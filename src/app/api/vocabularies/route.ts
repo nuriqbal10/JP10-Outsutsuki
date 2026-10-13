@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { vocabularies } from "@/db/schema";
-
-const dbUrl = process.env.DATABASE_URL;
-const sql = neon(dbUrl || "");
-const db = drizzle(sql);
 
 export async function GET(request: NextRequest) {
   try {
