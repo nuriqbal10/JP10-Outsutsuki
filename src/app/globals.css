@@ -1,0 +1,412 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,500&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;600;700;900&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme="burgundy"] {
+  --background: #18040c;
+  --foreground: #fdf2f4;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #3d0a17 0%, #20050c 50%, #120206 100%);
+  --clay-bg-from: rgba(92, 17, 36, 0.78);
+  --clay-bg-to: rgba(66, 13, 26, 0.88);
+  --clay-border: rgba(254, 205, 211, 0.2);
+  --clay-shadow-1: rgba(18, 2, 6, 0.6);
+  --clay-shadow-2: rgba(190, 37, 77, 0.15);
+  --clay-btn-from: #be254d;
+  --clay-btn-to: #881337;
+  --theme-accent: #f59e0b;
+
+  /* Typography & Semantics */
+  --text-heading: #fff1f2;
+  --text-body: #fecdd3;
+  --text-muted: #fda4af;
+  --badge-bg: rgba(76, 12, 27, 0.8);
+  --badge-text: #fde68a;
+  --badge-border: rgba(245, 158, 11, 0.35);
+
+  --font-theme-heading: 'Cinzel', 'Noto Serif JP', serif;
+  --font-theme-body: var(--font-jakarta, 'Plus Jakarta Sans'), 'Noto Sans JP', sans-serif;
+  --heading-letter-spacing: 0.035em;
+  --font-kyokasho: "UD デジタル 教科書体 NP-R", "UD Digi Kyokasho NP-R", "Noto Serif JP", serif;
+}
+
+[data-theme="milk"] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #ffffff 0%, #f8fafc 50%, #edf2f7 100%);
+  --clay-bg-from: rgba(255, 255, 255, 0.98);
+  --clay-bg-to: rgba(248, 250, 252, 0.94);
+  --clay-border: rgba(203, 213, 225, 0.65);
+  --clay-shadow-1: rgba(15, 23, 42, 0.07);
+  --clay-shadow-2: rgba(255, 255, 255, 1);
+  --clay-btn-from: #b45309;
+  --clay-btn-to: #78350f;
+  --theme-accent: #b45309;
+
+  /* Typography & Semantics: Ultra Sharp & High Contrast on Milk White */
+  --text-heading: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --badge-bg: #f1f5f9;
+  --badge-text: #b45309;
+  --badge-border: #cbd5e1;
+
+  --font-theme-heading: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+  --font-theme-body: 'Plus Jakarta Sans', 'Noto Sans JP', sans-serif;
+  --heading-letter-spacing: -0.01em;
+  --font-kyokasho: "BIZ UDPGothic", "Noto Sans JP", sans-serif;
+}
+
+[data-theme="jade"] {
+  --background: #041410;
+  --foreground: #f0fdf4;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #0e3025 0%, #071f18 50%, #030f0c 100%);
+  --clay-bg-from: rgba(16, 56, 46, 0.82);
+  --clay-bg-to: rgba(9, 36, 29, 0.92);
+  --clay-border: rgba(167, 243, 208, 0.22);
+  --clay-shadow-1: rgba(3, 15, 12, 0.7);
+  --clay-shadow-2: rgba(16, 185, 129, 0.15);
+  --clay-btn-from: #059669;
+  --clay-btn-to: #064e3b;
+  --theme-accent: #34d399;
+
+  /* Typography & Semantics */
+  --text-heading: #f0fdf4;
+  --text-body: #a7f3d0;
+  --text-muted: #6ee7b7;
+  --badge-bg: rgba(6, 78, 59, 0.8);
+  --badge-text: #a7f3d0;
+  --badge-border: rgba(52, 211, 153, 0.35);
+
+  --font-theme-heading: 'Outfit', 'Noto Sans JP', sans-serif;
+  --font-theme-body: 'Outfit', 'Noto Sans JP', sans-serif;
+  --heading-letter-spacing: 0.01em;
+  --font-kyokasho: "UD デジタル 教科書体 NP-R", "BIZ UDPGothic", "Noto Sans JP", sans-serif;
+}
+
+[data-theme="obsidian"] {
+  --background: #0a0f17;
+  --foreground: #f8fafc;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #182232 0%, #0e1520 50%, #06090e 100%);
+  --clay-bg-from: rgba(28, 41, 61, 0.84);
+  --clay-bg-to: rgba(16, 25, 39, 0.94);
+  --clay-border: rgba(203, 213, 225, 0.22);
+  --clay-shadow-1: rgba(6, 9, 14, 0.75);
+  --clay-shadow-2: rgba(56, 189, 248, 0.12);
+  --clay-btn-from: #2563eb;
+  --clay-btn-to: #1e3a8a;
+  --theme-accent: #38bdf8;
+
+  /* Typography & Semantics */
+  --text-heading: #f8fafc;
+  --text-body: #cbd5e1;
+  --text-muted: #94a3b8;
+  --badge-bg: rgba(30, 41, 59, 0.85);
+  --badge-text: #38bdf8;
+  --badge-border: rgba(56, 189, 248, 0.35);
+
+  --font-theme-heading: 'Space Grotesk', 'Noto Sans JP', sans-serif;
+  --font-theme-body: var(--font-jakarta, 'Plus Jakarta Sans'), 'Noto Sans JP', sans-serif;
+  --heading-letter-spacing: 0.025em;
+  --font-kyokasho: "Noto Sans JP", "BIZ UDPGothic", sans-serif;
+}
+
+[data-theme="plum"] {
+  --background: #110619;
+  --foreground: #faf5ff;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #2c0f3f 0%, #1a0728 50%, #0d0314 100%);
+  --clay-bg-from: rgba(62, 23, 90, 0.82);
+  --clay-bg-to: rgba(38, 12, 57, 0.92);
+  --clay-border: rgba(233, 213, 255, 0.22);
+  --clay-shadow-1: rgba(13, 3, 20, 0.75);
+  --clay-shadow-2: rgba(192, 132, 252, 0.15);
+  --clay-btn-from: #9333ea;
+  --clay-btn-to: #581c87;
+  --theme-accent: #f472b6;
+
+  /* Typography & Semantics */
+  --text-heading: #faf5ff;
+  --text-body: #e9d5ff;
+  --text-muted: #d8b4fe;
+  --badge-bg: rgba(74, 21, 75, 0.85);
+  --badge-text: #f472b6;
+  --badge-border: rgba(244, 114, 182, 0.35);
+
+  --font-theme-heading: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --font-theme-body: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --heading-letter-spacing: 0.02em;
+  --font-kyokasho: "Shippori Mincho", "Noto Serif JP", serif;
+}
+
+[data-theme="ivory"] {
+  --background: #f7f4ee;
+  --foreground: #1c1917;
+  --bg-gradient: radial-gradient(circle at 15% 15%, #faf7f2 0%, #f4efe6 50%, #ece4d6 100%);
+  --clay-bg-from: rgba(255, 255, 255, 0.96);
+  --clay-bg-to: rgba(247, 241, 232, 0.92);
+  --clay-border: rgba(214, 194, 170, 0.45);
+  --clay-shadow-1: rgba(80, 50, 20, 0.08);
+  --clay-shadow-2: rgba(255, 255, 255, 0.95);
+  --clay-btn-from: #b45309;
+  --clay-btn-to: #78350f;
+  --theme-accent: #b45309;
+
+  /* Typography & Semantics */
+  --text-heading: #1c1917;
+  --text-body: #44403c;
+  --text-muted: #78716c;
+  --badge-bg: #efe9de;
+  --badge-text: #292524;
+  --badge-border: #d6c2aa;
+
+  --font-theme-heading: 'Lora', 'Noto Serif JP', serif;
+  --font-theme-body: 'Lora', 'Noto Serif JP', serif;
+  --heading-letter-spacing: 0.008em;
+  --font-kyokasho: "Noto Serif JP", "Yu Mincho", serif;
+}
+
+body {
+  background: var(--bg-gradient);
+  background-color: var(--background);
+  color: var(--text-body);
+  font-family: var(--font-theme-body);
+  background-attachment: fixed;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease, font-family 0.3s ease;
+}
+
+/* Dynamic Headings matching active theme */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-theme-heading);
+  letter-spacing: var(--heading-letter-spacing, normal);
+  color: var(--text-heading) !important;
+}
+
+/* Light Theme Overrides for perfect contrast */
+[data-theme="milk"] h1,
+[data-theme="milk"] h2,
+[data-theme="milk"] h3,
+[data-theme="milk"] h4,
+[data-theme="ivory"] h1,
+[data-theme="ivory"] h2,
+[data-theme="ivory"] h3,
+[data-theme="ivory"] h4 {
+  color: var(--text-heading) !important;
+  -webkit-text-fill-color: initial !important;
+}
+
+[data-theme="milk"] p,
+[data-theme="ivory"] p {
+  color: var(--text-body) !important;
+}
+
+[data-theme="milk"] strong,
+[data-theme="ivory"] strong {
+  color: var(--text-heading) !important;
+}
+
+[data-theme="milk"] .clay-card,
+[data-theme="ivory"] .clay-card {
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Claymorphism Dynamic Surfaces */
+.clay-card {
+  background: linear-gradient(135deg, var(--clay-bg-from) 0%, var(--clay-bg-to) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--clay-border);
+  border-radius: 1.5rem;
+  box-shadow: 
+    8px 8px 24px var(--clay-shadow-1),
+    -4px -4px 16px var(--clay-shadow-2),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.12),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s ease;
+}
+
+.clay-card-light {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 240, 235, 0.9) 100%);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(180, 140, 90, 0.2);
+  border-radius: 1.25rem;
+  box-shadow: 
+    6px 6px 16px rgba(0, 0, 0, 0.15),
+    -3px -3px 10px rgba(255, 255, 255, 0.8),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 3px rgba(0, 0, 0, 0.08);
+}
+
+.clay-btn {
+  background: linear-gradient(135deg, var(--clay-btn-from) 0%, var(--clay-btn-to) 100%);
+  color: #fff;
+  border: 1px solid var(--clay-border);
+  box-shadow: 
+    4px 4px 12px var(--clay-shadow-1),
+    -2px -2px 6px var(--clay-shadow-2),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.3),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clay-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 
+    6px 6px 18px var(--clay-shadow-1),
+    -3px -3px 8px var(--clay-shadow-2),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+}
+
+.clay-btn:active {
+  transform: translateY(1px);
+  box-shadow: 
+    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.clay-btn-gold {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+  color: #fff;
+  border: 1px solid rgba(253, 230, 138, 0.4);
+  box-shadow: 
+    4px 4px 12px rgba(0, 0, 0, 0.3),
+    -2px -2px 6px rgba(251, 191, 36, 0.25),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.clay-nav-pill {
+  border-radius: 9999px;
+  box-shadow: 
+    3px 3px 8px var(--clay-shadow-1),
+    -2px -2px 6px var(--clay-shadow-2),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Original Outsutsuki Emblem Watermark & Magatama Accents */
+.watermark-ootsutsuki {
+  position: absolute;
+  top: -15%;
+  right: -5%;
+  width: 320px;
+  height: 320px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.magatama-bead {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+/* Clay Podium Styling */
+.clay-podium-1 {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.22) 0%, rgba(217, 119, 6, 0.35) 100%);
+  border: 2px solid rgba(251, 191, 36, 0.6);
+  box-shadow: 0 12px 28px rgba(217, 119, 6, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.clay-podium-2 {
+  background: linear-gradient(135deg, rgba(203, 213, 225, 0.2) 0%, rgba(148, 163, 184, 0.3) 100%);
+  border: 2px solid rgba(203, 213, 225, 0.6);
+  box-shadow: 0 8px 20px rgba(100, 116, 139, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.clay-podium-3 {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.18) 0%, rgba(194, 65, 12, 0.28) 100%);
+  border: 2px solid rgba(251, 146, 60, 0.5);
+  box-shadow: 0 8px 20px rgba(194, 65, 12, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+/* Print Certificate Official A4 Layout Rules */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  header,
+  nav,
+  aside,
+  button,
+  footer {
+    display: none !important;
+  }
+
+  body.printing-certificate-active main,
+  body.printing-certificate-active footer,
+  body.printing-certificate-active header,
+  body:has(#printReportModal:not(.hidden)) main,
+  body:has(#printReportModal:not(.hidden)) header {
+    display: none !important;
+  }
+
+  #printReportModal {
+    display: block !important;
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    inset: auto !important;
+    z-index: 9999 !important;
+  }
+
+  #printReportModal > div,
+  #printReportModal div.overflow-y-auto {
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+
+  #print-certificate-paper {
+    display: block !important;
+    visibility: visible !important;
+    box-shadow: none !important;
+    border: 2px solid #0f172a !important;
+    margin: 0 auto !important;
+    padding: 6mm 8mm !important;
+    width: 100% !important;
+    max-width: 196mm !important;
+    min-height: auto !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+  }
+
+  #print-certificate-paper * {
+    visibility: visible !important;
+  }
+}
