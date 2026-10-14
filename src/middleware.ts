@@ -24,7 +24,14 @@ const isPublicRoute = createRouteMatcher([
   "/api/rapor(.*)",
 ]);
 
+import { NextResponse } from "next/server";
+
 export default clerkMiddleware(async (auth, request) => {
+  // If Clerk is not configured on Cloudflare runtime yet, allow public access
+  if (!process.env.CLERK_SECRET_KEY) {
+    return NextResponse.next();
+  }
+
   if (!isPublicRoute(request)) {
     await auth.protect();
   }
