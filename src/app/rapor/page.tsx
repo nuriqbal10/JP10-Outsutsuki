@@ -751,20 +751,31 @@ export default function RaporDashboardPage() {
                         #{st.rank} {st.name}
                       </td>
                       {Array.from({ length: 18 }, (_, idx) => {
-                        const babScore = st.harian[idx]?.daiTest?.total || 0;
+                        const harianItem = st.harian?.[idx];
+                        const babScore = harianItem?.daiTesuto?.total ?? harianItem?.daiTest?.total ?? (typeof harianItem?.daiTesuto === 'number' ? harianItem.daiTesuto : 0);
                         const isPassed = babScore >= 70;
+                        const isFilled = babScore > 0;
                         return (
                           <td
                             key={idx}
-                            className={`p-1 font-mono ${
-                              babScore === 0
-                                ? "opacity-20"
-                                : isPassed
-                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-bold"
-                                : "bg-rose-500/15 text-rose-700 dark:text-rose-400 font-bold"
-                            }`}
+                            className="p-1.5 text-center"
                           >
-                            {babScore || "-"}
+                            {isFilled ? (
+                              <span
+                                className={`inline-block w-8 py-0.5 rounded text-[11px] font-mono font-extrabold shadow-xs ${
+                                  isPassed
+                                    ? "bg-emerald-600 text-white"
+                                    : "bg-rose-600 text-white"
+                                }`}
+                                title={`Bab ${idx + 1}: ${babScore} pt (${isPassed ? 'Tuntas' : 'Remedial'})`}
+                              >
+                                {babScore}
+                              </span>
+                            ) : (
+                              <span className="text-stone-400 dark:text-stone-500 font-mono text-[10px]">
+                                -
+                              </span>
+                            )}
                           </td>
                         );
                       })}
