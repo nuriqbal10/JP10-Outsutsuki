@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { NextResponse } from "next/server";
 import masterRaporDataRaw from "@/data/raporMasterData.json";
 import { MasterRaporData, StudentRaporItem, LevelRaporData } from "@/types/rapor";

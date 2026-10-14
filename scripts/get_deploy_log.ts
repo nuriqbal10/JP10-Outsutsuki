@@ -10,7 +10,8 @@ async function checkLog() {
     return;
   }
   const token = tokenMatch[1];
-  const url = 'https://api.cloudflare.com/client/v4/accounts/d2bfefe432bd5809cb005011a8bc3847/pages/projects/jp10-outsutsuki/deployments/dd21ab42-c344-4c1a-8e2f-25e2e8b16d68/history/logs';
+  const deploymentId = process.argv[2] || '31596e5e-6471-4cab-b813-934ca2289357';
+  const url = `https://api.cloudflare.com/client/v4/accounts/d2bfefe432bd5809cb005011a8bc3847/pages/projects/jp10-outsutsuki/deployments/${deploymentId}/history/logs`;
   
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` }

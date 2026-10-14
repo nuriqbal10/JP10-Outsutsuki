@@ -1,3 +1,5 @@
+export const runtime = "edge";
+
 import { SignUp } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
