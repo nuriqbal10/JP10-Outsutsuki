@@ -1,9 +1,4 @@
-name = "irodori-jft-portal"
+name = "jp10-outsutsuki"
 compatibility_date = "2024-11-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
-
-# Cloudflare R2 Bucket Binding
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "irodori-assets"
