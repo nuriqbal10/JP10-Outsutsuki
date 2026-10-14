@@ -1,3 +1,7 @@
+"use client";
+
+export const runtime = "edge";
+
 import Link from "next/link";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy } from "lucide-react";
