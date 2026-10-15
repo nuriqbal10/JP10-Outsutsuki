@@ -216,71 +216,122 @@ h1, h2, h3, h4, .font-heading {
     inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Claymorphism Dynamic Surfaces */
+/* Claymorphism Ultra-Luxury Dynamic Surfaces */
 .clay-card {
+  background: linear-gradient(135deg, var(--clay-bg-from) 0%, var(--clay-bg-to) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--clay-border);
+  border-radius: 1.5rem;
+  box-shadow: 
+    10px 14px 28px -4px var(--clay-shadow-1),
+    -6px -6px 20px -2px var(--clay-shadow-2),
+    inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.22),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-card-compact {
   background: linear-gradient(135deg, var(--clay-bg-from) 0%, var(--clay-bg-to) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--clay-border);
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   box-shadow: 
-    8px 8px 24px var(--clay-shadow-1),
-    -4px -4px 16px var(--clay-shadow-2),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.12),
-    inset -2px -2px 4px rgba(0, 0, 0, 0.35);
-  transition: all 0.3s ease;
+    6px 8px 18px -2px var(--clay-shadow-1),
+    -3px -3px 12px -1px var(--clay-shadow-2),
+    inset 1px 1px 1.5px rgba(255, 255, 255, 0.2),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.clay-card-inset {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--clay-border);
+  border-radius: 1.25rem;
+  box-shadow: 
+    inset 3px 3px 8px rgba(0, 0, 0, 0.4),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.05);
 }
 
 .clay-card-light {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 240, 235, 0.9) 100%);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(180, 140, 90, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 245, 240, 0.94) 100%);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(180, 140, 90, 0.25);
   border-radius: 1.25rem;
   box-shadow: 
-    6px 6px 16px rgba(0, 0, 0, 0.15),
-    -3px -3px 10px rgba(255, 255, 255, 0.8),
-    inset 2px 2px 3px rgba(255, 255, 255, 0.9),
-    inset -2px -2px 3px rgba(0, 0, 0, 0.08);
+    8px 10px 24px rgba(0, 0, 0, 0.08),
+    -4px -4px 14px rgba(255, 255, 255, 0.9),
+    inset 2px 2px 3px rgba(255, 255, 255, 0.95),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .clay-btn {
   background: linear-gradient(135deg, var(--clay-btn-from) 0%, var(--clay-btn-to) 100%);
   color: #fff;
   border: 1px solid var(--clay-border);
+  border-radius: 1rem;
   box-shadow: 
-    4px 4px 12px var(--clay-shadow-1),
-    -2px -2px 6px var(--clay-shadow-2),
-    inset 1px 1px 2px rgba(255, 255, 255, 0.3),
-    inset -1px -1px 2px rgba(0, 0, 0, 0.4);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    5px 6px 16px var(--clay-shadow-1),
+    -2px -2px 8px var(--clay-shadow-2),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.35),
+    inset -1px -1px 3px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .clay-btn:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
   box-shadow: 
-    6px 6px 18px var(--clay-shadow-1),
-    -3px -3px 8px var(--clay-shadow-2),
-    inset 1px 1px 2px rgba(255, 255, 255, 0.4);
+    8px 10px 22px var(--clay-shadow-1),
+    -3px -3px 10px var(--clay-shadow-2),
+    inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.45);
 }
 
 .clay-btn:active {
   transform: translateY(1px);
   box-shadow: 
-    inset 2px 2px 6px rgba(0, 0, 0, 0.6),
+    inset 3px 3px 8px rgba(0, 0, 0, 0.6),
     inset -1px -1px 2px rgba(255, 255, 255, 0.1);
 }
 
 .clay-btn-gold {
-  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+  background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
   color: #fff;
   border: 1px solid rgba(253, 230, 138, 0.4);
+  border-radius: 1rem;
   box-shadow: 
-    4px 4px 12px rgba(0, 0, 0, 0.3),
-    -2px -2px 6px rgba(251, 191, 36, 0.25),
-    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
-    inset -1px -1px 2px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    5px 6px 16px rgba(0, 0, 0, 0.35),
+    -2px -2px 8px rgba(251, 191, 36, 0.25),
+    inset 1.5px 1.5px 2px rgba(255, 255, 255, 0.45),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-nav-item {
+  border-radius: 0.875rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-nav-item-active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.28) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #fef08a !important;
+  box-shadow: 
+    4px 5px 14px rgba(0, 0, 0, 0.25),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.25),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="milk"] .clay-nav-item-active,
+[data-theme="ivory"] .clay-nav-item-active {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  border: 1px solid rgba(217, 119, 6, 0.5) !important;
+  color: #78350f !important;
+  box-shadow: 
+    3px 4px 12px rgba(180, 83, 9, 0.15),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.95),
+    inset -1px -1px 2px rgba(180, 83, 9, 0.1) !important;
 }
 
 .clay-nav-pill {
@@ -289,6 +340,74 @@ h1, h2, h3, h4, .font-heading {
     3px 3px 8px var(--clay-shadow-1),
     -2px -2px 6px var(--clay-shadow-2),
     inset 1px 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Claymorphism Luxury Sidebar & Navigator */
+.clay-sidebar {
+  background: linear-gradient(180deg, var(--clay-bg-from) 0%, var(--clay-bg-to) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--clay-border);
+  box-shadow: 
+    10px 0 30px -5px var(--clay-shadow-1),
+    inset -1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="milk"] .clay-sidebar,
+[data-theme="ivory"] .clay-sidebar {
+  box-shadow: 
+    4px 0 20px -2px rgba(15, 23, 42, 0.05),
+    inset -1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.clay-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 1.125rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  color: var(--text-body);
+  opacity: 0.85;
+}
+
+.clay-nav-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateX(3px);
+}
+
+[data-theme="milk"] .clay-nav-btn:hover,
+[data-theme="ivory"] .clay-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.clay-nav-btn-active {
+  opacity: 1 !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22) 0%, rgba(180, 83, 9, 0.28) 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.45) !important;
+  color: #fef08a !important;
+  box-shadow: 
+    4px 6px 16px var(--clay-shadow-1),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.3),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.25) !important;
+  transform: translateX(4px);
+}
+
+[data-theme="milk"] .clay-nav-btn-active,
+[data-theme="ivory"] .clay-nav-btn-active {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  border: 1px solid rgba(217, 119, 6, 0.45) !important;
+  color: #78350f !important;
+  box-shadow: 
+    3px 4px 12px rgba(180, 83, 9, 0.15),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.95),
+    inset -1px -1px 2px rgba(180, 83, 9, 0.1) !important;
+  transform: translateX(4px);
 }
 
 /* Original Outsutsuki Emblem Watermark & Magatama Accents */

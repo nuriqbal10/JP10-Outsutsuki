@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Trophy,
@@ -9,9 +9,7 @@ import {
   BarChart2,
   Award,
   BookOpen,
-  Calendar,
   CheckCircle2,
-  ChevronDown,
   Printer,
   SlidersHorizontal,
   Layers,
@@ -19,6 +17,11 @@ import {
   ShieldCheck,
   FileText,
   User,
+  Users,
+  Menu,
+  X,
+  ChevronRight,
+  TrendingUp,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
@@ -30,32 +33,7 @@ import masterRaporData from "@/data/raporMasterData.json";
 export default function RaporDashboardPage() {
   const [selectedLevel, setSelectedLevel] = useState<"A1" | "A21" | "A22">("A22");
   const [activeTab, setActiveTab] = useState<"overview" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
-
-  // State Dropdown Navigasi
-  const [isViewMenuOpen, setIsViewMenuOpen] = useState(false);
-  const [isLevelMenuOpen, setIsLevelMenuOpen] = useState(false);
-  const [isModuleMenuOpen, setIsModuleMenuOpen] = useState(false);
-
-  const viewMenuRef = useRef<HTMLDivElement>(null);
-  const levelMenuRef = useRef<HTMLDivElement>(null);
-  const moduleMenuRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (viewMenuRef.current && !viewMenuRef.current.contains(event.target as Node)) {
-        setIsViewMenuOpen(false);
-      }
-      if (levelMenuRef.current && !levelMenuRef.current.contains(event.target as Node)) {
-        setIsLevelMenuOpen(false);
-      }
-      if (moduleMenuRef.current && !moduleMenuRef.current.contains(event.target as Node)) {
-        setIsModuleMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Instant State
   const [raporData, setRaporData] = useState<LevelRaporData | null>(() => {
@@ -127,196 +105,335 @@ export default function RaporDashboardPage() {
     A22: "Tingkat Lanjutan 2 (初級2 A2.2)",
   };
 
+  const navItems = [
+    { id: "overview", label: "Ringkasan Eksekutif", sub: "Statistik & Podium Juara", icon: BarChart2 },
+    { id: "students", label: "Buku Nilai (28 Siswa)", sub: "Rekap Nilai Komulatif", icon: Users },
+    { id: "grandprix", label: "Dinamika Progres Nilai", sub: "Kemajuan Bab 1 s.d. 18", icon: TrendingUp },
+    { id: "heatmap", label: "Matriks Diagnostik Bab", sub: "Evaluasi Ketuntasan Bab", icon: SlidersHorizontal },
+    { id: "feedback", label: "Catatan & Evaluasi Shihan", sub: "Rekomendasi Individual", icon: Award },
+    { id: "portal", label: "Portal Individual Siswa", sub: "Cetak Rapor Per Siswa", icon: User },
+  ];
+
+  const levelOptions = [
+    { id: "A1", label: "入門 A1", name: "Tingkat Dasar (A1)" },
+    { id: "A21", label: "初級1 A2.1", name: "Tingkat Lanjutan 1 (A2.1)" },
+    { id: "A22", label: "初級2 A2.2", name: "Tingkat Lanjutan 2 (A2.2)" },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col font-sans relative selection:bg-amber-500/20 selection:text-amber-800 dark:selection:text-amber-200">
+    <div className="min-h-screen flex font-sans relative selection:bg-amber-500/20 selection:text-amber-800 dark:selection:text-amber-200">
       {/* ========================================================
-          1. UNIFIED COMMAND & NAVIGATION HEADER (TERPADU SATU WADAH)
+          1. DESKTOP SIDEBAR NAVIGATOR (CLAYMORPHISM LUXURY)
           ======================================================== */}
-      <header className="sticky top-0 z-50 px-4 sm:px-8 py-3 w-full border-b border-current/10 backdrop-blur-xl bg-black/5 dark:bg-black/40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          {/* Sisi Kiri: Identitas Brand Klan Outsutsuki */}
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/"
-              className="w-10 h-10 p-1.5 rounded-xl bg-white dark:bg-stone-900 border border-current/15 flex items-center justify-center shadow-sm hover:scale-105 transition"
-              title="Kembali ke Beranda Portal"
-            >
+      <aside className="hidden lg:flex w-72 flex-col shrink-0 sticky top-0 h-screen clay-sidebar p-5 justify-between z-40 overflow-y-auto">
+        <div className="space-y-6">
+          {/* Identitas Brand Klan Outsutsuki */}
+          <Link
+            href="/"
+            className="flex items-center gap-3 p-2 rounded-2xl hover:bg-black/5 dark:hover:bg-white/5 transition group"
+            title="Kembali ke Beranda Portal"
+          >
+            <div className="w-11 h-11 p-1 rounded-xl bg-white dark:bg-stone-900 border border-current/15 flex items-center justify-center shadow-md group-hover:scale-105 transition">
               <img
                 src="/logo_outsutsuki.png"
                 alt="Emblem Klan Otsutsuki"
                 className="w-full h-full object-contain filter dark:invert"
               />
-            </Link>
+            </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-sm tracking-wide uppercase font-serif">
-                  Ōtsutsuki Academia
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-sm tracking-wide uppercase font-serif">
+                  Ōtsutsuki
                 </span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                  大筒木一族
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  大筒木
                 </span>
               </div>
-              <p className="text-[11px] opacity-70">
-                Sistem Evaluasi Akademik Irodori • Pembina: イクバル先生 (Iqbal-sensei)
-              </p>
+              <p className="text-[10px] opacity-70 font-medium">Sistem Evaluasi Akademik</p>
+            </div>
+          </Link>
+
+          {/* Level Switcher (Segmented Clay Pills) */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-2 block">
+              Tingkat Kurikulum
+            </span>
+            <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-current/10">
+              {levelOptions.map((lvl) => (
+                <button
+                  key={lvl.id}
+                  onClick={() => setSelectedLevel(lvl.id as any)}
+                  className={`py-1.5 rounded-lg text-[11px] font-extrabold transition cursor-pointer text-center ${
+                    selectedLevel === lvl.id
+                      ? "bg-amber-500 text-stone-950 shadow-sm"
+                      : "opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                  }`}
+                >
+                  {lvl.label.split(" ")[0]}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Sisi Tengah: Wadah Navigasi Terpadu (Dropdown Cluster) */}
-          <div className="hidden lg:flex items-center gap-2 bg-black/5 dark:bg-white/5 p-1 rounded-2xl border border-current/10">
-            {/* Dropdown 1: Menu Tampilan Fitur */}
-            <div className="relative" ref={viewMenuRef}>
-              <button
-                onClick={() => {
-                  setIsViewMenuOpen(!isViewMenuOpen);
-                  setIsLevelMenuOpen(false);
-                  setIsModuleMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25 transition cursor-pointer"
-              >
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                <span>{viewTitles[activeTab].split(" ")[0]} ({activeTab === "overview" ? "Ringkasan" : activeTab === "students" ? "Buku Nilai" : activeTab === "grandprix" ? "Progres" : activeTab === "heatmap" ? "Heatmap" : activeTab === "feedback" ? "Evaluasi" : "Portal"})</span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
-              </button>
+          {/* Navigasi Utama Panel Rapor */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-2 block">
+              Navigator Analisis
+            </span>
+            <nav className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as any)}
+                    className={`clay-nav-btn ${isActive ? "clay-nav-btn-active" : ""}`}
+                  >
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-amber-500" : "opacity-70"}`} />
+                    <div className="text-left flex-1 min-w-0">
+                      <span className="block truncate leading-tight">{item.label}</span>
+                      <span className="block text-[10px] opacity-60 truncate font-normal">{item.sub}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
 
-              {isViewMenuOpen && (
-                <div className="absolute left-0 mt-2 w-64 rounded-2xl p-2 bg-white dark:bg-stone-900 border border-current/15 shadow-2xl z-50 space-y-1 animate-in fade-in duration-150">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider opacity-50">
-                    Pilih Mode Tampilan Analisis
-                  </div>
-                  {[
-                    { id: "overview", label: "Ringkasan Eksekutif", sub: "Statistik & Podium Juara" },
-                    { id: "students", label: "Buku Nilai Lengkap", sub: "Rekap Nilai 28 Siswa" },
-                    { id: "grandprix", label: "Dinamika Progres Nilai", sub: "Analisis Kemajuan 18 Bab" },
-                    { id: "heatmap", label: "Matriks Diagnostik Bab", sub: "Evaluasi Ketuntasan Bab" },
-                    { id: "feedback", label: "Catatan & Evaluasi Shihan", sub: "Rekomendasi Individual" },
-                    { id: "portal", label: "Portal Individual Siswa", sub: "Cetak Rapor Per Siswa" },
-                  ].map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        setActiveTab(item.id as any);
-                        setIsViewMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col transition cursor-pointer ${
-                        activeTab === item.id
-                          ? "bg-amber-500 text-stone-950 font-bold shadow-xs"
-                          : "opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
-                      }`}
-                    >
-                      <span className="font-bold">{item.label}</span>
-                      <span className="text-[10px] opacity-70">{item.sub}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+          {/* Modul Akademik Terpadu */}
+          <div className="space-y-1.5 pt-2 border-t border-current/10">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-2 block">
+              Modul Akademik Terpadu
+            </span>
+            <div className="space-y-0.5">
+              <Link
+                href="/lms/irodori-a2-2"
+                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <BookOpen className="w-3.5 h-3.5 text-amber-500" /> LMS Silabus 12 Bab
+                </span>
+                <ChevronRight className="w-3 h-3 opacity-40" />
+              </Link>
+              <Link
+                href="/cbt"
+                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-500" /> Simulasi CBT JFT
+                </span>
+                <ChevronRight className="w-3 h-3 opacity-40" />
+              </Link>
+              <Link
+                href="/kanji"
+                className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <Layers className="w-3.5 h-3.5 text-amber-500" /> Studio Huruf Kanji
+                </span>
+                <ChevronRight className="w-3 h-3 opacity-40" />
+              </Link>
             </div>
+          </div>
+        </div>
 
-            {/* Dropdown 2: Tingkat Kurikulum (Level) */}
-            <div className="relative" ref={levelMenuRef}>
+        {/* Sidebar Footer */}
+        <div className="pt-4 border-t border-current/10 space-y-3">
+          <div className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-extrabold text-xs flex items-center justify-center border border-amber-500/30 shrink-0">
+              伊
+            </div>
+            <div className="min-w-0">
+              <div className="text-[11px] font-extrabold truncate">イクバル先生</div>
+              <div className="text-[10px] opacity-60 truncate">Shihan Penanggung Jawab</div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <ThemeSwitcher compact={false} />
+            {top3[0] && (
               <button
-                onClick={() => {
-                  setIsLevelMenuOpen(!isLevelMenuOpen);
-                  setIsViewMenuOpen(false);
-                  setIsModuleMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
+                onClick={() => setSelectedStudentForPrint(top3[0])}
+                className="p-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 border border-amber-500/30 transition cursor-pointer"
+                title="Cetak Rapor Resmi Juara I"
               >
-                <BookOpen className="w-3.5 h-3.5 text-amber-500" />
-                <span>{selectedLevel === "A22" ? "初級2 A2.2" : selectedLevel === "A21" ? "初級1 A2.1" : "入門 A1"}</span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
+                <Printer className="w-4 h-4" />
               </button>
+            )}
+          </div>
+        </div>
+      </aside>
 
-              {isLevelMenuOpen && (
-                <div className="absolute left-0 mt-2 w-56 rounded-2xl p-2 bg-white dark:bg-stone-900 border border-current/15 shadow-2xl z-50 space-y-1 animate-in fade-in duration-150">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider opacity-50">
-                    Tingkat Kurikulum Irodori
+      {/* ========================================================
+          MOBILE DRAWER SIDEBAR (TAMPIL DI LAYAR HP/TABLET)
+          ======================================================== */}
+      {isMobileDrawerOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileDrawerOpen(false)}
+          />
+          <div className="relative w-72 max-w-[85vw] h-full clay-sidebar p-5 flex flex-col justify-between z-10 overflow-y-auto animate-in slide-in-from-left duration-200">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2.5"
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                >
+                  <div className="w-9 h-9 p-1 rounded-xl bg-white dark:bg-stone-900 border border-current/15 flex items-center justify-center shadow-sm">
+                    <img
+                      src="/logo_outsutsuki.png"
+                      alt="Logo Outsutsuki"
+                      className="w-full h-full object-contain filter dark:invert"
+                    />
                   </div>
-                  {[
-                    { id: "A1", label: "入門 A1 (Nyuumon)", sub: "Tingkat Dasar Standar" },
-                    { id: "A21", label: "初級1 A2.1 (Shokyuu 1)", sub: "Tingkat Lanjutan 1" },
-                    { id: "A22", label: "初級2 A2.2 (Shokyuu 2)", sub: "Tingkat Lanjutan 2" },
-                  ].map((lvl) => (
+                  <div>
+                    <span className="font-extrabold text-sm uppercase">Ōtsutsuki</span>
+                    <p className="text-[9px] opacity-60">Sistem Evaluasi Rapor</p>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                  className="p-1.5 rounded-lg opacity-70 hover:opacity-100 bg-black/5 dark:bg-white/10"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Mobile Level Switcher */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1 block">
+                  Pilih Tingkat Kurikulum
+                </span>
+                <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-current/10">
+                  {levelOptions.map((lvl) => (
                     <button
                       key={lvl.id}
                       onClick={() => {
                         setSelectedLevel(lvl.id as any);
-                        setIsLevelMenuOpen(false);
+                        setIsMobileDrawerOpen(false);
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col transition cursor-pointer ${
+                      className={`py-1.5 rounded-lg text-[10px] font-bold text-center ${
                         selectedLevel === lvl.id
-                          ? "bg-amber-500 text-stone-950 font-bold shadow-xs"
-                          : "opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                          ? "bg-amber-500 text-stone-950 font-black shadow-xs"
+                          : "opacity-75"
                       }`}
                     >
-                      <span className="font-bold">{lvl.label}</span>
-                      <span className="text-[10px] opacity-70">{lvl.sub}</span>
+                      {lvl.label.split(" ")[0]}
                     </button>
                   ))}
                 </div>
-              )}
+              </div>
+
+              {/* Mobile Nav Links */}
+              <div className="space-y-1">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1 block">
+                  Menu Utama
+                </span>
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeTab === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setActiveTab(item.id as any);
+                        setIsMobileDrawerOpen(false);
+                      }}
+                      className={`clay-nav-btn ${isActive ? "clay-nav-btn-active" : ""}`}
+                    >
+                      <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-amber-500" : "opacity-70"}`} />
+                      <div className="text-left flex-1 min-w-0">
+                        <span className="block truncate">{item.label}</span>
+                        <span className="block text-[10px] opacity-60 font-normal">{item.sub}</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Mobile Modul Shortcuts */}
+              <div className="space-y-1 pt-3 border-t border-current/10">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1 block">
+                  Modul Portal
+                </span>
+                <Link
+                  href="/lms/irodori-a2-2"
+                  className="block p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100"
+                >
+                  LMS Silabus &amp; LKPD
+                </Link>
+                <Link
+                  href="/cbt"
+                  className="block p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100"
+                >
+                  Simulasi Ujian CBT
+                </Link>
+                <Link
+                  href="/kanji"
+                  className="block p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100"
+                >
+                  Studio Huruf Kanji
+                </Link>
+              </div>
             </div>
 
-            {/* Dropdown 3: Modul Terkait */}
-            <div className="relative" ref={moduleMenuRef}>
-              <button
-                onClick={() => {
-                  setIsModuleMenuOpen(!isModuleMenuOpen);
-                  setIsViewMenuOpen(false);
-                  setIsLevelMenuOpen(false);
-                }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
-              >
-                <Layers className="w-3.5 h-3.5 text-amber-500" />
-                <span>Modul Portal</span>
-                <ChevronDown className="w-3 h-3 opacity-60" />
-              </button>
+            <div className="pt-4 border-t border-current/10 flex items-center justify-between">
+              <ThemeSwitcher compact={false} />
+            </div>
+          </div>
+        </div>
+      )}
 
-              {isModuleMenuOpen && (
-                <div className="absolute right-0 mt-2 w-52 rounded-2xl p-2 bg-white dark:bg-stone-900 border border-current/15 shadow-2xl z-50 space-y-1 animate-in fade-in duration-150">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider opacity-50">
-                    Akses Modul Akademik
-                  </div>
-                  <Link
-                    href="/lms/irodori-a2-2"
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
-                  >
-                    <span className="font-bold">LMS Silabus &amp; LKPD</span>
-                    <span className="text-[10px] opacity-70">Materi 12 Bab Irodori</span>
-                  </Link>
-                  <Link
-                    href="/cbt"
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
-                  >
-                    <span className="font-bold">Simulasi Ujian CBT</span>
-                    <span className="text-[10px] opacity-70">Standar Ujian JFT-Basic</span>
-                  </Link>
-                  <Link
-                    href="/kanji"
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
-                  >
-                    <span className="font-bold">Studio Huruf Kanji</span>
-                    <span className="text-[10px] opacity-70">Stroke Order &amp; Lembar Latih</span>
-                  </Link>
-                  <Link
-                    href="/flashcard"
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs flex flex-col opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
-                  >
-                    <span className="font-bold">Flashcard Kosakata</span>
-                    <span className="text-[10px] opacity-70">Audio Pelafalan Asli</span>
-                  </Link>
-                </div>
-              )}
+      {/* ========================================================
+          MAIN CONTENT AREA (WRAPPER SISI KANAN)
+          ======================================================== */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* TOP BAR / COMMAND HEADER */}
+        <header className="sticky top-0 z-30 px-4 sm:px-8 py-3 w-full border-b border-current/10 backdrop-blur-xl bg-black/5 dark:bg-black/30 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            {/* Hamburger Button untuk Mobile */}
+            <button
+              onClick={() => setIsMobileDrawerOpen(true)}
+              className="lg:hidden p-2 rounded-xl bg-black/5 dark:bg-white/10 border border-current/15 hover:scale-105 transition"
+              title="Buka Menu Navigator"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Breadcrumb Tampilan Aktif */}
+            <div>
+              <div className="flex items-center gap-2 text-[11px] opacity-70">
+                <span>Ōtsutsuki Academia</span>
+                <span>›</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">
+                  {selectedLevel === "A22" ? "初級2 A2.2" : selectedLevel === "A21" ? "初級1 A2.1" : "入門 A1"}
+                </span>
+              </div>
+              <h2 className="text-sm sm:text-base font-extrabold tracking-tight font-serif truncate max-w-xs sm:max-w-md">
+                {viewTitles[activeTab]}
+              </h2>
             </div>
           </div>
 
-          {/* Sisi Kanan: ThemeSwitcher & Navigasi Mobile */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Quick Button Cetak Rapor */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Quick Badges Indikator Kelas */}
+            <div className="hidden md:flex items-center gap-2 text-xs">
+              <span className="px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 font-medium">
+                Rata-Rata: <strong className="text-amber-600 dark:text-amber-400">{raporData?.classSummary?.classAverage || 73.8}</strong>
+              </span>
+              <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
+                Ketuntasan: 100%
+              </span>
+            </div>
+
+            {/* Quick Print Button */}
             {top3[0] && (
               <button
                 onClick={() => setSelectedStudentForPrint(top3[0])}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition cursor-pointer"
+                className="clay-btn-gold hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-sm cursor-pointer"
                 title="Cetak Laporan Hasil Belajar Siswa Peringkat I"
               >
                 <Printer className="w-3.5 h-3.5" />
@@ -326,32 +443,24 @@ export default function RaporDashboardPage() {
 
             <ThemeSwitcher />
           </div>
-        </div>
+        </header>
 
-        {/* Mobile Navigation Tabs (Hanya Tampil di Layar Kecil) */}
-        <div className="lg:hidden mt-2 pt-2 border-t border-current/10 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none text-xs">
-          {[
-            { id: "overview", label: "Ringkasan" },
-            { id: "students", label: "Buku Nilai" },
-            { id: "grandprix", label: "Progres" },
-            { id: "heatmap", label: "Matriks" },
-            { id: "feedback", label: "Evaluasi" },
-            { id: "portal", label: "Siswa" },
-          ].map((m) => (
+        {/* Mobile Quick-Scroll Pill Bar */}
+        <div className="lg:hidden px-4 py-2 border-b border-current/10 flex items-center gap-2 overflow-x-auto scrollbar-none text-xs bg-black/5 dark:bg-black/20">
+          {navItems.map((m) => (
             <button
               key={m.id}
               onClick={() => setActiveTab(m.id as any)}
-              className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition cursor-pointer ${
                 activeTab === m.id
                   ? "bg-amber-500 text-stone-950 shadow-xs"
                   : "bg-black/5 dark:bg-white/10 opacity-75"
               }`}
             >
-              {m.label}
+              {m.label.split(" ")[0]}
             </button>
           ))}
         </div>
-      </header>
 
       {/* ========================================================
           2. KONTEN UTAMA DASHBOARD
@@ -388,21 +497,21 @@ export default function RaporDashboardPage() {
 
               {/* 3 Indikator Utama Eksekutif */}
               <div className="grid grid-cols-3 gap-3 pt-3 max-w-lg">
-                <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 text-center">
+                <div className="clay-card-compact p-3.5 rounded-2xl text-center">
                   <span className="text-[11px] opacity-70 block font-medium">Rata-Rata Kelas</span>
                   <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 mt-0.5 block">
                     {raporData?.classSummary?.classAverage || 73.8}
                   </span>
                   <span className="text-[10px] opacity-60">Skala 100 pt</span>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 text-center">
+                <div className="clay-card-compact p-3.5 rounded-2xl text-center">
                   <span className="text-[11px] opacity-70 block font-medium">Ketuntasan KKM</span>
                   <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">
                     100%
                   </span>
                   <span className="text-[10px] opacity-60">28 / 28 Siswa</span>
                 </div>
-                <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 text-center">
+                <div className="clay-card-compact p-3.5 rounded-2xl text-center">
                   <span className="text-[11px] opacity-70 block font-medium">Skor Tertinggi</span>
                   <span className="text-xl sm:text-2xl font-black text-purple-600 dark:text-purple-400 mt-0.5 block">
                     {top3[0]?.compositeScore || 94.0}
@@ -413,7 +522,7 @@ export default function RaporDashboardPage() {
             </div>
 
             {/* Kartu Ringkasan Standar Pengesahan Akademik */}
-            <div className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/15 max-w-sm w-full space-y-3 shrink-0">
+            <div className="clay-card-compact p-5 rounded-2xl max-w-sm w-full space-y-3 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-500 flex items-center justify-center border border-amber-500/40 shrink-0">
                   <ShieldCheck className="w-4 h-4" />
@@ -461,7 +570,7 @@ export default function RaporDashboardPage() {
                 {top3[1] && (
                   <div
                     onClick={() => setSelectedStudentForPrint(top3[1])}
-                    className="order-2 md:order-1 p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-300/40 dark:border-slate-700/60 text-center relative cursor-pointer hover:border-slate-400 hover:scale-[1.02] transition shadow-md group"
+                    className="clay-podium-2 order-2 md:order-1 p-6 rounded-3xl text-center relative cursor-pointer hover:scale-[1.02] transition shadow-md group"
                     title="Klik untuk membuka lembar rapor resmi"
                   >
                     <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center mx-auto mb-3 border border-slate-300 dark:border-slate-700">
@@ -494,7 +603,7 @@ export default function RaporDashboardPage() {
                 {top3[0] && (
                   <div
                     onClick={() => setSelectedStudentForPrint(top3[0])}
-                    className="order-1 md:order-2 p-7 rounded-2xl bg-gradient-to-b from-amber-500/15 via-transparent to-amber-500/5 border-2 border-amber-500/50 text-center relative cursor-pointer hover:scale-[1.03] transition shadow-xl group -mt-2"
+                    className="clay-podium-1 order-1 md:order-2 p-7 rounded-3xl text-center relative cursor-pointer hover:scale-[1.03] transition shadow-xl group -mt-2"
                     title="Klik untuk membuka lembar rapor resmi"
                   >
                     <div className="w-12 h-12 rounded-full bg-amber-500 text-stone-950 font-black text-sm flex items-center justify-center mx-auto mb-3 shadow-md">
@@ -527,7 +636,7 @@ export default function RaporDashboardPage() {
                 {top3[2] && (
                   <div
                     onClick={() => setSelectedStudentForPrint(top3[2])}
-                    className="order-3 p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-amber-700/30 dark:border-amber-700/50 text-center relative cursor-pointer hover:border-amber-600 hover:scale-[1.02] transition shadow-md group"
+                    className="clay-podium-3 order-3 p-6 rounded-3xl text-center relative cursor-pointer hover:scale-[1.02] transition shadow-md group"
                     title="Klik untuk membuka lembar rapor resmi"
                   >
                     <div className="w-10 h-10 rounded-full bg-amber-900/30 text-amber-700 dark:text-amber-400 font-bold text-xs flex items-center justify-center mx-auto mb-3 border border-amber-700/40">
@@ -566,7 +675,7 @@ export default function RaporDashboardPage() {
         {activeTab === "students" && (
           <div className="space-y-4">
             {/* Toolbar Pencarian & Filter Grade */}
-            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="clay-card-compact p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
               <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
                 <input
@@ -599,7 +708,7 @@ export default function RaporDashboardPage() {
             </div>
 
             {/* Tabel Administrasi Nilai Siswa */}
-            <div className="rounded-2xl border border-current/10 overflow-hidden shadow-lg bg-white/40 dark:bg-stone-950/40">
+            <div className="clay-card p-2 rounded-3xl overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
@@ -700,7 +809,7 @@ export default function RaporDashboardPage() {
             ======================================================== */}
         {activeTab === "grandprix" && (
           <div className="space-y-4">
-            <div className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="clay-card p-6 rounded-3xl border border-current/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
               <div>
                 <h3 className="text-base font-bold tracking-tight font-serif flex items-center gap-2">
                   <BarChart2 className="w-5 h-5 text-amber-500" />
@@ -723,7 +832,7 @@ export default function RaporDashboardPage() {
             PANEL 4: MATRIKS DIAGNOSTIK 18 BAB
             ======================================================== */}
         {activeTab === "heatmap" && (
-          <div className="p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-4 shadow-md">
+          <div className="clay-card p-6 rounded-3xl border border-current/10 space-y-4 shadow-xl">
             <div>
               <h3 className="text-base font-bold tracking-tight font-serif flex items-center gap-2">
                 <FileText className="w-5 h-5 text-amber-500" />
@@ -734,7 +843,7 @@ export default function RaporDashboardPage() {
               </p>
             </div>
 
-            <div className="overflow-x-auto border border-current/15 rounded-xl bg-white/40 dark:bg-stone-950/40">
+            <div className="overflow-x-auto border border-current/15 rounded-2xl bg-white/40 dark:bg-stone-950/40 p-1">
               <table className="w-full text-center border-collapse text-[10px]">
                 <thead>
                   <tr className="bg-black/10 dark:bg-white/10 font-bold opacity-80">
@@ -792,7 +901,7 @@ export default function RaporDashboardPage() {
             ======================================================== */}
         {activeTab === "feedback" && (
           <div className="space-y-4">
-            <div className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex items-center justify-between">
+            <div className="clay-card p-6 rounded-3xl border border-current/10 flex items-center justify-between shadow-lg">
               <div>
                 <h3 className="text-base font-bold tracking-tight font-serif flex items-center gap-2">
                   <Award className="w-5 h-5 text-amber-500" />
@@ -809,7 +918,7 @@ export default function RaporDashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(raporData?.rankedStudents || []).map((st) => (
-                <div key={st.no} className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-2.5 shadow-sm">
+                <div key={st.no} className="clay-card-compact p-5 rounded-2xl border border-current/10 space-y-2.5 shadow-sm hover:scale-[1.01] transition">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-sm">#{st.rank} {st.name}</span>
                     <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
@@ -838,7 +947,7 @@ export default function RaporDashboardPage() {
             PANEL 6: PORTAL INDIVIDUAL SISWA (PER SISWA)
             ======================================================== */}
         {activeTab === "portal" && portalStudent && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-6 shadow-md">
+          <div className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 space-y-6 shadow-xl">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-current/10 pb-4">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
@@ -869,7 +978,7 @@ export default function RaporDashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-current/10 text-center">
+              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 text-center">
                 <div className="w-14 h-14 rounded-full mx-auto mb-2 bg-slate-800 text-white font-bold text-base flex items-center justify-center shadow-sm">
                   {portalStudent.name.substring(0, 2).toUpperCase()}
                 </div>
@@ -880,7 +989,7 @@ export default function RaporDashboardPage() {
                 </span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-current/10 flex flex-col justify-between">
+              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
                 <span className="text-xs opacity-70 font-medium">Nilai Akumulatif Komprehensif</span>
                 <span className="text-3xl font-black text-amber-600 dark:text-amber-400 my-2">
                   {portalStudent.compositeScore} <span className="text-xs opacity-50 font-normal">/ 100 pt</span>
@@ -888,7 +997,7 @@ export default function RaporDashboardPage() {
                 <p className="text-[11px] opacity-60">Batas kelulusan minimum KKM: 70.00 pt</p>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white dark:bg-stone-900 border border-current/10 flex flex-col justify-between">
+              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
                 <span className="text-xs opacity-70 font-medium">Status Penguasaan Kompetensi</span>
                 <div className="flex items-center gap-2 my-2 text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="w-6 h-6" />
@@ -900,6 +1009,7 @@ export default function RaporDashboardPage() {
           </div>
         )}
       </main>
+      </div>
 
       {/* ========================================================
           MODAL CETAK LEMBAR RAPOR RESMI A4 (OFFICIAL PRINT MODAL)
