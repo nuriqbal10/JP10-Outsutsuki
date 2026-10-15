@@ -535,7 +535,7 @@ export default function CbtSessionPage() {
                   <div>
                     <div className="text-xs font-black text-rose-100">Audio Menyimak (Choukai)</div>
                     <div className="text-[11px] text-amber-300 font-bold mt-0.5">
-                      {audioPlayCounts[currentQ.id] || 0 >= 2
+                      {(audioPlayCounts[currentQ.id] || 0) >= 2
                         ? "⚠️ Batas maksimal putar audio tercapai (2x)"
                         : `Audio bisa diputar ${2 - (audioPlayCounts[currentQ.id] || 0)} kali lagi`}
                     </div>
@@ -545,7 +545,14 @@ export default function CbtSessionPage() {
                 <audio
                   controls
                   src={currentQ.audioR2Url}
-                  onPlay={() => handleAudioPlay(currentQ.id)}
+                  onPlay={(e) => {
+                    if ((audioPlayCounts[currentQ.id] || 0) >= 2) {
+                      e.currentTarget.pause();
+                      alert("Batas maksimal mendengarkan audio untuk butir soal ini adalah 2 kali (Regulasi JFT-Basic).");
+                      return;
+                    }
+                    handleAudioPlay(currentQ.id);
+                  }}
                   onEnded={handleAudioEnded}
                   className="w-full sm:w-64 h-10 rounded-xl outline-none"
                   preload="metadata"

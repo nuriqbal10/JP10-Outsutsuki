@@ -22,7 +22,17 @@ async function setEnv() {
         production: {
           env_vars: {
             NODE_VERSION: { value: '20' },
-            DATABASE_URL: { value: 'postgresql://neondb_owner:npg_IfJ7lCroQ8Ky@ep-withered-hat-b3wywrji.c-4.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require' },
+            DATABASE_URL: { value: 'postgresql://neondb_owner:npg_IfJ7lCroQ8Ky@ep-withered-hat-b3wywrji-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require' },
+            NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: { value: 'pk_test_c3VpdGFibGUtYWtpdGEtMTE1Ni5jbGVyay5hY2NvdW50cy5kZXYk' },
+            CLERK_SECRET_KEY: { value: 'sk_test_99Hg8baQOWu4SVp03yKVEQCSH6dUKF2yOQQnWf2hWb' },
+            NEXT_PUBLIC_CLERK_SIGN_IN_URL: { value: '/sign-in' },
+            NEXT_PUBLIC_CLERK_SIGN_UP_URL: { value: '/sign-up' }
+          }
+        },
+        preview: {
+          env_vars: {
+            NODE_VERSION: { value: '20' },
+            DATABASE_URL: { value: 'postgresql://neondb_owner:npg_IfJ7lCroQ8Ky@ep-withered-hat-b3wywrji-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require' },
             NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: { value: 'pk_test_c3VpdGFibGUtYWtpdGEtMTE1Ni5jbGVyay5hY2NvdW50cy5kZXYk' },
             CLERK_SECRET_KEY: { value: 'sk_test_99Hg8baQOWu4SVp03yKVEQCSH6dUKF2yOQQnWf2hWb' },
             NEXT_PUBLIC_CLERK_SIGN_IN_URL: { value: '/sign-in' },
