@@ -56,12 +56,12 @@ settings: {
         <h3>D. Standar Kelulusan Internal LPK</h3>
         <table>
           <tr><th>Kriteria</th><th>Standar</th></tr>
-          <tr><td>Nilai Akhir Bab</td><td>≥ 75</td></tr>
-          <tr><td>Nilai Ujian Bab / Mini JFT-like</td><td>≥ 70</td></tr>
-          <tr><td>Nilai Kanji</td><td>≥ 70</td></tr>
-          <tr><td>Nilai Kosakata</td><td>≥ 70</td></tr>
+          <tr><td>Nilai Akhir Bab</td><td>≥ 85 (Tuntas KKM)</td></tr>
+          <tr><td>Nilai Ujian Bab / Mini JFT-like</td><td>≥ 85</td></tr>
+          <tr><td>Nilai Kanji</td><td>≥ 85</td></tr>
+          <tr><td>Nilai Kosakata</td><td>≥ 85</td></tr>
           <tr><td>Nilai Terjemahan</td><td>≥ 60</td></tr>
-          <tr><td>Minimum per section JFT-like</td><td>≥ 60%</td></tr>
+          <tr><td>Minimum per section JFT-like</td><td>≥ 70%</td></tr>
         </table>
 
         <div class="warning">
@@ -75,8 +75,8 @@ settings: {
           <li>Pilih login <strong>Peserta</strong> atau <strong>Guru</strong>.</li>
           <li>Peserta mengisi nama, kelas, dan tanggal.</li>
           <li>Guru memasukkan password guru untuk membuka kunci jawaban dan naskah audio.</li>
-          <li>Untuk 聴解, klik tombol <strong>Putar Audio</strong>. Audio diputar menggunakan teks-ke-suara browser.</li>
-          <li>Jika suara bahasa Jepang tidak tersedia, guru dapat membacakan naskah audio setelah login sebagai guru.</li>
+          <li>Untuk 聴解, klik tombol <strong>Putar Audio</strong>. Audio diputar langsung menggunakan rekaman otentik penutur asli Jepang (Studio Quality MP3).</li>
+          <li>Seluruh audio otentik dapat diakses langsung pada tab Bank Audio atau tombol putar pada soal.</li>
           <li>Klik <strong>Hitung Nilai</strong> untuk melihat hasil dan umpan balik.</li>
           <li>Jawaban tersimpan otomatis di browser ini.</li>
         </ol>

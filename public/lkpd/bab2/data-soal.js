@@ -61,12 +61,12 @@ window.LKPD_DATA = {
         <h3>D. Standar Kelulusan Internal LPK</h3>
         <table>
           <tr><th>Kriteria</th><th>Standar</th></tr>
-          <tr><td>Nilai Akhir Bab</td><td>≥ 75</td></tr>
-          <tr><td>Ujian Bab / Mini JFT-like</td><td>≥ 70</td></tr>
-          <tr><td>Kanji</td><td>≥ 70</td></tr>
-          <tr><td>Kosakata</td><td>≥ 70</td></tr>
+          <tr><td>Nilai Akhir Bab</td><td>≥ 85 (Tuntas KKM)</td></tr>
+          <tr><td>Ujian Bab / Mini JFT-like</td><td>≥ 85</td></tr>
+          <tr><td>Kanji</td><td>≥ 85</td></tr>
+          <tr><td>Kosakata</td><td>≥ 85</td></tr>
           <tr><td>Terjemahan</td><td>≥ 60</td></tr>
-          <tr><td>Minimum per section JFT-like</td><td>≥ 60%</td></tr>
+          <tr><td>Minimum per section JFT-like</td><td>≥ 70%</td></tr>
         </table>
 
         <div class="warning">

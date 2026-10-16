@@ -411,8 +411,8 @@ function calculateScore(){
   if(kosakataNilai<60) weak.push("語彙ドリル (Kosa Kata)");
   if(terjemahanNilai<60) weak.push("翻訳 (Terjemahan)");
 
-  const isLulus = finalNilai >= 65 && weak.length <= 1;
-  const statusText = isLulus ? "LULUS (CHECKPOINT 1 TERCAPAI)" : "BELUM LULUS (REMEDIAL CHECKPOINT 1)";
+  const isLulus = finalNilai >= 85 && weak.length === 0;
+  const statusText = isLulus ? "LULUS (TUNTAS KKM LPK ≥ 85.0 pt)" : "BELUM MEMENUHI KKM (REMEDIAL KKM < 85.0 pt)";
 
   lastScores = {
     moji, kaiwa, choikai, dokkai, kanji,

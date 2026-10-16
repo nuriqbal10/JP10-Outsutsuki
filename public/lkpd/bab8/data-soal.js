@@ -28,7 +28,7 @@ window.LKPD_DATA = {
         <div class="meta-box">
           <p><strong>Mata Pelajaran:</strong> Bahasa Jepang (Irodori 初級2 - Bab 8)</p>
           <p><strong>Topik:</strong> 屋台はどこかわかりますか？ (Festival Budaya, Lokasi Stan & Denah Acara)</p>
-          <p><strong>Target Kelulusan:</strong> Nilai Akhir &ge; 75.0 | Mini JFT-like &ge; 70.0 | Indikasi Skala JFT-Basic &ge; 200/250</p>
+          <p><strong>Target Kelulusan:</strong> Nilai Akhir &ge; 85.0 (Tuntas KKM) | Mini JFT-like &ge; 85.0 | Indikasi Skala JFT-Basic &ge; 200/250</p>
         </div>
         <h3>Kompetensi Can-Do Irodori Bab 8:</h3>
         <ul>

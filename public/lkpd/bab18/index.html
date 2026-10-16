@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LKPD Interaktif Bahasa Jepang Bab 18 - A2.2 / JFT-Basic</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="login-wrap">
+    <div class="login-card">
+      <div style="font-size:10px; font-weight:900; letter-spacing:1px; color:#d97706; text-transform:uppercase; margin-bottom:4px;">
+        LPK JP10 OUTSUTSUKI • KURIKULUM CEFR A2
+      </div>
+      <h1>LKPD Bahasa Jepang Bab 18</h1>
+      <p class="ja" style="font-size:1.15rem; font-weight:bold; color:#78350f;">第18課「将来、自分の会社を作ろうと思っています」</p>
+      <p>Level: A2.2 • これからの目標と人生設計／修了と次へのステップ / Persiapan JFT-Basic</p>
+
+      <div class="role-buttons">
+        <button id="btnRoleStudent" class="role-btn active" onclick="selectRole('student')">
+          Peserta
+        </button>
+        <button id="btnRoleTeacher" class="role-btn" onclick="selectRole('teacher')">
+          Guru / Sensei
+        </button>
+      </div>
+
+      <form id="studentForm" onsubmit="event.preventDefault(); loginStudent();">
+        <label>
+          Nama Peserta Didik
+          <input type="text" id="loginName" required placeholder="Contoh: Budi Santoso" />
+        </label>
+        <label>
+          Kelas / Angkatan LPK
+          <input type="text" id="loginClass" required placeholder="Contoh: Kelas A2.2 - JP10" />
+        </label>
+        <label>
+          Tanggal Pengerjaan
+          <input type="date" id="loginDate" required />
+        </label>
+        <button type="submit">Masuk & Mulai Mengerjakan LKPD</button>
+      </form>
+
+      <form id="teacherForm" style="display:none;" onsubmit="event.preventDefault(); loginTeacher();">
+        <label>
+          Password Guru / Sensei
+          <input type="password" id="teacherPassword" required placeholder="Masukkan PIN Guru" />
+        </label>
+        <button type="submit">Masuk sebagai Guru</button>
+      </form>
+
+      <p id="loginError" class="error"></p>
+    </div>
+  </div>
+
+  <!-- APP INTERAKTIF -->
+  <div id="app" style="display:none;">
+    <header>
+      <div class="container header-flex">
+        <div>
+          <h1 style="font-size:1.25rem;">LKPD Interaktif Bab 18</h1>
+          <p id="userInfo" style="font-size:0.85rem; color:#fef3c7;"></p>
+        </div>
+        <div class="header-actions no-print">
+          <button onclick="calculateScore()">Hitung Nilai</button>
+          <button class="secondary" onclick="copyReport()">Salin Laporan</button>
+          <button style="background:#059669;color:#fff;" onclick="kirimKeGuru()">Kirim Nilai ke LMS</button>
+          <button class="secondary" onclick="window.print()">Cetak / PDF</button>
+          <button class="danger" onclick="logout()">Keluar</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <nav id="tabs" class="tabs no-print"></nav>
+      <main id="panels"></main>
+    </div>
+  </div>
+
+  <script src="data-soal.js?v=5.0"></script>
+  <script src="script.js?v=5.0"></script>
+</body>
+</html>

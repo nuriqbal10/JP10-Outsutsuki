@@ -74,9 +74,9 @@ window.LKPD_DATA = {
             <tr><th>Komponen Evaluasi</th><th>Passing Grade</th></tr>
           </thead>
           <tbody>
-            <tr><td>Nilai Akhir Keseluruhan LKPD</td><td>≥ 75 Poin</td></tr>
-            <tr><td>Bagian Mini JFT-like (4 Seksi)</td><td>≥ 70%</td></tr>
-            <tr><td>Bagian Kanji & Kosakata</td><td>≥ 70 Poin</td></tr>
+            <tr><td>Nilai Akhir Keseluruhan LKPD</td><td>≥ 85 (Tuntas KKM) Poin</td></tr>
+            <tr><td>Bagian Mini JFT-like (4 Seksi)</td><td>≥ 85%</td></tr>
+            <tr><td>Bagian Kanji & Kosakata</td><td>≥ 85 Poin</td></tr>
             <tr><td>Bagian Terjemahan</td><td>≥ 60 Poin</td></tr>
           </tbody>
         </table>

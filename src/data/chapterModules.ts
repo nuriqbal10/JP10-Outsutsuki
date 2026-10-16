@@ -598,5 +598,346 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
         content: "Alat elektronik rumah tangga di Jepang memiliki banyak mode khusus (seperti mode hemat 'エコ', mode cuci cepat 'おいそぎ', atau mode nasi pulen '炊き分け'). Memahami tombol dasar sangat mempermudah kehidupan sehari-hari."
       }
     ]
+  },
+  13: {
+    chapter: 13,
+    titleJa: "第13課「いろいろな資料を展示してあります」",
+    titleId: "Fasilitas Publik & Pelayanan Kota",
+    topic: "公共施設と利用案内／利用ルールと設備",
+    pdfUrl: "/modul/bab13.pdf",
+    canDoList: [
+      "Can-do 52: Mampu memahami penjelasan mengenai fasilitas umum (perpustakaan, museum seni, balai kota) dan apa saja yang dapat dilakukan di sana.",
+      "Can-do 53: Mampu menanyakan informasi dan mengajukan permohonan penggunaan fasilitas atau kartu perpustakaan di loket pelayanan.",
+      "Can-do 54: Mampu membaca pengumuman panduan operasional, jam buka, hari libur (休館日), dan tata tertib fasilitas umum."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Fasilitas Umum & Ruangan",
+        items: [
+          { ja: "市役所 (しやくしょ)", id: "Balai kota / kantor pemerintah kota" },
+          { ja: "図書館 (としょかん)", id: "Perpustakaan" },
+          { ja: "美術館 (びじゅつかん)", id: "Museum seni" },
+          { ja: "展示室 (てんじしつ)", id: "Ruang pameran / display" }
+        ]
+      },
+      {
+        category: "Operasional & Aturan",
+        items: [
+          { ja: "休館日 (きゅうかんび)", id: "Hari libur tutup fasilitas" },
+          { ja: "入館料 (にゅうかんりょう)", id: "Biaya tiket masuk" },
+          { ja: "貸出 (かしだし)", id: "Peminjaman buku/barang" },
+          { ja: "禁煙 (きんえん)", id: "Dilarang merokok" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "V(て形)＋あります",
+        meaning: "Sengaja disiapkan / dalam keadaan terpasang...",
+        explanation: "Menyatakan kondisi atau hasil perbuatan yang sengaja disiapkan oleh seseorang untuk tujuan tertentu.",
+        examples: [
+          { ja: "壁に利用案内のポスターが貼ってあります。", romaji: "Kabe ni riyou annai no posutaa ga hatte arimasu.", id: "Di dinding telah tertempel poster petunjuk penggunaan." },
+          { ja: "いろいろな資料を展示してあります。", romaji: "Iroirona shiryou o tenji shite arimasu.", id: "Berbagai materi dan arsip sengaja dipamerkan." }
+        ]
+      },
+      {
+        pattern: "V(て形)＋みてください",
+        meaning: "Silakan coba lakukan...",
+        explanation: "Digunakan untuk merekomendasikan seseorang mencoba mengunjungi atau menikmati suatu tempat/fasilitas.",
+        examples: [
+          { ja: "とても綺麗な庭園ですから、ぜひ一度行ってみてください。", romaji: "Totemo kirei na teien desu kara, zehi ichido itte mite kudasai.", id: "Karena tamannya sangat indah, silakan coba berkunjung sekali ke sana." }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Pusat Layanan Warga (Kominkan / Shimin Center)",
+        content: "Di setiap kota di Jepang terdapat Kominkan (balai warga) dan perpustakaan publik yang menyediakan ruang belajar gratis, kelas bahasa Jepang bagi warga asing, serta berbagai kegiatan komunitas ramah biaya."
+      }
+    ]
+  },
+  14: {
+    chapter: 14,
+    titleJa: "第14課「髪をもう少し短くしてください」",
+    titleId: "Memanfaatkan Layanan Jasa",
+    topic: "店舗サービスの利用／美容院・クリーニング・宅配便",
+    pdfUrl: "/modul/bab14.pdf",
+    canDoList: [
+      "Can-do 55: Mampu menyampaikan keinginan potongan dan gaya rambut kepada kapster salon (美容院).",
+      "Can-do 56: Mampu menitipkan pakaian di laundry (クリーニング) dan mengonfirmasi tanggal/jam siap diambil.",
+      "Can-do 57: Mampu mengirimkan paket melalui kurir kilat (宅配便) dan mengisi formulir pengiriman."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Salon & Perawatan",
+        items: [
+          { ja: "美容院 (びよういん)", id: "Salon kecantikan / pangkas rambut" },
+          { ja: "前髪 (まえがみ)", id: "Poni rambut" },
+          { ja: "短くする (みじかくする)", id: "Memendekkan" },
+          { ja: "染める (そめる)", id: "Mewarnai / mengecat rambut" }
+        ]
+      },
+      {
+        category: "Laundry & Ekspedisi",
+        items: [
+          { ja: "クリーニング", id: "Laundry / dry cleaning" },
+          { ja: "シミ", id: "Noda pada pakaian" },
+          { ja: "仕上がり (しあがり)", id: "Waktu selesai / siap diambil" },
+          { ja: "宅配便 (たくはいびん)", id: "Kurir pengiriman paket kilat" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "～を ［Kata Sifat-I: ～く］／［Kata Sifat-Na: ～に］ します",
+        meaning: "Membuat / mengubah kondisi menjadi...",
+        explanation: "Digunakan saat meminta orang lain mengubah suatu keadaan sesuai kehendak kita.",
+        examples: [
+          { ja: "髪をもう少し短くしてください。", romaji: "Kami o mou sukoshi mijikaku shite kudasai.", id: "Tolong potong rambut saya sedikit lebih pendek." },
+          { ja: "部屋をきれいにしました。", romaji: "Heya o kirei ni shimashita.", id: "Saya telah membersihkan kamar." }
+        ]
+      },
+      {
+        pattern: "V(て形)＋もらえますか／いただけますか",
+        meaning: "Bisakah Anda tolong lakukan...",
+        explanation: "Ungkapan permohonan sopan kepada staf layanan pelanggan.",
+        examples: [
+          { ja: "このシミを落としてもらえますか。", romaji: "Kono shimi o otoshite moraemasu ka.", id: "Bisakah tolong hilangkan noda ini?" }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Pelayanan Prima (Omotenashi) Salon & Kurir Jepang",
+        content: "Salon di Jepang sangat detail dalam memastikan kenyamanan pelanggan (mulai dari suhu air keramas hingga pertanyaan titik yang gatal). Kurir kilat (Takkyubin) juga memiliki sistem penentuan slot jam pengantaran yang sangat tepat waktu."
+      }
+    ]
+  },
+  15: {
+    chapter: 15,
+    titleJa: "第15課「ゴミを減らすために、マイバッグを持っています」",
+    titleId: "Lingkungan & Gaya Hidup Eco",
+    topic: "環境保護とごみの分別ルール／エコな暮らしの習慣",
+    pdfUrl: "/modul/bab15.pdf",
+    canDoList: [
+      "Can-do 58: Mampu memahami jadwal dan aturan ketat pemilahan sampah di lingkungan tempat tinggal Jepang.",
+      "Can-do 59: Mampu menceritakan kebiasaan ramah lingkungan sehari-hari (mengurangi plastik, hemat listrik/air).",
+      "Can-do 60: Mampu memahami pengumuman pasar loak (freemarket), daur ulang, atau penanganan barang bekas."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Kategori Sampah Jepang",
+        items: [
+          { ja: "燃えるゴミ (もえるごみ)", id: "Sampah yang bisa dibakar (organik/kertas)" },
+          { ja: "燃えないゴミ (もえないごみ)", id: "Sampah tidak bisa dibakar (logam/gelas)" },
+          { ja: "資源ゴミ (しげんごみ)", id: "Sampah daur ulang (botol PET, kaleng)" },
+          { ja: "粗大ゴミ (そだいごみ)", id: "Sampah besar (kasur, perabot, sepeda)" }
+        ]
+      },
+      {
+        category: "Aksi Ramah Lingkungan",
+        items: [
+          { ja: "分別 (ぶんべつ)", id: "Pemilahan sampah" },
+          { ja: "マイバッグ", id: "Tas belanja kain ramah lingkungan" },
+          { ja: "リサイクル", id: "Daur ulang" },
+          { ja: "節電 (せつでん)", id: "Penghematan daya listrik" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "V(Kamus)＋ために、～",
+        meaning: "Demi / Untuk tujuan [Aksi Sadar]...",
+        explanation: "Menyatakan tujuan utama dari tindakan yang dilakukan dengan sengaja.",
+        examples: [
+          { ja: "ゴミを減らすために、マイバッグを持っています。", romaji: "Gomi o herasu tame ni, mai baggu o motte imasu.", id: "Demi mengurangi sampah, saya selalu membawa tas belanja sendiri." }
+        ]
+      },
+      {
+        pattern: "V(ない形)＋ようにしています",
+        meaning: "Berusaha membiasakan diri untuk tidak...",
+        explanation: "Menyatakan kebiasaan atau upaya sadar yang rutin dipraktikkan.",
+        examples: [
+          { ja: "電気をつけっぱなしにしないようにしています。", romaji: "Denki o tsukeppanashi ni shinai you ni shite imasu.", id: "Saya berusaha agar tidak membiarkan lampu menyala terus-menerus." }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Konsep Mottainai & Pemilahan Sampah Jepang",
+        content: "Masyarakat Jepang memegang teguh filosofi 'Mottainai' (menghargai sumber daya dan menghindari kemubaziran). Pemilahan sampah adalah kewajiban sosial yang sangat penting bagi warga asing yang tinggal di perumahan Jepang."
+      }
+    ]
+  },
+  16: {
+    chapter: 16,
+    titleJa: "第16課「地震が起きたら、どうすればいいですか？」",
+    titleId: "Mitigasi Bencana & Keselamatan",
+    topic: "自然災害への備えと緊急行動／防災訓練と避難",
+    pdfUrl: "/modul/bab16.pdf",
+    canDoList: [
+      "Can-do 61: Mampu memahami alarm gempa dini (緊急地震速報) dan siaran radio darurat pemerintah.",
+      "Can-do 62: Mampu merespons dan menanyakan instruksi penyelamatan diri saat gempa bumi, topan, atau kebakaran.",
+      "Can-do 63: Mampu membaca peta jalur evakuasi (Hazard Map) dan menemukan lokasi posko pengungsian terdekat."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Bencana Alam & Peringatan",
+        items: [
+          { ja: "地震 (じしん)", id: "Gempa bumi" },
+          { ja: "震度 (しんど)", id: "Skala getaran gempa (Shindo)" },
+          { ja: "津波 (つなみ)", id: "Gelombang tsunami" },
+          { ja: "台風 (たいふう)", id: "Angin badai topan" }
+        ]
+      },
+      {
+        category: "Evakuasi & Logistik Darurat",
+        items: [
+          { ja: "避難所 (ひなんじょ)", id: "Tempat evakuasi darurat (sekolah, gedung serbaguna)" },
+          { ja: "非常口 (ひじょうぐち)", id: "Pintu keluar darurat" },
+          { ja: "懐中電灯 (かいちゅうでんとう)", id: "Lampu senter baterai" },
+          { ja: "停電 (ていでん)", id: "Mati aliran listrik" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "V(たら)／N(なら)、～てください",
+        meaning: "Jika / Kalau [Kondisi Darurat Terjadi], lakukanlah...",
+        explanation: "Digunakan untuk memberikan instruksi keselamatan segera saat kondisi tertentu terjadi.",
+        examples: [
+          { ja: "地震が起きたら、机の下に入って頭を守ってください。", romaji: "Jishin ga okitara, tsukue no shita ni haitte atama o mamotte kudasai.", id: "Kalau gempa terjadi, masuklah ke bawah meja dan lindungi kepala Anda." }
+        ]
+      },
+      {
+        pattern: "V(て形)＋はいけません",
+        meaning: "Dilarang keras melakukan...",
+        explanation: "Larangan tegas menyangkut bahaya keselamatan jiwa.",
+        examples: [
+          { ja: "火事のときはエレベーターを使ってはいけません。", romaji: "Kaji no toki wa erebeetaa o tsukatte wa ikemasen.", id: "Saat kebakaran dilarang keras menggunakan lift." }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Bousai (Kesiapsiagaan Bencana) di Jepang",
+        content: "Setiap gedung dan asrama di Jepang rutin menggelar pelatihan mitigasi bencana (防災訓練 - Bousai Kunren). Pastikan selalu mengetahui letak tangga darurat dan menyimpan tas siaga bencana (非常持ち出し袋) di dekat pintu keluar."
+      }
+    ]
+  },
+  17: {
+    chapter: 17,
+    titleJa: "第17課「日本語が前より話せるようになりました」",
+    titleId: "Pertumbuhan & Perubahan Diri",
+    topic: "日本生活での自己成長／過去と現在の比較",
+    pdfUrl: "/modul/bab17.pdf",
+    canDoList: [
+      "Can-do 64: Mampu menceritakan perubahan kemampuan bahasa Jepang dan adaptasi kehidupan dibanding awal tiba.",
+      "Can-do 65: Mampu menyimak dan memahami cerita rekan mengenai perjuangan serta perkembangan dirinya.",
+      "Can-do 66: Mampu membaca esai refleksi atau pesan perpisahan rekan kerja yang menyelesaikan program magang."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Perkembangan & Kemampuan",
+        items: [
+          { ja: "成長 (せいちょう)", id: "Pertumbuhan / perkembangan" },
+          { ja: "上達する (じょうたつする)", id: "Meningkat kemampuannya" },
+          { ja: "慣れる (なれる)", id: "Menjadi terbiasa / adaptasi" },
+          { ja: "自信 (じしん)", id: "Rasa percaya diri" }
+        ]
+      },
+      {
+        category: "Refleksi Pengalaman",
+        items: [
+          { ja: "苦労 (くろう)", id: "Jerih payah / perjuangan" },
+          { ja: "思い出 (おもいで)", id: "Kenangan berkesan" },
+          { ja: "親切 (しんせつ)", id: "Kebaikan hati" },
+          { ja: "振り返る (ふりかえる)", id: "Merenungkan masa lalu" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "V(Kamus/Bentuk Bisa)＋ようになりました",
+        meaning: "Sudah menjadi bisa / terbiasa melakukan...",
+        explanation: "Menyatakan perubahan kemampuan atau kebiasaan dari yang sebelumnya tidak bisa menjadi bisa.",
+        examples: [
+          { ja: "日本語が前より話せるようになりました。", romaji: "Nihongo ga mae yori hanaseru you ni narimashita.", id: "Saya sudah menjadi lebih bisa berbicara bahasa Jepang dibanding dulu." },
+          { ja: "納豆が食べられるようになりました。", romaji: "Nattou ga taberareru you ni narimashita.", id: "Saya sekarang sudah bisa makan natto." }
+        ]
+      },
+      {
+        pattern: "V(て形)＋よかったです",
+        meaning: "Syukurlah / Beruntung sekali bahwa...",
+        explanation: "Menyatakan rasa syukur dan kepuasan atas pengalaman yang telah dijalani.",
+        examples: [
+          { ja: "日本に来て本当によかったです。", romaji: "Nihon ni kite hontou ni yokatta desu.", id: "Saya sangat bersyukur telah datang ke Jepang." }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Perkembangan Kemandirian Peserta di Jepang",
+        content: "Tinggal mandiri di Jepang tidak hanya meningkatkan kemahiran berbahasa, tetapi juga membentuk etos kerja profesional (5S, Hou-Ren-So), kedisiplinan waktu, serta kematangan mental peserta pelatihan."
+      }
+    ]
+  },
+  18: {
+    chapter: 18,
+    titleJa: "第18課「将来、自分の会社を作ろうと思っています」",
+    titleId: "Impian & Rencana Masa Depan",
+    topic: "これからの目標と人生設計／修了と次へのステップ",
+    pdfUrl: "/modul/bab18.pdf",
+    canDoList: [
+      "Can-do 67: Mampu menyampaikan rencana karir masa depan, mimpi wirausaha, atau ujian Tokutei Ginou beserta alasannya.",
+      "Can-do 68: Mampu mendengarkan rencana impian rekan, saling menyemangati, dan bertukar harapan.",
+      "Can-do 69: Mampu membaca artikel dan pesan kelulusan mengenai alumni yang sukses berkarir di Jepang atau tanah air."
+    ],
+    keyVocabCategories: [
+      {
+        category: "Masa Depan & Karir",
+        items: [
+          { ja: "将来 (しょうらい)", id: "Masa depan" },
+          { ja: "夢 (ゆめ)", id: "Cita-cita / impian" },
+          { ja: "特定技能 (とくていぎのう)", id: "Specified Skilled Worker (SSW)" },
+          { ja: "起業する (きぎょうする)", id: "Membuka usaha / bisnis mandiri" }
+        ]
+      },
+      {
+        category: "Target & Kelulusan",
+        items: [
+          { ja: "合格する (ごうかくする)", id: "Lulus ujian" },
+          { ja: "目標 (もくひょう)", id: "Sasaran / target capaian" },
+          { ja: "応援する (おうえんする)", id: "Mendukung / memberi semangat" },
+          { ja: "修了 (しゅうりょう)", id: "Penyelesaian / tamat program" }
+        ]
+      }
+    ],
+    grammarPoints: [
+      {
+        pattern: "V(意向形 - Ikoukei)＋と思っています",
+        meaning: "Berniat / Berencana untuk [Sudah Dipikirkan Sejak Lama]...",
+        explanation: "Menyatakan niat masa depan yang sudah dipikirkan dan direncanakan oleh pembicara.",
+        examples: [
+          { ja: "将来、自分の会社を作ろうと思っています。", romaji: "Shourai, jibun no kaisha o tsukurou to omotte imasu.", id: "Di masa depan, saya berniat mendirikan perusahaan sendiri." },
+          { ja: "国へ帰ったら、日本語を教えようと思っています。", romaji: "Kuni e kaettara, nihongo o oshieyou to omotte imasu.", id: "Kalau pulang ke tanah air, saya berniat mengajar bahasa Jepang." }
+        ]
+      },
+      {
+        pattern: "V(Kamus)＋つもりです",
+        meaning: "Berencana / Bermaksud pasti untuk...",
+        explanation: "Menyatakan kepastian rencana atau keputusan tegas yang hendak diambil.",
+        examples: [
+          { ja: "特定技能試験に合格して、あと5年間日本で働くつもりです。", romaji: "Tokutei ginou shiken ni goukaku shite, ato gonenkan Nihon de hataraku tsumori desu.", id: "Saya berencana lulus ujian Tokutei Ginou dan bekerja di Jepang 5 tahun lagi." }
+        ]
+      }
+    ],
+    cultureNotes: [
+      {
+        title: "Kelulusan Level A2 & Peluang Karir Masa Depan",
+        content: "Menyelesaikan Irodori 初級2 (Bab 1–18) menandai kesiapan penuh peserta untuk menghadapi ujian JFT-Basic A2 atau JLPT N4, membuka jalan menuju status visa Pekerja Berketerampilan Spesifik (Tokutei Ginou / SSW) di Jepang."
+      }
+    ]
   }
 };
+

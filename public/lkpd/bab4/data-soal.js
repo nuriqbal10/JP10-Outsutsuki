@@ -57,7 +57,7 @@ window.LKPD_DATA = {
         <h3>C. Kriteria Kelulusan &amp; Bobot Penilaian LPK</h3>
         <p>Penilaian kelulusan diselaraskan dengan standar kelulusan tes formatif LPK JP10 Outsutsuki:</p>
         <ul>
-          <li><strong>Nilai ≥ 80%</strong>: Sangat Siap Ujian JFT-Basic (A2 Kompeten).</li>
+          <li><strong>Nilai ≥ 85% (Tuntas KKM LPK)</strong>: Sangat Siap Ujian JFT-Basic (A2 Kompeten).</li>
           <li><strong>Nilai 65% – 79%</strong>: Cukup / Perlu Penguatan pada aspek tertentu.</li>
           <li><strong>Nilai &lt; 65%</strong>: Wajib Remedial &amp; Shadowing Mandiri pada Bank Audio.</li>
         </ul>

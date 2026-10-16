@@ -85,6 +85,36 @@ const AUTHENTIC_LKPD_TITLES: Record<number, { titleJa: string; subtitle: string;
     subtitle: "電化製品と使い方／取扱説明と操作ボタン",
     desc: "Mencakup: Peralatan elektronik rumah tangga (炊飯器、電子レンジ、洗濯機、掃除機), syarat otomatis / pengoperasian mesin (V辞書形＋と、～), cara penggunaan (～方), mode hemat energi (エコモード), keselamatan listrik, 30 soal JFT-like, kanji, kosakata, terjemahan, dan 13 audio otentik.",
   },
+  13: {
+    titleJa: "第13課「いろいろな資料を展示してあります」",
+    subtitle: "さまざまなサービス・公共施設／利用ルールと設備",
+    desc: "Mencakup: Fasilitas umum kota (perpustakaan, balai kota, galeri seni), keadaan yang disiapkan (Vてあります), ajakan mencoba (Vてみてください), jam buka & biaya, 30 soal asesmen JFT-like, kanji, kosakata, terjemahan, dan 15 audio otentik.",
+  },
+  14: {
+    titleJa: "第14課「髪をもう少し短くしてください」",
+    subtitle: "サービスを利用する／美容院・クリーニング・宅配便",
+    desc: "Mencakup: Pangkas rambut & gaya rambut, laundry & noda pakaian, kurir paket kilat & barang pecah belah, pola mengubah kondisi (～を…く／にします), permohonan sopan (Vてもらえますか), 30 soal JFT-like, kanji, kosakata, terjemahan, dan 14 audio otentik.",
+  },
+  15: {
+    titleJa: "第15課「ゴミを減らすために、マイバッグを持っています」",
+    subtitle: "環境とエコ生活／ゴミの分別ルールと省エネルギー",
+    desc: "Mencakup: Aturan pemilahan sampah (燃える・燃えない・資源・粗大ゴミ), jadwal pengangkutan, pola tujuan (V辞書形＋ために), kebiasaan ramah lingkungan (Vないようにしています), 30 soal JFT-like, kanji, kosakata, terjemahan, dan 13 audio otentik.",
+  },
+  16: {
+    titleJa: "第16課「地震が起きたら、どうすればいいですか？」",
+    subtitle: "防災と安全／地震・台風・避難所・非常持ち出し袋",
+    desc: "Mencakup: Tindakan darurat saat gempa bumi & alarm peringatan dini, evakuasi dan rambu keselamatan, pola kondisional darurat (Vたら／Nなら), larangan keras (Vてはいけません), 30 soal JFT-like, kanji, kosakata, terjemahan, dan 27 audio otentik.",
+  },
+  17: {
+    titleJa: "第17課「日本語が前より話せるようになりました」",
+    subtitle: "成長と変化・私の人生／日本生活の振り返りと適応",
+    desc: "Mencakup: Perkembangan kemampuan bahasa Jepang & adaptasi hidup, perubahan kebiasaan (V可能形＋ようになりました), rasa syukur (～てよかったです), komparasi dulu vs sekarang, 30 soal JFT-like, kanji, kosakata, terjemahan, dan 11 audio otentik.",
+  },
+  18: {
+    titleJa: "第18課「将来、自分の会社を作ろうと思っています」",
+    subtitle: "将来の夢と計画／キャリア・特定技能・起業・修了",
+    desc: "Mencakup: Cita-cita masa depan, ujian Tokutei Ginou (SSW), rencana wirausaha di tanah air, niat matang (V意向形＋と思っています), rencana pasti (Vるつもりです), pidato kelulusan, 30 soal JFT-like, kanji, kosakata, terjemahan, dan 18 audio otentik.",
+  },
 };
 
 export default function LkpdWorksheet({
@@ -157,7 +187,7 @@ export default function LkpdWorksheet({
     setIframeKey((prev) => prev + 1);
   };
 
-  const hasAuthenticLkpd = chapter >= 1 && chapter <= 12;
+  const hasAuthenticLkpd = chapter >= 1 && chapter <= 18;
   const meta = AUTHENTIC_LKPD_TITLES[chapter] || {
     titleJa: `第${chapter}課「${chapterTitle}」`,
     subtitle: chapterTopic,
