@@ -25,6 +25,7 @@ export default function StudentDetailModal({
   onClose,
 }: StudentDetailModalProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "chapters" | "exams">("overview");
+  const kkm = typeof window !== "undefined" ? Number(localStorage.getItem("outsutsuki_kkm")) || 85 : 85;
 
   if (!student) return null;
 
@@ -274,14 +275,14 @@ export default function StudentDetailModal({
 
                       const defs: string[] = [];
                       if (dt.total > 0) {
-                        if ((dt.dokkai / 28) < 0.6) defs.push("Dokkai");
-                        if ((dt.choukai / 24) < 0.6) defs.push("Choukai");
-                        if ((dt.kaiwa / 24) < 0.6) defs.push("Kaiwa");
-                        if ((dt.mojiGoi / 24) < 0.6) defs.push("Moji");
+                        if (((dt.dokkai / 28) * 100) < kkm) defs.push("Dokkai");
+                        if (((dt.choukai / 24) * 100) < kkm) defs.push("Choukai");
+                        if (((dt.kaiwa / 24) * 100) < kkm) defs.push("Kaiwa");
+                        if (((dt.mojiGoi / 24) * 100) < kkm) defs.push("Moji");
                       }
-                      if (kanji > 0 && kanji < 65) defs.push("Kanji");
-                      if (kotoba > 0 && kotoba < 65) defs.push("Kotoba");
-                      if (honyaku > 0 && honyaku < 65) defs.push("Honyaku");
+                      if (kanji > 0 && kanji < kkm) defs.push("Kanji");
+                      if (kotoba > 0 && kotoba < kkm) defs.push("Kotoba");
+                      if (honyaku > 0 && honyaku < kkm) defs.push("Honyaku");
 
                       const rowsToRender = [];
 
@@ -297,7 +298,7 @@ export default function StudentDetailModal({
                           <td className="py-2 px-2 text-center">{dt.dokkai > 0 ? dt.dokkai : "-"}</td>
                           <td className="py-2 px-2 text-center font-black">
                             {dt.total > 0 ? (
-                              <span className={`px-1.5 py-0.5 rounded text-[10px] ${dt.total >= 70 ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"}`}>
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] ${dt.total >= kkm ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"}`}>
                                 {dt.total}
                               </span>
                             ) : "-"}
@@ -308,8 +309,8 @@ export default function StudentDetailModal({
                           <td className="py-2 px-3 font-sans text-[10.5px]">
                             {defs.length > 0 ? (
                               <span className="text-rose-500 font-bold">⚠️ Lemah: {defs.join(", ")}</span>
-                            ) : dt.total >= 70 ? (
-                              <span className="text-emerald-500 font-bold">✅ Tuntas</span>
+                            ) : dt.total >= kkm ? (
+                              <span className="text-emerald-500 font-bold">✅ Tuntas (≥{kkm}%)</span>
                             ) : (
                               <span className="opacity-40">-</span>
                             )}

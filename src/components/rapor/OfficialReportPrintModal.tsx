@@ -77,6 +77,7 @@ export default function OfficialReportPrintModal({
   };
 
   // Persentase KKM 4 aspek (bobot harian: 24, 24, 24, 28)
+  const kkm = typeof window !== "undefined" ? Number(localStorage.getItem("outsutsuki_kkm")) || 85 : 85;
   const pctMoji = Math.min(100, Math.round(((avg.mojiGoi || 0) / 24) * 100));
   const pctKaiwa = Math.min(100, Math.round(((avg.kaiwa || 0) / 24) * 100));
   const pctChoukai = Math.min(100, Math.round(((avg.choukai || 0) / 24) * 100));
@@ -217,7 +218,7 @@ export default function OfficialReportPrintModal({
                 <h3 className="font-bold text-[11px] uppercase tracking-wider text-slate-800">
                   Rincian Penilaian 4 Aspek Kompetensi &amp; Evaluasi Berkala
                 </h3>
-                <span className="text-[10px] text-slate-500">Skala Kelulusan Minimum: 70.00 pt</span>
+                <span className="text-[10px] text-slate-500">Skala Kelulusan Minimum: {kkm}.00 pt</span>
               </div>
 
               <table className="w-full border-collapse border border-slate-300 text-[11px] text-center">
@@ -329,7 +330,7 @@ export default function OfficialReportPrintModal({
             <div className="grid grid-cols-2 gap-3 items-center border border-slate-200 p-3 rounded-lg bg-slate-50/50">
               <div>
                 <h4 className="font-bold text-[11px] uppercase tracking-wider text-slate-800 mb-1">
-                  Persentase Penguasaan Kompetensi (Standar KKM 70%)
+                  Persentase Penguasaan Kompetensi (Standar KKM {kkm}%)
                 </h4>
                 <p className="text-[10px] text-slate-500 mb-2">
                   Dihitung dari akumulasi performa harian dan ujian berkala.

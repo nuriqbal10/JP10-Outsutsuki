@@ -86,6 +86,27 @@ export default function DiagnosticMatrixView({
     return levelData?.rankedStudents?.[0]?.no ?? levelData?.students?.[0]?.no ?? 1;
   });
 
+  // State Standar KKM (Default 85% sesuai kriteria Sensei, tersimpan di localStorage)
+  const [kkm, setKkm] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("outsutsuki_kkm");
+        if (saved && !isNaN(Number(saved))) return Number(saved);
+      } catch {}
+    }
+    return 85;
+  });
+
+  const handleSetKkm = (val: number) => {
+    const clamped = Math.max(50, Math.min(100, val));
+    setKkm(clamped);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("outsutsuki_kkm", String(clamped));
+      } catch {}
+    }
+  };
+
   const students = useMemo(() => {
     return levelData?.rankedStudents || levelData?.students || [];
   }, [levelData]);
@@ -105,9 +126,10 @@ export default function DiagnosticMatrixView({
     return students.find((s) => s.no === selectedStudentNo) || students[0] || null;
   }, [students, selectedStudentNo]);
 
-  // Helper untuk mengekstrak data 4 poin per bab / checkpoint untuk siswa
+  // Helper untuk mengekstrak data 4 poin per bab / checkpoint untuk siswa berdasarkan KKM aktif
   const buildStudentRows = (student: StudentRaporItem): ChapterDiagnosticRow[] => {
     const rows: ChapterDiagnosticRow[] = [];
+    const warningThreshold = Math.max(40, kkm - 15);
 
     // Bab 1 s.d. 18
     for (let i = 0; i < 18; i++) {
@@ -128,21 +150,21 @@ export default function DiagnosticMatrixView({
       const isFilled = dt.total > 0 || kanji > 0 || kotoba > 0 || honyaku > 0;
 
       if (isFilled) {
-        if (pDokkai < 60 && dt.total > 0) deficiencies.push(`Dokkai (${dt.dokkai}/28 - ${Math.round(pDokkai)}%)`);
-        if (pChoukai < 60 && dt.total > 0) deficiencies.push(`Choukai (${dt.choukai}/24 - ${Math.round(pChoukai)}%)`);
-        if (pKaiwa < 60 && dt.total > 0) deficiencies.push(`Kaiwa (${dt.kaiwa}/24 - ${Math.round(pKaiwa)}%)`);
-        if (pMoji < 60 && dt.total > 0) deficiencies.push(`Moji-Goi (${dt.mojiGoi}/24 - ${Math.round(pMoji)}%)`);
-        if (kanji > 0 && kanji < 65) deficiencies.push(`Kanji (${kanji} pt)`);
-        if (kotoba > 0 && kotoba < 65) deficiencies.push(`Kotoba (${kotoba} pt)`);
-        if (honyaku > 0 && honyaku < 65) deficiencies.push(`Honyaku (${honyaku} pt)`);
+        if (pDokkai < kkm && dt.total > 0) deficiencies.push(`Dokkai (${dt.dokkai}/28 - ${Math.round(pDokkai)}%)`);
+        if (pChoukai < kkm && dt.total > 0) deficiencies.push(`Choukai (${dt.choukai}/24 - ${Math.round(pChoukai)}%)`);
+        if (pKaiwa < kkm && dt.total > 0) deficiencies.push(`Kaiwa (${dt.kaiwa}/24 - ${Math.round(pKaiwa)}%)`);
+        if (pMoji < kkm && dt.total > 0) deficiencies.push(`Moji-Goi (${dt.mojiGoi}/24 - ${Math.round(pMoji)}%)`);
+        if (kanji > 0 && kanji < kkm) deficiencies.push(`Kanji (${kanji} pt)`);
+        if (kotoba > 0 && kotoba < kkm) deficiencies.push(`Kotoba (${kotoba} pt)`);
+        if (honyaku > 0 && honyaku < kkm) deficiencies.push(`Honyaku (${honyaku} pt)`);
       }
 
       let status: ChapterDiagnosticRow["status"] = "empty";
       if (!isFilled) {
         status = "empty";
-      } else if (deficiencies.length === 0 && dt.total >= 85) {
+      } else if (deficiencies.length === 0 && dt.total >= kkm) {
         status = "perfect";
-      } else if (deficiencies.length === 0 && dt.total >= 70) {
+      } else if (deficiencies.length === 0 && dt.total >= warningThreshold) {
         status = "passed";
       } else if (deficiencies.length <= 2) {
         status = "warning";
@@ -150,7 +172,12 @@ export default function DiagnosticMatrixView({
         status = "danger";
       }
 
-      let recommendation = "Performa seimbang dan telah memenuhi standar KKM.";
+      let recommendation = `Performa tuntas di atas standar KKM (${kkm}%).`;
+      if (!isFilled) {
+        recommendation = "Materi belum diujikan / data belum terekam.";
+      } else if (deficiencies.length > 0) {
+        recommendation = `Target KKM ${kkm}%: Fokus penguatan pada ${deficiencies.slice(0, 2).join(", ")}.`;
+      }
       if (!isFilled) {
         recommendation = "Materi belum diujikan / data belum terekam.";
       } else if (deficiencies.length > 0) {
@@ -191,11 +218,17 @@ export default function DiagnosticMatrixView({
         const cpDef: string[] = [];
         const isCpFilled = (test.total || 0) > 0 || (cp1?.kanji || 0) > 0;
         if (isCpFilled) {
-          if (test.dokkai < 55) cpDef.push(`Dokkai (${test.dokkai}/88)`);
-          if (test.choukai < 45) cpDef.push(`Choukai (${test.choukai}/66)`);
-          if (test.kaiwa < 30) cpDef.push(`Kaiwa (${test.kaiwa}/48)`);
-          if (test.mojiGoi < 30) cpDef.push(`Moji-Goi (${test.mojiGoi}/48)`);
-          if ((cp1?.kanji || 0) > 0 && (cp1?.kanji || 0) < 65) cpDef.push(`Kanji (${cp1?.kanji} pt)`);
+          const pDok = (test.dokkai / 88) * 100;
+          const pCho = (test.choukai / 66) * 100;
+          const pKai = (test.kaiwa / 48) * 100;
+          const pMoj = (test.mojiGoi / 48) * 100;
+          if (pDok < kkm && test.total > 0) cpDef.push(`Dokkai (${test.dokkai}/88 - ${Math.round(pDok)}%)`);
+          if (pCho < kkm && test.total > 0) cpDef.push(`Choukai (${test.choukai}/66 - ${Math.round(pCho)}%)`);
+          if (pKai < kkm && test.total > 0) cpDef.push(`Kaiwa (${test.kaiwa}/48 - ${Math.round(pKai)}%)`);
+          if (pMoj < kkm && test.total > 0) cpDef.push(`Moji-Goi (${test.mojiGoi}/48 - ${Math.round(pMoj)}%)`);
+          if ((cp1?.kanji || 0) > 0 && (cp1?.kanji || 0) < kkm) cpDef.push(`Kanji (${cp1?.kanji} pt)`);
+          if ((cp1?.kotoba || 0) > 0 && (cp1?.kotoba || 0) < kkm) cpDef.push(`Kotoba (${cp1?.kotoba} pt)`);
+          if ((cp1?.honyaku || 0) > 0 && (cp1?.honyaku || 0) < kkm) cpDef.push(`Honyaku (${cp1?.honyaku} pt)`);
         }
         rows.push({
           key: "checkpoint-1",
@@ -224,8 +257,8 @@ export default function DiagnosticMatrixView({
           recommendation: !isCpFilled
             ? "Ujian Checkpoint 1 belum ditempuh."
             : cpDef.length > 0
-            ? `Evaluasi Checkpoint 1: Perlu remediasi di ${cpDef.join(", ")}.`
-            : "Kompetensi Bab 1 s.d. 6 tuntas dengan sangat baik.",
+            ? `Target KKM ${kkm}%: Perlu remediasi di ${cpDef.join(", ")}.`
+            : `Kompetensi Bab 1 s.d. 6 tuntas di atas KKM ${kkm}%.`,
         });
       }
 
@@ -236,11 +269,17 @@ export default function DiagnosticMatrixView({
         const cpDef: string[] = [];
         const isCpFilled = (test.total || 0) > 0 || (cp2?.kanji || 0) > 0;
         if (isCpFilled) {
-          if (test.dokkai < 55) cpDef.push(`Dokkai (${test.dokkai}/88)`);
-          if (test.choukai < 45) cpDef.push(`Choukai (${test.choukai}/66)`);
-          if (test.kaiwa < 30) cpDef.push(`Kaiwa (${test.kaiwa}/48)`);
-          if (test.mojiGoi < 30) cpDef.push(`Moji-Goi (${test.mojiGoi}/48)`);
-          if ((cp2?.kanji || 0) > 0 && (cp2?.kanji || 0) < 65) cpDef.push(`Kanji (${cp2?.kanji} pt)`);
+          const pDok = (test.dokkai / 88) * 100;
+          const pCho = (test.choukai / 66) * 100;
+          const pKai = (test.kaiwa / 48) * 100;
+          const pMoj = (test.mojiGoi / 48) * 100;
+          if (pDok < kkm && test.total > 0) cpDef.push(`Dokkai (${test.dokkai}/88 - ${Math.round(pDok)}%)`);
+          if (pCho < kkm && test.total > 0) cpDef.push(`Choukai (${test.choukai}/66 - ${Math.round(pCho)}%)`);
+          if (pKai < kkm && test.total > 0) cpDef.push(`Kaiwa (${test.kaiwa}/48 - ${Math.round(pKai)}%)`);
+          if (pMoj < kkm && test.total > 0) cpDef.push(`Moji-Goi (${test.mojiGoi}/48 - ${Math.round(pMoj)}%)`);
+          if ((cp2?.kanji || 0) > 0 && (cp2?.kanji || 0) < kkm) cpDef.push(`Kanji (${cp2?.kanji} pt)`);
+          if ((cp2?.kotoba || 0) > 0 && (cp2?.kotoba || 0) < kkm) cpDef.push(`Kotoba (${cp2?.kotoba} pt)`);
+          if ((cp2?.honyaku || 0) > 0 && (cp2?.honyaku || 0) < kkm) cpDef.push(`Honyaku (${cp2?.honyaku} pt)`);
         }
         rows.push({
           key: "checkpoint-2",
@@ -269,8 +308,8 @@ export default function DiagnosticMatrixView({
           recommendation: !isCpFilled
             ? "Ujian Checkpoint 2 belum ditempuh."
             : cpDef.length > 0
-            ? `Evaluasi Checkpoint 2: Perlu remediasi di ${cpDef.join(", ")}.`
-            : "Kompetensi Bab 7 s.d. 12 tuntas dengan sangat baik.",
+            ? `Target KKM ${kkm}%: Perlu remediasi di ${cpDef.join(", ")}.`
+            : `Kompetensi Bab 7 s.d. 12 tuntas di atas KKM ${kkm}%.`,
         });
       }
 
@@ -281,11 +320,17 @@ export default function DiagnosticMatrixView({
         const cpDef: string[] = [];
         const isCpFilled = (test.total || 0) > 0 || (cp3?.kanji || 0) > 0;
         if (isCpFilled) {
-          if (test.dokkai < 55) cpDef.push(`Dokkai (${test.dokkai}/88)`);
-          if (test.choukai < 45) cpDef.push(`Choukai (${test.choukai}/66)`);
-          if (test.kaiwa < 30) cpDef.push(`Kaiwa (${test.kaiwa}/48)`);
-          if (test.mojiGoi < 30) cpDef.push(`Moji-Goi (${test.mojiGoi}/48)`);
-          if ((cp3?.kanji || 0) > 0 && (cp3?.kanji || 0) < 65) cpDef.push(`Kanji (${cp3?.kanji} pt)`);
+          const pDok = (test.dokkai / 88) * 100;
+          const pCho = (test.choukai / 66) * 100;
+          const pKai = (test.kaiwa / 48) * 100;
+          const pMoj = (test.mojiGoi / 48) * 100;
+          if (pDok < kkm && test.total > 0) cpDef.push(`Dokkai (${test.dokkai}/88 - ${Math.round(pDok)}%)`);
+          if (pCho < kkm && test.total > 0) cpDef.push(`Choukai (${test.choukai}/66 - ${Math.round(pCho)}%)`);
+          if (pKai < kkm && test.total > 0) cpDef.push(`Kaiwa (${test.kaiwa}/48 - ${Math.round(pKai)}%)`);
+          if (pMoj < kkm && test.total > 0) cpDef.push(`Moji-Goi (${test.mojiGoi}/48 - ${Math.round(pMoj)}%)`);
+          if ((cp3?.kanji || 0) > 0 && (cp3?.kanji || 0) < kkm) cpDef.push(`Kanji (${cp3?.kanji} pt)`);
+          if ((cp3?.kotoba || 0) > 0 && (cp3?.kotoba || 0) < kkm) cpDef.push(`Kotoba (${cp3?.kotoba} pt)`);
+          if ((cp3?.honyaku || 0) > 0 && (cp3?.honyaku || 0) < kkm) cpDef.push(`Honyaku (${cp3?.honyaku} pt)`);
         }
         rows.push({
           key: "checkpoint-3",
@@ -314,8 +359,8 @@ export default function DiagnosticMatrixView({
           recommendation: !isCpFilled
             ? "Ujian Checkpoint 3 belum ditempuh."
             : cpDef.length > 0
-            ? `Evaluasi Checkpoint 3: Perlu remediasi di ${cpDef.join(", ")}.`
-            : "Kompetensi Bab 13 s.d. 18 tuntas dengan sangat baik.",
+            ? `Target KKM ${kkm}%: Perlu remediasi di ${cpDef.join(", ")}.`
+            : `Kompetensi Bab 13 s.d. 18 tuntas di atas KKM ${kkm}%.`,
         });
 
         // Sisipkan Shiken 1 Buku (Final Exam) di baris terakhir
@@ -324,11 +369,17 @@ export default function DiagnosticMatrixView({
         const fnDef: string[] = [];
         const isFnFilled = (fnTest.total || 0) > 0 || (fn?.kanji || 0) > 0;
         if (isFnFilled) {
-          if (fnTest.dokkai < 55) fnDef.push(`Dokkai`);
-          if (fnTest.choukai < 45) fnDef.push(`Choukai`);
-          if (fnTest.kaiwa < 30) fnDef.push(`Kaiwa`);
-          if (fnTest.mojiGoi < 30) fnDef.push(`Moji-Goi`);
-          if ((fn?.kanji || 0) > 0 && (fn?.kanji || 0) < 65) fnDef.push(`Kanji`);
+          const pDok = (fnTest.dokkai / 88) * 100;
+          const pCho = (fnTest.choukai / 66) * 100;
+          const pKai = (fnTest.kaiwa / 48) * 100;
+          const pMoj = (fnTest.mojiGoi / 48) * 100;
+          if (pDok < kkm && fnTest.total > 0) fnDef.push(`Dokkai (${fnTest.dokkai}/88 - ${Math.round(pDok)}%)`);
+          if (pCho < kkm && fnTest.total > 0) fnDef.push(`Choukai (${fnTest.choukai}/66 - ${Math.round(pCho)}%)`);
+          if (pKai < kkm && fnTest.total > 0) fnDef.push(`Kaiwa (${fnTest.kaiwa}/48 - ${Math.round(pKai)}%)`);
+          if (pMoj < kkm && fnTest.total > 0) fnDef.push(`Moji-Goi (${fnTest.mojiGoi}/48 - ${Math.round(pMoj)}%)`);
+          if ((fn?.kanji || 0) > 0 && (fn?.kanji || 0) < kkm) fnDef.push(`Kanji (${fn?.kanji} pt)`);
+          if ((fn?.kotoba || 0) > 0 && (fn?.kotoba || 0) < kkm) fnDef.push(`Kotoba (${fn?.kotoba} pt)`);
+          if ((fn?.honyaku || 0) > 0 && (fn?.honyaku || 0) < kkm) fnDef.push(`Honyaku (${fn?.honyaku} pt)`);
         }
         rows.push({
           key: "shiken-1-buku",
@@ -356,8 +407,8 @@ export default function DiagnosticMatrixView({
           recommendation: !isFnFilled
             ? "Ujian komprehensif 1 buku belum ditempuh."
             : fnDef.length > 0
-            ? `Evaluasi Akhir Buku: Kekurangan pada aspek ${fnDef.join(", ")}.`
-            : "Selamat! Seluruh aspek 1 buku tuntas dan siap mengikuti ujian resmi JFT-Basic A2.",
+            ? `Target KKM ${kkm}%: Kekurangan pada aspek ${fnDef.join(", ")}.`
+            : `Selamat! Seluruh aspek 1 buku tuntas di atas KKM ${kkm}% dan siap mengikuti ujian resmi JFT-Basic A2.`,
         });
       }
     }
@@ -368,7 +419,7 @@ export default function DiagnosticMatrixView({
   const currentStudentRows = useMemo(() => {
     if (!selectedStudent) return [];
     return buildStudentRows(selectedStudent);
-  }, [selectedStudent]);
+  }, [selectedStudent, kkm]);
 
   // Analisis keseluruhan kekurangan siswa terpilih
   const studentOverallDeficiencies = useMemo(() => {
@@ -587,6 +638,65 @@ export default function DiagnosticMatrixView({
             </div>
           </div>
         </div>
+
+        {/* KKM SETTING CONTROL BAR (SENSI ADJUSTABLE) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-current/10">
+          <div className="flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-500 flex items-center justify-center shrink-0">
+              <SlidersHorizontal className="w-4 h-4" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-[var(--text-heading)]">
+                  Standar KKM Sensei:
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500 text-stone-950 font-black font-mono text-xs shadow-md">
+                  {kkm}%
+                </span>
+              </div>
+              <p className="text-[10px] opacity-75 text-[var(--text-body)]">
+                Ambang batas kelulusan &amp; deteksi kekurangan otomatis (Tersimpan otomatis)
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Presets & Stepper */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[11px] font-bold opacity-70 mr-1 text-[var(--text-body)]">Pilihan KKM:</span>
+            {[70, 75, 80, 85, 90].map((preset) => (
+              <button
+                key={preset}
+                onClick={() => handleSetKkm(preset)}
+                className={`px-2.5 py-1 rounded-xl text-xs font-mono font-black transition border ${
+                  kkm === preset
+                    ? "bg-amber-500 text-stone-950 border-amber-400 shadow-sm scale-105"
+                    : "bg-black/10 dark:bg-white/10 hover:bg-black/20 text-[var(--text-heading)] border-current/10 opacity-70 hover:opacity-100"
+                }`}
+                title={`Atur KKM ke ${preset}%`}
+              >
+                {preset}%
+              </button>
+            ))}
+
+            <div className="flex items-center ml-1 border border-current/20 rounded-xl overflow-hidden bg-black/15 shadow-inner">
+              <button
+                onClick={() => handleSetKkm(kkm - 1)}
+                className="px-2.5 py-1 hover:bg-amber-500/20 text-xs font-black transition text-[var(--text-heading)] active:scale-95"
+                title="Kurangi KKM 1%"
+              >
+                -
+              </button>
+              <span className="px-2 text-xs font-mono font-black text-amber-500">{kkm}%</span>
+              <button
+                onClick={() => handleSetKkm(kkm + 1)}
+                className="px-2.5 py-1 hover:bg-amber-500/20 text-xs font-black transition text-[var(--text-heading)] active:scale-95"
+                title="Tambah KKM 1%"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* ==========================================================
@@ -651,9 +761,9 @@ export default function DiagnosticMatrixView({
           <div className="clay-card p-4 sm:p-5 rounded-3xl border border-current/10 shadow-xl overflow-hidden space-y-3">
             <div className="flex items-center justify-between text-xs font-bold opacity-90 px-1">
               <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" /> Tuntas (≥70%)
-                <span className="w-3 h-3 rounded-full bg-amber-500 inline-block ml-2" /> Waspada (55–69%)
-                <span className="w-3 h-3 rounded-full bg-rose-500 inline-block ml-2" /> Defisit (&lt;55%)
+                <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" /> Tuntas (≥{kkm}%)
+                <span className="w-3 h-3 rounded-full bg-amber-500 inline-block ml-2" /> Waspada ({Math.max(40, kkm - 15)}–{kkm - 1}%)
+                <span className="w-3 h-3 rounded-full bg-rose-500 inline-block ml-2" /> Defisit (&lt;{Math.max(40, kkm - 15)}%)
               </div>
               <p className="text-[11px] opacity-80 hidden sm:block">
                 Klik baris siswa untuk membuka diagnostik individual detail
@@ -734,8 +844,8 @@ export default function DiagnosticMatrixView({
                       {Array.from({ length: 6 }, (_, idx) => {
                         const { val, max, isFilled } = getAspectValue(st, "bab", idx);
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
-                        const isWarning = pct >= 55 && pct < 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td key={idx} className="p-1 text-center font-mono">
                             {isFilled ? (
@@ -747,7 +857,7 @@ export default function DiagnosticMatrixView({
                                     ? "bg-amber-500 text-stone-950 font-black"
                                     : "bg-rose-600 text-white"
                                 }`}
-                                title={`Bab ${idx + 1}: ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Bab ${idx + 1}: ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -762,15 +872,20 @@ export default function DiagnosticMatrixView({
                       {(() => {
                         const { val, max, isFilled } = getAspectValue(st, "cp1");
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td className="p-1 text-center font-mono bg-amber-500/10 border-x border-amber-500/20 font-black">
                             {isFilled ? (
                               <span
                                 className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black ${
-                                  isPassed ? "bg-amber-500 text-stone-950" : "bg-rose-600 text-white"
+                                  isPassed
+                                    ? "bg-amber-500 text-stone-950"
+                                    : isWarning
+                                    ? "bg-amber-600/90 text-white"
+                                    : "bg-rose-600 text-white"
                                 }`}
-                                title={`Checkpoint 1 (Bab 1-6): ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Checkpoint 1 (Bab 1-6): ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -786,8 +901,8 @@ export default function DiagnosticMatrixView({
                         const chapterIdx = idx + 6;
                         const { val, max, isFilled } = getAspectValue(st, "bab", chapterIdx);
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
-                        const isWarning = pct >= 55 && pct < 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td key={chapterIdx} className="p-1 text-center font-mono">
                             {isFilled ? (
@@ -799,7 +914,7 @@ export default function DiagnosticMatrixView({
                                     ? "bg-amber-500 text-stone-950 font-black"
                                     : "bg-rose-600 text-white"
                                 }`}
-                                title={`Bab ${chapterIdx + 1}: ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Bab ${chapterIdx + 1}: ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -814,15 +929,20 @@ export default function DiagnosticMatrixView({
                       {(() => {
                         const { val, max, isFilled } = getAspectValue(st, "cp2");
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td className="p-1 text-center font-mono bg-amber-500/10 border-x border-amber-500/20 font-black">
                             {isFilled ? (
                               <span
                                 className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black ${
-                                  isPassed ? "bg-amber-500 text-stone-950" : "bg-rose-600 text-white"
+                                  isPassed
+                                    ? "bg-amber-500 text-stone-950"
+                                    : isWarning
+                                    ? "bg-amber-600/90 text-white"
+                                    : "bg-rose-600 text-white"
                                 }`}
-                                title={`Checkpoint 2 (Bab 7-12): ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Checkpoint 2 (Bab 7-12): ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -838,8 +958,8 @@ export default function DiagnosticMatrixView({
                         const chapterIdx = idx + 12;
                         const { val, max, isFilled } = getAspectValue(st, "bab", chapterIdx);
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
-                        const isWarning = pct >= 55 && pct < 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td key={chapterIdx} className="p-1 text-center font-mono">
                             {isFilled ? (
@@ -851,7 +971,7 @@ export default function DiagnosticMatrixView({
                                     ? "bg-amber-500 text-stone-950 font-black"
                                     : "bg-rose-600 text-white"
                                 }`}
-                                title={`Bab ${chapterIdx + 1}: ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Bab ${chapterIdx + 1}: ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -866,15 +986,20 @@ export default function DiagnosticMatrixView({
                       {(() => {
                         const { val, max, isFilled } = getAspectValue(st, "cp3");
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td className="p-1 text-center font-mono bg-amber-500/10 border-x border-amber-500/20 font-black">
                             {isFilled ? (
                               <span
                                 className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black ${
-                                  isPassed ? "bg-amber-500 text-stone-950" : "bg-rose-600 text-white"
+                                  isPassed
+                                    ? "bg-amber-500 text-stone-950"
+                                    : isWarning
+                                    ? "bg-amber-600/90 text-white"
+                                    : "bg-rose-600 text-white"
                                 }`}
-                                title={`Checkpoint 3 (Bab 13-18): ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Checkpoint 3 (Bab 13-18): ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -889,15 +1014,20 @@ export default function DiagnosticMatrixView({
                       {(() => {
                         const { val, max, isFilled } = getAspectValue(st, "final");
                         const pct = max > 0 ? (val / max) * 100 : 0;
-                        const isPassed = pct >= 70;
+                        const isPassed = pct >= kkm;
+                        const isWarning = pct >= Math.max(40, kkm - 15) && pct < kkm;
                         return (
                           <td className="p-1 text-center font-mono bg-purple-500/10 border-l border-purple-500/20 font-black">
                             {isFilled ? (
                               <span
                                 className={`inline-block px-2 py-0.5 rounded text-[10px] font-black ${
-                                  isPassed ? "bg-purple-600 text-white" : "bg-rose-600 text-white"
+                                  isPassed
+                                    ? "bg-purple-600 text-white"
+                                    : isWarning
+                                    ? "bg-purple-800/80 text-white"
+                                    : "bg-rose-600 text-white"
                                 }`}
-                                title={`Shiken 1 Buku (Final): ${val}/${max} (${Math.round(pct)}%)`}
+                                title={`Shiken 1 Buku (Final): ${val}/${max} (${Math.round(pct)}%) - KKM: ${kkm}%`}
                               >
                                 {val}
                               </span>
@@ -1161,7 +1291,7 @@ export default function DiagnosticMatrixView({
                           <span
                             className={
                               row.shiken.mojiGoi > 0 &&
-                              row.shiken.mojiGoi < row.shiken.maxMojiGoi * 0.6
+                              row.shiken.mojiGoi < (row.shiken.maxMojiGoi * kkm) / 100
                                 ? "text-rose-500 font-black"
                                 : ""
                             }
@@ -1175,7 +1305,7 @@ export default function DiagnosticMatrixView({
                           <span
                             className={
                               row.shiken.kaiwa > 0 &&
-                              row.shiken.kaiwa < row.shiken.maxKaiwa * 0.6
+                              row.shiken.kaiwa < (row.shiken.maxKaiwa * kkm) / 100
                                 ? "text-rose-500 font-black"
                                 : ""
                             }
@@ -1189,7 +1319,7 @@ export default function DiagnosticMatrixView({
                           <span
                             className={
                               row.shiken.choukai > 0 &&
-                              row.shiken.choukai < row.shiken.maxChoukai * 0.6
+                              row.shiken.choukai < (row.shiken.maxChoukai * kkm) / 100
                                 ? "text-rose-500 font-black"
                                 : ""
                             }
@@ -1203,7 +1333,7 @@ export default function DiagnosticMatrixView({
                           <span
                             className={
                               row.shiken.dokkai > 0 &&
-                              row.shiken.dokkai < row.shiken.maxDokkai * 0.6
+                              row.shiken.dokkai < (row.shiken.maxDokkai * kkm) / 100
                                 ? "text-rose-500 font-black"
                                 : ""
                             }
@@ -1217,7 +1347,7 @@ export default function DiagnosticMatrixView({
                           {row.shiken.total > 0 ? (
                             <span
                               className={`px-1.5 py-0.5 rounded text-[10.5px] ${
-                                row.shiken.total >= row.shiken.maxTotal * 0.7
+                                row.shiken.total >= (row.shiken.maxTotal * kkm) / 100
                                   ? "bg-emerald-600 text-white"
                                   : "bg-rose-600 text-white"
                               }`}
@@ -1234,7 +1364,7 @@ export default function DiagnosticMatrixView({
                           {row.kanji > 0 ? (
                             <span
                               className={
-                                row.kanji < 70 ? "text-rose-500 font-black" : "text-emerald-500"
+                                row.kanji < kkm ? "text-rose-500 font-black" : "text-emerald-500"
                               }
                             >
                               {row.kanji}
@@ -1249,7 +1379,7 @@ export default function DiagnosticMatrixView({
                           {row.kotoba > 0 ? (
                             <span
                               className={
-                                row.kotoba < 70 ? "text-rose-500 font-black" : "text-emerald-500"
+                                row.kotoba < kkm ? "text-rose-500 font-black" : "text-emerald-500"
                               }
                             >
                               {row.kotoba}
@@ -1264,7 +1394,7 @@ export default function DiagnosticMatrixView({
                           {row.honyaku > 0 ? (
                             <span
                               className={
-                                row.honyaku < 70 ? "text-rose-500 font-black" : "text-emerald-500"
+                                row.honyaku < kkm ? "text-rose-500 font-black" : "text-emerald-500"
                               }
                             >
                               {row.honyaku}
