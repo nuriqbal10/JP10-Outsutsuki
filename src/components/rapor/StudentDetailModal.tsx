@@ -234,42 +234,192 @@ export default function StudentDetailModal({
 
           {activeTab === "chapters" && (
             <div className="space-y-3">
-              <h4 className="text-xs font-black uppercase tracking-wider opacity-80">
-                Nilai Harian Bab 1 s.d. 18 (Dai-Test & Tugas)
-              </h4>
-              <div className="overflow-x-auto">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-black uppercase tracking-wider opacity-80">
+                    Matriks Diagnostik Bab 1 s.d. 18 &amp; Checkpoints Evaluasi
+                  </h4>
+                  <p className="text-[11px] opacity-70">
+                    Pemetaan 4 Poin: 1. Shiken (Moji-Goi, Kaiwa, Choukai, Dokkai), 2. Kanji, 3. Kotoba, 4. Honyaku
+                  </p>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 font-bold border border-amber-500/30">
+                  18 Bab + 3 Checkpoint + Shiken Buku
+                </span>
+              </div>
+              <div className="overflow-x-auto border border-current/15 rounded-2xl bg-white/30 dark:bg-stone-950/40 p-1">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-current/15 opacity-70 text-[10.5px] uppercase">
-                      <th className="py-2.5 px-3">Bab</th>
-                      <th className="py-2.5 px-3 text-center">文字・語彙 (24)</th>
-                      <th className="py-2.5 px-3 text-center">会話 (24)</th>
-                      <th className="py-2.5 px-3 text-center">聴解 (24)</th>
-                      <th className="py-2.5 px-3 text-center">読解 (28)</th>
-                      <th className="py-2.5 px-3 text-center font-bold">Dai-Test (100)</th>
-                      <th className="py-2.5 px-3 text-center">漢字</th>
-                      <th className="py-2.5 px-3 text-center">言葉</th>
+                    <tr className="border-b border-current/15 opacity-80 text-[10px] uppercase font-bold bg-black/5 dark:bg-white/5">
+                      <th className="py-2.5 px-3">Unit / Ujian</th>
+                      <th className="py-2.5 px-2 text-center text-blue-500">文字語彙 (24)</th>
+                      <th className="py-2.5 px-2 text-center text-cyan-500">会話 (24)</th>
+                      <th className="py-2.5 px-2 text-center text-emerald-500">聴解 (24)</th>
+                      <th className="py-2.5 px-2 text-center text-purple-500">読解 (28)</th>
+                      <th className="py-2.5 px-2 text-center font-black text-amber-500">Total Shiken</th>
+                      <th className="py-2.5 px-2 text-center text-rose-500">2. 漢字</th>
+                      <th className="py-2.5 px-2 text-center text-amber-500">3. 言葉</th>
+                      <th className="py-2.5 px-2 text-center text-teal-500">4. 翻訳</th>
+                      <th className="py-2.5 px-3 min-w-[140px]">Diagnosa</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {student.harian.map((h) => {
-                      const dt = h.daiTesuto || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
-                      return (
-                        <tr key={h.chapter} className="border-b border-current/10 hover:bg-black/5 dark:hover:bg-white/5 transition font-mono">
-                          <td className="py-2.5 px-3 font-sans font-bold text-amber-500">
-                            第{h.chapter}課
+                  <tbody className="divide-y divide-current/10 font-mono text-[11px]">
+                    {Array.from({ length: 18 }, (_, idx) => {
+                      const chapterNum = idx + 1;
+                      const h = student.harian?.[idx];
+                      const dt = h?.daiTesuto || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                      const kanji = typeof h?.kanji === "number" ? h.kanji : 0;
+                      const kotoba = typeof h?.kotoba === "number" ? h.kotoba : 0;
+                      const honyaku = typeof h?.honyaku === "number" ? h.honyaku : 0;
+
+                      const defs: string[] = [];
+                      if (dt.total > 0) {
+                        if ((dt.dokkai / 28) < 0.6) defs.push("Dokkai");
+                        if ((dt.choukai / 24) < 0.6) defs.push("Choukai");
+                        if ((dt.kaiwa / 24) < 0.6) defs.push("Kaiwa");
+                        if ((dt.mojiGoi / 24) < 0.6) defs.push("Moji");
+                      }
+                      if (kanji > 0 && kanji < 65) defs.push("Kanji");
+                      if (kotoba > 0 && kotoba < 65) defs.push("Kotoba");
+                      if (honyaku > 0 && honyaku < 65) defs.push("Honyaku");
+
+                      const rowsToRender = [];
+
+                      // Render Chapter Row
+                      rowsToRender.push(
+                        <tr key={`ch-${chapterNum}`} className="border-b border-current/10 hover:bg-black/5 dark:hover:bg-white/5 transition">
+                          <td className="py-2 px-3 font-sans font-bold text-amber-500">
+                            第{chapterNum}課
                           </td>
-                          <td className="py-2.5 px-3 text-center">{dt.mojiGoi}</td>
-                          <td className="py-2.5 px-3 text-center">{dt.kaiwa}</td>
-                          <td className="py-2.5 px-3 text-center">{dt.choukai}</td>
-                          <td className="py-2.5 px-3 text-center">{dt.dokkai}</td>
-                          <td className="py-2.5 px-3 text-center font-black text-amber-500">
-                            {dt.total > 0 ? dt.total : "-"}
+                          <td className="py-2 px-2 text-center">{dt.mojiGoi > 0 ? dt.mojiGoi : "-"}</td>
+                          <td className="py-2 px-2 text-center">{dt.kaiwa > 0 ? dt.kaiwa : "-"}</td>
+                          <td className="py-2 px-2 text-center">{dt.choukai > 0 ? dt.choukai : "-"}</td>
+                          <td className="py-2 px-2 text-center">{dt.dokkai > 0 ? dt.dokkai : "-"}</td>
+                          <td className="py-2 px-2 text-center font-black">
+                            {dt.total > 0 ? (
+                              <span className={`px-1.5 py-0.5 rounded text-[10px] ${dt.total >= 70 ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"}`}>
+                                {dt.total}
+                              </span>
+                            ) : "-"}
                           </td>
-                          <td className="py-2.5 px-3 text-center">{h.kanji > 0 ? h.kanji : "-"}</td>
-                          <td className="py-2.5 px-3 text-center">{h.kotoba > 0 ? h.kotoba : "-"}</td>
+                          <td className="py-2 px-2 text-center">{kanji > 0 ? kanji : "-"}</td>
+                          <td className="py-2 px-2 text-center">{kotoba > 0 ? kotoba : "-"}</td>
+                          <td className="py-2 px-2 text-center">{honyaku > 0 ? honyaku : "-"}</td>
+                          <td className="py-2 px-3 font-sans text-[10.5px]">
+                            {defs.length > 0 ? (
+                              <span className="text-rose-500 font-bold">⚠️ Lemah: {defs.join(", ")}</span>
+                            ) : dt.total >= 70 ? (
+                              <span className="text-emerald-500 font-bold">✅ Tuntas</span>
+                            ) : (
+                              <span className="opacity-40">-</span>
+                            )}
+                          </td>
                         </tr>
                       );
+
+                      // Checkpoint 1 setelah Bab 6
+                      if (chapterNum === 6) {
+                        const cp = student.fukushuu1;
+                        const t = cp?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                        rowsToRender.push(
+                          <tr key="cp-1" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
+                            <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
+                              🎖️ Checkpoint 1 (Bab 1–6)
+                            </td>
+                            <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.choukai || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.dokkai || "-"}</td>
+                            <td className="py-2 px-2 text-center font-black text-amber-500">
+                              {t.total > 0 ? `${t.total}/250` : "-"}
+                            </td>
+                            <td className="py-2 px-2 text-center">{cp?.kanji || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.kotoba || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.honyaku || "-"}</td>
+                            <td className="py-2 px-3 font-sans text-[10.5px] font-bold text-amber-600 dark:text-amber-400">
+                              {t.total > 0 ? "Evaluasi Checkpoint 1" : "Belum diuji"}
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      // Checkpoint 2 setelah Bab 12
+                      if (chapterNum === 12) {
+                        const cp = student.fukushuu2;
+                        const t = cp?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                        rowsToRender.push(
+                          <tr key="cp-2" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
+                            <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
+                              🎖️ Checkpoint 2 (Bab 7–12)
+                            </td>
+                            <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.choukai || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.dokkai || "-"}</td>
+                            <td className="py-2 px-2 text-center font-black text-amber-500">
+                              {t.total > 0 ? `${t.total}/250` : "-"}
+                            </td>
+                            <td className="py-2 px-2 text-center">{cp?.kanji || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.kotoba || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.honyaku || "-"}</td>
+                            <td className="py-2 px-3 font-sans text-[10.5px] font-bold text-amber-600 dark:text-amber-400">
+                              {t.total > 0 ? "Evaluasi Checkpoint 2" : "Belum diuji"}
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      // Checkpoint 3 setelah Bab 18
+                      if (chapterNum === 18) {
+                        const cp = student.fukushuu3;
+                        const t = cp?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                        rowsToRender.push(
+                          <tr key="cp-3" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
+                            <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
+                              🎖️ Checkpoint 3 (Bab 13–18)
+                            </td>
+                            <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.choukai || "-"}</td>
+                            <td className="py-2 px-2 text-center">{t.dokkai || "-"}</td>
+                            <td className="py-2 px-2 text-center font-black text-amber-500">
+                              {t.total > 0 ? `${t.total}/250` : "-"}
+                            </td>
+                            <td className="py-2 px-2 text-center">{cp?.kanji || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.kotoba || "-"}</td>
+                            <td className="py-2 px-2 text-center">{cp?.honyaku || "-"}</td>
+                            <td className="py-2 px-3 font-sans text-[10.5px] font-bold text-amber-600 dark:text-amber-400">
+                              {t.total > 0 ? "Evaluasi Checkpoint 3" : "Belum diuji"}
+                            </td>
+                          </tr>
+                        );
+
+                        // Shiken 1 Buku (Final Exam)
+                        const fn = student.finalExam;
+                        const fnTest = fn?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                        rowsToRender.push(
+                          <tr key="final-exam" className="bg-purple-500/20 font-black border-y-2 border-purple-500/40">
+                            <td className="py-2.5 px-3 font-sans font-black text-purple-600 dark:text-purple-300">
+                              👑 Shiken 1 Buku (Full Book)
+                            </td>
+                            <td className="py-2 px-2 text-center">{fnTest.mojiGoi || "-"}</td>
+                            <td className="py-2 px-2 text-center">{fnTest.kaiwa || "-"}</td>
+                            <td className="py-2 px-2 text-center">{fnTest.choukai || "-"}</td>
+                            <td className="py-2 px-2 text-center">{fnTest.dokkai || "-"}</td>
+                            <td className="py-2 px-2 text-center font-black text-purple-500">
+                              {fnTest.total > 0 ? `${fnTest.total}/250` : "-"}
+                            </td>
+                            <td className="py-2 px-2 text-center">{fn?.kanji || "-"}</td>
+                            <td className="py-2 px-2 text-center">{fn?.kotoba || "-"}</td>
+                            <td className="py-2 px-2 text-center">{fn?.honyaku || "-"}</td>
+                            <td className="py-2 px-3 font-sans text-[10.5px] font-black text-purple-600 dark:text-purple-300">
+                              {fnTest.total > 0 ? "Ujian Akhir Buku Tuntas" : "Belum ditempuh"}
+                            </td>
+                          </tr>
+                        );
+                      }
+
+                      return rowsToRender;
                     })}
                   </tbody>
                 </table>
@@ -278,52 +428,76 @@ export default function StudentDetailModal({
           )}
 
           {activeTab === "exams" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Checkpoint 1 */}
               <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
                 <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Ujian 1 (Bab 1–6)
+                  Checkpoint 1 (Bab 1–6)
                 </span>
                 <h4 className="font-bold text-sm">復習テスト 1</h4>
-                <div className="space-y-1.5 text-xs font-mono">
-                  <div className="flex justify-between"><span>Moji-Goi (48):</span> <span>{student.fukushuu1?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>Kaiwa (48):</span> <span>{student.fukushuu1?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>Choukai (66):</span> <span>{student.fukushuu1?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>Dokkai (88):</span> <span>{student.fukushuu1?.test.dokkai || 0}</span></div>
-                  <div className="pt-2 border-t border-current/10 flex justify-between font-black text-amber-500 text-sm">
-                    <span>Total (250):</span> <span>{student.fukushuu1?.test.total || 0}</span>
-                  </div>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu1?.test.mojiGoi || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu1?.test.kaiwa || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu1?.test.choukai || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu1?.test.dokkai || 0}</span></div>
+                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu1?.test.total || 0} / 250</span></div>
+                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu1?.kanji || 0}</span></div>
+                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu1?.kotoba || 0}</span></div>
+                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu1?.honyaku || 0}</span></div>
                 </div>
               </div>
 
+              {/* Checkpoint 2 */}
               <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
                 <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Ujian 2 (Bab 7–12)
+                  Checkpoint 2 (Bab 7–12)
                 </span>
                 <h4 className="font-bold text-sm">復習テスト 2</h4>
-                <div className="space-y-1.5 text-xs font-mono">
-                  <div className="flex justify-between"><span>Moji-Goi (48):</span> <span>{student.fukushuu2?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>Kaiwa (48):</span> <span>{student.fukushuu2?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>Choukai (66):</span> <span>{student.fukushuu2?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>Dokkai (88):</span> <span>{student.fukushuu2?.test.dokkai || 0}</span></div>
-                  <div className="pt-2 border-t border-current/10 flex justify-between font-black text-amber-500 text-sm">
-                    <span>Total (250):</span> <span>{student.fukushuu2?.test.total || 0}</span>
-                  </div>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu2?.test.mojiGoi || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu2?.test.kaiwa || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu2?.test.choukai || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu2?.test.dokkai || 0}</span></div>
+                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu2?.test.total || 0} / 250</span></div>
+                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu2?.kanji || 0}</span></div>
+                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu2?.kotoba || 0}</span></div>
+                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu2?.honyaku || 0}</span></div>
                 </div>
               </div>
 
+              {/* Checkpoint 3 */}
               <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
                 <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Ujian 3 (Bab 13–18)
+                  Checkpoint 3 (Bab 13–18)
                 </span>
                 <h4 className="font-bold text-sm">復習テスト 3</h4>
-                <div className="space-y-1.5 text-xs font-mono">
-                  <div className="flex justify-between"><span>Moji-Goi (48):</span> <span>{student.fukushuu3?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>Kaiwa (48):</span> <span>{student.fukushuu3?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>Choukai (66):</span> <span>{student.fukushuu3?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>Dokkai (88):</span> <span>{student.fukushuu3?.test.dokkai || 0}</span></div>
-                  <div className="pt-2 border-t border-current/10 flex justify-between font-black text-amber-500 text-sm">
-                    <span>Total (250):</span> <span>{student.fukushuu3?.test.total || 0}</span>
-                  </div>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu3?.test.mojiGoi || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu3?.test.kaiwa || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu3?.test.choukai || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu3?.test.dokkai || 0}</span></div>
+                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu3?.test.total || 0} / 250</span></div>
+                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu3?.kanji || 0}</span></div>
+                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu3?.kotoba || 0}</span></div>
+                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu3?.honyaku || 0}</span></div>
+                </div>
+              </div>
+
+              {/* Shiken 1 Buku */}
+              <div className="clay-card p-5 rounded-2xl border border-purple-500/30 bg-purple-500/5 space-y-3">
+                <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-300 bg-purple-500/20 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                  Shiken 1 Buku (Full)
+                </span>
+                <h4 className="font-bold text-sm text-purple-600 dark:text-purple-300">総括終了試験</h4>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.finalExam?.test.mojiGoi || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.finalExam?.test.kaiwa || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.finalExam?.test.choukai || 0}</span></div>
+                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.finalExam?.test.dokkai || 0}</span></div>
+                  <div className="flex justify-between font-black text-purple-600 dark:text-purple-300"><span>Total Shiken:</span> <span>{student.finalExam?.test.total || 0} / 250</span></div>
+                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.finalExam?.kanji || 0}</span></div>
+                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.finalExam?.kotoba || 0}</span></div>
+                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.finalExam?.honyaku || 0}</span></div>
                 </div>
               </div>
             </div>

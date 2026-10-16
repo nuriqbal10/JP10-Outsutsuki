@@ -28,6 +28,7 @@ import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
 import OfficialReportPrintModal from "@/components/rapor/OfficialReportPrintModal";
 import StudentDetailModal from "@/components/rapor/StudentDetailModal";
 import BarRaceView from "@/components/rapor/BarRaceView";
+import DiagnosticMatrixView from "@/components/rapor/DiagnosticMatrixView";
 import masterRaporData from "@/data/raporMasterData.json";
 
 export default function RaporDashboardPage() {
@@ -829,71 +830,13 @@ export default function RaporDashboardPage() {
         )}
 
         {/* ========================================================
-            PANEL 4: MATRIKS DIAGNOSTIK 18 BAB
+            PANEL 4: MATRIKS DIAGNOSTIK 18 BAB (4 POIN + CHECKPOINTS + SHIKEN 1 BUKU)
             ======================================================== */}
         {activeTab === "heatmap" && (
-          <div className="clay-card p-6 rounded-3xl border border-current/10 space-y-4 shadow-xl">
-            <div>
-              <h3 className="text-base font-bold tracking-tight font-serif flex items-center gap-2">
-                <FileText className="w-5 h-5 text-amber-500" />
-                Matriks Diagnostik Ketuntasan 18 Bab
-              </h3>
-              <p className="text-xs opacity-70 mt-0.5">
-                Pemetaan capaian skor Dai-Test per bab untuk mendeteksi area materi yang memerlukan penguatan.
-              </p>
-            </div>
-
-            <div className="overflow-x-auto border border-current/15 rounded-2xl bg-white/40 dark:bg-stone-950/40 p-1">
-              <table className="w-full text-center border-collapse text-[10px]">
-                <thead>
-                  <tr className="bg-black/10 dark:bg-white/10 font-bold opacity-80">
-                    <th className="p-2 text-left pl-3 w-40">Peserta Didik</th>
-                    {Array.from({ length: 18 }, (_, i) => i + 1).map((b) => (
-                      <th key={b} className="p-2 w-9">Bab {b}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-current/10 font-medium">
-                  {(raporData?.rankedStudents || []).map((st) => (
-                    <tr key={st.no} className="hover:bg-amber-500/10">
-                      <td className="p-2 text-left pl-3 truncate max-w-[150px] font-bold">
-                        #{st.rank} {st.name}
-                      </td>
-                      {Array.from({ length: 18 }, (_, idx) => {
-                        const harianItem = st.harian?.[idx];
-                        const babScore = harianItem?.daiTesuto?.total ?? harianItem?.daiTest?.total ?? (typeof harianItem?.daiTesuto === 'number' ? harianItem.daiTesuto : 0);
-                        const isPassed = babScore >= 70;
-                        const isFilled = babScore > 0;
-                        return (
-                          <td
-                            key={idx}
-                            className="p-1.5 text-center"
-                          >
-                            {isFilled ? (
-                              <span
-                                className={`inline-block w-8 py-0.5 rounded text-[11px] font-mono font-extrabold shadow-xs ${
-                                  isPassed
-                                    ? "bg-emerald-600 text-white"
-                                    : "bg-rose-600 text-white"
-                                }`}
-                                title={`Bab ${idx + 1}: ${babScore} pt (${isPassed ? 'Tuntas' : 'Remedial'})`}
-                              >
-                                {babScore}
-                              </span>
-                            ) : (
-                              <span className="text-stone-400 dark:text-stone-500 font-mono text-[10px]">
-                                -
-                              </span>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <DiagnosticMatrixView
+            levelData={raporData}
+            onOpenStudentDetail={(student) => setSelectedStudentForDetail(student)}
+          />
         )}
 
         {/* ========================================================
