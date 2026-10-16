@@ -195,7 +195,7 @@ export default function ScoreReport({
   };
 
   return (
-    <div className="min-h-screen font-sans text-rose-50 pb-20 selection:bg-amber-400 selection:text-black">
+    <div className="min-h-screen font-sans text-[var(--text-body)] pb-20 selection:bg-amber-400 selection:text-black">
       {/* ========================================================
           1. HEADER ATAS (NAVIGASI & AKSI HASIL)
           ======================================================== */}
@@ -651,13 +651,13 @@ export default function ScoreReport({
                         const isThisUserChoice = userChoice === opt.letter;
                         const isThisKey = q.answerKey.toLowerCase() === opt.letter;
 
-                        let style = "bg-[#1F060F] border-rose-950 text-rose-200/80";
+                        let style = "bg-[#1F060F] border-rose-950 text-white font-medium";
                         if (isThisKey) {
                           // Kunci jawaban benar (Hijau zamrud / Emas)
                           style = "bg-emerald-950/70 border-emerald-500/60 text-emerald-200 font-bold shadow-md ring-1 ring-emerald-500/30";
                         } else if (isThisUserChoice && !isCorrect) {
                           // Pilihan salah siswa (Merah)
-                          style = "bg-rose-950/70 border-rose-700 text-rose-200 line-through";
+                          style = "bg-rose-950/70 border-rose-700 text-white line-through";
                         }
 
                         return (

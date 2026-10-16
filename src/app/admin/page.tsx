@@ -503,11 +503,11 @@ export default function SiteAdministrationPage() {
                           </div>
                         )}
 
-                        <div className="text-sm font-black text-rose-50 whitespace-pre-line leading-relaxed">
+                        <div className="text-sm font-black text-white whitespace-pre-line leading-relaxed">
                           {q.questionText}
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 pt-3 border-t border-rose-950/60 text-xs text-rose-200/80">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 pt-3 border-t border-rose-950/60 text-xs text-slate-200">
                           <div className={q.answerKey === "a" ? "text-emerald-300 font-bold" : ""}>
                             A. {q.optionA}
                           </div>

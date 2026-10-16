@@ -44,7 +44,7 @@ export default function ChapterModuleViewer({
   };
 
   return (
-    <div className="flex flex-col gap-6 text-rose-50 font-sans">
+    <div className="flex flex-col gap-6 text-[var(--text-body)] font-sans">
       {/* ========================================================
           1. HEADER MODUL PEMBELAJARAN RESMI
           ======================================================== */}
@@ -125,7 +125,7 @@ export default function ChapterModuleViewer({
             <Compass className="w-4 h-4 text-amber-400 shrink-0" />
             <span>Target Capaian Pembelajaran (Can-do Irodori Bab {chapter}):</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-rose-200/90 leading-relaxed">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-white/95 leading-relaxed">
             {moduleData.canDoList.map((cando, idx) => (
               <div key={idx} className="flex items-start gap-2 bg-[#280814]/80 p-2.5 rounded-xl border border-rose-950/80">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
@@ -142,12 +142,12 @@ export default function ChapterModuleViewer({
       {viewMode === "pdf" ? (
         /* PDF VIEWER RESMI TERINTEGRASI */
         <div className="clay-card rounded-3xl p-3 sm:p-5 border border-rose-950/80 shadow-2xl flex flex-col gap-3">
-          <div className="flex items-center justify-between px-2 text-xs text-rose-300/70 font-bold border-b border-rose-950/60 pb-2">
+          <div className="flex items-center justify-between px-2 text-xs text-amber-200 font-bold border-b border-rose-950/60 pb-2">
             <span className="flex items-center gap-1.5 text-amber-200">
               <FileText className="w-3.5 h-3.5 text-amber-400" />
               Buku Teks Resmi: Irodori Nihongo de Seikatsu 初級2 (Bab {chapter})
             </span>
-            <span className="text-[11px] text-rose-400/70">
+            <span className="text-[11px] text-[var(--text-muted)]">
               * Dilengkapi ilustrasi warna, teks kanji berfurigana, dan dialog otentik
             </span>
           </div>

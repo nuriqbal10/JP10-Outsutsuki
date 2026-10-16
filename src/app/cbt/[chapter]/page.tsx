@@ -298,7 +298,7 @@ export default function CbtSessionPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-rose-50 select-none pb-12">
+    <div className="min-h-screen flex flex-col font-sans text-[var(--text-body)] select-none pb-12">
       {/* ========================================================
           1. HEADER JFT-SIMULATION (CLAYMORPHISM LUXURY BURGUNDY)
           ======================================================== */}
@@ -492,11 +492,11 @@ export default function CbtSessionPage() {
         {currentQ ? (
           <div className="clay-card p-6 sm:p-10 flex flex-col gap-6 relative border border-rose-400/20 shadow-2xl">
             {/* Sub-header Soal */}
-            <div className="flex items-center justify-between border-b border-rose-900/40 pb-4">
-              <span className="text-xs font-black uppercase text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+            <div className="flex items-center justify-between border-b border-[var(--clay-border)] pb-4">
+              <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
                 {currentSection.name} • Butir #{currentQ.questionNumber}
               </span>
-              <span className="text-xs font-bold text-rose-300/60 font-mono">
+              <span className="text-xs font-bold text-[var(--text-muted)] font-mono">
                 Soal {currentQIndex + 1} dari {sectionQuestions.length}
               </span>
             </div>
@@ -511,7 +511,7 @@ export default function CbtSessionPage() {
             {/* GAMBAR ILUSTRASI RESMI JFT */}
             {currentQ.imageR2Url && (
               <div className="flex flex-col items-center justify-center p-4 bg-[#2b0811] border border-rose-900/40 rounded-2xl shadow-inner">
-                <div className="text-[11px] font-bold text-rose-300/60 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <div className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3 flex items-center gap-1.5">
                   <ImageIcon className="w-3.5 h-3.5 text-amber-400" /> Gambar Ilustrasi Soal
                 </div>
                 <img
@@ -533,7 +533,7 @@ export default function CbtSessionPage() {
                     <Volume2 className="w-6 h-6" />
                   </div>
                   <div>
-                    <div className="text-xs font-black text-rose-100">Audio Menyimak (Choukai)</div>
+                    <div className="text-xs font-black text-[var(--text-heading)]">Audio Menyimak (Choukai)</div>
                     <div className="text-[11px] text-amber-300 font-bold mt-0.5">
                       {(audioPlayCounts[currentQ.id] || 0) >= 2
                         ? "⚠️ Batas maksimal putar audio tercapai (2x)"
@@ -563,7 +563,7 @@ export default function CbtSessionPage() {
             )}
 
             {/* TEKS SOAL (DENGAN WHITE-SPACE PRE-LINE SESUAI ENTER/NEWLINE ASLI) */}
-            <div className="text-base sm:text-lg font-black text-rose-50 leading-relaxed whitespace-pre-line">
+            <div className="text-base sm:text-lg font-black leading-relaxed whitespace-pre-line cbt-question-text">
               {currentQ.questionText}
             </div>
 
@@ -574,13 +574,13 @@ export default function CbtSessionPage() {
                 const isCorrect = isSubmitted && currentQ.answerKey.toLowerCase() === opt.letter;
                 const isWrong = isSubmitted && isSelected && !isCorrect;
 
-                let optClass = "bg-[#330812] border-rose-900/40 text-rose-100 hover:bg-[#4a0d1b] hover:border-rose-500/50";
+                let optClass = "bg-[#330812] border-rose-900/40 text-white font-medium hover:bg-[#4a0d1b] hover:border-rose-500/50";
                 if (isSelected && !isSubmitted) {
                   optClass = "bg-gradient-to-r from-rose-700 to-rose-800 text-white border-amber-400 shadow-xl ring-2 ring-amber-400/40 scale-[1.01]";
                 } else if (isCorrect) {
                   optClass = "bg-emerald-600/90 text-white border-emerald-400 ring-2 ring-emerald-400 shadow-lg";
                 } else if (isWrong) {
-                  optClass = "bg-rose-950 text-rose-200 border-rose-500 ring-2 ring-rose-500";
+                  optClass = "bg-rose-950 text-white border-rose-500 ring-2 ring-rose-500";
                 }
 
                 return (
@@ -590,10 +590,10 @@ export default function CbtSessionPage() {
                     className={`w-full text-left p-4 rounded-2xl border text-sm font-semibold transition flex items-center justify-between gap-4 ${optClass}`}
                   >
                     <div className="flex items-center gap-3.5">
-                      <span className="w-8 h-8 rounded-xl bg-black/30 border border-white/10 text-rose-100 flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
+                      <span className="w-8 h-8 rounded-xl bg-black/40 border border-white/20 text-white flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
                         {opt.letter}
                       </span>
-                      <span className="whitespace-pre-line leading-relaxed">{opt.text}</span>
+                      <span className="whitespace-pre-line leading-relaxed text-white font-semibold">{opt.text}</span>
                     </div>
 
                     {isSelected && !isSubmitted && (
@@ -610,11 +610,11 @@ export default function CbtSessionPage() {
             </div>
 
             {/* NAVIGASI SEBELUMNYA / SELANJUTNYA (FORMAT JFT-SIMULATION) */}
-            <div className="flex items-center justify-between pt-4 border-t border-rose-900/40">
+            <div className="flex items-center justify-between pt-4 border-t border-[var(--clay-border)]">
               <button
                 onClick={() => setCurrentQIndex((prev) => Math.max(0, prev - 1))}
                 disabled={currentQIndex === 0}
-                className="clay-nav-pill px-5 py-2.5 bg-[#330812] border border-rose-900/50 text-rose-300 font-bold text-xs hover:bg-[#4a0d1b] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
+                className="clay-nav-pill px-5 py-2.5 bg-[#330812] border border-rose-900/50 text-white font-bold text-xs hover:bg-[#4a0d1b] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
               >
                 <ChevronLeft className="w-4 h-4" /> Soal Sebelumnya
               </button>
@@ -646,7 +646,7 @@ export default function CbtSessionPage() {
               </button>
             </div>
 
-            <p className="text-xs text-rose-200/80 leading-relaxed">
+            <p className="text-xs text-[var(--text-body)] opacity-90 leading-relaxed">
               Pilih alokasi waktu ujian sesuai kebutuhan simulasi atau latihan cepat:
             </p>
 
@@ -658,7 +658,7 @@ export default function CbtSessionPage() {
                   className={`py-2.5 rounded-xl font-black text-xs border transition ${
                     customMinutes === mins
                       ? "bg-rose-600 text-white border-amber-400 shadow-md ring-1 ring-amber-400"
-                      : "bg-[#330812] text-rose-300 border-rose-900/50 hover:bg-[#4a0d1b]"
+                      : "bg-[#330812] text-white border-rose-900/50 hover:bg-[#4a0d1b]"
                   }`}
                 >
                   {mins} Menit
@@ -666,8 +666,8 @@ export default function CbtSessionPage() {
               ))}
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-rose-900/40 text-xs">
-              <span className="font-bold text-rose-300">Status Timer:</span>
+            <div className="flex items-center justify-between pt-3 border-t border-[var(--clay-border)] text-xs">
+              <span className="font-bold text-[var(--text-heading)]">Status Timer:</span>
               <button
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
                 className={`px-3 py-1.5 rounded-lg font-black transition ${
@@ -687,7 +687,7 @@ export default function CbtSessionPage() {
       {showTeacherAuthModal && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="clay-card p-6 sm:p-8 max-w-sm w-full shadow-2xl flex flex-col gap-5 border border-rose-400/30">
-            <div className="flex items-center justify-between border-b border-rose-900/40 pb-3">
+            <div className="flex items-center justify-between border-b border-[var(--clay-border)] pb-3">
               <h3 className="font-black text-amber-300 text-base flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-amber-400" /> Login Guru / Pengajar
               </h3>
@@ -696,7 +696,7 @@ export default function CbtSessionPage() {
               </button>
             </div>
 
-            <p className="text-xs text-rose-200/80 leading-relaxed">
+            <p className="text-xs text-[var(--text-body)] opacity-90 leading-relaxed">
               Masukkan kata sandi guru / pengajar untuk mengaktifkan editing langsung.
             </p>
 
@@ -706,7 +706,7 @@ export default function CbtSessionPage() {
               value={teacherPassInput}
               onChange={(e) => setTeacherPassInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleTeacherLogin()}
-              className="w-full px-4 py-3 rounded-xl bg-[#25060e] border border-rose-800/60 text-sm font-semibold text-rose-100 outline-none focus:border-amber-400"
+              className="w-full px-4 py-3 rounded-xl bg-[#25060e] border border-rose-800/60 text-sm font-semibold text-white outline-none focus:border-amber-400"
               autoFocus
             />
 
@@ -714,7 +714,7 @@ export default function CbtSessionPage() {
               onClick={handleTeacherLogin}
               className="w-full py-3 clay-btn rounded-xl text-xs font-black shadow-lg"
             >
-              Masuk Sebagai Guru
+              Masuk Mode Guru
             </button>
           </div>
         </div>
@@ -726,7 +726,7 @@ export default function CbtSessionPage() {
       {isEditing && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="clay-card p-6 sm:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col gap-5 border border-rose-400/40">
-            <div className="flex items-center justify-between border-b border-rose-900/40 pb-3">
+            <div className="flex items-center justify-between border-b border-[var(--clay-border)] pb-3">
               <h3 className="font-black text-amber-300 text-base flex items-center gap-2">
                 <Edit3 className="w-5 h-5 text-amber-400" /> Edit Butir Soal #{currentQ.questionNumber} ({currentQ.section.toUpperCase()})
               </h3>
@@ -735,7 +735,7 @@ export default function CbtSessionPage() {
               </button>
             </div>
 
-            <div className="flex flex-col gap-4 text-xs font-bold text-rose-200">
+            <div className="flex flex-col gap-4 text-xs font-bold text-[var(--text-heading)]">
               {/* Teks Soal */}
               <div>
                 <label className="mb-1 block text-amber-300">Teks Soal / Pertanyaan:</label>
@@ -743,7 +743,7 @@ export default function CbtSessionPage() {
                   rows={3}
                   value={editForm.questionText || ""}
                   onChange={(e) => setEditForm({ ...editForm, questionText: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-[#25060e] border border-rose-800 text-sm font-medium text-rose-50 outline-none focus:border-amber-400 whitespace-pre-line"
+                  className="w-full p-3 rounded-xl bg-[#25060e] border border-rose-800 text-sm font-medium text-white outline-none focus:border-amber-400 whitespace-pre-line"
                 />
               </div>
 
@@ -755,7 +755,7 @@ export default function CbtSessionPage() {
                   value={editForm.imageR2Url || ""}
                   onChange={(e) => setEditForm({ ...editForm, imageR2Url: e.target.value })}
                   placeholder="https://.../images/shokyu2/..."
-                  className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 font-mono text-xs text-rose-200 outline-none focus:border-amber-400"
+                  className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 font-mono text-xs text-white outline-none focus:border-amber-400"
                 />
               </div>
 
@@ -767,7 +767,7 @@ export default function CbtSessionPage() {
                   value={editForm.audioR2Url || ""}
                   onChange={(e) => setEditForm({ ...editForm, audioR2Url: e.target.value })}
                   placeholder="https://.../audio/shokyu2/..."
-                  className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 font-mono text-xs text-rose-200 outline-none focus:border-amber-400"
+                  className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 font-mono text-xs text-white outline-none focus:border-amber-400"
                 />
               </div>
 
@@ -778,7 +778,7 @@ export default function CbtSessionPage() {
                   rows={3}
                   value={editForm.stimulusText || ""}
                   onChange={(e) => setEditForm({ ...editForm, stimulusText: e.target.value })}
-                  className="w-full p-3 rounded-xl bg-[#25060e] border border-rose-800 text-xs font-medium text-rose-50 outline-none focus:border-amber-400 whitespace-pre-line"
+                  className="w-full p-3 rounded-xl bg-[#25060e] border border-rose-800 text-xs font-medium text-white outline-none focus:border-amber-400 whitespace-pre-line"
                 />
               </div>
 
@@ -790,7 +790,7 @@ export default function CbtSessionPage() {
                     type="text"
                     value={editForm.optionA || ""}
                     onChange={(e) => setEditForm({ ...editForm, optionA: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-rose-100 outline-none focus:border-amber-400"
+                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-white outline-none focus:border-amber-400"
                   />
                 </div>
                 <div>
@@ -799,7 +799,7 @@ export default function CbtSessionPage() {
                     type="text"
                     value={editForm.optionB || ""}
                     onChange={(e) => setEditForm({ ...editForm, optionB: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-rose-100 outline-none focus:border-amber-400"
+                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-white outline-none focus:border-amber-400"
                   />
                 </div>
                 <div>
@@ -808,7 +808,7 @@ export default function CbtSessionPage() {
                     type="text"
                     value={editForm.optionC || ""}
                     onChange={(e) => setEditForm({ ...editForm, optionC: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-rose-100 outline-none focus:border-amber-400"
+                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-white outline-none focus:border-amber-400"
                   />
                 </div>
                 <div>
@@ -817,7 +817,7 @@ export default function CbtSessionPage() {
                     type="text"
                     value={editForm.optionD || ""}
                     onChange={(e) => setEditForm({ ...editForm, optionD: e.target.value })}
-                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-rose-100 outline-none focus:border-amber-400"
+                    className="w-full p-2.5 rounded-xl bg-[#25060e] border border-rose-800 text-xs text-white outline-none focus:border-amber-400"
                   />
                 </div>
               </div>
@@ -838,10 +838,10 @@ export default function CbtSessionPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-rose-900/40">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--clay-border)]">
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-5 py-2.5 rounded-xl bg-[#330812] text-rose-300 font-bold text-xs hover:bg-[#4a0d1b]"
+                className="px-5 py-2.5 rounded-xl bg-[#330812] text-white font-bold text-xs hover:bg-[#4a0d1b]"
               >
                 Batal
               </button>
