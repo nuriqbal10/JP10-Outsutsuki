@@ -105,6 +105,30 @@ const CHAPTER_METADATA: Record<number, { title: string; topic: string; slidesEmb
     title: "このボタンを押すと、エコモードに変わります",
     topic: "Pengoperasian Alat Elektronik, Tombol Fungsi & Rumah Tangga",
   },
+  13: {
+    title: "いろいろな資料を展示してあります",
+    topic: "Fasilitas Umum, Balai Kota & Aturan Peminjaman",
+  },
+  14: {
+    title: "髪をもう少し短くしてください",
+    topic: "Layanan Jasa Publik, Salon Pangkas Rambut & Kurir Paket",
+  },
+  15: {
+    title: "ゴミを減らすために、マイバッグを持っています",
+    topic: "Lingkungan Hidup, Pemilahan Sampah & Gaya Hidup Eco",
+  },
+  16: {
+    title: "地震が起きたら、どうすればいいですか？",
+    topic: "Mitigasi Bencana Alam, Peringatan Gempa Dini & Keselamatan",
+  },
+  17: {
+    title: "日本語が前より話せるようになりました",
+    topic: "Pertumbuhan Diri, Refleksi di Jepang & Peningkatan Kemampuan",
+  },
+  18: {
+    title: "将来、自分の会社を作ろうと思っています",
+    topic: "Rencana Masa Depan, Karir Tokutei Ginou & Kelulusan A2",
+  },
 };
 
 export default function LmsBabLearningPage() {
@@ -408,7 +432,7 @@ export default function LmsBabLearningPage() {
                   href={`/cbt/${babNum}`}
                   className="clay-btn-gold px-6 py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow-xl hover:scale-105 shrink-0"
                 >
-                  Mulai Simulasi Penuh CBT Bab 0{babNum}
+                  Mulai Simulasi Penuh CBT Bab {babNum < 10 ? `0${babNum}` : babNum}
                 </Link>
               </div>
 
@@ -466,6 +490,46 @@ export default function LmsBabLearningPage() {
             </div>
           </div>
         )}
+
+        {/* PREV / NEXT CHAPTER NAVIGATION FOOTER */}
+        <div className="clay-card rounded-2xl p-4 border border-current/10 flex items-center justify-between gap-4 mt-6">
+          {babNum > 1 ? (
+            <Link
+              href={`/lms/irodori-a2-2/bab/${babNum - 1}`}
+              className="clay-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:scale-105 transition"
+            >
+              <ArrowLeft className="w-4 h-4 text-amber-500" />
+              Bab {babNum - 1}
+            </Link>
+          ) : (
+            <div />
+          )}
+
+          <Link
+            href="/lms/irodori-a2-2"
+            className="text-xs font-extrabold uppercase tracking-wider opacity-70 hover:opacity-100 transition hidden sm:inline"
+          >
+            Kembali ke Silabus A2.2
+          </Link>
+
+          {babNum < 18 ? (
+            <Link
+              href={`/lms/irodori-a2-2/bab/${babNum + 1}`}
+              className="clay-btn-gold px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:scale-105 transition"
+            >
+              Bab {babNum + 1}
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <Link
+              href="/cbt/0"
+              className="clay-btn-gold px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:scale-105 transition"
+            >
+              Ujian Akhir (Fukushuu)
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
+        </div>
       </main>
       </div>
     </div>

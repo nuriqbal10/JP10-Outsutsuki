@@ -43,6 +43,12 @@ const CHAPTERS = [
   { num: 10, title: "どんな服を着て行けばいいですか？", topic: "Etiket Berpakaian & Upacara" },
   { num: 11, title: "ポイントカードを忘れてしまいました", topic: "Belanja & Penyesalan" },
   { num: 12, title: "このボタンを押すと、エコモードに変わります", topic: "Peralatan Elektronik & Mesin" },
+  { num: 13, title: "いろいろな資料を展示してあります", topic: "Fasilitas Umum & Balai Kota" },
+  { num: 14, title: "髪をもう少し短くしてください", topic: "Layanan Jasa, Salon & Kurir" },
+  { num: 15, title: "ゴミを減らすために、マイバッグを持っています", topic: "Pemilahan Sampah & Gaya Hidup Eco" },
+  { num: 16, title: "地震が起きたら、どうすればいいですか？", topic: "Mitigasi Bencana & Keselamatan" },
+  { num: 17, title: "日本語が前より話せるようになりました", topic: "Perkembangan Diri & Adaptasi" },
+  { num: 18, title: "将来、自分の会社を作ろうと思っています", topic: "Rencana Masa Depan & Karir" },
 ];
 
 export default function LmsSidebar({

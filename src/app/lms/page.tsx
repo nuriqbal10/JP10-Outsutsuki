@@ -24,6 +24,17 @@ export default function LmsPortalPage() {
         { num: 5, title: "安全第一", topic: "Aturan Pabrik & Keselamatan K3" },
         { num: 6, title: "どうやって行きますか", topic: "Transportasi, Tiket & Rute" },
         { num: 7, title: "雨が降ったら、ホールでやります", topic: "Festival & Acara Komunitas" },
+        { num: 8, title: "屋台はどこかわかりますか？", topic: "Denah Stan Festival & Posisi" },
+        { num: 9, title: "成人の日は、何をするんですか？", topic: "Hari Libur Nasional & Perayaan Jepang" },
+        { num: 10, title: "どんな服を着て行けばいいですか？", topic: "Etiket Menghadiri Acara & Pakaian" },
+        { num: 11, title: "ポイントカードを忘れてしまいました", topic: "Berbelanja, Fitting & Kasir" },
+        { num: 12, title: "このボタンを押すと、エコモードに変わります", topic: "Pengoperasian Alat Elektronik & Tombol" },
+        { num: 13, title: "いろいろな資料を展示してあります", topic: "Fasilitas Umum, Balai Kota & Galeri" },
+        { num: 14, title: "髪をもう少し短くしてください", topic: "Salon Rambut, Laundry & Kurir Paket" },
+        { num: 15, title: "ゴミを減らすために、マイバッグを持っています", topic: "Pemilahan Sampah & Gaya Hidup Eco" },
+        { num: 16, title: "地震が起きたら、どうすればいいですか？", topic: "Mitigasi Bencana & Keselamatan Jiwa" },
+        { num: 17, title: "日本語が前より話せるようになりました", topic: "Pertumbuhan Diri & Refleksi di Jepang" },
+        { num: 18, title: "将来、自分の会社を作ろうと思っています", topic: "Impian Masa Depan, Karir & SSW" },
       ]
     },
     {

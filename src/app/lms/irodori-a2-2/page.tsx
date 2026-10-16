@@ -155,11 +155,89 @@ export default function IrodoriA2CoursePage() {
       subTitle: "Kono Botan o Osu to, Ekomoodo ni Kawarimasu",
       topic: "Pengoperasian Alat Elektronik, Tombol Fungsi & Rumah Tangga",
       vocabCount: 276,
-      quizCount: 25,
+      quizCount: 40,
       grammarPoints: [
         "V［辞書形］＋と、～（確定条件・機械の動作）",
         "V［ます形］＋方（使い方・操作方法）",
         "～ようにしてください（使用上の注意）",
+      ],
+    },
+    {
+      num: 13,
+      title: "いろいろな資料を展示してあります",
+      subTitle: "Iroirona Shiryou o Tenji shite Arimasu",
+      topic: "Fasilitas Umum, Museum Seni, Balai Kota & Aturan Peminjaman",
+      vocabCount: 215,
+      quizCount: 40,
+      grammarPoints: [
+        "V［て形］＋あります（結果の状態・掲示）",
+        "V［て形］＋みてください（勧誘・推奨）",
+        "～てはいけません／禁煙（禁止・注意事項）",
+      ],
+    },
+    {
+      num: 14,
+      title: "髪をもう少し短くしてください",
+      subTitle: "Kami o Mou Sukoshi Mijikaku shite Kudasai",
+      topic: "Layanan Jasa Publik, Salon Pangkas Rambut, Laundry & Kurir Paket",
+      vocabCount: 230,
+      quizCount: 40,
+      grammarPoints: [
+        "～を［～く／～に］します（状態の変更）",
+        "V［て形］＋もらえますか／いただけますか（丁寧な依頼）",
+        "～までに（仕上がり期限）",
+      ],
+    },
+    {
+      num: 15,
+      title: "ゴミを減らすために、マイバッグを持っています",
+      subTitle: "Gomi o Herasu Tame ni, Mai Baggu o Motte Imasu",
+      topic: "Lingkungan Hidup, Pemilahan Sampah & Gaya Hidup Ramah Lingkungan",
+      vocabCount: 225,
+      quizCount: 40,
+      grammarPoints: [
+        "V［辞書形］＋ために（目的）",
+        "V［ない形］＋ようにしています（習慣・心がけ）",
+        "～たまま（放置・状態継続）",
+      ],
+    },
+    {
+      num: 16,
+      title: "地震が起きたら、どうすればいいですか？",
+      subTitle: "Jishin ga Okitara, Dou Sureba Ii desu ka",
+      topic: "Mitigasi Bencana Alam, Peringatan Gempa Dini, Evakuasi & Tas Darurat",
+      vocabCount: 240,
+      quizCount: 40,
+      grammarPoints: [
+        "V［たら］／N［なら］、～てください（緊急時の条件と指示）",
+        "V［て形］＋はいけません（禁止）",
+        "疑問詞＋V［ば形］＋いいですか（助言求め）",
+      ],
+    },
+    {
+      num: 17,
+      title: "日本語が前より話せるようになりました",
+      subTitle: "Nihongo ga Mae yori Hanaseru you ni Narimashita",
+      topic: "Refleksi Diri, Peningkatan Kemampuan Bahasa Jepang & Adaptasi",
+      vocabCount: 235,
+      quizCount: 40,
+      grammarPoints: [
+        "V［可能形／辞書形］＋ようになりました（能力・習慣の変化）",
+        "V［て形］＋よかったです（安堵・感謝）",
+        "～に比べて／前と違って（過去と現在の比較）",
+      ],
+    },
+    {
+      num: 18,
+      title: "将来、自分の会社を作ろうと思っています",
+      subTitle: "Shourai, Jibun no Kaisha o Tsukurou to Omotte Imasu",
+      topic: "Rencana Masa Depan, Karir Tokutei Ginou, Wirausaha & Kelulusan A2",
+      vocabCount: 250,
+      quizCount: 40,
+      grammarPoints: [
+        "V［意向形］＋と思っています（意志・将来計画）",
+        "V［辞書形］＋つもりです（強い予定・決意）",
+        "V［て形］＋あげる／もらう／くれる（授受表現）",
       ],
     },
   ];
@@ -240,7 +318,7 @@ export default function IrodoriA2CoursePage() {
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-black uppercase text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-lg">
-                      第{ch.num}課 (Bab 0{ch.num})
+                      第{ch.num}課 (Bab {ch.num < 10 ? `0${ch.num}` : ch.num})
                     </span>
                     <span className="text-xs font-bold opacity-60 font-mono">
                       {ch.subTitle}
@@ -276,7 +354,7 @@ export default function IrodoriA2CoursePage() {
                     href={`/lms/irodori-a2-2/bab/${ch.num}`}
                     className="clay-btn-gold flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-wider text-center transition shadow-md hover:scale-[1.02]"
                   >
-                    Buka Bab 0{ch.num}
+                    Buka Bab {ch.num < 10 ? `0${ch.num}` : ch.num}
                   </Link>
                   <Link
                     href={`/cbt/${ch.num}`}
