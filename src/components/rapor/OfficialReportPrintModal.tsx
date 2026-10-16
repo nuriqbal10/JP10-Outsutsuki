@@ -84,7 +84,42 @@ export default function OfficialReportPrintModal({
   const pctDokkai = Math.min(100, Math.round(((avg.dokkai || 0) / 28) * 100));
 
   const compositeScore = student.compositeScore ?? student.summary?.compositeScore ?? 0;
-  const grade = student.grade || (compositeScore >= 85 ? "A" : compositeScore >= 75 ? "B" : compositeScore >= 60 ? "C" : "D");
+  const rawGrade = (student.grade || "").split(" ")[0].toUpperCase();
+  const grade = rawGrade || (compositeScore >= 85 ? "A" : compositeScore >= 75 ? "B" : compositeScore >= 60 ? "C" : "D");
+
+  const isPassed = compositeScore >= kkm;
+  const isWarning = compositeScore >= Math.max(40, kkm - 15) && compositeScore < kkm;
+
+  const statusLabel = isPassed
+    ? `Grade ${grade} (Memenuhi Standar Kelulusan JFT-Basic A2)`
+    : isWarning
+    ? `Grade ${grade} (Lulus Bersyarat / Perlu Pemantapan)`
+    : `Grade ${grade} (Belum Memenuhi KKM / Perlu Remedial)`;
+
+  const statusColorClass = isPassed
+    ? "text-emerald-700 font-bold"
+    : isWarning
+    ? "text-amber-700 font-bold"
+    : "text-rose-700 font-bold";
+
+  const predikatJapanese = isPassed
+    ? (grade === "A" ? "Sangat Baik (優 - Yū)" : "Baik (良 - Ryō)")
+    : isWarning
+    ? "Cukup (可 - Ka)"
+    : "Perlu Bimbingan (不可 - Fuka)";
+
+  const defaultSenseiNote = isPassed
+    ? "Peserta didik menunjukkan disiplin dan penguasaan kompetensi tinggi dalam menyelesaikan kurikulum Irodori A2. Memiliki modalitas kuat untuk kelulusan ujian resmi JFT-Basic A2."
+    : isWarning
+    ? "Peserta didik menunjukkan kemajuan yang cukup baik. Direkomendasikan melakukan pendalaman pada seksi membaca wacana (Dokkai) dan dialog percakapan situasional."
+    : "Nilai peserta didik belum mencapai kriteria ketuntasan minimal (KKM). Diwajibkan mengikuti program remedial intensif serta bimbingan perbaikan materi sebelum ujian resmi.";
+
+  const defaultSenseiRec = isPassed
+    ? "Pertahankan konsistensi latihan simulasi CBT berkala dan perluas kosakata kejuruan kerja di Jepang."
+    : isWarning
+    ? "Tingkatkan intensitas latihan soal simulasi CBT Choukai dan Dokkai untuk meningkatkan ketepatan waktu."
+    : "Wajib mengikuti pengayaan materi dan ujian remedial pada seksi Moji-Goi, Choukai, dan Dokkai.";
+
   const currentDate = new Date().toLocaleDateString("id-ID", {
     day: "numeric",
     month: "long",
@@ -206,7 +241,7 @@ export default function OfficialReportPrintModal({
                 <div className="flex">
                   <span className="w-28 font-bold text-slate-600">Predikat / Status</span>
                   <span>
-                    : <strong className="text-emerald-700 font-bold">Grade {grade} (Memenuhi Standar Kelulusan)</strong>
+                    : <strong className={statusColorClass}>{statusLabel}</strong>
                   </span>
                 </div>
               </div>
@@ -417,15 +452,15 @@ export default function OfficialReportPrintModal({
                 <span className="font-bold text-[11px] uppercase tracking-wider text-slate-800">
                   Catatan Evaluasi Instruktur Pengajar (Shihan / Sensei):
                 </span>
-                <span className="text-[10px] font-bold text-slate-600">Predikat: Sangat Baik (優)</span>
+                <span className="text-[10px] font-bold text-slate-600">Predikat: {predikatJapanese}</span>
               </div>
               <p className="text-[10px] text-slate-800 leading-normal">
-                {student.senseiNote || "Peserta didik menunjukkan disiplin dan komitmen tinggi dalam menuntaskan 18 bab materi Irodori A2. Penguasaan kosakata kerja dan pola kalimat fungsional telah memenuhi kriteria kesiapan kerja di Jepang."}
+                {student.senseiNote || defaultSenseiNote}
               </p>
               <div className="pt-1 border-t border-slate-200 text-[10px] text-slate-700 flex items-start gap-1">
                 <strong className="text-slate-900 shrink-0">Rekomendasi Lanjutan:</strong>
                 <span>
-                  {student.senseiRecommendation || "Tingkatkan intensitas simulasi ujian CBT sub-tes Choukai dan perdalam kosakata teknis sesuai bidang kerja."}
+                  {student.senseiRecommendation || defaultSenseiRec}
                 </span>
               </div>
             </div>

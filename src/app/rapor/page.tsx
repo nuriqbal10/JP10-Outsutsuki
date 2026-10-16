@@ -22,6 +22,8 @@ import {
   X,
   ChevronRight,
   TrendingUp,
+  AlertCircle,
+  AlertTriangle,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
@@ -61,6 +63,28 @@ export default function RaporDashboardPage() {
 
   // Student Portal State
   const [portalStudentId, setPortalStudentId] = useState<number>(1);
+
+  // KKM Setting State (disinkronkan dengan localStorage)
+  const [kkm, setKkm] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("outsutsuki_kkm");
+        if (saved && !isNaN(Number(saved))) return Number(saved);
+      } catch {}
+    }
+    return 85;
+  });
+
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        const saved = localStorage.getItem("outsutsuki_kkm");
+        if (saved && !isNaN(Number(saved))) setKkm(Number(saved));
+      } catch {}
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   // Fetch data saat ganti level
   useEffect(() => {
@@ -889,68 +913,136 @@ export default function RaporDashboardPage() {
         {/* ========================================================
             PANEL 6: PORTAL INDIVIDUAL SISWA (PER SISWA)
             ======================================================== */}
-        {activeTab === "portal" && portalStudent && (
-          <div className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 space-y-6 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-current/10 pb-4">
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                  Pencarian Rapor Individual Siswa
-                </span>
-                <h2 className="text-xl font-bold font-serif mt-0.5">Lembar Laporan Hasil Belajar Peserta Didik</h2>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <select
-                  value={portalStudentId}
-                  onChange={(e) => setPortalStudentId(parseInt(e.target.value, 10))}
-                  className="p-2.5 rounded-xl bg-white dark:bg-stone-900 border border-current/20 text-xs font-bold outline-none cursor-pointer"
-                >
-                  {(raporData?.students || []).map((st) => (
-                    <option key={st.no} value={st.no}>
-                      #{st.no} - {st.name} (Peringkat #{st.rank})
-                    </option>
-                  ))}
-                </select>
+        {activeTab === "portal" && portalStudent && (() => {
+          const score = portalStudent.compositeScore ?? portalStudent.summary?.compositeScore ?? 0;
+          const rawGrade = (portalStudent.grade || "").split(" ")[0].toUpperCase();
+          const effectiveGrade = rawGrade || (score >= 85 ? "A" : score >= 75 ? "B" : score >= 60 ? "C" : "D");
 
-                <button
-                  onClick={() => setSelectedStudentForPrint(portalStudent)}
-                  className="clay-btn-gold px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Printer className="w-4 h-4" /> Cetak Lembar Rapor A4
-                </button>
+          const isPassed = score >= kkm;
+          const isWarning = score >= Math.max(40, kkm - 15) && score < kkm;
+
+          // Grade badge styling & text
+          let gradeBadgeColor = "bg-rose-500/15 text-rose-500 border-rose-500/30";
+          let gradeText = `Grade ${effectiveGrade} (Perlu Remedial)`;
+          if (effectiveGrade === "A") {
+            gradeBadgeColor = "bg-emerald-500/15 text-emerald-500 border-emerald-500/30";
+            gradeText = `Grade A (Sangat Memuaskan - Tuntas KKM)`;
+          } else if (effectiveGrade === "B") {
+            gradeBadgeColor = isPassed
+              ? "bg-emerald-500/15 text-emerald-500 border-emerald-500/30"
+              : "bg-amber-500/15 text-amber-500 border-amber-500/30";
+            gradeText = isPassed
+              ? `Grade B (Baik - Memenuhi KKM)`
+              : `Grade B (Lulus Bersyarat / Perlu Pemantapan)`;
+          } else if (effectiveGrade === "C") {
+            gradeBadgeColor = "bg-amber-500/15 text-amber-500 border-amber-500/30";
+            gradeText = `Grade C (Cukup - Belum Tuntas KKM)`;
+          }
+
+          // Score color
+          const scoreColor = isPassed
+            ? "text-emerald-500"
+            : isWarning
+            ? "text-amber-500"
+            : "text-rose-500";
+
+          // Status Penguasaan Kompetensi Sesuai Regulasi KKM
+          let statusIcon = <AlertTriangle className="w-6 h-6 text-rose-500 shrink-0" />;
+          let statusTitle = "Belum Memenuhi Syarat Kelulusan";
+          let statusSubtitle = `Nilai akumulatif (${score} pt) di bawah batas KKM (${kkm} pt). Wajib bimbingan intensif & remedial.`;
+          let statusContainerClass = "text-rose-500";
+
+          if (isPassed) {
+            statusIcon = <CheckCircle2 className="w-6 h-6 text-emerald-500 shrink-0" />;
+            statusTitle = "Siap Mengikuti Ujian JFT-Basic A2";
+            statusSubtitle = `Target KKM ${kkm} pt terpenuhi. Kompetensi Kurikulum Irodori JF CEFR A2 tuntas.`;
+            statusContainerClass = "text-emerald-500";
+          } else if (isWarning) {
+            statusIcon = <AlertCircle className="w-6 h-6 text-amber-500 shrink-0" />;
+            statusTitle = "Pemantapan Pra-Ujian Diperlukan";
+            statusSubtitle = `Mendekati standar KKM (${kkm} pt). Direkomendasikan simulasi tryout CBT tambahan.`;
+            statusContainerClass = "text-amber-500";
+          }
+
+          return (
+            <div className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 space-y-6 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-current/10 pb-4">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">
+                    Pencarian Rapor Individual Siswa
+                  </span>
+                  <h2 className="text-xl font-bold font-serif mt-0.5 text-[var(--text-heading)]">
+                    Lembar Laporan Hasil Belajar Peserta Didik
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <select
+                    value={portalStudentId}
+                    onChange={(e) => setPortalStudentId(parseInt(e.target.value, 10))}
+                    className="p-2.5 rounded-xl bg-[var(--background)] border border-current/20 text-xs font-bold text-[var(--text-heading)] outline-none cursor-pointer shadow-sm"
+                  >
+                    {(raporData?.students || []).map((st) => (
+                      <option key={st.no} value={st.no} className="bg-stone-900 text-white">
+                        #{st.no} - {st.name} (Peringkat #{st.rank || st.no})
+                      </option>
+                    ))}
+                  </select>
+
+                  <button
+                    onClick={() => setSelectedStudentForPrint(portalStudent)}
+                    className="clay-btn-gold px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Printer className="w-4 h-4" /> Cetak Lembar Rapor A4
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Card 1: Profil & Predikat */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 text-center flex flex-col items-center justify-center">
+                  <div className="w-14 h-14 rounded-full mb-2 bg-gradient-to-br from-stone-800 to-stone-900 text-amber-400 font-black text-lg flex items-center justify-center shadow-md border-2 border-amber-500/40">
+                    {portalStudent.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <h3 className="font-bold text-base text-[var(--text-heading)]">{portalStudent.name}</h3>
+                  <p className="text-xs opacity-70 text-[var(--text-body)]">
+                    Peringkat Kelas #{portalStudent.rank || portalStudent.no}
+                  </p>
+                  <span className={`inline-block mt-2.5 px-3 py-1 rounded-full text-xs font-bold border ${gradeBadgeColor}`}>
+                    {gradeText}
+                  </span>
+                </div>
+
+                {/* Card 2: Nilai Akumulatif & KKM */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
+                  <span className="text-xs opacity-70 font-bold uppercase tracking-wider text-[var(--text-heading)]">
+                    Nilai Akumulatif Komprehensif
+                  </span>
+                  <div className="my-2">
+                    <span className={`text-4xl font-black ${scoreColor}`}>
+                      {score}
+                    </span>
+                    <span className="text-sm opacity-60 font-mono ml-1.5 text-[var(--text-body)]">/ 100 pt</span>
+                  </div>
+                  <p className="text-[11px] opacity-75 text-[var(--text-body)] font-medium">
+                    Batas kelulusan minimum KKM: <strong className="text-amber-500 font-mono">{kkm}.00 pt</strong>
+                  </p>
+                </div>
+
+                {/* Card 3: Status Penguasaan Kompetensi Sesuai Regulasi */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
+                  <span className="text-xs opacity-70 font-bold uppercase tracking-wider text-[var(--text-heading)]">
+                    Status Penguasaan Kompetensi
+                  </span>
+                  <div className={`flex items-center gap-2.5 my-2 ${statusContainerClass}`}>
+                    {statusIcon}
+                    <span className="text-base font-extrabold leading-tight">{statusTitle}</span>
+                  </div>
+                  <p className="text-[11px] opacity-75 text-[var(--text-body)] leading-relaxed">{statusSubtitle}</p>
+                </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 text-center">
-                <div className="w-14 h-14 rounded-full mx-auto mb-2 bg-slate-800 text-white font-bold text-base flex items-center justify-center shadow-sm">
-                  {portalStudent.name.substring(0, 2).toUpperCase()}
-                </div>
-                <h3 className="font-bold text-base">{portalStudent.name}</h3>
-                <p className="text-xs opacity-60">Peringkat Kelas #{portalStudent.rank}</p>
-                <span className="inline-block mt-2 px-3 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-500/30">
-                  Grade {portalStudent.grade} (Lulus Standar)
-                </span>
-              </div>
-
-              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
-                <span className="text-xs opacity-70 font-medium">Nilai Akumulatif Komprehensif</span>
-                <span className="text-3xl font-black text-amber-600 dark:text-amber-400 my-2">
-                  {portalStudent.compositeScore} <span className="text-xs opacity-50 font-normal">/ 100 pt</span>
-                </span>
-                <p className="text-[11px] opacity-60">Batas kelulusan minimum KKM: 70.00 pt</p>
-              </div>
-
-              <div className="clay-card-compact p-5 rounded-2xl border border-current/10 flex flex-col justify-between">
-                <span className="text-xs opacity-70 font-medium">Status Penguasaan Kompetensi</span>
-                <div className="flex items-center gap-2 my-2 text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 className="w-6 h-6" />
-                  <span className="text-base font-bold">Siap Mengikuti Ujian JFT-Basic</span>
-                </div>
-                <p className="text-[11px] opacity-60">Kurikulum Irodori JF CEFR A2 Terpenuhi</p>
-              </div>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </main>
       </div>
 
