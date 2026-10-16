@@ -566,3 +566,62 @@ h1, h2, h3, h4, .font-heading {
     visibility: visible !important;
   }
 }
+
+/* ========================================================
+   DIAGNOSTIC MATRIX & RAPOR TABLE CONTRAST HARMONIZATION
+   ======================================================== */
+.diagnostic-sticky-cell {
+  background-color: var(--background) !important;
+  color: var(--text-heading) !important;
+}
+
+[data-theme="burgundy"] .diagnostic-sticky-cell,
+:root .diagnostic-sticky-cell {
+  background-color: #1a080d !important;
+  color: #ffffff !important;
+}
+
+[data-theme="obsidian"] .diagnostic-sticky-cell {
+  background-color: #0d1522 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="jade"] .diagnostic-sticky-cell {
+  background-color: #071f18 !important;
+  color: #f0fdf4 !important;
+}
+
+[data-theme="plum"] .diagnostic-sticky-cell {
+  background-color: #1a0728 !important;
+  color: #faf5ff !important;
+}
+
+[data-theme="milk"] .diagnostic-sticky-cell {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+[data-theme="ivory"] .diagnostic-sticky-cell {
+  background-color: #fdfbf7 !important;
+  color: #1e1b18 !important;
+}
+
+/* Ensure student name is always crisp and visible */
+.diagnostic-student-name {
+  color: var(--text-heading) !important;
+  font-weight: 800 !important;
+}
+
+[data-theme="burgundy"] .diagnostic-student-name,
+[data-theme="obsidian"] .diagnostic-student-name,
+[data-theme="jade"] .diagnostic-student-name,
+[data-theme="plum"] .diagnostic-student-name,
+:root .diagnostic-student-name {
+  color: #ffffff !important;
+}
+
+[data-theme="milk"] .diagnostic-student-name,
+[data-theme="ivory"] .diagnostic-student-name {
+  color: #0f172a !important;
+}
+

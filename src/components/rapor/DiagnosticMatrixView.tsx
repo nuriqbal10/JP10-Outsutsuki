@@ -547,43 +547,43 @@ export default function DiagnosticMatrixView({
 
         {/* 4 POIN LEGEND BADGES */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-current/10 text-xs">
-          <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-500 flex items-center justify-center font-black text-xs">
+          <div className="p-2.5 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-blue-500/25 text-blue-400 flex items-center justify-center font-black text-xs">
               1
             </div>
             <div>
-              <p className="font-black text-[11px] text-blue-600 dark:text-blue-400">Shiken Bab (4 Seksi)</p>
-              <p className="text-[10px] opacity-70">Moji-Goi, Kaiwa, Choukai, Dokkai</p>
+              <p className="font-black text-[11px] text-blue-400">Shiken Bab (4 Seksi)</p>
+              <p className="text-[10px] opacity-80 text-[var(--text-body)]">Moji-Goi, Kaiwa, Choukai, Dokkai</p>
             </div>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-500 flex items-center justify-center font-black text-xs">
+          <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-rose-500/25 text-rose-400 flex items-center justify-center font-black text-xs">
               2
             </div>
             <div>
-              <p className="font-black text-[11px] text-rose-600 dark:text-rose-400">Kanji (漢字)</p>
-              <p className="text-[10px] opacity-70">Goresan &amp; Arti Huruf Kanji</p>
+              <p className="font-black text-[11px] text-rose-400">Kanji (漢字)</p>
+              <p className="text-[10px] opacity-80 text-[var(--text-body)]">Goresan &amp; Arti Huruf Kanji</p>
             </div>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-500 flex items-center justify-center font-black text-xs">
+          <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-amber-500/25 text-amber-400 flex items-center justify-center font-black text-xs">
               3
             </div>
             <div>
-              <p className="font-black text-[11px] text-amber-600 dark:text-amber-400">Kotoba (言葉)</p>
-              <p className="text-[10px] opacity-70">Penguasaan Kosakata Tema</p>
+              <p className="font-black text-[11px] text-amber-400">Kotoba (言葉)</p>
+              <p className="text-[10px] opacity-80 text-[var(--text-body)]">Penguasaan Kosakata Tema</p>
             </div>
           </div>
 
-          <div className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-500 flex items-center justify-center font-black text-xs">
+          <div className="p-2.5 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-teal-500/25 text-teal-400 flex items-center justify-center font-black text-xs">
               4
             </div>
             <div>
-              <p className="font-black text-[11px] text-teal-600 dark:text-teal-400">Honyaku (翻訳)</p>
-              <p className="text-[10px] opacity-70">Ketepatan Alih Bahasa</p>
+              <p className="font-black text-[11px] text-teal-400">Honyaku (翻訳)</p>
+              <p className="text-[10px] opacity-80 text-[var(--text-body)]">Ketepatan Alih Bahasa</p>
             </div>
           </div>
         </div>
@@ -642,29 +642,29 @@ export default function DiagnosticMatrixView({
                 placeholder="Cari nama peserta didik..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs border border-current/15 bg-white/40 dark:bg-stone-950/40 focus:outline-hidden focus:border-amber-500"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs border border-current/20 bg-black/15 text-[var(--text-heading)] placeholder:opacity-50 focus:outline-hidden focus:border-amber-500"
               />
             </div>
           </div>
 
           {/* TABEL MATRIKS DIAGNOSTIK KELAS */}
           <div className="clay-card p-4 sm:p-5 rounded-3xl border border-current/10 shadow-xl overflow-hidden space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold opacity-80 px-1">
+            <div className="flex items-center justify-between text-xs font-bold opacity-90 px-1">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" /> Tuntas (≥70%)
                 <span className="w-3 h-3 rounded-full bg-amber-500 inline-block ml-2" /> Waspada (55–69%)
                 <span className="w-3 h-3 rounded-full bg-rose-500 inline-block ml-2" /> Defisit (&lt;55%)
               </div>
-              <p className="text-[11px] opacity-70 hidden sm:block">
+              <p className="text-[11px] opacity-80 hidden sm:block">
                 Klik baris siswa untuk membuka diagnostik individual detail
               </p>
             </div>
 
-            <div className="overflow-x-auto border border-current/15 rounded-2xl bg-white/40 dark:bg-stone-950/40 p-1">
+            <div className="overflow-x-auto border border-current/20 rounded-2xl bg-black/20 p-1">
               <table className="w-full text-center border-collapse text-[10px]">
                 <thead>
-                  <tr className="bg-black/10 dark:bg-white/10 font-bold opacity-90 text-[10px]">
-                    <th className="p-2 text-left pl-3 sticky left-0 z-10 bg-stone-100 dark:bg-stone-900 border-r border-current/10 min-w-[140px]">
+                  <tr className="bg-black/30 font-bold opacity-90 text-[10px]">
+                    <th className="p-2.5 text-left pl-3 sticky left-0 z-20 diagnostic-sticky-cell border-r border-current/20 min-w-[150px] shadow-md font-bold">
                       Peserta Didik ({filteredStudents.length})
                     </th>
 
@@ -674,7 +674,7 @@ export default function DiagnosticMatrixView({
                     ))}
 
                     {/* Checkpoint 1 (Bab 1-6) */}
-                    <th className="p-1.5 min-w-[48px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black border-x border-amber-500/30">
+                    <th className="p-1.5 min-w-[50px] bg-amber-500/25 text-amber-300 font-black border-x border-amber-500/40">
                       CP 1-6
                     </th>
 
@@ -684,7 +684,7 @@ export default function DiagnosticMatrixView({
                     ))}
 
                     {/* Checkpoint 2 (Bab 7-12) */}
-                    <th className="p-1.5 min-w-[48px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black border-x border-amber-500/30">
+                    <th className="p-1.5 min-w-[50px] bg-amber-500/25 text-amber-300 font-black border-x border-amber-500/40">
                       CP 7-12
                     </th>
 
@@ -694,12 +694,12 @@ export default function DiagnosticMatrixView({
                     ))}
 
                     {/* Checkpoint 3 (Bab 13-18) */}
-                    <th className="p-1.5 min-w-[48px] bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black border-x border-amber-500/30">
+                    <th className="p-1.5 min-w-[50px] bg-amber-500/25 text-amber-300 font-black border-x border-amber-500/40">
                       CP 13-18
                     </th>
 
                     {/* Shiken 1 Buku */}
-                    <th className="p-1.5 min-w-[56px] bg-purple-500/20 text-purple-600 dark:text-purple-300 font-black border-l border-purple-500/30">
+                    <th className="p-1.5 min-w-[60px] bg-purple-500/30 text-purple-200 font-black border-l border-purple-500/40">
                       SHIKEN BUKU
                     </th>
 
@@ -716,15 +716,15 @@ export default function DiagnosticMatrixView({
                         setSelectedStudentNo(st.no);
                         setViewMode("individual");
                       }}
-                      className="hover:bg-amber-500/10 cursor-pointer transition group"
+                      className="hover:bg-amber-500/15 cursor-pointer transition group"
                     >
-                      {/* Nama Siswa */}
-                      <td className="p-2 text-left pl-3 sticky left-0 z-10 bg-white/95 dark:bg-stone-900/95 border-r border-current/10 font-bold group-hover:bg-amber-500/10 transition">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-4 h-4 rounded-full bg-black/10 dark:bg-white/10 text-[9px] flex items-center justify-center font-mono shrink-0">
+                      {/* Nama Siswa (Sticky Cell Berlatar Tema & Teks Kontras Tinggi) */}
+                      <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-bold group-hover:bg-amber-500/25 transition shadow-md">
+                        <div className="flex items-center gap-2">
+                          <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-[9px] flex items-center justify-center font-mono shrink-0 font-black">
                             {st.rank || st.no}
                           </span>
-                          <span className="truncate max-w-[120px]" title={st.name}>
+                          <span className="truncate max-w-[125px] diagnostic-student-name font-black text-xs" title={st.name}>
                             {st.name}
                           </span>
                         </div>
@@ -971,7 +971,7 @@ export default function DiagnosticMatrixView({
                 <select
                   value={selectedStudentNo}
                   onChange={(e) => setSelectedStudentNo(Number(e.target.value))}
-                  className="px-3 py-2 rounded-xl text-xs font-bold border border-current/20 bg-white/60 dark:bg-stone-900/60 focus:outline-hidden focus:border-amber-500"
+                  className="px-3 py-2 rounded-xl text-xs font-bold border border-current/20 bg-[var(--background)] text-[var(--text-heading)] focus:outline-hidden focus:border-amber-500"
                 >
                   {students.map((st) => (
                     <option key={st.no} value={st.no} className="bg-stone-900 text-white">
@@ -982,7 +982,7 @@ export default function DiagnosticMatrixView({
 
                 <button
                   onClick={() => onOpenStudentDetail && onOpenStudentDetail(selectedStudent)}
-                  className="px-3 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-stone-950 transition text-xs font-bold flex items-center gap-1.5"
+                  className="px-3 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-stone-950 transition text-xs font-bold flex items-center gap-1.5"
                   title="Buka Modal Profil & Rapor Resmi"
                 >
                   <Eye className="w-3.5 h-3.5" />
@@ -994,19 +994,19 @@ export default function DiagnosticMatrixView({
             {/* DIAGNOSTIC HIGHLIGHT CARDS (KELEMAHAN & KEKUATAN) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-current/10">
               {/* Card 1: Kekurangan Utama */}
-              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-black text-rose-600 dark:text-rose-400">
+              <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-black text-rose-400">
                   <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10.5px]">
-                    <AlertTriangle className="w-4 h-4" /> Area Kekurangan Utama
+                    <AlertTriangle className="w-4 h-4 text-rose-400" /> Area Kekurangan Utama
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-500 text-[10px] font-mono">
+                  <span className="px-2 py-0.5 rounded-full bg-rose-500/25 text-rose-300 text-[10px] font-mono font-bold">
                     Prioritas Remedial
                   </span>
                 </div>
-                <h4 className="font-extrabold text-sm sm:text-base">
+                <h4 className="font-extrabold text-sm sm:text-base text-[var(--text-heading)]">
                   {studentOverallDeficiencies.weakestSection}
                 </h4>
-                <p className="text-xs opacity-75 leading-relaxed">
+                <p className="text-xs opacity-80 leading-relaxed text-[var(--text-body)]">
                   {studentOverallDeficiencies.items.length > 0
                     ? studentOverallDeficiencies.items.slice(0, 2).join(", ")
                     : "Tidak terdeteksi kelemahan kritis. Seluruh materi berada di atas standar tuntas."}
@@ -1014,43 +1014,43 @@ export default function DiagnosticMatrixView({
               </div>
 
               {/* Card 2: Kekuatan Utama */}
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-black text-emerald-600 dark:text-emerald-400">
+              <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-black text-emerald-400">
                   <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10.5px]">
-                    <TrendingUp className="w-4 h-4" /> Area Unggulan (Kekuatan)
+                    <TrendingUp className="w-4 h-4 text-emerald-400" /> Area Unggulan (Kekuatan)
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500 text-[10px] font-mono">
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/25 text-emerald-300 text-[10px] font-mono font-bold">
                     Tuntas Tinggi
                   </span>
                 </div>
-                <h4 className="font-extrabold text-sm sm:text-base">
+                <h4 className="font-extrabold text-sm sm:text-base text-[var(--text-heading)]">
                   {selectedStudent.pilar && selectedStudent.pilar.dokkai >= selectedStudent.pilar.choukai
                     ? "Pemahaman Bacaan (Dokkai)"
                     : "Menyimak Audio (Choukai)"}
                 </h4>
-                <p className="text-xs opacity-75 leading-relaxed">
+                <p className="text-xs opacity-80 leading-relaxed text-[var(--text-body)]">
                   Konsisten meraih poin tinggi pada tugas listening dan dialog percakapan situasional.
                 </p>
               </div>
 
               {/* Card 3: Evaluasi Checkpoint & Ujian Akhir */}
-              <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-black text-purple-600 dark:text-purple-400">
+              <div className="p-4 rounded-2xl bg-purple-500/15 border border-purple-500/30 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-black text-purple-300">
                   <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10.5px]">
-                    <Award className="w-4 h-4" /> Kesiapan Sertifikasi A2
+                    <Award className="w-4 h-4 text-purple-300" /> Kesiapan Sertifikasi A2
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-500 text-[10px] font-mono">
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/25 text-purple-200 text-[10px] font-mono font-bold">
                     JFT-Basic Standard
                   </span>
                 </div>
-                <h4 className="font-extrabold text-sm sm:text-base">
+                <h4 className="font-extrabold text-sm sm:text-base text-[var(--text-heading)]">
                   {selectedStudent.grade === "A"
                     ? "Sangat Siap (A - 優秀)"
                     : selectedStudent.grade === "B"
                     ? "Siap Bersyarat (B - 良好)"
                     : "Perlu Pemantapan (C/D)"}
                 </h4>
-                <p className="text-xs opacity-75 leading-relaxed">
+                <p className="text-xs opacity-80 leading-relaxed text-[var(--text-body)]">
                   {selectedStudent.grade === "A"
                     ? "Memiliki modalitas seimbang untuk kelulusan Ujian Resmi JFT-Basic A2."
                     : "Direkomendasikan memperkuat latihan kecepatan membaca wacana sebelum ujian resmi."}
@@ -1063,48 +1063,48 @@ export default function DiagnosticMatrixView({
           <div className="clay-card p-4 sm:p-6 rounded-3xl border border-current/10 shadow-xl space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-current/10 pb-3">
               <div>
-                <h4 className="text-base font-bold font-serif flex items-center gap-2">
+                <h4 className="text-base font-bold font-serif flex items-center gap-2 text-[var(--text-heading)]">
                   <FileText className="w-4 h-4 text-amber-500" />
                   Rincian Diagnostik Per Bab &amp; Checkpoint
                 </h4>
-                <p className="text-xs opacity-70 mt-0.5">
+                <p className="text-xs opacity-75 mt-0.5 text-[var(--text-body)]">
                   Tabel pemetaan detail 4 seksi Shiken, Kanji, Kotoba, Honyaku beserta titik evaluasi kekurangan.
                 </p>
               </div>
-              <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-black/5 dark:bg-white/10 border border-current/15">
+              <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-black/15 border border-current/15 text-[var(--text-heading)]">
                 Total 22 Baris Evaluasi
               </span>
             </div>
 
-            <div className="overflow-x-auto border border-current/15 rounded-2xl bg-white/30 dark:bg-stone-950/40">
+            <div className="overflow-x-auto border border-current/20 rounded-2xl bg-black/20">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-current/15 bg-black/5 dark:bg-white/5 opacity-80 text-[10.5px] uppercase font-bold">
+                  <tr className="border-b border-current/20 bg-black/30 opacity-90 text-[10.5px] uppercase font-bold text-[var(--text-heading)]">
                     <th className="py-3 px-3 min-w-[140px]">Bab / Ujian</th>
                     {/* Seksi Shiken */}
-                    <th className="py-3 px-2 text-center text-blue-600 dark:text-blue-400">
+                    <th className="py-3 px-2 text-center text-blue-400">
                       Moji-Goi (24/48)
                     </th>
-                    <th className="py-3 px-2 text-center text-cyan-600 dark:text-cyan-400">
+                    <th className="py-3 px-2 text-center text-cyan-400">
                       Kaiwa (24/48)
                     </th>
-                    <th className="py-3 px-2 text-center text-emerald-600 dark:text-emerald-400">
+                    <th className="py-3 px-2 text-center text-emerald-400">
                       Choukai (24/66)
                     </th>
-                    <th className="py-3 px-2 text-center text-purple-600 dark:text-purple-400">
+                    <th className="py-3 px-2 text-center text-purple-300">
                       Dokkai (28/88)
                     </th>
-                    <th className="py-3 px-2 text-center font-black text-amber-500">
+                    <th className="py-3 px-2 text-center font-black text-amber-400">
                       Total Shiken
                     </th>
                     {/* 3 Aspek Lainnya */}
-                    <th className="py-3 px-2 text-center text-rose-500 font-bold">
+                    <th className="py-3 px-2 text-center text-rose-400 font-bold">
                       2. Kanji
                     </th>
-                    <th className="py-3 px-2 text-center text-amber-500 font-bold">
+                    <th className="py-3 px-2 text-center text-amber-400 font-bold">
                       3. Kotoba
                     </th>
-                    <th className="py-3 px-2 text-center text-teal-500 font-bold">
+                    <th className="py-3 px-2 text-center text-teal-400 font-bold">
                       4. Honyaku
                     </th>
                     {/* Diagnosa Kekurangan */}

@@ -97,17 +97,29 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<ThemeId>("burgundy");
   const [mounted, setMounted] = useState(false);
 
+  const applyThemeToDOM = (theme: ThemeId) => {
+    const isLight = theme === "milk" || theme === "ivory";
+    document.documentElement.setAttribute("data-theme", theme);
+    if (isLight) {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    }
+  };
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem("outsutsuki_theme") as ThemeId;
       if (saved && THEME_OPTIONS.some((t) => t.id === saved)) {
         setCurrentTheme(saved);
-        document.documentElement.setAttribute("data-theme", saved);
+        applyThemeToDOM(saved);
       } else {
-        document.documentElement.setAttribute("data-theme", "burgundy");
+        applyThemeToDOM("burgundy");
       }
     } catch {
-      // fallback
+      applyThemeToDOM("burgundy");
     }
     setMounted(true);
   }, []);
@@ -116,7 +128,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setCurrentTheme(theme);
     try {
       localStorage.setItem("outsutsuki_theme", theme);
-      document.documentElement.setAttribute("data-theme", theme);
+      applyThemeToDOM(theme);
     } catch {
       // ignore
     }
