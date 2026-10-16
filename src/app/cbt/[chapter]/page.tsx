@@ -544,7 +544,11 @@ export default function CbtSessionPage() {
 
                 <audio
                   controls
-                  src={currentQ.audioR2Url}
+                  src={
+                    currentQ.audioR2Url?.startsWith("http") || currentQ.audioR2Url?.startsWith("/lkpd/")
+                      ? currentQ.audioR2Url
+                      : `/lkpd/bab${currentQ.chapter}/audio/${currentQ.audioR2Url?.split("/").pop()}`
+                  }
                   onError={(e) => {
                     const target = e.currentTarget;
                     const filename = currentQ.audioR2Url?.split("/").pop();
