@@ -3,13 +3,24 @@ import { ArrowLeft, Clock, Volume2, Award, CheckCircle2, AlertCircle, FileText, 
 
 export default function CbtSimulatorPage() {
   const chapters = [
-    { num: 1, title: "私のこと", topic: "Perkenalan Diri & Kehidupan di Jepang", questions: 90, status: "Siap Ujian" },
-    { num: 2, title: "どんな人ですか", topic: "Ciri Fisik, Karakter & Pakaian", questions: 90, status: "Siap Ujian" },
-    { num: 3, title: "おすすめは何ですか", topic: "Restoran, Makanan & Reservasi", questions: 90, status: "Siap Ujian" },
-    { num: 4, title: "何時からですか", topic: "Jam Kerja, Lembur & Jadwal", questions: 90, status: "Siap Ujian" },
-    { num: 5, title: "安全第一", topic: "Aturan Pabrik & Keselamatan K3", questions: 90, status: "Siap Ujian" },
-    { num: 6, title: "どうやって行きますか", topic: "Transportasi, Tiket & Rute", questions: 90, status: "Siap Ujian" },
+    { num: 1, title: "私のこと", topic: "Perkenalan Diri & Kehidupan di Jepang", questions: 100, status: "Siap Ujian" },
+    { num: 2, title: "どんな人ですか", topic: "Ciri Fisik, Karakter & Pakaian", questions: 100, status: "Siap Ujian" },
+    { num: 3, title: "おすすめは何ですか", topic: "Restoran, Makanan & Reservasi", questions: 100, status: "Siap Ujian" },
+    { num: 4, title: "何時からですか", topic: "Jam Kerja, Lembur & Jadwal", questions: 100, status: "Siap Ujian" },
+    { num: 5, title: "安全第一", topic: "Aturan Pabrik & Keselamatan K3", questions: 95, status: "Siap Ujian" },
+    { num: 6, title: "どうやって行きますか", topic: "Transportasi, Tiket & Rute", questions: 95, status: "Siap Ujian" },
     { num: 7, title: "雨が降ったら、ホールでやります", topic: "Festival & Acara Komunitas", questions: 90, status: "Siap Ujian" },
+    { num: 8, title: "屋台はどこかわかりますか？", topic: "Denah Stan Festival & Posisi", questions: 40, status: "Siap Ujian" },
+    { num: 9, title: "成人の日は、何をするんですか？", topic: "Hari Libur Nasional & Perayaan Jepang", questions: 40, status: "Siap Ujian" },
+    { num: 10, title: "どんな服を着て行けばいいですか？", topic: "Etiket Menghadiri Acara & Pakaian", questions: 40, status: "Siap Ujian" },
+    { num: 11, title: "ポイントカードを忘れてしまいました", topic: "Berbelanja, Fitting & Kasir", questions: 40, status: "Siap Ujian" },
+    { num: 12, title: "このボタンを押すと、エコモードに変わります", topic: "Pengoperasian Alat Elektronik & Tombol", questions: 40, status: "Siap Ujian" },
+    { num: 13, title: "いろいろな資料を展示してあります", topic: "Fasilitas Umum, Balai Kota & Galeri", questions: 40, status: "Siap Ujian" },
+    { num: 14, title: "髪をもう少し短くしてください", topic: "Salon Rambut, Laundry & Kurir Paket", questions: 40, status: "Siap Ujian" },
+    { num: 15, title: "ゴミを減らすために、マイバッグを持っています", topic: "Pemilahan Sampah & Gaya Hidup Eco", questions: 40, status: "Siap Ujian" },
+    { num: 16, title: "地震が起きたら、どうすればいいですか？", topic: "Mitigasi Bencana & Keselamatan Jiwa", questions: 40, status: "Siap Ujian" },
+    { num: 17, title: "日本語が前より話せるようになりました", topic: "Pertumbuhan Diri & Refleksi di Jepang", questions: 40, status: "Siap Ujian" },
+    { num: 18, title: "将来、自分の会社を作ろうと思っています", topic: "Impian Masa Depan, Karir & SSW", questions: 40, status: "Siap Ujian" },
   ];
 
   return (
@@ -66,7 +77,7 @@ export default function CbtSimulatorPage() {
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
               Pilih Paket Ujian per Bab (初級2)
             </h3>
-            <span className="text-xs text-rose-300/70 font-semibold">Total 772 Butir Soal Terintegrasi</span>
+            <span className="text-xs text-rose-300/70 font-semibold">Total 1.210 Butir Soal Terintegrasi</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

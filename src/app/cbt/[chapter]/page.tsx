@@ -545,6 +545,16 @@ export default function CbtSessionPage() {
                 <audio
                   controls
                   src={currentQ.audioR2Url}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const filename = currentQ.audioR2Url?.split("/").pop();
+                    if (filename && !target.src.includes("/lkpd/")) {
+                      const formattedFilename = filename.startsWith("Z_") && !filename.startsWith("Z_[")
+                        ? filename.replace(/^Z_(\d{2})-(\d{2})_/, "Z_[$1-$2]_")
+                        : filename;
+                      target.src = `/lkpd/bab${currentQ.chapter}/audio/${formattedFilename}`;
+                    }
+                  }}
                   onPlay={(e) => {
                     if ((audioPlayCounts[currentQ.id] || 0) >= 2) {
                       e.currentTarget.pause();
