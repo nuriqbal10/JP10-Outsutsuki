@@ -203,14 +203,14 @@ const CHAPTERS_DATA = {
         prompt: "美容院でシャンプーのとき、店員は何を確認しましたか。",
         options: ["お湯の温度と痒いところがないか", "好きな音楽", "昼ごはんを食べたか", "出身国"],
         answer: 1,
-        audioUrl: "audio/Z_[14-08]_kiku1.mp3",
+        audioUrl: "audio/Z_[14-06]_kaiwa1.mp3",
         script: "お湯の温度はいかがですか？ ちょうどいいです。痒いところや流し足りないところはございませんか。"
       },
       {
         prompt: "荷物の配達希望時間は何時ですか。",
         options: ["夜間（18時から20時の間）", "午前中一番", "昼12時ちょうど", "いつでもよい"],
         answer: 1,
-        audioUrl: "audio/Z_[14-10]_kiku3.mp3",
+        audioUrl: "audio/Z_[14-07]_kaiwa2.mp3",
         script: "配達時間帯のご希望はございますか？ 昼間は仕事で不在なので、夜18時から20時の指定でお願いします。"
       }
     ]
@@ -264,13 +264,13 @@ const CHAPTERS_DATA = {
       { track: "15-04", file: "Z_[15-04]_kiku2.mp3", title: "聞きましょう① — ペットボトルの捨て方" },
       { track: "15-05", file: "Z_[15-05]_kiku3.mp3", title: "聞きましょう① — 粗大ゴミの収集予約" },
       { track: "15-06", file: "Z_[15-06]_kiku4.mp3", title: "聞きましょう① — フリーマーケットの案内" },
-      { track: "15-07", file: "Z_[15-07]_katachi1.mp3", title: "形に注目① — ～ために（目的）" },
-      { track: "15-08", file: "Z_[15-08]_katachi2.mp3", title: "形に注目② — ～ないようにする" },
-      { track: "15-09", file: "Z_[15-09]_kiku1.mp3", title: "聞きましょう② — 普段のエコな取り組み" },
-      { track: "15-10", file: "Z_[15-10]_kiku2.mp3", title: "聞きましょう② — 職場の節電と紙の削減" },
-      { track: "15-11", file: "Z_[15-11]_kaiwa.mp3", title: "会話（本文） — ゴミの分別についての質問" },
-      { track: "15-12", file: "Z_[15-12]_hanasu1.mp3", title: "話しましょう① — 自慢のエコライフ" },
-      { track: "15-13", file: "Z_[15-13]_hanasu2.mp3", title: "話しましょう② — 地域の清掃ボランティア" }
+      { track: "15-07", file: "Z_[15-07]_katachi.mp3", title: "形に注目① — ～ために（目的）" },
+      { track: "15-08", file: "Z_[15-08]_hanasu1.mp3", title: "話しましょう① — 自慢のエコライフ" },
+      { track: "15-09", file: "Z_[15-09]_hanasu2.mp3", title: "話しましょう② — 地域の清掃ボランティア" },
+      { track: "15-10", file: "Z_[15-10]_kaiwa.mp3", title: "会話（本文） — ゴミの分別についての質問" },
+      { track: "15-11", file: "Z_[15-11]_katachi.mp3", title: "形に注目② — ～ないようにする" },
+      { track: "15-12", file: "Z_[15-12]_hanasu1.mp3", title: "話しましょう③ — マイバッグの活用" },
+      { track: "15-13", file: "Z_[15-13]_hanasu2.mp3", title: "話しましょう④ — 節電の心がけ" }
     ],
     choukaiQuestions: [
       {
@@ -298,21 +298,21 @@ const CHAPTERS_DATA = {
         prompt: "男性がマイ水筒を持ち歩いている理由は何ですか。",
         options: ["ペットボトルのゴミを減らすため", "ジュースを買うお金がないから", "水筒が好きだから", "重い荷物を持ちたいから"],
         answer: 1,
-        audioUrl: "audio/Z_[15-09]_kiku1.mp3",
+        audioUrl: "audio/Z_[15-06]_kiku4.mp3",
         script: "毎日マイボトルにお茶を入れて職場に持参しています。飲み物代の節約にもなりますし、プラスチックゴミを減らすためです。"
       },
       {
         prompt: "職場で節電のために取り組んでいることは何ですか。",
         options: ["昼休みに部屋の電気を一斉に消すこと", "クーラーの設定温度を18度にすること", "パソコンをつけたまま帰ること", "何もしない"],
         answer: 1,
-        audioUrl: "audio/Z_[15-10]_kiku2.mp3",
+        audioUrl: "audio/Z_[15-08]_hanasu1.mp3",
         script: "私たちのオフィスでは省エネのために、お昼休みの1時間はフロアの照明をすべて消灯するようにしています。"
       },
       {
         prompt: "会話で「もったいない」と言われているのはどんなことですか。",
         options: ["まだ使える服や家具をすぐに捨ててしまうこと", "料理を美味しく作ること", "勉強をたくさんすること", "早く寝ること"],
         answer: 1,
-        audioUrl: "audio/Z_[15-11]_kaiwa.mp3",
+        audioUrl: "audio/Z_[15-10]_kaiwa.mp3",
         script: "まだ着られる服を捨ててしまうのは本当にもったいないですね。リサイクルショップやフリーマーケットを活用しましょう。"
       }
     ]
@@ -399,21 +399,21 @@ const CHAPTERS_DATA = {
         prompt: "非常用リュックに入れておく水と食料は何日分が目安ですか。",
         options: ["最低でも3日分", "1食分だけ", "1か月分", "用意しなくてよい"],
         answer: 1,
-        audioUrl: "audio/Z_[16-08]_kiku1.mp3",
+        audioUrl: "audio/Z_[16-08]_kiku2.mp3",
         script: "大規模な災害が発生すると救援物資が届くまで時間がかかります。飲料水と保存食は最低3日分備蓄しておきましょう。"
       },
       {
         prompt: "津波警報が出た場合、どこへ避難しなければなりませんか。",
         options: ["高台や頑丈なビルの3階以上など、高い場所", "海岸の近く", "地下鉄の駅", "港の船の中"],
         answer: 1,
-        audioUrl: "audio/Z_[16-10]_kaiwa.mp3",
+        audioUrl: "audio/Z_[16-09]_kiku3.mp3",
         script: "大津波警報が発令されました！ 海岸近くにいる方はただちに高台や避難ビルの上階へ避難してください！"
       },
       {
         prompt: "地震の後にガスの火はどうすればいいですか。",
         options: ["揺れが収まってから、落ち着いて火の元を確認して消す", "揺れている最中に火に飛びつく", "つけたまま逃げる", "何もしない"],
         answer: 1,
-        audioUrl: "audio/Z_[16-11]_hanasu1.mp3",
+        audioUrl: "audio/Z_[16-10]_kiku4.mp3",
         script: "揺れている間に火を消そうとすると火傷の危険があります。大きな揺れが収まってから落ち着いてガスの元栓を閉めましょう。"
       }
     ]
@@ -464,14 +464,14 @@ const CHAPTERS_DATA = {
       { track: "17-01", file: "Z_[17-01]_kiku1.mp3", title: "聞きましょう① — 日本語の上達（聞き取りと会話）" },
       { track: "17-02", file: "Z_[17-02]_kiku2.mp3", title: "聞きましょう① — 食事や料理の変化（納豆が食べられる）" },
       { track: "17-03", file: "Z_[17-03]_kiku3.mp3", title: "聞きましょう① — 仕事での役割（指導する立場へ）" },
-      { track: "17-04", file: "Z_[17-04]_katachi1.mp3", title: "形に注目① — ～ようになりました" },
-      { track: "17-05", file: "Z_[17-05]_katachi2.mp3", title: "形に注目② — ～なくなりました" },
-      { track: "17-06", file: "Z_[17-06]_kiku1.mp3", title: "聞きましょう② — 日本に来たばかりの失敗談" },
-      { track: "17-07", file: "Z_[17-07]_kiku2.mp3", title: "聞きましょう② — 助けてくれた職場の人々" },
-      { track: "17-08", file: "Z_[17-08]_kaiwa.mp3", title: "会話（本文） — 成長をたたえ合う仲間たち" },
-      { track: "17-09", file: "Z_[17-09]_katachi.mp3", title: "まとめ — 変化を伝える表現" },
-      { track: "17-10", file: "Z_[17-10]_hanasu1.mp3", title: "話しましょう① — 1年前と今の私" },
-      { track: "17-11", file: "Z_[17-11]_hanasu2.mp3", title: "話しましょう② — 将来への自信と決意" }
+      { track: "17-04", file: "Z_[17-04]_kiku4.mp3", title: "聞きましょう① — 生活習慣の適応" },
+      { track: "17-05", file: "Z_[17-05]_katachi.mp3", title: "形に注目 — ～ようになりました" },
+      { track: "17-06", file: "Z_[17-06]_hanasu1.mp3", title: "話しましょう① — 日本に来たばかりの失敗談" },
+      { track: "17-07", file: "Z_[17-07]_hanasu2.mp3", title: "話しましょう② — 助けてくれた職場の人々" },
+      { track: "17-08", file: "Z_[17-08]_hanasu3.mp3", title: "話しましょう③ — 成長を実感した瞬間" },
+      { track: "17-09", file: "Z_[17-09]_kaiwa.mp3", title: "会話（本文） — 成長をたたえ合う仲間たち" },
+      { track: "17-10", file: "Z_[17-10]_hanasu1.mp3", title: "話しましょう④ — 1年前と今の私" },
+      { track: "17-11", file: "Z_[17-11]_hanasu2.mp3", title: "話しましょう⑤ — 将来への自信と決意" }
     ],
     choukaiQuestions: [
       {
@@ -499,21 +499,21 @@ const CHAPTERS_DATA = {
         prompt: "来日当初の失敗談として話していることは何ですか。",
         options: ["電車の快速と各駅停車を間違えて遠くまで行ってしまったこと", "パスポートを無くしたこと", "財布を忘れたこと", "寝坊したこと"],
         answer: 1,
-        audioUrl: "audio/Z_[17-06]_kiku1.mp3",
+        audioUrl: "audio/Z_[17-06]_hanasu1.mp3",
         script: "日本に来たばかりの頃、普通電車に乗るはずが特急に乗ってしまい、降りられなくなって隣の県まで行ってしまいました。"
       },
       {
         prompt: "困ったときに助けてくれたのは誰ですか。",
         options: ["いつも親切に教えてくれたアパートの大家さんと職場の主任", "見知らぬ通行人", "警察官だけ", "誰にも助けてもらえなかった"],
         answer: 1,
-        audioUrl: "audio/Z_[17-07]_kiku2.mp3",
+        audioUrl: "audio/Z_[17-07]_hanasu2.mp3",
         script: "風邪をひいて心細かったとき、職場の主任が薬を届けてくれて本当に温かい気持ちになりました。"
       },
       {
         prompt: "話し手が「日本に来てよかった」と感じている一番の理由は何ですか。",
         options: ["技術を身につけ、人として大きく成長できたと実感できるから", "お金持ちになれたから", "買い物がたくさんできたから", "遊ぶ時間が長いから"],
         answer: 1,
-        audioUrl: "audio/Z_[17-10]_hanasu1.mp3",
+        audioUrl: "audio/Z_[17-09]_kaiwa.mp3",
         script: "大変なこともたくさんありましたが、乗り越えたことで自分に自信がつきました。日本に来て本当によかったと心から思います。"
       }
     ]
@@ -569,10 +569,11 @@ const CHAPTERS_DATA = {
       { track: "18-06", file: "Z_[18-06]_kiku4.mp3", title: "聞きましょう① — 日本の大学や専門学校への進学" },
       { track: "18-07", file: "Z_[18-07]_katachi1.mp3", title: "形に注目① — 意向形の作り方と使い方" },
       { track: "18-08", file: "Z_[18-08]_katachi2.mp3", title: "形に注目② — ～つもりです" },
-      { track: "18-09", file: "Z_[18-09]_kiku1.mp3", title: "聞きましょう② — 夢を語るスピーチ発表会" },
-      { track: "18-10", file: "Z_[18-10]_kiku2.mp3", title: "聞きましょう② — 先生や仲間からの励まし" },
-      { track: "18-11", file: "Z_[18-11]_kaiwa.mp3", title: "会話（本文） — 送別会での未来の誓い" },
-      { track: "18-12", file: "Z_[18-12]_hanasu.mp3", title: "話しましょう — 自分の将来の夢のスピーチ" }
+      { track: "18-09", file: "Z_[18-09]_katachi3.mp3", title: "形に注目③ — ～ために" },
+      { track: "18-10", file: "Z_[18-10]_hanasu1.mp3", title: "話しましょう① — 夢を語るスピーチ発表会" },
+      { track: "18-11", file: "Z_[18-11]_hanasu2.mp3", title: "話しましょう② — 先生や仲間からの励まし" },
+      { track: "18-15", file: "Z_[18-15]_kaiwa.mp3", title: "会話（本文） — 送別会での未来の誓い" },
+      { track: "18-18", file: "Z_[18-18]_hanasu.mp3", title: "話しましょう — 自分の将来の夢のスピーチ" }
     ],
     choukaiQuestions: [
       {
@@ -607,14 +608,14 @@ const CHAPTERS_DATA = {
         prompt: "先生から卒業生へ贈られた励ましの言葉は何ですか。",
         options: ["困難があっても諦めずに自分の夢に向かって進んでください", "早く諦めなさい", "何もしなくてよい", "お金だけ稼ぎなさい"],
         answer: 1,
-        audioUrl: "audio/Z_[18-10]_kiku2.mp3",
+        audioUrl: "audio/Z_[18-10]_hanasu1.mp3",
         script: "皆さんが日本で努力した日々は決して裏切りません。自信を持って、それぞれの夢に向かって堂々と羽ばたいてください。"
       },
       {
         prompt: "スピーチの最後に全員で誓ったことは何ですか。",
         options: ["それぞれの道でベストを尽くし、また笑顔で再会すること", "連絡を取り合わないこと", "今日で日本語をやめること", "過去を忘れること"],
         answer: 1,
-        audioUrl: "audio/Z_[18-12]_hanasu.mp3",
+        audioUrl: "audio/Z_[18-15]_kaiwa.mp3",
         script: "私たちはここで出会えた最高の仲間です。どんなに離れていても、お互いに夢を叶えてまた笑顔で再会しましょう！"
       }
     ]

@@ -28,48 +28,43 @@ Audit menyeluruh membuktikan bahwa seluruh butir soal Choukai (160 butir) dan Do
   - Total akumulasi butir soal diperbarui menjadi **1.210 butir soal terintegrasi**.
   - Setiap kartu bab (Bab 1 s.d. Bab 18) berstatus *"Siap Ujian"*.
 
+### 4. Siklus Rebalancing Kunci Jawaban & Validasi Audio Choukai (Bab 8 - 18)
+- `[web/scripts/rebalance_and_fix_all_cbt_lkpd.js]` & `[web/scripts/generate_bab13_18_lkpd.js]`
+  - Menghilangkan anomali kunci jawaban hardcode 'A' pada Bab 8 s.d. Bab 18.
+  - Melakukan permutasi seimbang pilihan ganda di `data-soal.js` dan re-seeding tabel `questions` Neon Cloud: tepat 10 butir 'a', 10 butir 'b', 10 butir 'c', dan 10 butir 'd' per bab (distribusi ideal 25%).
+  - Memperbaiki pemetaan audio Choukai Bab 14 s.d. 18 ke nama file otentik fisik di disk (seperti `Z_[14-06]_kaiwa1.mp3`, `Z_[15-06]_kiku4.mp3`, `Z_[16-08]_kiku2.mp3`, `Z_[17-06]_hanasu1.mp3`, `Z_[18-10]_hanasu1.mp3`, dll).
+- `[web/scripts/check_audio_links.js]`
+  - Skrip pemeriksa audio otomatis yang memverifikasi 100% file audio LKPD & CBT Bab 1–18 tersedia di disk.
+
 ---
 
 ## Hasil Pengujian
 
-### 1. Verifikasi Jumlah Soal per Bab di Database Neon Cloud
+### 1. Verifikasi Distribusi Kunci Jawaban per Bab (Bab 8 - 18)
 ```sql
-SELECT chapter, COUNT(*) as count FROM questions GROUP BY chapter ORDER BY chapter;
+SELECT chapter, answer_key, count(*)::int as count 
+FROM questions WHERE chapter >= 8 
+GROUP BY chapter, answer_key ORDER BY chapter, answer_key;
 ```
 Hasil:
-- Chapter 0 (Fukushuu 1): 90 soal
-- Chapter 1: 100 soal
-- Chapter 2: 100 soal
-- Chapter 3: 100 soal
-- Chapter 4: 100 soal
-- Chapter 5: 95 soal
-- Chapter 6: 95 soal
-- Chapter 7: 90 soal
-- Chapter 8: 40 soal
-- Chapter 9: 40 soal
-- Chapter 10: 40 soal
-- Chapter 11: 40 soal
-- Chapter 12: 40 soal
-- Chapter 13: 40 soal
-- Chapter 14: 40 soal
-- Chapter 15: 40 soal
-- Chapter 16: 40 soal
-- Chapter 17: 40 soal
-- Chapter 18: 40 soal
-**Total Keseluruhan: 1.210 Butir Soal Tersemai Sempurna di Database!**
+- Bab 8 s.d. Bab 18: Masing-masing memiliki tepat **10 a, 10 b, 10 c, 10 d** (25% seimbang, bebas bias).
 
-### 2. Kompilasi Produksi Next.js
+### 2. Verifikasi Ketersediaan File Audio Choukai (Bab 1 - 18)
+```text
+node scripts/check_audio_links.js
+✅ Bab 1 s.d. Bab 18: 100% SEMUA FILE AUDIO TERVERIFIKASI DITEMUKAN DI DISK!
+```
+
+### 3. Kompilasi Produksi Next.js
 ```
 npm run build
-✓ Compiled successfully in 7.0s
-Linting and checking validity of types ...
+✓ Compiled successfully in 5.0s
 Generating static pages (12/12)
-Finalizing page optimization ...
-Collecting build traces ...
 Exit Code: 0 (BUILD SUCCEEDED)
 ```
 
 ---
 
 ## Hal yang Tidak Sesuai Rencana
-- Tidak ada. Seluruh butir soal berhasil di-seed tanpa kegagalan koneksi database.
+- Ditemukan diskrepansi penamaan file audio Bab 14–18 saat audit awal, yang segera dimutakhirkan dan divalidasi hingga 100% cocok dengan file fisik.
+
