@@ -20,12 +20,22 @@ import {
   AVAILABLE_BADGES,
 } from "@/lib/gamification";
 
-const SAMPLE_KOTOBA_MINIGAME = [
+const KOTOBA_BANK = [
   { ja: "出身 (しゅっしん)", id: "Asal daerah / negara", options: ["Asal daerah / negara", "Pekerjaan", "Hobi", "Sekolah"] },
   { ja: "専門 (せんもん)", id: "Bidang spesialisasi", options: ["Bidang spesialisasi", "Asrama", "Pabrik", "Gaji"] },
-  { ja: "安全第一", id: "Utamakan keselamatan K3", options: ["Utamakan keselamatan K3", "Kerja lembur", "Waktu istirahat", "Aturan kebersihan"] },
+  { ja: "安全第一 (あんぜんだいいち)", id: "Utamakan keselamatan K3", options: ["Utamakan keselamatan K3", "Kerja lembur", "Waktu istirahat", "Aturan kebersihan"] },
   { ja: "残業 (ざんぎょう)", id: "Kerja lembur", options: ["Kerja lembur", "Shift malam", "Hari libur", "Tepat waktu"] },
   { ja: "避難所 (ひなんじょ)", id: "Tempat evakuasi darurat", options: ["Tempat evakuasi darurat", "Halte bus", "Rumah sakit", "Kantor polisi"] },
+  { ja: "分別 (ぶんべつ)", id: "Pemilahan sampah", options: ["Pemilahan sampah", "Daur ulang", "Penghematan listrik", "Pembakaran sampah"] },
+  { ja: "マイバッグ", id: "Tas belanja ramah lingkungan", options: ["Tas belanja ramah lingkungan", "Tas ransel kerja", "Kantong plastik", "Kotak bekal"] },
+  { ja: "美容院 (びよういん)", id: "Salon pangkas rambut", options: ["Salon pangkas rambut", "Rumah sakit", "Dry cleaning", "Toko pakaian"] },
+  { ja: "展示室 (てんじしつ)", id: "Ruang pameran / museum", options: ["Ruang pameran / museum", "Ruang meeting", "Perpustakaan", "Kantin"] },
+  { ja: "前髪 (まえがみ)", id: "Poni rambut", options: ["Poni rambut", "Rambut pendek", "Cat rambut", "Gaya rambut"] },
+  { ja: "特定技能 (とくていぎのう)", id: "Pekerja Berketerampilan Spesifik (SSW)", options: ["Pekerja Berketerampilan Spesifik (SSW)", "Pemagang teknis", "Pelajar asing", "Karyawan tetap"] },
+  { ja: "地震 (じしん)", id: "Gempa bumi", options: ["Gempa bumi", "Angin topan", "Banjir", "Kebakaran"] },
+  { ja: "休館日 (きゅうかんび)", id: "Hari libur tutup fasilitas", options: ["Hari libur tutup fasilitas", "Jam operasional", "Biaya masuk", "Jadwal pameran"] },
+  { ja: "粗大ゴミ (そだいごみ)", id: "Sampah ukuran besar / perabot", options: ["Sampah ukuran besar / perabot", "Sampah organik", "Botol plastik", "Kaleng minuman"] },
+  { ja: "将来 (しょうらい)", id: "Masa depan / cita-cita", options: ["Masa depan / cita-cita", "Masa lalu", "Pengalaman kerja", "Rencana tahun depan"] },
 ];
 
 export default function GamificationBanner() {
@@ -33,6 +43,7 @@ export default function GamificationBanner() {
   const [showGameModal, setShowGameModal] = useState(false);
 
   // Minigame State
+  const [activeQuestions, setActiveQuestions] = useState(KOTOBA_BANK.slice(0, 5));
   const [qIndex, setQIndex] = useState(0);
   const [gameScore, setGameScore] = useState(0);
   const [gameFinished, setGameFinished] = useState(false);
@@ -53,6 +64,8 @@ export default function GamificationBanner() {
   if (!state) return null;
 
   const handleStartGame = () => {
+    const shuffled = [...KOTOBA_BANK].sort(() => 0.5 - Math.random()).slice(0, 5);
+    setActiveQuestions(shuffled);
     setQIndex(0);
     setGameScore(0);
     setGameFinished(false);
@@ -65,7 +78,7 @@ export default function GamificationBanner() {
     if (selectedAns !== null) return;
     setSelectedAns(chosen);
 
-    const currentQ = SAMPLE_KOTOBA_MINIGAME[qIndex];
+    const currentQ = activeQuestions[qIndex];
     const correct = chosen === currentQ.id;
     setIsCorrect(correct);
 
@@ -74,7 +87,7 @@ export default function GamificationBanner() {
     }
 
     setTimeout(() => {
-      if (qIndex + 1 < SAMPLE_KOTOBA_MINIGAME.length) {
+      if (qIndex + 1 < activeQuestions.length) {
         setQIndex((prev) => prev + 1);
         setSelectedAns(null);
         setIsCorrect(null);
@@ -176,7 +189,7 @@ export default function GamificationBanner() {
               <>
                 <div className="flex items-center justify-between border-b border-current/10 pb-3">
                   <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
-                    <Zap className="w-4 h-4 fill-current" /> Kotoba Speed Match • Soal {qIndex + 1}/{SAMPLE_KOTOBA_MINIGAME.length}
+                    <Zap className="w-4 h-4 fill-current" /> Kotoba Speed Match • Soal {qIndex + 1}/{activeQuestions.length}
                   </div>
                   <span className="text-xs font-bold font-mono">Skor: {gameScore}</span>
                 </div>
@@ -184,15 +197,15 @@ export default function GamificationBanner() {
                 <div className="text-center py-4 bg-black/5 dark:bg-black/30 rounded-2xl border border-current/10">
                   <span className="text-xs font-bold opacity-60 block uppercase">Pilih Terjemahan yang Tepat:</span>
                   <h4 className="text-2xl font-black mt-2 text-amber-500">
-                    {SAMPLE_KOTOBA_MINIGAME[qIndex].ja}
+                    {activeQuestions[qIndex].ja}
                   </h4>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {SAMPLE_KOTOBA_MINIGAME[qIndex].options.map((opt, idx) => {
+                  {activeQuestions[qIndex].options.map((opt, idx) => {
                     let btnClass = "clay-btn p-3.5 rounded-xl text-xs font-bold text-left transition";
                     if (selectedAns) {
-                      if (opt === SAMPLE_KOTOBA_MINIGAME[qIndex].id) {
+                      if (opt === activeQuestions[qIndex].id) {
                         btnClass = "bg-emerald-600 text-white p-3.5 rounded-xl text-xs font-bold text-left shadow-lg scale-[1.02]";
                       } else if (opt === selectedAns) {
                         btnClass = "bg-rose-600 text-white p-3.5 rounded-xl text-xs font-bold text-left";
@@ -221,7 +234,7 @@ export default function GamificationBanner() {
                 <div>
                   <h3 className="text-2xl font-black">Latihan Selesai!</h3>
                   <p className="text-xs opacity-80 mt-1">
-                    Kamu berhasil menjawab {gameScore} dari {SAMPLE_KOTOBA_MINIGAME.length} soal dengan benar!
+                    Kamu berhasil menjawab {gameScore} dari {activeQuestions.length} soal dengan benar!
                   </p>
                   <div className="inline-block mt-3 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs font-black uppercase">
                     +{gameScore * 15} XP Ditambahkan ke Akun Anda!

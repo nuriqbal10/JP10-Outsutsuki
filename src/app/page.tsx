@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import GamificationBanner from "@/components/lms/GamificationBanner";
 
 export default function HomePage() {
   return (
@@ -80,7 +81,7 @@ export default function HomePage() {
               Portal Pembelajaran Bahasa Jepang <span className="text-amber-600 dark:text-amber-400">Kelas Outsutsuki</span>
             </h2>
             <p className="mt-4 opacity-85 text-sm sm:text-base leading-relaxed">
-              Platform belajar resmi khusus siswa <strong>Kelas Outsutsuki</strong> untuk menguasai materi <strong>Irodori A2.2</strong>, mengerjakan 12 bab LKPD terstandar, menyimak audio otentik, dan mengikuti simulasi ujian JFT-Basic A2.
+              Platform belajar resmi khusus siswa <strong>Kelas Outsutsuki</strong> untuk menguasai materi <strong>Irodori A2.2</strong>, mengerjakan 18 bab LKPD terstandar, menyimak audio otentik, dan mengikuti simulasi ujian JFT-Basic A2.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
@@ -124,6 +125,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* GAMIFICATION BASE (LEVEL, XP, STREAK & KOTOBA MINIGAME) */}
+        <GamificationBanner />
 
         {/* SPOTLIGHT: RAPOR & RANKING OUTSUTSUKI */}
         <section className="clay-card p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-amber-500/10 via-transparent to-amber-500/5">
