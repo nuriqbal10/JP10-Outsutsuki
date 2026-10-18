@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle, Volume2, Play } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import GamificationBanner from "@/components/lms/GamificationBanner";
 
 export default function IrodoriA2CoursePage() {
   const chapters = [
@@ -298,6 +299,9 @@ export default function IrodoriA2CoursePage() {
             Tryout Akbar (Fukushuu 1)
           </Link>
         </div>
+
+        {/* GAMIFICATION DASHBOARD (LEVEL, XP, STREAK, MINIGAME) */}
+        <GamificationBanner />
 
         {/* CHAPTER LIST */}
         <div className="flex flex-col gap-6">

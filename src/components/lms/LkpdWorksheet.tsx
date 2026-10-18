@@ -17,6 +17,7 @@ import {
   Edit2,
   Send,
 } from "lucide-react";
+import { addXp } from "@/lib/gamification";
 
 interface LkpdWorksheetProps {
   chapter: number;
@@ -166,6 +167,7 @@ export default function LkpdWorksheet({
           student: event.data.student || studentName,
           score: event.data.score,
         });
+        addXp(50, `Menyelesaikan LKPD Bab ${chapter}`);
         setTimeout(() => setSubmissionSuccess(null), 10000);
       }
     };

@@ -22,6 +22,7 @@ import {
   Layers,
   HelpCircle,
 } from "lucide-react";
+import { addXp } from "@/lib/gamification";
 
 export interface Question {
   id: number;
@@ -156,6 +157,7 @@ export default function ScoreReport({
         const json = await res.json();
         if (json.success) {
           setSavedToDb(true);
+          addXp(results.isPassed ? 150 : 75, results.isPassed ? "Lulus Ujian CBT JFT-Basic" : "Menyelesaikan Ujian CBT");
         }
       } catch (err) {
         console.error("Gagal menyimpan hasil ujian:", err);

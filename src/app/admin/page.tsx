@@ -27,7 +27,9 @@ import {
   Lock,
   RotateCcw,
   ExternalLink,
+  UploadCloud,
 } from "lucide-react";
+import BulkQuestionImporter from "@/components/admin/BulkQuestionImporter";
 
 interface Question {
   id: number;
@@ -50,6 +52,7 @@ interface Question {
 const ADMIN_TABS = [
   { id: "general", label: "General", desc: "Ikhtisar Server & Sistem LMS" },
   { id: "questions", label: "Bank Soal", desc: "Buat, Edit & Kelola Soal Ujian" },
+  { id: "import", label: "Impor Soal Massal", desc: "Upload Berkas Word (.docx), Blackboard, atau Aiken" },
   { id: "lkpd", label: "Tugas LKPD", desc: "Periksa Lembar Kerja & Nilai Siswa" },
   { id: "grades", label: "Grades CBT", desc: "Rekap Nilai & Hasil Ujian Simulator" },
   { id: "courses", label: "Courses", desc: "Manajemen Silabus & Bab" },
@@ -402,10 +405,10 @@ export default function SiteAdministrationPage() {
                     onChange={(e) => setSelectedChapter(parseInt(e.target.value, 10))}
                     className="p-2 rounded-xl bg-[#1A050D] border border-rose-900/60 text-xs font-bold text-amber-200 outline-none cursor-pointer focus:border-amber-400"
                   >
-                    <option value={0}>Fukushuu 1 (Bab 01–06)</option>
-                    {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                    <option value={0}>Fukushuu (Ujian Akbar)</option>
+                    {Array.from({ length: 18 }, (_, i) => i + 1).map((num) => (
                       <option key={num} value={num}>
-                        第{num}課 (Bab 0{num})
+                        第{num}課 (Bab {num < 10 ? `0${num}` : num})
                       </option>
                     ))}
                   </select>
@@ -440,14 +443,23 @@ export default function SiteAdministrationPage() {
                 </div>
               </div>
 
-              {/* Tombol Buat Soal Baru */}
-              <button
-                onClick={handleOpenCreate}
-                className="clay-btn-gold px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shrink-0 shadow-lg hover:scale-105 transition w-full md:w-auto justify-center"
-              >
-                <Plus className="w-4 h-4 stroke-[3]" />
-                Buat Soal Baru
-              </button>
+              {/* Action Buttons: Impor Massal & Buat Soal Baru */}
+              <div className="flex items-center gap-2.5 w-full md:w-auto">
+                <button
+                  onClick={() => setActiveTab("import")}
+                  className="clay-btn px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shrink-0 shadow-lg hover:scale-105 transition justify-center text-amber-300 border border-amber-500/40"
+                >
+                  <UploadCloud className="w-4 h-4 text-amber-400" />
+                  Impor Word / Blackboard
+                </button>
+                <button
+                  onClick={handleOpenCreate}
+                  className="clay-btn-gold px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shrink-0 shadow-lg hover:scale-105 transition justify-center"
+                >
+                  <Plus className="w-4 h-4 stroke-[3]" />
+                  Buat Soal Baru
+                </button>
+              </div>
             </div>
 
             {/* TABEL DAFTAR SOAL */}
@@ -547,6 +559,20 @@ export default function SiteAdministrationPage() {
               )}
             </div>
           </div>
+        )}
+
+        {/* ========================================================
+            TAB: IMPOR SOAL MASSAL (WORD / BLACKBOARD / AIKEN / CSV)
+            ======================================================== */}
+        {activeTab === "import" && (
+          <BulkQuestionImporter
+            defaultChapter={selectedChapter}
+            defaultSection={selectedSection === "all" ? "moji_goi" : selectedSection}
+            onSuccess={() => {
+              fetchQuestions();
+              setActiveTab("questions");
+            }}
+          />
         )}
 
         {/* ========================================================
@@ -1109,10 +1135,10 @@ export default function SiteAdministrationPage() {
                     onChange={(e) => setFormData({ ...formData, chapter: parseInt(e.target.value, 10) })}
                     className="w-full p-2.5 rounded-xl bg-[#1A050D] border border-rose-900/60 text-amber-100 font-bold outline-none"
                   >
-                    <option value={0}>Fukushuu 1 (Bab 0)</option>
-                    {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                    <option value={0}>Fukushuu (Ujian Akbar)</option>
+                    {Array.from({ length: 18 }, (_, i) => i + 1).map((n) => (
                       <option key={n} value={n}>
-                        Bab 0{n}
+                        第{n}課 (Bab {n < 10 ? `0${n}` : n})
                       </option>
                     ))}
                   </select>
