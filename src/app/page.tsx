@@ -213,7 +213,7 @@ export default function HomePage() {
               </div>
               <h3 className="font-extrabold text-lg">Modul LMS & LKPD</h3>
               <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                Buku modul resmi PDF, audio otentik The Japan Foundation, dan lembar kerja peserta didik (LKPD) Bab 1 s.d. 12.
+                Buku modul resmi PDF, audio otentik The Japan Foundation, dan lembar kerja peserta didik (LKPD) Bab 1 s.d. 18.
               </p>
             </div>
             <Link href="/lms" className="text-xs font-black text-amber-500 hover:underline flex items-center gap-1">
