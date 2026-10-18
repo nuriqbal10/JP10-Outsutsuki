@@ -169,3 +169,46 @@ function calculateRank(state: UserGamificationState): UserGamificationState {
     progressPercent: percent,
   };
 }
+
+export function setGamificationLevel(targetLevel: number): UserGamificationState {
+  const current = getGamificationState();
+  const clamped = Math.max(1, Math.min(10, targetLevel));
+  const targetRank = RANKS.find((r) => r.level === clamped) || RANKS[0];
+  
+  // Set XP to minXp of that level + 20%
+  const bonusXp = Math.round((targetRank.maxXp - targetRank.minXp) * 0.2);
+  const newXp = targetRank.minXp + bonusXp;
+
+  const updated: UserGamificationState = {
+    ...current,
+    xp: newXp,
+  };
+
+  const finalState = calculateRank(updated);
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(finalState));
+    window.dispatchEvent(new CustomEvent("gamification-updated", { detail: finalState }));
+  }
+  return finalState;
+}
+
+export function resetGamificationState(): UserGamificationState {
+  const initial: UserGamificationState = {
+    xp: 0,
+    level: 1,
+    rankTitle: RANKS[0].title,
+    rankBadge: RANKS[0].badge,
+    nextLevelXp: RANKS[0].maxXp,
+    progressPercent: 0,
+    dailyStreak: 1,
+    lastActiveDate: new Date().toISOString().split("T")[0],
+    badges: ["first_step"],
+  };
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    window.dispatchEvent(new CustomEvent("gamification-updated", { detail: initial }));
+  }
+  return initial;
+}
+
