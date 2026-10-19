@@ -25,7 +25,12 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  KeyRound,
+  Check,
+  LogIn,
+  User as UserIcon,
 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import { addXp } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
 import { sfx } from "@/lib/soundEffects";
@@ -36,6 +41,7 @@ interface Participant {
   email: string;
   name: string;
   avatar: string;
+  team?: "shinobi" | "samurai";
   joinedAt: number;
   score: number;
   hp: number;
@@ -45,16 +51,11 @@ interface Participant {
 interface RoomData {
   id: string;
   mode: BattleMode;
+  roomCode: string;
   requiredCount: number;
   status: "waiting" | "countdown" | "in_battle" | "finished";
   countdownSeconds: number;
   participants: Participant[];
-}
-
-interface EnrolledMember {
-  name: string;
-  email: string;
-  avatar: string;
 }
 
 interface BattleQuestion {
@@ -63,6 +64,15 @@ interface BattleQuestion {
   correct: string;
   options: string[];
 }
+
+const AVATAR_OPTIONS = [
+  { emoji: "🥷", label: "Shinobi" },
+  { emoji: "⚔️", label: "Samurai" },
+  { emoji: "🦊", label: "Kitsune" },
+  { emoji: "⚡", label: "Raikiri" },
+  { emoji: "🌸", label: "Kunoichi" },
+  { emoji: "🐲", label: "Ryu" },
+];
 
 const BATTLE_QUESTIONS: BattleQuestion[] = [
   { ja: "残業 (ざんぎょう)", romaji: "zangyou", correct: "Kerja lembur", options: ["Kerja lembur", "Shift malam", "Cuti tahunan", "Tepat waktu"] },
@@ -75,6 +85,8 @@ const BATTLE_QUESTIONS: BattleQuestion[] = [
   { ja: "粗大ゴミ (そだいごみ)", romaji: "sodaigomi", correct: "Sampah perabot / ukuran besar", options: ["Sampah perabot / ukuran besar", "Sampah dapur", "Botol plastik", "Kaleng minuman"] },
   { ja: "美容院 (びよういん)", romaji: "biyouin", correct: "Salon pangkas rambut", options: ["Salon pangkas rambut", "Rumah sakit", "Dry cleaning", "Toko pakaian"] },
   { ja: "点検 (てんけん)", romaji: "tenken", correct: "Pemeriksaan / inspeksi rutin", options: ["Pemeriksaan / inspeksi rutin", "Perbaikan mesin", "Pembersihan lantai", "Penggantian ban"] },
+  { ja: "非常口 (ひじょうぐち)", romaji: "hijouguchi", correct: "Pintu keluar darurat", options: ["Pintu keluar darurat", "Pintu gerbang utama", "Pintu gudang", "Pintu lift"] },
+  { ja: "賞味期限 (しょうみきげん)", romaji: "shoumikigen", correct: "Batas tanggal terbaik konsumsi", options: ["Batas tanggal terbaik konsumsi", "Tanggal pembuatan", "Harga diskon", "Berat bersih"] },
 ];
 
 export default function BattleRoyaleModal({
@@ -86,16 +98,23 @@ export default function BattleRoyaleModal({
   onClose: () => void;
   initialMode?: BattleMode;
 }) {
-  const [mode, setMode] = useState<BattleMode>(initialMode);
-  const [room, setRoom] = useState<RoomData | null>(null);
-  const [enrolledMembers, setEnrolledMembers] = useState<EnrolledMember[]>([]);
+  const { user, isLoaded } = useUser();
 
-  // User Identity from Email
+  // Mode & Room State
+  const [mode, setMode] = useState<BattleMode>(initialMode);
+  const [customRoomCode, setCustomRoomCode] = useState<string>("");
+  const [isUsingCustomRoom, setIsUsingCustomRoom] = useState<boolean>(false);
+  const [room, setRoom] = useState<RoomData | null>(null);
+
+  // Identity State
   const [myEmail, setMyEmail] = useState<string>("");
   const [myName, setMyName] = useState<string>("");
+  const [myAvatar, setMyAvatar] = useState<string>("🥷");
+  const [myTeam, setMyTeam] = useState<"shinobi" | "samurai">("shinobi");
   const [isJoined, setIsJoined] = useState(false);
-  const [loadingJoin, setLoadingJoin] = useState(false);
-  const [joinError, setJoinError] = useState<string | null>(null);
+  const [isMyReady, setIsMyReady] = useState(false);
+  const [loadingAction, setLoadingAction] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   // Battle State
   const [battleState, setBattleState] = useState<"lobby" | "countdown" | "in_battle" | "victory" | "defeat">("lobby");
@@ -111,28 +130,57 @@ export default function BattleRoyaleModal({
   const questionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load saved member email from storage if available
+  // Auto-detect logged in user from Clerk or local storage
   useEffect(() => {
-    const savedEmail = localStorage.getItem("irodori_user_email") || "";
-    const savedName = localStorage.getItem("irodori_user_name") || "";
-    if (savedEmail) setMyEmail(savedEmail);
-    if (savedName) setMyName(savedName);
-  }, []);
+    if (typeof window === "undefined") return;
+
+    if (user) {
+      const clerkEmail = user.primaryEmailAddress?.emailAddress || "";
+      const clerkName = user.fullName || user.firstName || user.username || "";
+      if (clerkEmail) {
+        setMyEmail(clerkEmail);
+        localStorage.setItem("irodori_user_email", clerkEmail);
+      }
+      if (clerkName) {
+        setMyName(clerkName);
+        localStorage.setItem("irodori_user_name", clerkName);
+      }
+    } else {
+      const savedEmail = localStorage.getItem("irodori_user_email") || "";
+      const savedName = localStorage.getItem("irodori_user_name") || "";
+      if (savedEmail) setMyEmail(savedEmail);
+      if (savedName) setMyName(savedName);
+    }
+  }, [user, isLoaded]);
+
+  // Active room code resolving
+  const currentActiveRoomCode = isUsingCustomRoom && customRoomCode.trim() ? customRoomCode.trim().toUpperCase() : "";
 
   // Poll Lobby Status from /api/battle-lobby
-  const fetchLobbyStatus = async (targetMode: BattleMode) => {
+  const fetchLobbyStatus = async (targetMode: BattleMode, roomCodeParam?: string) => {
     try {
-      const res = await fetch(`/api/battle-lobby?mode=${targetMode}&email=${encodeURIComponent(myEmail)}`);
+      const activeCode = roomCodeParam !== undefined ? roomCodeParam : currentActiveRoomCode;
+      const url = `/api/battle-lobby?mode=${targetMode}&roomCode=${encodeURIComponent(activeCode)}&email=${encodeURIComponent(myEmail)}`;
+      const res = await fetch(url);
       if (!res.ok) return;
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.room) {
         setRoom(data.room);
-        if (data.enrolledMembers && enrolledMembers.length === 0) {
-          setEnrolledMembers(data.enrolledMembers);
+
+        // Sync user's ready status from room
+        const meInRoom = data.room.participants.find((p: Participant) => p.email.toLowerCase() === myEmail.toLowerCase());
+        if (meInRoom) {
+          setIsJoined(true);
+          setIsMyReady(meInRoom.isReady);
+          if (meInRoom.team) setMyTeam(meInRoom.team);
+          if (meInRoom.avatar) setMyAvatar(meInRoom.avatar);
+        } else {
+          setIsJoined(false);
+          setIsMyReady(false);
         }
 
-        // If room is filled and countdown begins
-        if (data.room.status === "countdown" && battleState === "lobby" && isJoined) {
+        // Trigger countdown if room countdown started
+        if (data.room.status === "countdown" && battleState === "lobby") {
           triggerLobbyCountdown(data.room);
         }
       }
@@ -147,37 +195,39 @@ export default function BattleRoyaleModal({
       return;
     }
 
-    fetchLobbyStatus(mode);
+    fetchLobbyStatus(mode, currentActiveRoomCode);
     pollIntervalRef.current = setInterval(() => {
       if (battleState === "lobby") {
-        fetchLobbyStatus(mode);
+        fetchLobbyStatus(mode, currentActiveRoomCode);
       }
     }, 2000);
 
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
     };
-  }, [isOpen, mode, battleState, myEmail, isJoined]);
+  }, [isOpen, mode, battleState, myEmail, isUsingCustomRoom, customRoomCode]);
 
-  // Handle Mode Switch
+  // Mode Selection
   const handleSelectMode = (newMode: BattleMode) => {
+    if (isJoined) handleLeaveLobby();
     setMode(newMode);
     setBattleState("lobby");
     setIsJoined(false);
-    fetchLobbyStatus(newMode);
+    setIsMyReady(false);
+    fetchLobbyStatus(newMode, currentActiveRoomCode);
   };
 
-  // Join Lobby with Enrolled Email
-  const handleJoinLobby = async (emailToJoin: string, nameToJoin?: string) => {
-    if (!emailToJoin.trim()) {
-      setJoinError("Pilih atau masukkan email member terdaftar Anda.");
+  // Join Lobby as current user
+  const handleJoinLobby = async () => {
+    if (!myEmail.trim()) {
+      setActionError("Masukkan email akun Anda untuk bergabung.");
       return;
     }
 
-    setLoadingJoin(true);
-    setJoinError(null);
+    setLoadingAction(true);
+    setActionError(null);
 
-    const resolvedName = nameToJoin || myName || emailToJoin.split("@")[0].toUpperCase();
+    const resolvedName = myName.trim() || myEmail.split("@")[0].toUpperCase();
 
     try {
       const res = await fetch("/api/battle-lobby", {
@@ -186,51 +236,135 @@ export default function BattleRoyaleModal({
         body: JSON.stringify({
           action: "join",
           mode,
-          email: emailToJoin.trim().toLowerCase(),
+          roomCode: currentActiveRoomCode,
+          email: myEmail.trim().toLowerCase(),
           name: resolvedName,
-          avatar: "🥷",
+          avatar: myAvatar,
+          team: myTeam,
         }),
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setJoinError(data.error || "Gagal bergabung ke lobi.");
-        setLoadingJoin(false);
+        setActionError(data.error || "Gagal bergabung ke lobi.");
+        setLoadingAction(false);
         return;
       }
 
       setRoom(data.room);
       setIsJoined(true);
-      setMyEmail(emailToJoin.trim().toLowerCase());
-      setMyName(resolvedName);
-      localStorage.setItem("irodori_user_email", emailToJoin.trim().toLowerCase());
+      setIsMyReady(false);
+      localStorage.setItem("irodori_user_email", myEmail.trim().toLowerCase());
       localStorage.setItem("irodori_user_name", resolvedName);
       sfx.playCorrect();
-
-      // Check if this join fulfills the quota
-      if (data.room.participants.length >= data.room.requiredCount) {
-        triggerLobbyCountdown(data.room);
-      }
     } catch (e: any) {
-      setJoinError("Koneksi gagal. Coba lagi.");
+      setActionError("Koneksi gagal. Silakan coba lagi.");
     } finally {
-      setLoadingJoin(false);
+      setLoadingAction(false);
     }
   };
 
+  // Leave Lobby
   const handleLeaveLobby = async () => {
     try {
       await fetch("/api/battle-lobby", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "leave", mode, email: myEmail }),
+        body: JSON.stringify({
+          action: "leave",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
       });
       setIsJoined(false);
-      fetchLobbyStatus(mode);
+      setIsMyReady(false);
+      fetchLobbyStatus(mode, currentActiveRoomCode);
     } catch (e) {}
   };
 
-  // Countdown when Kuota Terpenuhi
+  // Student determines their own ready status
+  const handleToggleReady = async () => {
+    setLoadingAction(true);
+    setActionError(null);
+    try {
+      const nextReady = !isMyReady;
+      const res = await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "toggle_ready",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+          isReady: nextReady,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success && data.room) {
+        setRoom(data.room);
+        setIsMyReady(nextReady);
+        if (nextReady) {
+          sfx.playCorrect();
+        } else {
+          sfx.playTick();
+        }
+
+        if (data.room.status === "countdown") {
+          triggerLobbyCountdown(data.room);
+        }
+      }
+    } catch (e) {
+      setActionError("Gagal memperbarui status kesiapan.");
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  // Student determines their own team
+  const handleSelectTeam = async (team: "shinobi" | "samurai") => {
+    setMyTeam(team);
+    if (isJoined) {
+      try {
+        await fetch("/api/battle-lobby", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "choose_team",
+            mode,
+            roomCode: currentActiveRoomCode,
+            email: myEmail,
+            team,
+          }),
+        });
+        fetchLobbyStatus(mode, currentActiveRoomCode);
+      } catch (e) {}
+    }
+  };
+
+  // Student determines their own avatar
+  const handleSelectAvatar = async (avatar: string) => {
+    setMyAvatar(avatar);
+    if (isJoined) {
+      try {
+        await fetch("/api/battle-lobby", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "choose_avatar",
+            mode,
+            roomCode: currentActiveRoomCode,
+            email: myEmail,
+            avatar,
+          }),
+        });
+        fetchLobbyStatus(mode, currentActiveRoomCode);
+      } catch (e) {}
+    }
+  };
+
+  // Countdown when Kuota Terpenuhi & Semua Peserta SIAP
   const triggerLobbyCountdown = (currentRoom: RoomData) => {
     setBattleState("countdown");
     setCountdownNum(5);
@@ -264,12 +398,12 @@ export default function BattleRoyaleModal({
     setCurrentQIndex(0);
     setTimeLeft(8);
     setSelectedAnswer(null);
-    setBattleLog([`🔥 KUOTA TERPENUHI! ${participants.length} Member Resmi Bertanding!`]);
+    setBattleLog([`🔥 PERTANDINGAN DIMULAI! Seluruh peserta telah konfirmasi SIAP!`]);
     setBattleState("in_battle");
     sfx.playBlast();
   };
 
-  // Turn Timer Loop in Battle
+  // Question Timer Loop
   useEffect(() => {
     if (battleState !== "in_battle" || selectedAnswer !== null) {
       if (questionTimerRef.current) clearInterval(questionTimerRef.current);
@@ -319,7 +453,7 @@ export default function BattleRoyaleModal({
 
     setActiveCombatants((prev) => {
       return prev.map((c) => {
-        const isMe = c.email === myEmail;
+        const isMe = c.email.toLowerCase() === myEmail.toLowerCase();
         let hp = c.hp;
         let score = c.score;
 
@@ -332,7 +466,7 @@ export default function BattleRoyaleModal({
             newLogs.push(`💥 Anda ${chosen === "__TIMEOUT__" ? "KEHABISAN WAKTU" : "SALAH JAWAB"}! Menerima -25 HP.`);
           }
         } else {
-          // Live rival simulated reaction based on difficulty
+          // Live rival simulated reaction
           const rivalCorrect = Math.random() < 0.6;
           if (rivalCorrect) {
             score += 20;
@@ -357,8 +491,8 @@ export default function BattleRoyaleModal({
   };
 
   const checkBattleOver = () => {
-    const me = activeCombatants.find((c) => c.email === myEmail);
-    const others = activeCombatants.filter((c) => c.email !== myEmail);
+    const me = activeCombatants.find((c) => c.email.toLowerCase() === myEmail.toLowerCase());
+    const others = activeCombatants.filter((c) => c.email.toLowerCase() !== myEmail.toLowerCase());
     const othersAlive = others.filter((c) => c.hp > 0).length;
 
     if (me && me.hp <= 0) {
@@ -395,164 +529,354 @@ export default function BattleRoyaleModal({
   const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
   const currentParticipants = room?.participants || [];
   const slotsLeft = Math.max(0, requiredQuota - currentParticipants.length);
+  const allParticipantsReady =
+    currentParticipants.length >= requiredQuota &&
+    currentParticipants.every((p) => p.isReady);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5">
-      <div className="clay-card rounded-3xl p-5 sm:p-8 max-w-2xl w-full border border-rose-500/40 relative shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 max-h-[92vh] overflow-y-auto custom-scrollbar">
+      <div className="clay-card rounded-3xl p-5 sm:p-8 max-w-2xl w-full border border-rose-500/40 relative shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 max-h-[94vh] overflow-y-auto custom-scrollbar">
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
           className="absolute right-5 top-5 p-1.5 rounded-xl bg-black/10 dark:bg-white/10 hover:opacity-100 opacity-60 transition"
+          title="Tutup Modal"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* ================= STEP 1: LOBBY & KUOTA ANGGOTA ================= */}
+        {/* ================= STEP 1: LOBBY & PRE-MATCH ================= */}
         {battleState === "lobby" && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
+            {/* HEADER */}
             <div className="flex items-center gap-3 border-b border-current/10 pb-4">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center shadow-lg shrink-0">
                 <Swords className="w-6 h-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-black">Lobi Battle Royale Member</h2>
-                  <span className="text-[10px] font-black uppercase bg-rose-500/10 text-rose-500 border border-rose-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
-                    <Radio className="w-3 h-3 animate-pulse" /> Real Member
+                  <h2 className="text-xl sm:text-2xl font-black">Lobi Battle Royale Real-Member</h2>
+                  <span className="text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
+                    <Radio className="w-3 h-3 animate-pulse" /> Akun Siswa Mandiri
                   </span>
                 </div>
                 <p className="text-xs opacity-75 mt-0.5">
-                  Khusus member terdaftar di database email. Pertandingan otomatis dimulai saat kuota terpenuhi!
+                  Setiap siswa masuk dengan akunnya sendiri dan menentukan sendiri mode, avatar, kubu tim, serta konfirmasi kesiapan tanding.
                 </p>
               </div>
             </div>
 
-            {/* MODE SELECTION TABS */}
-            <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10">
-              <button
-                onClick={() => handleSelectMode("1vs1")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-                  mode === "1vs1" ? "bg-rose-500 text-white shadow-md" : "hover:bg-black/5 opacity-70"
-                }`}
-              >
-                <span>⚔️</span> Duel 1 vs 1 (2 Kuota)
-              </button>
-              <button
-                onClick={() => handleSelectMode("group")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-                  mode === "group" ? "bg-indigo-600 text-white shadow-md" : "hover:bg-black/5 opacity-70"
-                }`}
-              >
-                <span>🛡️</span> Tim 2 vs 2 (4 Kuota)
-              </button>
-              <button
-                onClick={() => handleSelectMode("all_members")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
-                  mode === "all_members" ? "bg-amber-500 text-stone-950 shadow-md" : "hover:bg-black/5 opacity-70"
-                }`}
-              >
-                <span>👑</span> Survival (6 Kuota)
-              </button>
+            {/* 1. IDENTITAS AKUN LOGIN (OTENTIKASI SISWA) */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
+                  <UserCheck className="w-4 h-4" />
+                  {user ? "Akun Login Terverifikasi (Clerk SSO)" : "Identitas Siswa (Akun Mandiri)"}
+                </div>
+                {user && (
+                  <span className="text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Logged In
+                  </span>
+                )}
+              </div>
+
+              {user ? (
+                // Tampilan Siswa yang sudah login di Portal / Clerk
+                <div className="flex items-center justify-between p-3 rounded-xl bg-black/10 dark:bg-black/30 border border-current/10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl font-black">
+                      {myAvatar}
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black flex items-center gap-1.5">
+                        {myName || "Siswa Terdaftar"}
+                      </h4>
+                      <p className="text-[11px] opacity-70 font-mono">{myEmail}</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg">
+                    Akun Aktif Anda
+                  </span>
+                </div>
+              ) : (
+                // Siswa menentukan sendiri email & namanya (input mandiri, BUKAN comot dropdown teman)
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Nama Lengkap Siswa</label>
+                    <input
+                      type="text"
+                      disabled={isJoined}
+                      value={myName}
+                      onChange={(e) => setMyName(e.target.value)}
+                      placeholder="Masukkan nama Anda..."
+                      className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Email Resmi Siswa</label>
+                    <input
+                      type="email"
+                      disabled={isJoined}
+                      value={myEmail}
+                      onChange={(e) => setMyEmail(e.target.value)}
+                      placeholder="email.siswa@irodori.outsutsuki.sch.id"
+                      className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-mono font-bold"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* MEMBER IDENTITY BAR (SELECT OR ENTER ENROLLED EMAIL) */}
-            {!isJoined ? (
-              <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col gap-3">
-                <div className="flex items-center gap-2 text-xs font-black text-amber-500 uppercase">
-                  <Mail className="w-4 h-4" /> Masuk Sebagai Member Terdaftar
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="flex-1">
-                    <select
-                      value={myEmail}
-                      onChange={(e) => {
-                        const sel = enrolledMembers.find((m) => m.email === e.target.value);
-                        setMyEmail(e.target.value);
-                        if (sel) setMyName(sel.name);
-                      }}
-                      className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold font-sans"
+            {/* 2. SISWA MENENTUKAN SENDIRI: AVATAR & ROOM */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Avatar Selector */}
+              <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase opacity-75">Tentukan Avatar Shinobi Anda</span>
+                <div className="flex items-center justify-between gap-1">
+                  {AVATAR_OPTIONS.map((av) => (
+                    <button
+                      key={av.emoji}
+                      onClick={() => handleSelectAvatar(av.emoji)}
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg transition ${
+                        myAvatar === av.emoji
+                          ? "bg-amber-500 text-black scale-110 shadow-md ring-2 ring-amber-400"
+                          : "hover:bg-black/10 dark:hover:bg-white/10 opacity-70"
+                      }`}
+                      title={av.label}
                     >
-                      <option value="">-- Pilih Nama Siswa Terdaftar (Kelas A2.2) --</option>
-                      {enrolledMembers.map((m, idx) => (
-                        <option key={idx} value={m.email}>
-                          {m.name} ({m.email})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      {av.emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
+              {/* Room Code Customizer */}
+              <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase opacity-75">Tentukan Room / Lobi</span>
                   <button
-                    disabled={loadingJoin || !myEmail}
-                    onClick={() => handleJoinLobby(myEmail, myName)}
-                    className="clay-btn-gold px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shrink-0 disabled:opacity-50"
+                    onClick={() => {
+                      setIsUsingCustomRoom(!isUsingCustomRoom);
+                      if (isJoined) handleLeaveLobby();
+                    }}
+                    className="text-[10px] font-bold text-amber-500 hover:underline flex items-center gap-1"
                   >
-                    {loadingJoin ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserCheck className="w-4 h-4" />}
-                    Masuk Lobi
+                    <KeyRound className="w-3 h-3" />
+                    {isUsingCustomRoom ? "Gunakan Lobi Umum" : "Pakai Kode Room Khusus"}
                   </button>
                 </div>
 
-                {joinError && (
-                  <div className="text-xs text-rose-500 font-bold flex items-center gap-1">
-                    <AlertCircle className="w-3.5 h-3.5" /> {joinError}
+                {isUsingCustomRoom ? (
+                  <input
+                    type="text"
+                    disabled={isJoined}
+                    value={customRoomCode}
+                    onChange={(e) => setCustomRoomCode(e.target.value.toUpperCase())}
+                    placeholder="Contoh: A22-DUEL / LPK-99"
+                    className="p-2 rounded-xl border border-amber-500/40 bg-white dark:bg-stone-900 text-xs font-mono font-black uppercase"
+                  />
+                ) : (
+                  <div className="text-xs font-bold py-1.5 opacity-80 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
+                    Lobi Publik Bersama (Semua Siswa Terdaftar)
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 3. MODE SELECTION TABS */}
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-black uppercase opacity-75">Pilih Mode Pertandingan</span>
+              <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10">
+                <button
+                  onClick={() => handleSelectMode("1vs1")}
+                  className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
+                    mode === "1vs1" ? "bg-rose-500 text-white shadow-md" : "hover:bg-black/5 opacity-70"
+                  }`}
+                >
+                  <span>⚔️</span> Duel 1 vs 1 (2 Kuota)
+                </button>
+                <button
+                  onClick={() => handleSelectMode("group")}
+                  className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
+                    mode === "group" ? "bg-indigo-600 text-white shadow-md" : "hover:bg-black/5 opacity-70"
+                  }`}
+                >
+                  <span>🛡️</span> Tim 2 vs 2 (4 Kuota)
+                </button>
+                <button
+                  onClick={() => handleSelectMode("all_members")}
+                  className={`py-2 px-3 rounded-xl text-xs font-black transition flex flex-col sm:flex-row items-center justify-center gap-1.5 ${
+                    mode === "all_members" ? "bg-amber-500 text-stone-950 shadow-md" : "hover:bg-black/5 opacity-70"
+                  }`}
+                >
+                  <span>👑</span> Survival (6 Kuota)
+                </button>
+              </div>
+            </div>
+
+            {/* OPSI PILIH TIM JIKA MODE GROUP 2vs2 */}
+            {mode === "group" && (
+              <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase text-indigo-400">
+                  Tentukan Kubu Anda Sendiri (Tim 2 vs 2)
+                </span>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleSelectTeam("shinobi")}
+                    className={`p-2.5 rounded-xl border font-black text-xs flex items-center justify-center gap-2 transition ${
+                      myTeam === "shinobi"
+                        ? "bg-blue-600 text-white border-blue-400 shadow-md ring-2 ring-blue-300"
+                        : "bg-black/10 dark:bg-white/5 border-current/10 opacity-70"
+                    }`}
+                  >
+                    <span>🥷</span> Tim Shinobi (Biru)
+                  </button>
+                  <button
+                    onClick={() => handleSelectTeam("samurai")}
+                    className={`p-2.5 rounded-xl border font-black text-xs flex items-center justify-center gap-2 transition ${
+                      myTeam === "samurai"
+                        ? "bg-rose-600 text-white border-rose-400 shadow-md ring-2 ring-rose-300"
+                        : "bg-black/10 dark:bg-white/5 border-current/10 opacity-70"
+                    }`}
+                  >
+                    <span>⚔️</span> Tim Samurai (Merah)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* 4. ACTIONS BAR: MASUK LOBI / SAYA SIAP */}
+            {!isJoined ? (
+              <div className="flex flex-col gap-2">
+                <button
+                  disabled={loadingAction || !myEmail.trim()}
+                  onClick={handleJoinLobby}
+                  className="clay-btn-gold py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 hover:scale-[1.01] transition"
+                >
+                  {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+                  Masuk ke Lobi Pertandingan
+                </button>
+                {actionError && (
+                  <div className="text-xs text-rose-500 font-bold flex items-center gap-1 justify-center">
+                    <AlertCircle className="w-3.5 h-3.5" /> {actionError}
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-black text-lg shadow">
-                    🥷
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center font-black text-2xl shadow">
+                    {myAvatar}
                   </div>
                   <div>
-                    <span className="text-[10px] font-black uppercase text-emerald-500">Anda Siap di Lobi</span>
+                    <span className="text-[10px] font-black uppercase text-amber-500">Anda Berada di Lobi</span>
                     <h4 className="text-sm font-black">{myName}</h4>
-                    <p className="text-[11px] opacity-70 font-mono">{myEmail}</p>
+                    <span className="text-[11px] font-mono opacity-70">
+                      {mode === "group" ? `Kubu: Tim ${myTeam.toUpperCase()}` : `Room: ${room?.roomCode || mode}`}
+                    </span>
                   </div>
                 </div>
 
-                <button
-                  onClick={handleLeaveLobby}
-                  className="clay-btn px-4 py-2 rounded-xl text-xs font-bold text-rose-500 hover:text-rose-400"
-                >
-                  Keluar Lobi
-                </button>
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  {/* TOMBOL SISWA MENENTUKAN SENDIRI STATUS SIAP */}
+                  <button
+                    disabled={loadingAction}
+                    onClick={handleToggleReady}
+                    className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition ${
+                      isMyReady
+                        ? "bg-emerald-500 text-white shadow-lg ring-2 ring-emerald-300"
+                        : "clay-btn-gold shadow-md hover:scale-105"
+                    }`}
+                  >
+                    {isMyReady ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" /> ANDA SUDAH SIAP! (Batal)
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-4 h-4" /> SAYA SIAP BERTANDING!
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={handleLeaveLobby}
+                    className="clay-btn px-3 py-2.5 rounded-xl text-xs font-bold text-rose-500 hover:text-rose-400"
+                    title="Keluar Lobi"
+                  >
+                    Keluar
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* WAITING ROOM HUD & KUOTA INDICATOR */}
+            {/* 5. WAITING ROOM HUD & REAL-TIME PESERTA */}
             <div className="p-5 rounded-3xl bg-black/5 dark:bg-black/30 border border-current/10 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-current/10 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-current/10 pb-3 gap-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase">
                   <Users className="w-4 h-4 text-amber-500" />
                   Peserta Terkumpul: <span className="text-amber-500">{currentParticipants.length}</span> / {requiredQuota}
+                  <span className="text-[11px] font-mono opacity-60 ml-1">
+                    (Room: {room?.roomCode || mode.toUpperCase()})
+                  </span>
                 </div>
-                <span className="text-[11px] font-mono font-bold text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-md">
-                  {slotsLeft === 0 ? "KUOTA LENGKAP! Menyiapkan Pertandingan..." : `Kurang ${slotsLeft} Member Lagi`}
-                </span>
+                <div>
+                  {slotsLeft === 0 ? (
+                    allParticipantsReady ? (
+                      <span className="text-[11px] font-mono font-black text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-md animate-pulse">
+                        SEMUA SIAP! Memulai Pertandingan...
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-mono font-bold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-md">
+                        Menunggu Semua Peserta Menekan "SIAP"
+                      </span>
+                    )
+                  ) : (
+                    <span className="text-[11px] font-mono font-bold text-rose-400 bg-rose-500/10 px-2.5 py-0.5 rounded-md">
+                      Kurang {slotsLeft} Member Lagi
+                    </span>
+                  )}
+                </div>
               </div>
 
-              {/* PARTICIPANTS AVATAR CARDS */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* PARTICIPANTS CARDS */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {Array.from({ length: requiredQuota }).map((_, idx) => {
                   const p = currentParticipants[idx];
                   if (p) {
-                    const isMe = p.email === myEmail;
+                    const isMe = p.email.toLowerCase() === myEmail.toLowerCase();
                     return (
                       <div
                         key={p.email}
-                        className={`p-3 rounded-2xl border transition flex items-center gap-3 ${
+                        className={`p-3 rounded-2xl border transition flex items-center justify-between gap-3 ${
                           isMe
                             ? "bg-amber-500/15 border-amber-400 ring-1 ring-amber-400/50 shadow"
                             : "bg-black/10 dark:bg-white/5 border-current/10"
                         }`}
                       >
-                        <span className="text-2xl">{p.avatar || "🥷"}</span>
-                        <div className="overflow-hidden">
-                          <div className="text-xs font-black truncate">{p.name}</div>
-                          <span className="text-[9px] font-mono text-emerald-500 font-bold flex items-center gap-0.5">
-                            <CheckCircle2 className="w-2.5 h-2.5" /> SIAP
-                          </span>
+                        <div className="flex items-center gap-2.5 overflow-hidden">
+                          <span className="text-2xl">{p.avatar || "🥷"}</span>
+                          <div className="overflow-hidden">
+                            <div className="text-xs font-black truncate flex items-center gap-1">
+                              {p.name} {isMe && <span className="text-[10px] text-amber-500 font-mono">(Anda)</span>}
+                            </div>
+                            <span className="text-[10px] font-mono opacity-70 truncate block">
+                              {p.team ? `Tim ${p.team}` : p.email.split("@")[0]}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div>
+                          {p.isReady ? (
+                            <span className="text-[10px] font-mono text-emerald-400 font-black bg-emerald-500/15 px-2 py-0.5 rounded flex items-center gap-0.5">
+                              <CheckCircle2 className="w-3 h-3" /> SIAP
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-mono text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded flex items-center gap-0.5">
+                              <Clock className="w-3 h-3 animate-spin" /> Menunggu
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
@@ -564,139 +888,119 @@ export default function BattleRoyaleModal({
                       key={`empty_${idx}`}
                       className="p-3 rounded-2xl border border-dashed border-current/20 flex items-center justify-center gap-2 opacity-50 bg-black/5"
                     >
-                      <span className="text-xs font-bold text-stone-400 animate-pulse">Menunggu Siswa...</span>
+                      <span className="text-xs font-bold text-stone-400 animate-pulse">Menunggu Peserta...</span>
                     </div>
                   );
                 })}
               </div>
 
-              {/* HELPER INFO */}
+              {/* PETUNJUK MULTIPLAYER */}
               <div className="text-[11px] opacity-75 text-center mt-1">
-                💡 Buka link web ini di tab/perangkat teman sekelas Anda dengan email siswa berbeda untuk langsung tanding bersama secara otomatis.
+                💡 Bagikan kode room <span className="font-mono font-bold text-amber-400">{room?.roomCode || mode.toUpperCase()}</span> ke teman sekelas Anda. Siswa yang bersangkutan membuka link ini di perangkat masing-masing untuk bertanding bersama!
               </div>
             </div>
           </div>
         )}
 
-        {/* ================= STEP 2: COUNTDOWN SCREEN (ABA-ABA SEBELUM MULAI) ================= */}
+        {/* ================= STEP 2: COUNTDOWN ABA-ABA 5 DETIK ================= */}
         {battleState === "countdown" && (
-          <div className="text-center py-10 flex flex-col items-center gap-6 animate-in zoom-in-90">
-            <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/40 text-xs font-black uppercase tracking-widest animate-pulse">
-              <Zap className="w-4 h-4 fill-current" /> Kuota Terpenuhi • Bersiap!
-            </div>
-
-            <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-rose-500 to-amber-500 text-stone-950 flex items-center justify-center text-6xl font-black shadow-2xl border-4 border-amber-300 animate-bounce">
+          <div className="py-12 flex flex-col items-center justify-center gap-6 text-center animate-in zoom-in-95">
+            <div className="w-24 h-24 rounded-full bg-rose-600/20 border-2 border-rose-500 text-rose-500 flex items-center justify-center text-5xl font-black font-mono shadow-2xl animate-pulse">
               {countdownNum}
             </div>
 
             <div>
-              <h3 className="text-2xl font-black">Pertandingan Dimulai Dalam Hitungan Detik!</h3>
-              <p className="text-xs opacity-75 mt-1 max-w-md">
-                Posisikan jari Anda pada pilihan jawaban. Kecepatan dan ketepatan kosakata Anda menentukan kemenangan!
+              <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
+                Aba-aba Pertandingan
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-black mt-3">SEMUA SISWA TELAH SIAP!</h2>
+              <p className="text-xs opacity-75 mt-1 max-w-sm">
+                Ronde 1 akan segera dimulai. Konsentrasi penuh pada kanji dan arti kosakata!
               </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {activeCombatants.map((c) => (
+                <div key={c.email} className="flex flex-col items-center gap-1">
+                  <span className="text-2xl">{c.avatar}</span>
+                  <span className="text-[10px] font-mono font-bold opacity-80">{c.name.split(" ")[0]}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* ================= STEP 3: IN BATTLE ARENA ================= */}
+        {/* ================= STEP 3: ARENA PERTANDINGAN AKTIF ================= */}
         {battleState === "in_battle" && currentQ && (
-          <div className="flex flex-col gap-5">
-            {/* TOP ARENA HEADER */}
+          <div className="flex flex-col gap-5 animate-in fade-in">
+            {/* TOP ARENA HUD */}
             <div className="flex items-center justify-between border-b border-current/10 pb-3">
-              <div className="flex items-center gap-2 text-xs font-black uppercase text-rose-500">
-                <Radio className="w-4 h-4 animate-pulse" />
-                Mode: {mode === "1vs1" ? "Duel 1 vs 1" : mode === "group" ? "Tim 2 vs 2" : "Survival 6 Member"}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase text-amber-500">
+                  Ronde {currentQIndex + 1} / {shuffledQuestions.length}
+                </span>
+                <span className="text-[11px] font-mono opacity-50">• {mode.toUpperCase()}</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono font-black text-amber-400">
-                Ronde {currentQIndex + 1}/{shuffledQuestions.length}
+
+              {/* TIMER HITUNG MUNDUR */}
+              <div
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-mono font-black text-sm transition ${
+                  timeLeft <= 3 ? "bg-rose-500 text-white animate-bounce shadow-md" : "bg-black/10 dark:bg-white/10"
+                }`}
+              >
+                <Clock className="w-4 h-4" /> {timeLeft}s
               </div>
             </div>
 
-            {/* COMBATANTS HP STATUS HUD */}
+            {/* COMBATANTS HP STATUS BARS */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {activeCombatants.map((c) => {
-                const isMe = c.email === myEmail;
-                const hpPercent = Math.max(0, Math.min(100, c.hp));
-                const isDead = c.hp <= 0;
-
+                const isMe = c.email.toLowerCase() === myEmail.toLowerCase();
+                const hpPercent = Math.max(0, c.hp);
                 return (
                   <div
                     key={c.email}
-                    className={`p-2.5 rounded-2xl border transition relative ${
-                      isDead
-                        ? "opacity-35 bg-stone-900 border-stone-800 grayscale"
+                    className={`p-2.5 rounded-xl border flex flex-col gap-1.5 transition ${
+                      c.hp <= 0
+                        ? "opacity-35 grayscale bg-rose-950/20 border-rose-500/20"
                         : isMe
-                        ? "bg-amber-500/15 border-amber-400 shadow-md ring-1 ring-amber-400"
-                        : "bg-black/5 dark:bg-black/30 border-current/10"
+                        ? "bg-amber-500/15 border-amber-400 shadow"
+                        : "bg-black/10 dark:bg-white/5 border-current/10"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-1 text-xs font-black">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <span>{c.avatar || "🥷"}</span>
-                        <span className="truncate">{c.name}</span>
-                      </div>
-                      <span className="font-mono text-[10px] text-amber-400 font-bold">{c.score}pts</span>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-black truncate flex items-center gap-1">
+                        {c.avatar} {c.name.split(" ")[0]}
+                      </span>
+                      <span className="font-mono text-[10px] font-bold text-amber-400">{c.score} PTS</span>
                     </div>
 
-                    {/* HP BAR */}
-                    <div className="w-full mt-2">
-                      <div className="flex justify-between text-[9px] font-bold opacity-70 mb-0.5">
-                        <span className="flex items-center gap-0.5">
-                          {isDead ? <Skull className="w-2.5 h-2.5 text-rose-500" /> : <Heart className="w-2.5 h-2.5 text-rose-500 fill-current" />}
-                          HP
-                        </span>
-                        <span>{c.hp}/100</span>
-                      </div>
-                      <div className="w-full h-1.5 rounded-full bg-black/20 dark:bg-white/10 overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-500 ${
-                            c.hp <= 30 ? "bg-rose-500" : "bg-gradient-to-r from-emerald-400 to-emerald-600"
-                          }`}
-                          style={{ width: `${hpPercent}%` }}
-                        />
-                      </div>
+                    {/* HP Bar */}
+                    <div className="w-full h-2 rounded-full bg-black/20 overflow-hidden relative">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          hpPercent > 50 ? "bg-emerald-500" : hpPercent > 20 ? "bg-amber-500" : "bg-rose-500"
+                        }`}
+                        style={{ width: `${hpPercent}%` }}
+                      />
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* TIMER BAR */}
-            <div className="w-full">
-              <div className="flex justify-between items-center text-xs font-black font-mono mb-1">
-                <span className="flex items-center gap-1 text-stone-400">
-                  <Clock className="w-3.5 h-3.5" /> Sisa Waktu Serangan
-                </span>
-                <span className={timeLeft <= 3 ? "text-rose-500 animate-ping font-black text-sm" : "text-amber-400"}>
-                  {timeLeft}s
-                </span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden border border-current/10">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    timeLeft <= 3 ? "bg-rose-500" : "bg-gradient-to-r from-rose-500 to-amber-500"
-                  }`}
-                  style={{ width: `${(timeLeft / 8) * 100}%` }}
-                />
-              </div>
-            </div>
-
-            {/* QUESTION CARD */}
-            <div className="text-center py-5 bg-black/5 dark:bg-black/40 rounded-2xl border border-current/10">
+            {/* QUESTION DISPLAY */}
+            <div className="p-6 rounded-3xl bg-gradient-to-br from-black/5 to-black/15 dark:from-white/5 dark:to-white/10 border border-current/15 text-center flex flex-col items-center justify-center gap-2 shadow-inner">
               <span className="text-[10px] font-black uppercase text-amber-500 tracking-wider">
-                Target Kosakata:
+                Tentukan Arti Kosakata
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black mt-2 text-rose-500">
-                {currentQ.ja}
-              </h3>
+              <h3 className="text-2xl sm:text-3xl font-black tracking-wide">{currentQ.ja}</h3>
               {currentQ.romaji && (
-                <span className="text-xs opacity-60 font-mono mt-0.5 block">
-                  [{currentQ.romaji}]
-                </span>
+                <span className="text-xs font-mono opacity-60">[{currentQ.romaji}]</span>
               )}
             </div>
 
-            {/* OPTIONS */}
+            {/* OPTIONS BUTTONS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {currentQ.options.map((opt, idx) => {
                 let btnClass = "clay-btn p-3.5 rounded-xl text-xs font-bold text-left transition relative";

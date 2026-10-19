@@ -1,36 +1,36 @@
 export const runtime = "edge";
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/db";
-import { users } from "@/db/schema";
-import { sql } from "drizzle-orm";
 import masterRaporDataRaw from "@/data/raporMasterData.json";
 
-// In-memory active battle rooms for Edge Runtime
-// Key: room code or mode ("1vs1" | "group" | "all_members")
-interface BattleRoom {
+export type BattleMode = "1vs1" | "group" | "all_members";
+
+export interface Participant {
+  email: string;
+  name: string;
+  avatar: string;
+  team?: "shinobi" | "samurai";
+  joinedAt: number;
+  score: number;
+  hp: number;
+  isReady: boolean;
+}
+
+export interface BattleRoom {
   id: string;
-  mode: "1vs1" | "group" | "all_members";
+  mode: BattleMode;
+  roomCode: string;
   requiredCount: number;
   status: "waiting" | "countdown" | "in_battle" | "finished";
   countdownSeconds: number;
-  participants: {
-    email: string;
-    name: string;
-    avatar: string;
-    joinedAt: number;
-    score: number;
-    hp: number;
-    isReady: boolean;
-  }[];
+  participants: Participant[];
   createdAt: number;
   updatedAt: number;
 }
 
-// Global variable across requests in edge instance
+// Global in-memory storage on Edge instance
 const globalRooms: Map<string, BattleRoom> = new Map();
 
-// Helper to get master enrolled members list
 function getEnrolledMembers() {
   const levels = (masterRaporDataRaw as any)?.levels;
   const listA22 = levels?.["A2.2"]?.students || levels?.["A1"]?.students || [];
@@ -41,21 +41,29 @@ function getEnrolledMembers() {
   }));
 }
 
+function resolveRoomId(mode: BattleMode, roomCode?: string | null): string {
+  if (roomCode && roomCode.trim().length > 0) {
+    return `custom_${roomCode.trim().toUpperCase()}`;
+  }
+  return `room_${mode}`;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const mode = (searchParams.get("mode") || "1vs1") as "1vs1" | "group" | "all_members";
+    const mode = (searchParams.get("mode") || "1vs1") as BattleMode;
+    const roomCode = searchParams.get("roomCode");
     const userEmail = searchParams.get("email");
 
-    // Clean up stale rooms older than 15 minutes
     const now = Date.now();
+    // Prune rooms inactive for > 30 minutes
     for (const [key, room] of globalRooms.entries()) {
-      if (now - room.updatedAt > 15 * 60 * 1000) {
+      if (now - room.updatedAt > 30 * 60 * 1000) {
         globalRooms.delete(key);
       }
     }
 
-    const roomId = `room_${mode}`;
+    const roomId = resolveRoomId(mode, roomCode);
     let room = globalRooms.get(roomId);
 
     const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
@@ -64,6 +72,7 @@ export async function GET(req: NextRequest) {
       room = {
         id: roomId,
         mode,
+        roomCode: roomCode ? roomCode.trim().toUpperCase() : mode.toUpperCase(),
         requiredCount: requiredQuota,
         status: "waiting",
         countdownSeconds: 5,
@@ -74,7 +83,6 @@ export async function GET(req: NextRequest) {
       globalRooms.set(roomId, room);
     }
 
-    // Also fetch enrolled members for autocomplete/selection
     const enrolledMembers = getEnrolledMembers();
 
     return NextResponse.json({
@@ -90,15 +98,27 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { action, mode, email, name, avatar } = body as {
-      action: "join" | "leave" | "ready" | "reset";
-      mode: "1vs1" | "group" | "all_members";
+    const {
+      action,
+      mode = "1vs1",
+      roomCode,
+      email,
+      name,
+      avatar = "🥷",
+      team = "shinobi",
+      isReady,
+    } = body as {
+      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "reset";
+      mode?: BattleMode;
+      roomCode?: string;
       email: string;
       name?: string;
       avatar?: string;
+      team?: "shinobi" | "samurai";
+      isReady?: boolean;
     };
 
-    const roomId = `room_${mode || "1vs1"}`;
+    const roomId = resolveRoomId(mode, roomCode);
     const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
     const now = Date.now();
 
@@ -106,7 +126,8 @@ export async function POST(req: NextRequest) {
     if (!room) {
       room = {
         id: roomId,
-        mode: mode || "1vs1",
+        mode,
+        roomCode: roomCode ? roomCode.trim().toUpperCase() : mode.toUpperCase(),
         requiredCount: requiredQuota,
         status: "waiting",
         countdownSeconds: 5,
@@ -135,40 +156,79 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, room });
     }
 
-    if (action === "join") {
-      if (!email) {
-        return NextResponse.json({ error: "Email member terdaftar wajib diisi." }, { status: 400 });
+    if (action === "toggle_ready") {
+      const p = room.participants.find((part) => part.email === email);
+      if (p) {
+        p.isReady = typeof isReady === "boolean" ? isReady : !p.isReady;
       }
 
-      // Check if already in room
-      const existingIdx = room.participants.findIndex((p) => p.email === email);
+      // Check if all participants are ready and quota is met
+      const allReady =
+        room.participants.length >= room.requiredCount &&
+        room.participants.every((part) => part.isReady);
+
+      if (allReady && room.status === "waiting") {
+        room.status = "countdown";
+        room.countdownSeconds = 5;
+      } else if (!allReady && room.status === "countdown") {
+        room.status = "waiting";
+        room.countdownSeconds = 5;
+      }
+
+      room.updatedAt = now;
+      return NextResponse.json({ success: true, room });
+    }
+
+    if (action === "choose_team") {
+      const p = room.participants.find((part) => part.email === email);
+      if (p) {
+        p.team = team;
+      }
+      room.updatedAt = now;
+      return NextResponse.json({ success: true, room });
+    }
+
+    if (action === "choose_avatar") {
+      const p = room.participants.find((part) => part.email === email);
+      if (p) {
+        p.avatar = avatar;
+      }
+      room.updatedAt = now;
+      return NextResponse.json({ success: true, room });
+    }
+
+    if (action === "join") {
+      if (!email || !email.trim()) {
+        return NextResponse.json({ error: "Identitas email akun siswa wajib diisi." }, { status: 400 });
+      }
+
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanName = name?.trim() || cleanEmail.split("@")[0].toUpperCase();
+
+      const existingIdx = room.participants.findIndex((p) => p.email === cleanEmail);
       if (existingIdx >= 0) {
         room.participants[existingIdx].joinedAt = now;
-        room.participants[existingIdx].name = name || room.participants[existingIdx].name;
+        room.participants[existingIdx].name = cleanName;
+        room.participants[existingIdx].avatar = avatar;
+        if (team) room.participants[existingIdx].team = team;
       } else {
-        // Only allow if not full or already in battle
         if (room.participants.length >= room.requiredCount) {
           return NextResponse.json(
-            { error: `Kuota lobi penuh (${room.requiredCount}/${room.requiredCount} member). Tunggu pertandingan selesai!` },
+            { error: `Lobi sudah penuh (${room.requiredCount}/${room.requiredCount}). Pilih atau buat room lain.` },
             { status: 400 }
           );
         }
 
         room.participants.push({
-          email,
-          name: name || email.split("@")[0],
-          avatar: avatar || "🥷",
+          email: cleanEmail,
+          name: cleanName,
+          avatar,
+          team,
           joinedAt: now,
           score: 0,
           hp: 100,
-          isReady: true,
+          isReady: false, // Siswa menentukan kesiapan sendiri via tombol SAYA SIAP
         });
-      }
-
-      // Check if quota met -> trigger countdown
-      if (room.participants.length >= room.requiredCount && room.status === "waiting") {
-        room.status = "countdown";
-        room.countdownSeconds = 5;
       }
 
       room.updatedAt = now;
