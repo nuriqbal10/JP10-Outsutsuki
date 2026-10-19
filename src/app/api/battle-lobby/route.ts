@@ -16,6 +16,7 @@ export interface Participant {
   score: number;
   hp: number;
   isReady: boolean;
+  rematchVote?: boolean;
 }
 
 function resolveRoomId(mode: BattleMode, roomCode?: string | null): { roomId: string; isCustom: boolean; cleanCode: string } {
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
       topicChapter,
       topicCategory,
     } = body as {
-      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "set_topic" | "reset";
+      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "set_topic" | "reset" | "finish_match" | "request_rematch" | "cancel_rematch";
       mode?: BattleMode;
       roomCode?: string;
       email?: string;
@@ -171,6 +172,46 @@ export async function POST(req: NextRequest) {
       participants = [];
     }
 
+    if (action === "finish_match") {
+      status = "finished";
+      // Clear rematch votes on match finish
+      participants.forEach((p) => {
+        p.rematchVote = false;
+        p.isReady = false;
+      });
+    }
+
+    if (action === "request_rematch" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
+      if (p) {
+        p.rematchVote = true;
+      }
+
+      // Check if ALL participants currently in the room agree to rematch
+      const allVotedRematch =
+        participants.length >= room.requiredCount &&
+        participants.every((part) => part.rematchVote === true);
+
+      if (allVotedRematch) {
+        // Both agreed! Reset HP, score, ready, and trigger countdown
+        status = "countdown";
+        countdownSeconds = 5;
+        participants.forEach((part) => {
+          part.hp = 100;
+          part.score = 0;
+          part.isReady = true;
+          part.rematchVote = false;
+        });
+      }
+    }
+
+    if (action === "cancel_rematch" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
+      if (p) {
+        p.rematchVote = false;
+      }
+    }
+
     if (action === "set_topic") {
       if (topicLevel) currentTopicLevel = topicLevel;
       if (typeof topicChapter === "number") currentTopicChapter = topicChapter;
@@ -179,9 +220,16 @@ export async function POST(req: NextRequest) {
 
     if (action === "leave" && email) {
       participants = participants.filter((p) => p.email.toLowerCase() !== email.toLowerCase());
-      if (status === "countdown" && participants.length < room.requiredCount) {
+      if (participants.length === 0) {
         status = "waiting";
         countdownSeconds = 5;
+      } else if (status === "finished" || (status === "countdown" && participants.length < room.requiredCount)) {
+        status = "waiting";
+        countdownSeconds = 5;
+        participants.forEach((p) => {
+          p.rematchVote = false;
+          p.isReady = false;
+        });
       }
     }
 
@@ -219,6 +267,9 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "join") {
+      if ((status === "finished" || status === "in_battle") && participants.length === 0) {
+        status = "waiting";
+      }
       if (!email || !email.trim()) {
         return NextResponse.json({ error: "Identitas email akun siswa wajib diisi." }, { status: 400 });
       }

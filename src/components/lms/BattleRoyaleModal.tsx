@@ -35,6 +35,7 @@ import {
   Send,
   Bell,
   RefreshCw,
+  LogOut,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { addXp } from "@/lib/gamification";
@@ -58,6 +59,7 @@ interface Participant {
   score: number;
   hp: number;
   isReady: boolean;
+  rematchVote?: boolean;
 }
 
 interface RoomData {
@@ -274,13 +276,19 @@ export default function BattleRoyaleModal({
           if (meInRoom.team) setMyTeam(meInRoom.team);
           if (meInRoom.avatar) setMyAvatar(meInRoom.avatar);
 
-          // CRITICAL FIX FOR PAGE CLASH: Only start countdown if THIS user is joined & ready!
-          if (data.room.status === "countdown" && battleState === "lobby" && meInRoom.isReady) {
+          // CRITICAL: Start countdown if room is in countdown (either from lobby start OR agreed rematch)
+          if (
+            data.room.status === "countdown" &&
+            (battleState === "lobby" || battleState === "victory" || battleState === "defeat") &&
+            meInRoom.isReady
+          ) {
             triggerLobbyCountdown(data.room);
           }
         } else {
-          setIsJoined(false);
-          setIsMyReady(false);
+          if (battleState !== "victory" && battleState !== "defeat") {
+            setIsJoined(false);
+            setIsMyReady(false);
+          }
         }
       }
     } catch (e) {
@@ -298,10 +306,11 @@ export default function BattleRoyaleModal({
     fetchLobbyStatus(mode, currentActiveRoomCode, true);
 
     pollIntervalRef.current = setInterval(() => {
-      if (battleState === "lobby") {
+      // Poll in lobby, and also in victory/defeat to listen for opponent rematch or exit
+      if (battleState === "lobby" || battleState === "victory" || battleState === "defeat") {
         fetchLobbyStatus(mode, currentActiveRoomCode);
       }
-    }, 2500);
+    }, 2000);
 
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -694,6 +703,115 @@ export default function BattleRoyaleModal({
     }, 1200);
   };
 
+  const notifyMatchFinished = async () => {
+    try {
+      await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "finish_match",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
+      });
+      fetchLobbyStatus(mode, currentActiveRoomCode, true);
+    } catch (e) {}
+  };
+
+  const handleRequestRematch = async () => {
+    setLoadingAction(true);
+    setActionError(null);
+    try {
+      const res = await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "request_rematch",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.room) {
+        setRoom(data.room);
+        lastSeenUpdatedAtRef.current = data.room.updatedAt || Date.now();
+        sfx.playCorrect();
+        if (data.room.status === "countdown") {
+          triggerLobbyCountdown(data.room);
+        }
+      }
+    } catch (e) {
+      setActionError("Gagal mengajukan rematch.");
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const handleCancelRematch = async () => {
+    setLoadingAction(true);
+    try {
+      await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "cancel_rematch",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
+      });
+      fetchLobbyStatus(mode, currentActiveRoomCode, true);
+    } catch (e) {} finally {
+      setLoadingAction(false);
+    }
+  };
+
+  const handleReturnToLobby = async () => {
+    setLoadingAction(true);
+    try {
+      await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "leave",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
+      });
+    } catch (e) {}
+    setIsJoined(false);
+    setIsMyReady(false);
+    setBattleState("lobby");
+    lastSeenUpdatedAtRef.current = 0;
+    setLoadingAction(false);
+    sfx.playTick();
+    fetchLobbyStatus(mode, currentActiveRoomCode, true);
+  };
+
+  const handleCloseModal = async () => {
+    if (isJoined) {
+      try {
+        await fetch("/api/battle-lobby", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "leave",
+            mode,
+            roomCode: currentActiveRoomCode,
+            email: myEmail,
+          }),
+        });
+      } catch (e) {}
+    }
+    setIsJoined(false);
+    setIsMyReady(false);
+    setBattleState("lobby");
+    onClose();
+  };
+
   const checkBattleOver = () => {
     const me = activeCombatants.find((c) => c.email.toLowerCase() === myEmail.toLowerCase());
     const others = activeCombatants.filter((c) => c.email.toLowerCase() !== myEmail.toLowerCase());
@@ -702,6 +820,7 @@ export default function BattleRoyaleModal({
     if (me && me.hp <= 0) {
       setBattleState("defeat");
       sfx.playEliminated();
+      notifyMatchFinished();
       return;
     }
 
@@ -719,6 +838,7 @@ export default function BattleRoyaleModal({
         setBattleState("defeat");
         sfx.playEliminated();
       }
+      notifyMatchFinished();
       return;
     }
 
@@ -750,12 +870,20 @@ export default function BattleRoyaleModal({
   const rivalCombatant = activeCombatants.find((c) => c.email.toLowerCase() !== myEmail.toLowerCase());
   const scoreDifference = (meCombatant?.score || 0) - (rivalCombatant?.score || 0);
 
+  // REMATCH CALCULATIONS (Keduanya harus setuju)
+  const myParticipant = currentParticipants.find((p) => p.email.toLowerCase() === myEmail.toLowerCase());
+  const rivalParticipants = currentParticipants.filter((p) => p.email.toLowerCase() !== myEmail.toLowerCase());
+  const myRematchVote = myParticipant?.rematchVote === true;
+  const rivalRematchVote = rivalParticipants.length > 0 && rivalParticipants.every((p) => p.rematchVote === true);
+  const rivalLeft = isJoined && currentParticipants.length < (mode === "1vs1" ? 2 : mode === "group" ? 4 : 6);
+  const rematchAgreedCount = currentParticipants.filter((p) => p.rematchVote).length;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5">
       <div className="clay-card rounded-3xl p-5 sm:p-8 max-w-2xl w-full border border-rose-500/40 relative shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 max-h-[94vh] overflow-y-auto custom-scrollbar">
         {/* CLOSE BUTTON */}
         <button
-          onClick={onClose}
+          onClick={handleCloseModal}
           className="absolute right-5 top-5 p-1.5 rounded-xl bg-black/10 dark:bg-white/10 hover:opacity-100 opacity-60 transition"
           title="Tutup Modal"
         >
@@ -1515,70 +1643,188 @@ export default function BattleRoyaleModal({
           </div>
         )}
 
-        {/* ================= STEP 4: VICTORY SCREEN ================= */}
-        {battleState === "victory" && (
-          <div className="text-center py-6 flex flex-col items-center gap-4 animate-in zoom-in-95">
-            <div className="w-24 h-24 rounded-3xl bg-amber-500/20 text-amber-400 border border-amber-400/50 flex items-center justify-center text-5xl shadow-2xl animate-bounce">
-              👑
-            </div>
-            <div>
-              <span className="text-xs font-black uppercase text-amber-500 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-                Kemenangan Mutlak!
+        {/* ================= STEP 4 & 5: RESULTS SCREEN (VICTORY & DEFEAT) ================= */}
+        {(battleState === "victory" || battleState === "defeat") && (
+          <div className="text-center py-4 flex flex-col items-center gap-5 animate-in zoom-in-95">
+            {/* BADGE & TITLE */}
+            <div className="flex flex-col items-center gap-2">
+              <div
+                className={`w-20 h-20 rounded-3xl flex items-center justify-center text-4xl shadow-2xl ${
+                  battleState === "victory"
+                    ? "bg-amber-500/20 text-amber-400 border border-amber-400/50 animate-bounce"
+                    : "bg-rose-500/20 text-rose-500 border border-rose-500/50"
+                }`}
+              >
+                {battleState === "victory" ? "👑" : "💀"}
+              </div>
+
+              <span
+                className={`text-[11px] font-black uppercase px-3 py-1 rounded-full border ${
+                  battleState === "victory"
+                    ? "text-amber-400 bg-amber-500/10 border-amber-500/30"
+                    : "text-rose-400 bg-rose-500/10 border-rose-500/30"
+                }`}
+              >
+                {battleState === "victory" ? "Kemenangan Mutlak! • 1 Match Selesai" : "Gugur di Medan Laga • 1 Match Selesai"}
               </span>
-              <h2 className="text-3xl font-black mt-2">CHAMPION ARENA!</h2>
-              <p className="text-xs opacity-75 mt-1 max-w-md">
-                Selamat! Anda memenangkan duel Head-to-Head ini dengan gemilang!
+
+              <h2 className="text-2xl sm:text-3xl font-black">
+                {battleState === "victory" ? "CHAMPION ARENA!" : "Kekalahan Duel"}
+              </h2>
+
+              <p className="text-xs opacity-75 max-w-md">
+                {battleState === "victory"
+                  ? "Selamat! Anda memenangkan duel Head-to-Head 1 match ini dengan gemilang!"
+                  : "Lawan Anda berhasil memimpin skor pada match ini. Tingkatkan hafalan kosakata Anda!"}
               </p>
-              <div className="inline-block mt-3 px-5 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-black uppercase tracking-wider">
-                +{mode === "all_members" ? 150 : mode === "group" ? 120 : 90} XP Ditambahkan ke Akun!
+
+              {battleState === "victory" && (
+                <div className="inline-block mt-1 px-4 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-black uppercase tracking-wider">
+                  +{mode === "all_members" ? 150 : mode === "group" ? 120 : 90} XP Ditambahkan ke Akun!
+                </div>
+              )}
+            </div>
+
+            {/* COMBATANTS FINAL SCORE SUMMARY CARD */}
+            <div className="w-full max-w-lg p-3.5 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
+              <div className="text-[10px] font-black uppercase tracking-wider opacity-60 text-center">
+                Ringkasan Skor Akhir 1 Match
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Me */}
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex flex-col items-center gap-1">
+                  <span className="text-2xl">{myAvatar}</span>
+                  <span className="text-xs font-black truncate max-w-full">
+                    {myName || myEmail.split("@")[0]} (Anda)
+                  </span>
+                  <span className="text-base font-black font-mono text-amber-400">
+                    {meCombatant?.score || 0} PTS
+                  </span>
+                  <span className="text-[10px] font-mono opacity-70">
+                    Sisa HP: {Math.max(0, meCombatant?.hp || 0)}%
+                  </span>
+                </div>
+
+                {/* Rival */}
+                <div className="p-3 rounded-xl bg-black/20 dark:bg-black/40 border border-current/10 flex flex-col items-center gap-1">
+                  <span className="text-2xl">{rivalCombatant?.avatar || "⚔️"}</span>
+                  <span className="text-xs font-black truncate max-w-full">
+                    {rivalCombatant?.name || "Lawan"}
+                  </span>
+                  <span className="text-base font-black font-mono text-amber-400">
+                    {rivalCombatant?.score || 0} PTS
+                  </span>
+                  <span className="text-[10px] font-mono opacity-70">
+                    Sisa HP: {Math.max(0, rivalCombatant?.hp || 0)}%
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 mt-4">
-              <button
-                onClick={() => setBattleState("lobby")}
-                className="clay-btn px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" /> Mode Lain
-              </button>
-              <button
-                onClick={onClose}
-                className="clay-btn-gold px-7 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition"
-              >
-                Tutup Arena
-              </button>
-            </div>
-          </div>
-        )}
+            {/* REMATCH CONSENT & AGREEMENT BOX (Keduanya Harus Setuju) */}
+            <div className="w-full max-w-lg flex flex-col gap-3">
+              {actionError && (
+                <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center justify-center gap-2">
+                  <AlertCircle className="w-4 h-4" /> {actionError}
+                </div>
+              )}
 
-        {/* ================= STEP 5: DEFEAT SCREEN ================= */}
-        {battleState === "defeat" && (
-          <div className="text-center py-6 flex flex-col items-center gap-4 animate-in zoom-in-95">
-            <div className="w-24 h-24 rounded-3xl bg-rose-500/20 text-rose-500 border border-rose-500/50 flex items-center justify-center text-5xl shadow-2xl">
-              💀
-            </div>
-            <div>
-              <span className="text-xs font-black uppercase text-rose-500 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/30">
-                Tereliminasi
-              </span>
-              <h2 className="text-3xl font-black mt-2">Gugur di Medan Laga!</h2>
-              <p className="text-xs opacity-75 mt-1 max-w-md">
-                Lawan Anda berhasil memimpin skor duel Head-to-Head kali ini. Tingkatkan hafalan dan coba tantang kembali!
-              </p>
+              {/* KONDISI 1: Lawan telah keluar / meninggalkan arena */}
+              {rivalLeft ? (
+                <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-center space-y-2">
+                  <p className="text-xs font-bold text-amber-400 flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-4 h-4" /> Lawan telah meninggalkan arena atau kembali ke lobi.
+                  </p>
+                  <p className="text-[11px] opacity-75">
+                    Match telah selesai. Silakan kembali ke lobi untuk memilih lawan atau bab materi lain.
+                  </p>
+                  <button
+                    onClick={handleReturnToLobby}
+                    disabled={loadingAction}
+                    className="clay-btn-gold w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow"
+                  >
+                    <LogOut className="w-4 h-4" /> Kembali ke Lobi Utama
+                  </button>
+                </div>
+              ) : myRematchVote && !rivalRematchVote ? (
+                /* KONDISI 2: Anda sudah meminta rematch, sedang menunggu konfirmasi lawan */
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/60 to-purple-950/60 border border-amber-400/40 text-center space-y-3 animate-pulse">
+                  <div className="flex items-center justify-center gap-2 text-xs font-black text-amber-300">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Menunggu Persetujuan Lawan ({rematchAgreedCount}/{room?.requiredCount || 2} Setuju)
+                  </div>
+                  <p className="text-[11px] opacity-80">
+                    Permintaan rematch telah terkirim. Pertandingan ulang akan dimulai otomatis begitu lawan menekan tombol setuju.
+                  </p>
+                  <button
+                    onClick={handleReturnToLobby}
+                    disabled={loadingAction}
+                    className="clay-btn w-full py-2 rounded-xl text-xs font-bold opacity-80 hover:opacity-100 flex items-center justify-center gap-2"
+                  >
+                    <LogOut className="w-3.5 h-3.5" /> Batal & Kembali ke Lobi
+                  </button>
+                </div>
+              ) : rivalRematchVote && !myRematchVote ? (
+                /* KONDISI 3: Lawan mengajak rematch, meminta persetujuan Anda */
+                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/70 to-teal-950/70 border-2 border-emerald-400 text-center space-y-3 shadow-xl animate-bounce">
+                  <div className="flex items-center justify-center gap-2 text-xs font-black text-emerald-300 uppercase tracking-wide">
+                    <Swords className="w-4 h-4" /> Lawan Mengajak Rematch! (1/2 Setuju)
+                  </div>
+                  <p className="text-xs font-medium text-stone-200">
+                    <span className="font-bold text-amber-300">{rivalCombatant?.name || "Lawan"}</span> ingin bertanding ulang 1 match lagi. Apakah Anda setuju?
+                  </p>
+                  <div className="flex flex-col sm:flex-row items-center gap-2">
+                    <button
+                      onClick={handleRequestRematch}
+                      disabled={loadingAction}
+                      className="w-full sm:flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition hover:scale-105"
+                    >
+                      {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                      Setuju & Mulai Rematch!
+                    </button>
+                    <button
+                      onClick={handleReturnToLobby}
+                      disabled={loadingAction}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-black/40 hover:bg-black/60 text-stone-300 font-bold text-xs flex items-center justify-center gap-1.5"
+                    >
+                      <LogOut className="w-3.5 h-3.5" /> Tolak & Kembali
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* KONDISI 4: Belum ada yang meminta rematch - tampilkan opsi Minta Rematch & Kembali ke Lobi */
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button
+                      onClick={handleRequestRematch}
+                      disabled={loadingAction}
+                      className="w-full sm:flex-1 clay-btn-gold py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:scale-105 transition"
+                    >
+                      {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                      Minta Rematch (Tanding Ulang)
+                    </button>
+                    <button
+                      onClick={handleReturnToLobby}
+                      disabled={loadingAction}
+                      className="w-full sm:flex-1 clay-btn py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" /> Kembali ke Lobi
+                    </button>
+                  </div>
+                  <p className="text-[10px] opacity-65 text-center">
+                    💡 Match selesai (1 match). Jika memilih Rematch, kedua siswa harus sama-sama setuju sebelum match baru dimulai.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-3 mt-4">
+            {/* TUTUP ARENA */}
+            <div className="pt-2">
               <button
-                onClick={() => setBattleState("lobby")}
-                className="clay-btn px-6 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2"
+                onClick={handleCloseModal}
+                className="text-xs opacity-60 hover:opacity-100 transition underline underline-offset-4 flex items-center gap-1.5"
               >
-                <RotateCcw className="w-4 h-4" /> Masuk Lobi Baru
-              </button>
-              <button
-                onClick={onClose}
-                className="clay-btn-gold px-7 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition"
-              >
-                Tutup Arena
+                <X className="w-3.5 h-3.5" /> Tutup Arena
               </button>
             </div>
           </div>
