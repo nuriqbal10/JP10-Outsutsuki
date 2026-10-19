@@ -125,6 +125,29 @@ export const battleRooms = pgTable("battle_rooms", {
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
 
+// ==============================================================================
+// 8. ONLINE PRESENCE & REAL-TIME DUEL CHALLENGES
+// ==============================================================================
+export const onlinePresence = pgTable("online_presence", {
+  email: text("email").primaryKey(),
+  name: text("name").notNull(),
+  avatar: text("avatar").default("🥷").notNull(),
+  status: text("status").default("online").notNull(), // 'online', 'in_lobby', 'in_battle'
+  currentRoomCode: text("current_room_code"),
+  lastSeen: bigint("last_seen", { mode: "number" }).notNull(),
+});
+
+export const battleInvitations = pgTable("battle_invitations", {
+  id: text("id").primaryKey(),
+  fromEmail: text("from_email").notNull(),
+  fromName: text("from_name").notNull(),
+  fromAvatar: text("from_avatar").default("🥷").notNull(),
+  toEmail: text("to_email").notNull(),
+  roomCode: text("room_code").notNull(),
+  status: text("status").default("pending").notNull(), // 'pending', 'accepted', 'declined', 'expired'
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -138,4 +161,9 @@ export type LkpdSubmission = typeof lkpdSubmissions.$inferSelect;
 export type NewLkpdSubmission = typeof lkpdSubmissions.$inferInsert;
 export type BattleRoomEntity = typeof battleRooms.$inferSelect;
 export type NewBattleRoomEntity = typeof battleRooms.$inferInsert;
+export type OnlinePresenceEntity = typeof onlinePresence.$inferSelect;
+export type NewOnlinePresenceEntity = typeof onlinePresence.$inferInsert;
+export type BattleInvitationEntity = typeof battleInvitations.$inferSelect;
+export type NewBattleInvitationEntity = typeof battleInvitations.$inferInsert;
+
 

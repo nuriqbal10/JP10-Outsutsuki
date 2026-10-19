@@ -32,6 +32,9 @@ import {
   Filter,
   Layers,
   HelpCircle,
+  Send,
+  Bell,
+  RefreshCw,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { addXp } from "@/lib/gamification";
@@ -71,6 +74,26 @@ interface RoomData {
   updatedAt: number;
 }
 
+interface OnlineStudent {
+  email: string;
+  name: string;
+  avatar: string;
+  status: string;
+  currentRoomCode?: string | null;
+  lastSeen: number;
+}
+
+interface PendingInvite {
+  id: string;
+  fromEmail: string;
+  fromName: string;
+  fromAvatar: string;
+  toEmail: string;
+  roomCode: string;
+  status: string;
+  createdAt: number;
+}
+
 const AVATAR_OPTIONS = [
   { emoji: "🥷", label: "Shinobi" },
   { emoji: "⚔️", label: "Samurai" },
@@ -108,7 +131,7 @@ export default function BattleRoyaleModal({
 
   // Topic & Category Customization State
   const [topicLevel, setTopicLevel] = useState<VocabLevel>("A2.2");
-  const [topicChapter, setTopicChapter] = useState<number>(0); // 0 = Semua Bab
+  const [topicChapter, setTopicChapter] = useState<number>(0);
   const [topicCategory, setTopicCategory] = useState<VocabCategory>("all");
 
   // Identity State
@@ -120,6 +143,11 @@ export default function BattleRoyaleModal({
   const [isMyReady, setIsMyReady] = useState(false);
   const [loadingAction, setLoadingAction] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  // Online Presence & Direct Challenges
+  const [onlineStudents, setOnlineStudents] = useState<OnlineStudent[]>([]);
+  const [pendingInvite, setPendingInvite] = useState<PendingInvite | null>(null);
+  const [inviteNotification, setInviteNotification] = useState<string | null>(null);
 
   // Battle State
   const [battleState, setBattleState] = useState<"lobby" | "countdown" | "in_battle" | "victory" | "defeat">("lobby");
@@ -133,6 +161,7 @@ export default function BattleRoyaleModal({
 
   const lastSeenUpdatedAtRef = useRef<number>(0);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const presenceIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const questionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -162,48 +191,96 @@ export default function BattleRoyaleModal({
   // Active room code resolving
   const currentActiveRoomCode = isUsingCustomRoom && customRoomCode.trim() ? customRoomCode.trim().toUpperCase() : "";
 
-  // Poll Lobby Status from /api/battle-lobby with delta optimization (Anti-Lag)
+  // 1. PRESENCE HEARTBEAT & INVITATION CHECK LOOP
+  useEffect(() => {
+    if (!myEmail) return;
+
+    const sendHeartbeat = async () => {
+      try {
+        await fetch("/api/presence", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "heartbeat",
+            email: myEmail,
+            name: myName,
+            avatar: myAvatar,
+            status: battleState === "in_battle" ? "in_battle" : isJoined ? "in_lobby" : "online",
+            roomCode: currentActiveRoomCode || null,
+          }),
+        });
+      } catch (e) {}
+    };
+
+    const fetchPresence = async () => {
+      try {
+        const res = await fetch(`/api/presence?email=${encodeURIComponent(myEmail)}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success) {
+          if (Array.isArray(data.onlineUsers)) {
+            setOnlineStudents(data.onlineUsers.filter((u: OnlineStudent) => u.email.toLowerCase() !== myEmail.toLowerCase()));
+          }
+          if (data.pendingInvite) {
+            setPendingInvite(data.pendingInvite);
+          } else {
+            setPendingInvite(null);
+          }
+        }
+      } catch (e) {}
+    };
+
+    sendHeartbeat();
+    fetchPresence();
+
+    presenceIntervalRef.current = setInterval(() => {
+      sendHeartbeat();
+      fetchPresence();
+    }, 5000);
+
+    return () => {
+      if (presenceIntervalRef.current) clearInterval(presenceIntervalRef.current);
+    };
+  }, [myEmail, myName, myAvatar, battleState, isJoined, currentActiveRoomCode]);
+
+  // 2. POLL LOBBY STATUS (PREVENTS PAGE CLASH: Only joins match if user is in room)
   const fetchLobbyStatus = async (targetMode: BattleMode, roomCodeParam?: string, forceFull: boolean = false) => {
     try {
       const activeCode = roomCodeParam !== undefined ? roomCodeParam : currentActiveRoomCode;
       const since = forceFull ? 0 : lastSeenUpdatedAtRef.current;
       const url = `/api/battle-lobby?mode=${targetMode}&roomCode=${encodeURIComponent(activeCode)}&since=${since}&email=${encodeURIComponent(myEmail)}`;
-      
+
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) return;
       const data = await res.json();
-      
+
       if (!data.success) return;
 
-      // Delta short-circuit: server says no changes, do nothing to save CPU
-      if (data.changed === false) {
-        return;
-      }
+      if (data.changed === false) return;
 
       if (data.room) {
         setRoom(data.room);
         lastSeenUpdatedAtRef.current = data.room.updatedAt || Date.now();
 
-        // Sync topic filters with room settings
         if (data.room.topicLevel) setTopicLevel(data.room.topicLevel);
         if (typeof data.room.topicChapter === "number") setTopicChapter(data.room.topicChapter);
         if (data.room.topicCategory) setTopicCategory(data.room.topicCategory);
 
-        // Sync user's status from room participants
+        // Check user identity in room
         const meInRoom = data.room.participants.find((p: Participant) => p.email.toLowerCase() === myEmail.toLowerCase());
         if (meInRoom) {
           setIsJoined(true);
           setIsMyReady(meInRoom.isReady);
           if (meInRoom.team) setMyTeam(meInRoom.team);
           if (meInRoom.avatar) setMyAvatar(meInRoom.avatar);
+
+          // CRITICAL FIX FOR PAGE CLASH: Only start countdown if THIS user is joined & ready!
+          if (data.room.status === "countdown" && battleState === "lobby" && meInRoom.isReady) {
+            triggerLobbyCountdown(data.room);
+          }
         } else {
           setIsJoined(false);
           setIsMyReady(false);
-        }
-
-        // Trigger countdown if room countdown started
-        if (data.room.status === "countdown" && battleState === "lobby") {
-          triggerLobbyCountdown(data.room);
         }
       }
     } catch (e) {
@@ -220,7 +297,6 @@ export default function BattleRoyaleModal({
     lastSeenUpdatedAtRef.current = 0;
     fetchLobbyStatus(mode, currentActiveRoomCode, true);
 
-    // Optimized polling: 2.5 seconds during lobby only
     pollIntervalRef.current = setInterval(() => {
       if (battleState === "lobby") {
         fetchLobbyStatus(mode, currentActiveRoomCode);
@@ -243,7 +319,7 @@ export default function BattleRoyaleModal({
     fetchLobbyStatus(newMode, currentActiveRoomCode, true);
   };
 
-  // Update Topic Filters & sync to room
+  // Topic Filters update
   const handleUpdateTopic = async (newLevel: VocabLevel, newChapter: number, newCategory: VocabCategory) => {
     setTopicLevel(newLevel);
     setTopicChapter(newChapter);
@@ -266,8 +342,8 @@ export default function BattleRoyaleModal({
     } catch (e) {}
   };
 
-  // Join Lobby as current user
-  const handleJoinLobby = async () => {
+  // Join Lobby
+  const handleJoinLobby = async (targetCodeOverride?: string) => {
     if (!myEmail.trim()) {
       setActionError("Masukkan email akun Anda untuk bergabung.");
       return;
@@ -276,6 +352,7 @@ export default function BattleRoyaleModal({
     setLoadingAction(true);
     setActionError(null);
 
+    const activeCode = targetCodeOverride !== undefined ? targetCodeOverride : currentActiveRoomCode;
     const resolvedName = myName.trim() || myEmail.split("@")[0].toUpperCase();
 
     try {
@@ -285,7 +362,7 @@ export default function BattleRoyaleModal({
         body: JSON.stringify({
           action: "join",
           mode,
-          roomCode: currentActiveRoomCode,
+          roomCode: activeCode,
           email: myEmail.trim().toLowerCase(),
           name: resolvedName,
           avatar: myAvatar,
@@ -334,7 +411,7 @@ export default function BattleRoyaleModal({
     } catch (e) {}
   };
 
-  // Student determines their own ready status
+  // Ready Toggle
   const handleToggleReady = async () => {
     setLoadingAction(true);
     setActionError(null);
@@ -374,7 +451,7 @@ export default function BattleRoyaleModal({
     }
   };
 
-  // Student determines their own team
+  // Team Selection
   const handleSelectTeam = async (team: "shinobi" | "samurai") => {
     setMyTeam(team);
     if (isJoined) {
@@ -395,7 +472,7 @@ export default function BattleRoyaleModal({
     }
   };
 
-  // Student determines their own avatar
+  // Avatar Selection
   const handleSelectAvatar = async (avatar: string) => {
     setMyAvatar(avatar);
     if (isJoined) {
@@ -416,7 +493,79 @@ export default function BattleRoyaleModal({
     }
   };
 
-  // Countdown when Kuota Terpenuhi & Semua Peserta SIAP
+  // 3. SEND DIRECT CHALLENGE TO ONLINE FRIEND
+  const handleChallengeStudent = async (targetStudent: OnlineStudent) => {
+    const randomCode = `DUEL${Math.floor(100 + Math.random() * 900)}`;
+    setIsUsingCustomRoom(true);
+    setCustomRoomCode(randomCode);
+
+    try {
+      setInviteNotification(`Mengirim tantangan duel ke ${targetStudent.name}...`);
+      await fetch("/api/presence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "send_invite",
+          email: myEmail,
+          name: myName,
+          avatar: myAvatar,
+          toEmail: targetStudent.email,
+          targetRoomCode: randomCode,
+        }),
+      });
+
+      // Join the duel room immediately
+      await handleJoinLobby(randomCode);
+      sfx.playSlash();
+      setTimeout(() => setInviteNotification(null), 5000);
+    } catch (e) {
+      setActionError("Gagal mengirim undangan duel.");
+    }
+  };
+
+  // 4. ACCEPT INCOMING CHALLENGE
+  const handleAcceptInvite = async () => {
+    if (!pendingInvite) return;
+    const targetRoom = pendingInvite.roomCode;
+    setIsUsingCustomRoom(true);
+    setCustomRoomCode(targetRoom);
+
+    try {
+      await fetch("/api/presence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "respond_invite",
+          email: myEmail,
+          inviteId: pendingInvite.id,
+          response: "accepted",
+        }),
+      });
+
+      setPendingInvite(null);
+      await handleJoinLobby(targetRoom);
+      sfx.playVictory();
+    } catch (e) {}
+  };
+
+  const handleDeclineInvite = async () => {
+    if (!pendingInvite) return;
+    try {
+      await fetch("/api/presence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "respond_invite",
+          email: myEmail,
+          inviteId: pendingInvite.id,
+          response: "declined",
+        }),
+      });
+      setPendingInvite(null);
+    } catch (e) {}
+  };
+
+  // 5. START COUNTDOWN & MATCH
   const triggerLobbyCountdown = (currentRoom: RoomData) => {
     setBattleState("countdown");
     setCountdownNum(5);
@@ -437,9 +586,7 @@ export default function BattleRoyaleModal({
     }, 1000);
   };
 
-  // Start match generating questions dynamically with Fisher-Yates shuffled options
   const startMatch = (currentRoom: RoomData) => {
-    // Generate questions matching the selected Level, Chapter, and Category
     const questions = generateBattleQuestions({
       level: currentRoom.topicLevel || topicLevel,
       chapter: currentRoom.topicChapter !== undefined ? currentRoom.topicChapter : topicChapter,
@@ -461,7 +608,7 @@ export default function BattleRoyaleModal({
     sfx.playBlast();
   };
 
-  // Question Timer Loop
+  // Question Timer
   useEffect(() => {
     if (battleState !== "in_battle" || selectedAnswer !== null) {
       if (questionTimerRef.current) clearInterval(questionTimerRef.current);
@@ -524,7 +671,6 @@ export default function BattleRoyaleModal({
             newLogs.push(`💥 Anda ${chosen === "__TIMEOUT__" ? "KEHABISAN WAKTU" : "SALAH JAWAB"}! Menerima -25 HP.`);
           }
         } else {
-          // Live rival simulated reaction
           const rivalCorrect = Math.random() < 0.6;
           if (rivalCorrect) {
             score += 20;
@@ -591,6 +737,19 @@ export default function BattleRoyaleModal({
     currentParticipants.length >= requiredQuota &&
     currentParticipants.every((p) => p.isReady);
 
+  // Check if room is busy with another ongoing battle and user is NOT a participant
+  const meInRoom = currentParticipants.find((p) => p.email.toLowerCase() === myEmail.toLowerCase());
+  const isRoomOccupiedByOthers =
+    !meInRoom && (room?.status === "in_battle" || room?.status === "countdown");
+
+  // HEAD TO HEAD CALCULATION
+  const p1 = activeCombatants[0] || currentParticipants[0];
+  const p2 = activeCombatants[1] || currentParticipants[1];
+  const isSameTeamConfrontation = p1 && p2 && p1.team && p2.team && p1.team === p2.team;
+  const meCombatant = activeCombatants.find((c) => c.email.toLowerCase() === myEmail.toLowerCase());
+  const rivalCombatant = activeCombatants.find((c) => c.email.toLowerCase() !== myEmail.toLowerCase());
+  const scoreDifference = (meCombatant?.score || 0) - (rivalCombatant?.score || 0);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5">
       <div className="clay-card rounded-3xl p-5 sm:p-8 max-w-2xl w-full border border-rose-500/40 relative shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 max-h-[94vh] overflow-y-auto custom-scrollbar">
@@ -602,6 +761,46 @@ export default function BattleRoyaleModal({
         >
           <X className="w-5 h-5" />
         </button>
+
+        {/* ================= INCOMING CHALLENGE MODAL (Direct Invite Alert) ================= */}
+        {pendingInvite && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-rose-900/90 to-amber-900/90 border-2 border-amber-400 text-white shadow-2xl animate-bounce flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-400 text-stone-950 flex items-center justify-center text-3xl font-black shadow">
+                {pendingInvite.fromAvatar || "🥷"}
+              </div>
+              <div>
+                <span className="text-[10px] font-black uppercase text-amber-300 tracking-wider flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5" /> Tantangan Duel Masuk!
+                </span>
+                <h4 className="text-sm font-black">{pendingInvite.fromName} Menantang Anda!</h4>
+                <p className="text-[11px] opacity-80 font-mono">Kode Room: #{pendingInvite.roomCode}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleAcceptInvite}
+                className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-1.5"
+              >
+                <Check className="w-4 h-4" /> Terima & Tanding
+              </button>
+              <button
+                onClick={handleDeclineInvite}
+                className="px-3 py-2 rounded-xl bg-black/40 hover:bg-black/60 text-stone-300 font-bold text-xs"
+              >
+                Tolak
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TOAST NOTIFIKASI UNDANGAN */}
+        {inviteNotification && (
+          <div className="p-3 rounded-xl bg-blue-500/20 border border-blue-400 text-blue-300 text-xs font-bold flex items-center gap-2">
+            <Radio className="w-4 h-4 animate-ping" /> {inviteNotification}
+          </div>
+        )}
 
         {/* ================= STEP 1: LOBBY & PRE-MATCH ================= */}
         {battleState === "lobby" && (
@@ -615,16 +814,86 @@ export default function BattleRoyaleModal({
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl sm:text-2xl font-black">Lobi Battle Royale Real-Member</h2>
                   <span className="text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
-                    <Radio className="w-3 h-3 animate-pulse" /> Anti-Lag Engine
+                    <Radio className="w-3 h-3 animate-pulse" /> Live Arena
                   </span>
                 </div>
                 <p className="text-xs opacity-75 mt-0.5">
-                  Tentukan materi soal (Bab, Level, Kategori Kata), avatar, dan klik SIAP untuk bertanding bersama.
+                  Tantang siswa yang sedang online, tentukan materi soal, dan tanding Head-to-Head secara real-time!
                 </p>
               </div>
             </div>
 
-            {/* 1. IDENTITAS AKUN LOGIN (OTENTIKASI SISWA) */}
+            {/* PERINGATAN BILA ROOM SEDANG DIPAKAI ORANG LAIN */}
+            {isRoomOccupiedByOthers && (
+              <div className="p-4 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <ShieldAlert className="w-6 h-6 text-rose-500 shrink-0" />
+                  <div>
+                    <h4 className="text-xs font-black text-rose-500 uppercase">Room Ini Sedang Berlangsung</h4>
+                    <p className="text-[11px] opacity-80">
+                      Ada anggota lain yang sedang bertanding di room ini. Gunakan kode room khusus untuk bertanding berdua!
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    const newCode = `DUEL${Math.floor(100 + Math.random() * 900)}`;
+                    setIsUsingCustomRoom(true);
+                    setCustomRoomCode(newCode);
+                    lastSeenUpdatedAtRef.current = 0;
+                    fetchLobbyStatus(mode, newCode, true);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-rose-500 text-white font-black text-xs uppercase tracking-wider shrink-0 hover:bg-rose-400"
+                >
+                  Buat Room Baru
+                </button>
+              </div>
+            )}
+
+            {/* 1. RADAR SISWA ONLINE SAAT INI (GAME FRIEND INVITATION) */}
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-emerald-400">
+                  <Radio className="w-4 h-4 animate-pulse" /> Siswa Online di Akademi ({onlineStudents.length})
+                </div>
+                <span className="text-[10px] font-mono text-emerald-400 opacity-80">Klik untuk langsung ajak duel</span>
+              </div>
+
+              {onlineStudents.length === 0 ? (
+                <div className="text-center py-2 text-xs opacity-60 font-sans">
+                  Belum ada siswa lain yang online saat ini. Bagikan link web ke teman sekelas Anda!
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto custom-scrollbar">
+                  {onlineStudents.map((stu) => (
+                    <div
+                      key={stu.email}
+                      className="p-2.5 rounded-xl bg-black/10 dark:bg-white/5 border border-current/10 flex items-center justify-between gap-2"
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <span className="text-xl">{stu.avatar}</span>
+                        <div className="overflow-hidden">
+                          <div className="text-xs font-black truncate">{stu.name}</div>
+                          <span className="text-[9px] font-mono text-emerald-400 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-ping" />
+                            {stu.status === "in_battle" ? "Sedang Tanding" : stu.status === "in_lobby" ? "Di Lobi" : "Online"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleChallengeStudent(stu)}
+                        className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 transition"
+                      >
+                        <Swords className="w-3 h-3" /> Ajak Duel
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 2. IDENTITAS AKUN LOGIN (OTENTIKASI SISWA) */}
             <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
@@ -681,7 +950,7 @@ export default function BattleRoyaleModal({
               )}
             </div>
 
-            {/* 2. CUSTOM KONTROL SOAL: LEVEL, BAB, & KATEGORI KATA (FITUR BARU) */}
+            {/* 3. KUSTOMISASI SOAL: LEVEL, BAB, & KATEGORI KATA */}
             <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
@@ -693,11 +962,8 @@ export default function BattleRoyaleModal({
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                {/* 2.1 PILIH LEVEL */}
                 <div>
-                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
-                    Level Materi
-                  </label>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">Level Materi</label>
                   <select
                     disabled={isJoined}
                     value={topicLevel}
@@ -711,11 +977,8 @@ export default function BattleRoyaleModal({
                   </select>
                 </div>
 
-                {/* 2.2 PILIH BAB */}
                 <div>
-                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
-                    Pilihan Bab
-                  </label>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">Pilihan Bab</label>
                   <select
                     disabled={isJoined}
                     value={topicChapter}
@@ -731,11 +994,8 @@ export default function BattleRoyaleModal({
                   </select>
                 </div>
 
-                {/* 2.3 PILIH KELAS KATA (POS) */}
                 <div>
-                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
-                    Kategori Kelas Kata
-                  </label>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">Kategori Kelas Kata</label>
                   <select
                     disabled={isJoined}
                     value={topicCategory}
@@ -752,9 +1012,8 @@ export default function BattleRoyaleModal({
               </div>
             </div>
 
-            {/* 3. AVATAR & ROOM SELECTION */}
+            {/* 4. AVATAR & ROOM SELECTION */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Avatar Selector */}
               <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
                 <span className="text-[10px] font-black uppercase opacity-75">Tentukan Avatar Shinobi</span>
                 <div className="flex items-center justify-between gap-1">
@@ -775,7 +1034,6 @@ export default function BattleRoyaleModal({
                 </div>
               </div>
 
-              {/* Room Code Customizer */}
               <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase opacity-75">Tentukan Room / Lobi</span>
@@ -836,7 +1094,7 @@ export default function BattleRoyaleModal({
               </div>
             </div>
 
-            {/* 4. MODE SELECTION TABS */}
+            {/* 5. MODE SELECTION TABS */}
             <div className="flex flex-col gap-2">
               <span className="text-[10px] font-black uppercase opacity-75">Pilih Mode Pertandingan</span>
               <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10">
@@ -867,7 +1125,7 @@ export default function BattleRoyaleModal({
               </div>
             </div>
 
-            {/* OPSI PILIH TIM JIKA MODE GROUP 2vs2 */}
+            {/* OPSI PILIH TIM */}
             {mode === "group" && (
               <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex flex-col gap-2">
                 <span className="text-[10px] font-black uppercase text-indigo-400">
@@ -898,12 +1156,12 @@ export default function BattleRoyaleModal({
               </div>
             )}
 
-            {/* 5. ACTIONS BAR: MASUK LOBI / SAYA SIAP */}
+            {/* 6. ACTIONS BAR: MASUK LOBI / SAYA SIAP */}
             {!isJoined ? (
               <div className="flex flex-col gap-2">
                 <button
-                  disabled={loadingAction || !myEmail.trim()}
-                  onClick={handleJoinLobby}
+                  disabled={loadingAction || !myEmail.trim() || isRoomOccupiedByOthers}
+                  onClick={() => handleJoinLobby()}
                   className="clay-btn-gold py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 hover:scale-[1.01] transition"
                 >
                   {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
@@ -925,13 +1183,12 @@ export default function BattleRoyaleModal({
                     <span className="text-[10px] font-black uppercase text-amber-500">Anda Berada di Lobi</span>
                     <h4 className="text-sm font-black">{myName}</h4>
                     <span className="text-[11px] font-mono opacity-70">
-                      {mode === "group" ? `Kubu: Tim ${myTeam.toUpperCase()}` : `Room: ${room?.roomCode || mode}`}
+                      {mode === "group" ? `Kubu: Tim ${myTeam.toUpperCase()}` : `Room: #${room?.roomCode || mode}`}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  {/* TOMBOL SISWA MENENTUKAN SENDIRI STATUS SIAP */}
                   <button
                     disabled={loadingAction}
                     onClick={handleToggleReady}
@@ -963,14 +1220,14 @@ export default function BattleRoyaleModal({
               </div>
             )}
 
-            {/* 6. WAITING ROOM HUD & REAL-TIME PESERTA */}
+            {/* 7. WAITING ROOM HUD & REAL-TIME PESERTA */}
             <div className="p-5 rounded-3xl bg-black/5 dark:bg-black/30 border border-current/10 flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-current/10 pb-3 gap-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase">
                   <Users className="w-4 h-4 text-amber-500" />
                   Peserta Terkumpul: <span className="text-amber-500">{currentParticipants.length}</span> / {requiredQuota}
                   <span className="text-[11px] font-mono opacity-60 ml-1">
-                    (Room: {room?.roomCode || mode.toUpperCase()})
+                    (Room: #{room?.roomCode || mode.toUpperCase()})
                   </span>
                 </div>
                 <div>
@@ -1034,7 +1291,6 @@ export default function BattleRoyaleModal({
                     );
                   }
 
-                  // Empty Slot
                   return (
                     <div
                       key={`empty_${idx}`}
@@ -1046,41 +1302,72 @@ export default function BattleRoyaleModal({
                 })}
               </div>
 
-              {/* PETUNJUK MULTIPLAYER */}
+              {/* PETUNJUK */}
               <div className="text-[11px] opacity-75 text-center mt-1">
-                💡 Bagikan kode room <span className="font-mono font-bold text-amber-400">{room?.roomCode || mode.toUpperCase()}</span> ke teman sekelas. Topik latihan yang dipilih:{" "}
-                <span className="font-bold text-emerald-400">
-                  {topicLevel} • {topicChapter ? `Bab ${topicChapter}` : "Semua Bab"} • {topicCategory.toUpperCase()}
-                </span>
+                💡 Bagikan kode room <span className="font-mono font-bold text-amber-400">#{room?.roomCode || mode.toUpperCase()}</span> ke teman Anda, atau klik tombol <b>Ajak Duel</b> pada radar siswa online di atas!
               </div>
             </div>
           </div>
         )}
 
-        {/* ================= STEP 2: COUNTDOWN ABA-ABA 5 DETIK ================= */}
+        {/* ================= STEP 2: COUNTDOWN & HEAD TO HEAD DERBY SHOWCASE ================= */}
         {battleState === "countdown" && (
-          <div className="py-12 flex flex-col items-center justify-center gap-6 text-center animate-in zoom-in-95">
-            <div className="w-24 h-24 rounded-full bg-rose-600/20 border-2 border-rose-500 text-rose-500 flex items-center justify-center text-5xl font-black font-mono shadow-2xl animate-pulse">
-              {countdownNum}
-            </div>
-
-            <div>
-              <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-                Aba-aba Pertandingan
+          <div className="py-8 flex flex-col items-center justify-center gap-6 text-center animate-in zoom-in-95">
+            {/* HEAD TO HEAD BANNER */}
+            <div className="w-full p-4 rounded-3xl bg-gradient-to-r from-rose-950/60 via-amber-950/40 to-blue-950/60 border border-amber-500/40 flex flex-col items-center gap-4 shadow-xl">
+              <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                <Flame className="w-3.5 h-3.5 text-rose-500 animate-bounce" />
+                {isSameTeamConfrontation
+                  ? `DERBY HEAD TO HEAD (SESAMA TIM ${p1?.team?.toUpperCase()})`
+                  : "HEAD TO HEAD CONFRONTATION"}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-3">SEMUA SISWA TELAH SIAP!</h2>
-              <p className="text-xs opacity-75 mt-1 max-w-sm">
-                Ronde 1 akan segera dimulai. Konsentrasi penuh pada kanji dan arti kosakata!
-              </p>
+
+              {/* VERSUS MATCHUP CARD */}
+              <div className="flex items-center justify-around w-full gap-2">
+                {/* FIGHTER 1 */}
+                <div className="flex flex-col items-center gap-1.5 flex-1">
+                  <div className="w-16 h-16 rounded-2xl bg-blue-500/20 border-2 border-blue-400 flex items-center justify-center text-3xl shadow-lg">
+                    {p1?.avatar || "🥷"}
+                  </div>
+                  <h4 className="text-sm font-black truncate max-w-[120px]">{p1?.name || "Player 1"}</h4>
+                  <span className="text-[10px] font-mono text-blue-400 font-bold uppercase">
+                    Tim {p1?.team || "Shinobi"}
+                  </span>
+                </div>
+
+                {/* CENTER VS EMBLEM */}
+                <div className="flex flex-col items-center gap-1 shrink-0 px-2">
+                  <div className="w-12 h-12 rounded-full bg-rose-600 border-2 border-amber-300 text-white flex items-center justify-center font-black text-lg shadow-xl animate-pulse">
+                    VS
+                  </div>
+                  <span className="text-[9px] font-mono font-bold opacity-75">1 ON 1 DUEL</span>
+                </div>
+
+                {/* FIGHTER 2 */}
+                <div className="flex flex-col items-center gap-1.5 flex-1">
+                  <div className="w-16 h-16 rounded-2xl bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center text-3xl shadow-lg">
+                    {p2?.avatar || "⚔️"}
+                  </div>
+                  <h4 className="text-sm font-black truncate max-w-[120px]">{p2?.name || "Player 2"}</h4>
+                  <span className="text-[10px] font-mono text-rose-400 font-bold uppercase">
+                    Tim {p2?.team || "Samurai"}
+                  </span>
+                </div>
+              </div>
+
+              {isSameTeamConfrontation && (
+                <div className="text-[11px] font-bold text-amber-300 bg-amber-500/10 px-3 py-1 rounded-xl">
+                  ⚔️ Pertarungan Sesama Saudara Seperguruan! Buktikan siapa ninja terhebat di kelas!
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center gap-3">
-              {activeCombatants.map((c) => (
-                <div key={c.email} className="flex flex-col items-center gap-1">
-                  <span className="text-2xl">{c.avatar}</span>
-                  <span className="text-[10px] font-mono font-bold opacity-80">{c.name.split(" ")[0]}</span>
-                </div>
-              ))}
+            {/* COUNTDOWN TIMER */}
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-20 h-20 rounded-full bg-rose-600/20 border-2 border-rose-500 text-rose-500 flex items-center justify-center text-4xl font-black font-mono shadow-2xl animate-pulse">
+                {countdownNum}
+              </div>
+              <p className="text-xs opacity-75">Ronde 1 akan segera dimulai. Bersiaplah!</p>
             </div>
           </div>
         )}
@@ -1088,6 +1375,31 @@ export default function BattleRoyaleModal({
         {/* ================= STEP 3: ARENA PERTANDINGAN AKTIF ================= */}
         {battleState === "in_battle" && currentQ && (
           <div className="flex flex-col gap-5 animate-in fade-in">
+            {/* HEAD TO HEAD LIVE SCORE TRACKER */}
+            {meCombatant && rivalCombatant && (
+              <div className="p-3 rounded-2xl bg-black/20 border border-current/10 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{meCombatant.avatar}</span>
+                  <span className="font-bold truncate max-w-[90px]">{meCombatant.name.split(" ")[0]} (Anda)</span>
+                  <span className="font-mono text-amber-400 font-black">{meCombatant.score} PTS</span>
+                </div>
+
+                <div className="text-[10px] font-black uppercase text-rose-400 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
+                  {scoreDifference === 0
+                    ? "SKOR IMBANG ⚔️"
+                    : scoreDifference > 0
+                    ? `+${scoreDifference} UNGGUL 🔥`
+                    : `${scoreDifference} TERTINGGAL ⚠️`}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-amber-400 font-black">{rivalCombatant.score} PTS</span>
+                  <span className="font-bold truncate max-w-[90px]">{rivalCombatant.name.split(" ")[0]}</span>
+                  <span className="text-lg">{rivalCombatant.avatar}</span>
+                </div>
+              </div>
+            )}
+
             {/* TOP ARENA HUD */}
             <div className="flex items-center justify-between border-b border-current/10 pb-3">
               <div className="flex items-center gap-2">
@@ -1135,7 +1447,6 @@ export default function BattleRoyaleModal({
                       <span className="font-mono text-[10px] font-bold text-amber-400">{c.score} PTS</span>
                     </div>
 
-                    {/* HP Bar */}
                     <div className="w-full h-2 rounded-full bg-black/20 overflow-hidden relative">
                       <div
                         className={`h-full transition-all duration-300 ${
@@ -1163,7 +1474,7 @@ export default function BattleRoyaleModal({
               )}
             </div>
 
-            {/* OPTIONS BUTTONS (FISHER-YATES SHUFFLED) */}
+            {/* OPTIONS BUTTONS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {currentQ.options.map((opt, idx) => {
                 let btnClass = "clay-btn p-3.5 rounded-xl text-xs font-bold text-left transition relative";
@@ -1216,7 +1527,7 @@ export default function BattleRoyaleModal({
               </span>
               <h2 className="text-3xl font-black mt-2">CHAMPION ARENA!</h2>
               <p className="text-xs opacity-75 mt-1 max-w-md">
-                Selamat! Anda berhasil mengalahkan seluruh peserta terdaftar di arena ini.
+                Selamat! Anda memenangkan duel Head-to-Head ini dengan gemilang!
               </p>
               <div className="inline-block mt-3 px-5 py-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-black uppercase tracking-wider">
                 +{mode === "all_members" ? 150 : mode === "group" ? 120 : 90} XP Ditambahkan ke Akun!
@@ -1252,7 +1563,7 @@ export default function BattleRoyaleModal({
               </span>
               <h2 className="text-3xl font-black mt-2">Gugur di Medan Laga!</h2>
               <p className="text-xs opacity-75 mt-1 max-w-md">
-                HP Anda terkuras habis oleh serangan peserta lain. Tingkatkan ketepatan kosakata Anda dan coba lagi!
+                Lawan Anda berhasil memimpin skor duel Head-to-Head kali ini. Tingkatkan hafalan dan coba tantang kembali!
               </p>
             </div>
 
