@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextResponse } from "next/server";
 import { db } from "@/db"; // Pastikan path koneksi database Anda sesuai
 import { users } from "@/db/schema";
