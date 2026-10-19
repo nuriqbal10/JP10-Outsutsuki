@@ -131,76 +131,10 @@ export function advanceDailyQuest(category: DailyQuest["category"], amount = 1):
   return { completedJustNow, rewardXp };
 }
 
-// Master Clan & Class Leaderboard with realistic student rankings
+// Master Clan & Class Leaderboard - Cleaned Version
 export function getLeaderboardData(currentUserName: string, currentUserXp: number, currentUserLevel: number): LeaderboardUser[] {
-  const defaultPeers: LeaderboardUser[] = [
-    {
-      id: "p1",
-      name: "Rizky Pratama (SSW Kaigo)",
-      avatar: "🥷",
-      rankTitle: "Jonin Kelas Atas",
-      level: 7,
-      xp: 4320,
-      streak: 14,
-      battlesWon: 28,
-      badge: "上忍 • 実践会話",
-    },
-    {
-      id: "p2",
-      name: "Siti Rahmawati (SSW Food Service)",
-      avatar: "🌸",
-      rankTitle: "Tokubetsu Jonin",
-      level: 6,
-      xp: 3150,
-      streak: 9,
-      battlesWon: 19,
-      badge: "特別上忍 • 聴解マスター",
-    },
-    {
-      id: "p3",
-      name: "Budi Santoso (SSW Manufaktur)",
-      avatar: "⚡",
-      rankTitle: "Chunin Elit",
-      level: 5,
-      xp: 2050,
-      streak: 6,
-      battlesWon: 12,
-      badge: "中忍 • 文法エキスパート",
-    },
-    {
-      id: "p4",
-      name: "Dewi Lestari (Akademi Tokyo)",
-      avatar: "🦊",
-      rankTitle: "Chunin Taktis",
-      level: 4,
-      xp: 1320,
-      streak: 4,
-      battlesWon: 8,
-      badge: "中忍 • 語彙マスター",
-    },
-    {
-      id: "p5",
-      name: "Ahmad Fauzi (SSW Konstruksi)",
-      avatar: "🦅",
-      rankTitle: "Genin Tangguh",
-      level: 3,
-      xp: 750,
-      streak: 3,
-      battlesWon: 4,
-      badge: "下忍 • 中級",
-    },
-    {
-      id: "p6",
-      name: "Nur Hidayah (Persiapan JFT A2)",
-      avatar: "🍃",
-      rankTitle: "Genin Pemula",
-      level: 2,
-      xp: 380,
-      streak: 2,
-      battlesWon: 2,
-      badge: "下忍 • 初級",
-    },
-  ];
+  // Array tester dikosongkan agar papan peringkat bersih
+  const defaultPeers: LeaderboardUser[] = [];
 
   // Inject current user
   const userEntry: LeaderboardUser = {

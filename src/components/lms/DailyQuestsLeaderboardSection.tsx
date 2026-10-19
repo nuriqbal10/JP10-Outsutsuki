@@ -12,10 +12,62 @@ import {
   Zap,
   Target,
   CheckCircle2,
+  Clock,
+  History,
+  RotateCcw,
   Swords,
 } from "lucide-react";
 import { getDailyQuests, getLeaderboardData, DailyQuest, LeaderboardUser } from "@/lib/dailyQuests";
 import { UserGamificationState, getGamificationState } from "@/lib/gamification";
+
+interface MatchParticipant {
+  email: string;
+  name: string;
+  avatar: string;
+  team?: "shinobi" | "samurai";
+  score: number;
+  hp: number;
+  isReady: boolean;
+}
+
+interface MatchHistoryItem {
+  id: string;
+  roomCode: string;
+  mode: string;
+  topicLevel: string;
+  topicChapter: number;
+  topicCategory: string;
+  winnerEmail: string | null;
+  winnerName: string | null;
+  winnerAvatar: string | null;
+  winnerTeam: string | null;
+  participants: MatchParticipant[];
+  totalQuestions: number;
+  createdAt: number;
+}
+
+interface LeaderboardEntry {
+  email: string;
+  name: string;
+  avatar: string;
+  team: string;
+  matchesPlayed: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  totalScore: number;
+  rankTitle: string;
+}
+
+function formatTimeAgo(timestamp: number): string {
+  const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+  if (diffSec < 60) return "Baru saja";
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 60) return `${diffMin} mnt lalu`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} jam lalu`;
+  return `${Math.floor(diffHr / 24)} hari lalu`;
+}
 
 export default function DailyQuestsLeaderboardSection({
   onOpenBattle,
@@ -24,14 +76,30 @@ export default function DailyQuestsLeaderboardSection({
 }) {
   const [quests, setQuests] = useState<DailyQuest[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
-  const [activeTab, setActiveTab] = useState<"quests" | "leaderboard">("quests");
+  const [battleMatches, setBattleMatches] = useState<MatchHistoryItem[]>([]);
+  const [battleLeaderboard, setBattleLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [activeTab, setActiveTab] = useState<"quests" | "leaderboard" | "history">("quests");
   const [userState, setUserState] = useState<UserGamificationState | null>(null);
+
+  const fetchBattleData = async () => {
+    try {
+      const res = await fetch("/api/battle-history");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          if (Array.isArray(data.matches)) setBattleMatches(data.matches);
+          if (Array.isArray(data.leaderboard)) setBattleLeaderboard(data.leaderboard);
+        }
+      }
+    } catch (e) { }
+  };
 
   useEffect(() => {
     const state = getGamificationState();
     setUserState(state);
     setQuests(getDailyQuests());
     setLeaderboard(getLeaderboardData("Anda (Shinobi)", state.xp, state.level));
+    fetchBattleData();
 
     const handleQuestUpdate = (e: any) => {
       setQuests(e.detail);
@@ -40,6 +108,7 @@ export default function DailyQuestsLeaderboardSection({
     const handleGamificationUpdate = (e: any) => {
       setUserState(e.detail);
       setLeaderboard(getLeaderboardData("Anda (Shinobi)", e.detail.xp, e.detail.level));
+      fetchBattleData();
     };
 
     window.addEventListener("daily-quests-updated", handleQuestUpdate);
@@ -62,36 +131,47 @@ export default function DailyQuestsLeaderboardSection({
             🎯
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-black">Misi Harian & Papan Peringkat Shinobi</h3>
+            <h3 className="text-base sm:text-lg font-black">Misi Harian & Riwayat Battle Shinobi</h3>
             <p className="text-xs opacity-70">
-              Selesaikan misi harian untuk mengumpulkan XP & taklukkan peringkat kelas!
+              Selesaikan misi harian, kumpulkan riwayat kemenangan duel & taklukkan peringkat klan!
             </p>
           </div>
         </div>
 
         {/* TAB TOGGLES */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
           <button
             onClick={() => setActiveTab("quests")}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-              activeTab === "quests"
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${activeTab === "quests"
                 ? "bg-amber-500 text-stone-950 shadow-md"
                 : "bg-black/5 dark:bg-white/5 hover:bg-black/10 opacity-80"
-            }`}
+              }`}
           >
             <Target className="w-3.5 h-3.5" />
             Misi Harian ({completedQuestsCount}/{quests.length})
           </button>
           <button
             onClick={() => setActiveTab("leaderboard")}
-            className={`px-4 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${
-              activeTab === "leaderboard"
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${activeTab === "leaderboard"
                 ? "bg-amber-500 text-stone-950 shadow-md"
                 : "bg-black/5 dark:bg-white/5 hover:bg-black/10 opacity-80"
-            }`}
+              }`}
           >
             <Trophy className="w-3.5 h-3.5" />
-            Papan Peringkat Kelas
+            Papan Peringkat
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("history");
+              fetchBattleData();
+            }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${activeTab === "history"
+                ? "bg-amber-500 text-stone-950 shadow-md"
+                : "bg-black/5 dark:bg-white/5 hover:bg-black/10 opacity-80"
+              }`}
+          >
+            <Swords className="w-3.5 h-3.5" />
+            Riwayat Pertandingan ({battleMatches.length})
           </button>
         </div>
       </div>
@@ -104,11 +184,10 @@ export default function DailyQuestsLeaderboardSection({
             return (
               <div
                 key={q.id}
-                className={`p-4 rounded-2xl border transition flex flex-col justify-between gap-3 ${
-                  q.isCompleted
+                className={`p-4 rounded-2xl border transition flex flex-col justify-between gap-3 ${q.isCompleted
                     ? "bg-emerald-500/10 border-emerald-500/30"
                     : "bg-black/5 dark:bg-black/20 border-current/10 hover:border-amber-400/40"
-                }`}
+                  }`}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
@@ -134,9 +213,8 @@ export default function DailyQuestsLeaderboardSection({
                   <div className="w-36">
                     <div className="w-full h-1.5 rounded-full bg-black/10 dark:bg-white/10 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-500 ${
-                          q.isCompleted ? "bg-emerald-500" : "bg-gradient-to-r from-amber-400 to-amber-600"
-                        }`}
+                        className={`h-full rounded-full transition-all duration-500 ${q.isCompleted ? "bg-emerald-500" : "bg-gradient-to-r from-amber-400 to-amber-600"
+                          }`}
                         style={{ width: `${pct}%` }}
                       />
                     </div>
@@ -176,11 +254,10 @@ export default function DailyQuestsLeaderboardSection({
               return (
                 <div
                   key={user.id}
-                  className={`p-3 sm:p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${
-                    user.isCurrentUser
+                  className={`p-3 sm:p-3.5 rounded-2xl border transition flex items-center justify-between gap-3 ${user.isCurrentUser
                       ? "bg-amber-500/15 border-amber-400 font-black shadow-lg ring-1 ring-amber-400/50"
                       : "bg-black/5 dark:bg-black/20 border-current/10 hover:bg-black/10"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-xl bg-black/10 dark:bg-white/10 flex items-center justify-center shrink-0">
@@ -223,6 +300,121 @@ export default function DailyQuestsLeaderboardSection({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* CONTENT TAB 3: BATTLE MATCH HISTORY */}
+      {activeTab === "history" && (
+        <div className="flex flex-col gap-3">
+          {battleMatches.length === 0 ? (
+            <div className="text-center py-10 px-4 rounded-2xl bg-black/5 dark:bg-black/20 border border-current/10 flex flex-col items-center gap-3">
+              <span className="text-4xl">📜</span>
+              <div>
+                <h4 className="font-black text-sm">Belum Ada Riwayat Pertandingan</h4>
+                <p className="text-xs opacity-70 mt-1 max-w-sm">
+                  Semua rekaman hasil duel Battle Royale (skor, HP, pemenang) akan otomatis tersimpan di database Neon secara permanen.
+                </p>
+              </div>
+              {onOpenBattle && (
+                <button
+                  onClick={onOpenBattle}
+                  className="clay-btn-gold px-5 py-2 rounded-xl text-xs font-black uppercase flex items-center gap-1.5 shadow"
+                >
+                  <Swords className="w-3.5 h-3.5" /> Mulai Duel Sekarang
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="max-h-96 overflow-y-auto space-y-2.5 pr-1 custom-scrollbar">
+              {battleMatches.map((match) => {
+                const p1 = match.participants[0];
+                const p2 = match.participants[1];
+                const isP1Winner = match.winnerEmail && p1 && match.winnerEmail.toLowerCase() === p1.email?.toLowerCase();
+                const isP2Winner = match.winnerEmail && p2 && match.winnerEmail.toLowerCase() === p2.email?.toLowerCase();
+
+                return (
+                  <div
+                    key={match.id}
+                    className="p-3.5 rounded-2xl border border-current/10 bg-black/5 dark:bg-black/20 hover:border-amber-400/40 transition flex flex-col gap-2.5"
+                  >
+                    {/* MATCH HEADER INFO */}
+                    <div className="flex items-center justify-between text-[11px]">
+                      <div className="flex items-center gap-2">
+                        <span className="font-black uppercase tracking-wider bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-md font-mono text-[10px]">
+                          {match.mode === "1vs1" ? "1 VS 1 DUEL" : match.mode.toUpperCase()}
+                        </span>
+                        <span className="opacity-75 font-mono text-[10px]">
+                          [{match.topicLevel} • {match.topicChapter ? `Bab ${match.topicChapter}` : "Semua Bab"} • {match.topicCategory?.toUpperCase()}]
+                        </span>
+                      </div>
+                      <span className="text-[10px] opacity-60 flex items-center gap-1 font-mono">
+                        <Clock className="w-3 h-3" /> {formatTimeAgo(match.createdAt)}
+                      </span>
+                    </div>
+
+                    {/* MATCHUP VERSUS DISPLAY */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      {/* Player 1 */}
+                      {p1 && (
+                        <div
+                          className={`p-2 rounded-xl border flex items-center justify-between gap-2 ${isP1Winner
+                              ? "bg-amber-500/15 border-amber-400/60 font-black shadow-sm"
+                              : "bg-black/10 dark:bg-white/5 border-current/10 opacity-75"
+                            }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="text-lg">{p1.avatar || "🥷"}</span>
+                            <div className="truncate">
+                              <span className="font-bold truncate block">{p1.name}</span>
+                              <span className="text-[9px] uppercase tracking-wider opacity-60 block">
+                                {p1.team || "shinobi"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="font-mono font-black text-amber-400 block">{p1.score} PTS</span>
+                            {isP1Winner && (
+                              <span className="text-[9px] font-black uppercase text-amber-400 flex items-center gap-0.5 justify-end">
+                                👑 MENANG
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Player 2 */}
+                      {p2 && (
+                        <div
+                          className={`p-2 rounded-xl border flex items-center justify-between gap-2 ${isP2Winner
+                              ? "bg-amber-500/15 border-amber-400/60 font-black shadow-sm"
+                              : "bg-black/10 dark:bg-white/5 border-current/10 opacity-75"
+                            }`}
+                        >
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="text-lg">{p2.avatar || "⚔️"}</span>
+                            <div className="truncate">
+                              <span className="font-bold truncate block">{p2.name}</span>
+                              <span className="text-[9px] uppercase tracking-wider opacity-60 block">
+                                {p2.team || "samurai"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="font-mono font-black text-amber-400 block">{p2.score} PTS</span>
+                            {isP2Winner && (
+                              <span className="text-[9px] font-black uppercase text-amber-400 flex items-center gap-0.5 justify-end">
+                                👑 MENANG
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -121,6 +121,8 @@ export const battleRooms = pgTable("battle_rooms", {
   topicChapter: integer("topic_chapter").notNull(),
   topicCategory: text("topic_category").notNull(),
   participants: jsonb("participants").notNull(),
+  questions: jsonb("questions"),
+  battleLog: jsonb("battle_log"),
   updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
@@ -148,22 +150,52 @@ export const battleInvitations = pgTable("battle_invitations", {
   createdAt: bigint("created_at", { mode: "number" }).notNull(),
 });
 
-// Type exports
+// ==============================================================================
+// 9. BATTLE MATCH HISTORY & LEADERBOARD LOGS
+// ==============================================================================
+export const battleMatchHistory = pgTable("battle_match_history", {
+  id: text("id").primaryKey(),
+  roomCode: text("room_code").notNull(),
+  mode: text("mode").notNull(),
+  topicLevel: text("topic_level").notNull(),
+  topicChapter: integer("topic_chapter").notNull(),
+  topicCategory: text("topic_category").notNull(),
+  winnerEmail: text("winner_email"),
+  winnerName: text("winner_name"),
+  winnerAvatar: text("winner_avatar"),
+  winnerTeam: text("winner_team"),
+  participants: jsonb("participants").notNull(),
+  totalQuestions: integer("total_questions").default(5).notNull(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+});
+
+// ==============================================================================
+// TYPE EXPORTS (Cleaned & Unified)
+// ==============================================================================
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+
 export type Vocabulary = typeof vocabularies.$inferSelect;
 export type NewVocabulary = typeof vocabularies.$inferInsert;
+
 export type Question = typeof questions.$inferSelect;
 export type NewQuestion = typeof questions.$inferInsert;
+
 export type ExamSession = typeof examSessions.$inferSelect;
 export type NewExamSession = typeof examSessions.$inferInsert;
+
 export type LkpdSubmission = typeof lkpdSubmissions.$inferSelect;
 export type NewLkpdSubmission = typeof lkpdSubmissions.$inferInsert;
+
 export type BattleRoomEntity = typeof battleRooms.$inferSelect;
 export type NewBattleRoomEntity = typeof battleRooms.$inferInsert;
+
 export type OnlinePresenceEntity = typeof onlinePresence.$inferSelect;
 export type NewOnlinePresenceEntity = typeof onlinePresence.$inferInsert;
+
 export type BattleInvitationEntity = typeof battleInvitations.$inferSelect;
 export type NewBattleInvitationEntity = typeof battleInvitations.$inferInsert;
 
+export type BattleMatchHistoryEntity = typeof battleMatchHistory.$inferSelect;
+export type NewBattleMatchHistoryEntity = typeof battleMatchHistory.$inferInsert;
 

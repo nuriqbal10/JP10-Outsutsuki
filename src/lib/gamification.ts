@@ -1,4 +1,49 @@
-export interface UserGamificationState {
+function calculateRank(state: UserGamificationState): UserGamificationState {
+  let rankTitle = "Murid Akademi";
+  let rankBadge = "アカデミー生";
+  let level = 1;
+
+  if (state.xp >= 4000) {
+    level = 7;
+    rankTitle = "Jonin Kelas Atas";
+    rankBadge = "上忍";
+  } else if (state.xp >= 3000) {
+    level = 6;
+    rankTitle = "Tokubetsu Jonin";
+    rankBadge = "特別上忍";
+  } else if (state.xp >= 2000) {
+    level = 5;
+    rankTitle = "Chunin Elit";
+    rankBadge = "中忍";
+  } else if (state.xp >= 1200) {
+    level = 4;
+    rankTitle = "Chunin Taktis";
+    rankBadge = "中忍";
+  } else if (state.xp >= 700) {
+    level = 3;
+    rankTitle = "Genin Tangguh";
+    rankBadge = "下忍";
+  } else if (state.xp >= 300) {
+    level = 2;
+    rankTitle = "Genin Pemula";
+    rankBadge = "下忍";
+  }
+
+  const nextLevelXp = level * 600;
+  const prevLevelXp = (level - 1) * 600;
+  const progressPercent = Math.min(
+    100,
+    Math.max(0, Math.round(((state.xp - prevLevelXp) / (nextLevelXp - prevLevelXp)) * 100))
+  );
+
+  return {
+    ...state,
+    level,
+    rankTitle,
+    rankBadge,
+    progressPercent,
+  };
+} export interface UserGamificationState {
   xp: number;
   level: number;
   rankTitle: string;
@@ -108,7 +153,7 @@ export function addXp(amount: number, reason?: string): UserGamificationState {
   const current = getGamificationState();
   const today = new Date().toISOString().split("T")[0];
 
-  // Update streak if first time today
+  // Update streak jika pertama kali hari ini
   let streak = current.dailyStreak;
   if (current.lastActiveDate !== today) {
     const last = new Date(current.lastActiveDate);
@@ -128,7 +173,7 @@ export function addXp(amount: number, reason?: string): UserGamificationState {
     lastActiveDate: today,
   };
 
-  // Check badges unlock
+  // Cek pembukaan badge
   const badges = [...updated.badges];
   if (updated.dailyStreak >= 3 && !badges.includes("streak_3")) badges.push("streak_3");
   if (updated.dailyStreak >= 7 && !badges.includes("streak_7")) badges.push("streak_7");
@@ -136,45 +181,33 @@ export function addXp(amount: number, reason?: string): UserGamificationState {
   updated.badges = badges;
 
   const finalState = calculateRank(updated);
+
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(finalState));
-    // Trigger custom event so reactive UI banners update immediately
+    // Picu custom event agar UI banner reaktif langsung terbarui
     window.dispatchEvent(new CustomEvent("gamification-updated", { detail: finalState }));
+
+    // Sinkronisasi otomatis ke Database Pusat melalui API
+    fetch("/api/student-progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: "student@ootsutsuki.class", // Bisa disesuaikan dengan email siswa yang sedang login
+        name: "Siswa Ootsutsuki",
+        xp: finalState.xp,
+        level: finalState.level,
+      }),
+    }).catch((err) => console.error("Gagal menyinkronkan XP ke database:", err));
   }
 
   return finalState;
-}
-
-function calculateRank(state: UserGamificationState): UserGamificationState {
-  const xp = state.xp;
-  let currentRank = RANKS[0];
-
-  for (let i = RANKS.length - 1; i >= 0; i--) {
-    if (xp >= RANKS[i].minXp) {
-      currentRank = RANKS[i];
-      break;
-    }
-  }
-
-  const range = currentRank.maxXp - currentRank.minXp;
-  const currentProgress = xp - currentRank.minXp;
-  const percent = Math.min(100, Math.max(0, Math.round((currentProgress / range) * 100)));
-
-  return {
-    ...state,
-    level: currentRank.level,
-    rankTitle: currentRank.title,
-    rankBadge: currentRank.badge,
-    nextLevelXp: currentRank.maxXp,
-    progressPercent: percent,
-  };
 }
 
 export function setGamificationLevel(targetLevel: number): UserGamificationState {
   const current = getGamificationState();
   const clamped = Math.max(1, Math.min(10, targetLevel));
   const targetRank = RANKS.find((r) => r.level === clamped) || RANKS[0];
-  
+
   // Set XP to minXp of that level + 20%
   const bonusXp = Math.round((targetRank.maxXp - targetRank.minXp) * 0.2);
   const newXp = targetRank.minXp + bonusXp;

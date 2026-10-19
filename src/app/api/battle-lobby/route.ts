@@ -2,8 +2,13 @@ export const runtime = "edge";
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { battleRooms, BattleRoomEntity } from "@/db/schema";
+import { battleRooms, BattleRoomEntity, battleMatchHistory } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import {
+  generateBattleQuestions,
+  VocabCategory,
+  VocabLevel,
+} from "@/data/battleQuestionBank";
 
 export type BattleMode = "1vs1" | "group" | "all_members";
 
@@ -39,6 +44,8 @@ function formatRoom(r: BattleRoomEntity) {
     topicChapter: r.topicChapter,
     topicCategory: r.topicCategory as "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3",
     participants: (r.participants as Participant[]) || [],
+    questions: (r.questions as any[]) || [],
+    battleLog: (r.battleLog as string[]) || [],
     updatedAt: r.updatedAt,
     createdAt: r.createdAt,
   };
@@ -118,8 +125,11 @@ export async function POST(req: NextRequest) {
       topicLevel,
       topicChapter,
       topicCategory,
+      isCorrect,
+      chosenAnswer,
+      questionIndex,
     } = body as {
-      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "set_topic" | "reset" | "finish_match" | "request_rematch" | "cancel_rematch";
+      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "set_topic" | "reset" | "finish_match" | "request_rematch" | "cancel_rematch" | "submit_turn";
       mode?: BattleMode;
       roomCode?: string;
       email?: string;
@@ -130,6 +140,9 @@ export async function POST(req: NextRequest) {
       topicLevel?: "all" | "A1" | "A2.1" | "A2.2";
       topicChapter?: number;
       topicCategory?: "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3";
+      isCorrect?: boolean;
+      chosenAnswer?: string;
+      questionIndex?: number;
     };
 
     const { roomId, cleanCode } = resolveRoomId(mode, roomCode);
@@ -151,6 +164,8 @@ export async function POST(req: NextRequest) {
         topicChapter: 0,
         topicCategory: "all",
         participants: [] as Participant[],
+        questions: [] as any[],
+        battleLog: [] as string[],
         updatedAt: now,
         createdAt: now,
       };
@@ -165,11 +180,15 @@ export async function POST(req: NextRequest) {
     let currentTopicLevel = room.topicLevel;
     let currentTopicChapter = room.topicChapter;
     let currentTopicCategory = room.topicCategory;
+    let questions = (room.questions as any[]) || [];
+    let battleLog = (room.battleLog as string[]) || [];
 
     if (action === "reset") {
       status = "waiting";
       countdownSeconds = 5;
       participants = [];
+      questions = [];
+      battleLog = [];
     }
 
     if (action === "finish_match") {
@@ -179,6 +198,48 @@ export async function POST(req: NextRequest) {
         p.rematchVote = false;
         p.isReady = false;
       });
+
+      // Save match to battle_match_history in Neon Postgres
+      if (participants.length > 0) {
+        const sorted = [...participants].sort((a, b) => b.score - a.score || b.hp - a.hp);
+        const winner = sorted[0];
+        const matchId = `match_${now}_${Math.random().toString(36).substring(2, 7)}`;
+        try {
+          await db.insert(battleMatchHistory).values({
+            id: matchId,
+            roomCode: cleanCode,
+            mode,
+            topicLevel: currentTopicLevel,
+            topicChapter: currentTopicChapter,
+            topicCategory: currentTopicCategory,
+            winnerEmail: winner?.email || null,
+            winnerName: winner?.name || null,
+            winnerAvatar: winner?.avatar || null,
+            winnerTeam: winner?.team || null,
+            participants,
+            totalQuestions: 5,
+            createdAt: now,
+          });
+        } catch (histErr) {
+          console.error("Error saving match history:", histErr);
+        }
+      }
+    }
+
+    if (action === "submit_turn" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
+      if (p) {
+        if (isCorrect) {
+          p.score += 20;
+          const newLog = `⚔️ ${p.name} menjawab BENAR! (+20 PTS)`;
+          battleLog = [newLog, ...battleLog].slice(0, 10);
+        } else {
+          const dmg = chosenAnswer === "__TIMEOUT__" ? 30 : 25;
+          p.hp = Math.max(0, p.hp - dmg);
+          const newLog = `💥 ${p.name} ${chosenAnswer === "__TIMEOUT__" ? "KEHABISAN WAKTU" : "SALAH JAWAB"}! (-${dmg} HP)`;
+          battleLog = [newLog, ...battleLog].slice(0, 10);
+        }
+      }
     }
 
     if (action === "request_rematch" && email) {
@@ -193,7 +254,7 @@ export async function POST(req: NextRequest) {
         participants.every((part) => part.rematchVote === true);
 
       if (allVotedRematch) {
-        // Both agreed! Reset HP, score, ready, and trigger countdown
+        // Both agreed! Reset HP, score, ready, and trigger countdown with fresh shared questions
         status = "countdown";
         countdownSeconds = 5;
         participants.forEach((part) => {
@@ -202,6 +263,19 @@ export async function POST(req: NextRequest) {
           part.isReady = true;
           part.rematchVote = false;
         });
+
+        questions = generateBattleQuestions({
+          level: currentTopicLevel as VocabLevel,
+          chapter: currentTopicChapter,
+          category: currentTopicCategory as VocabCategory,
+          count: 5,
+        });
+
+        battleLog = [
+          `🔥 REMATCH DIMULAI! Topik: [${currentTopicLevel} • ${
+            currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+          } • ${currentTopicCategory.toUpperCase()}]`,
+        ];
       }
     }
 
@@ -223,6 +297,8 @@ export async function POST(req: NextRequest) {
       if (participants.length === 0) {
         status = "waiting";
         countdownSeconds = 5;
+        questions = [];
+        battleLog = [];
       } else if (status === "finished" || (status === "countdown" && participants.length < room.requiredCount)) {
         status = "waiting";
         countdownSeconds = 5;
@@ -246,6 +322,18 @@ export async function POST(req: NextRequest) {
       if (allReady && status === "waiting") {
         status = "countdown";
         countdownSeconds = 5;
+        // Generate authentic shared questions on server for all participants!
+        questions = generateBattleQuestions({
+          level: currentTopicLevel as VocabLevel,
+          chapter: currentTopicChapter,
+          category: currentTopicCategory as VocabCategory,
+          count: 5,
+        });
+        battleLog = [
+          `🔥 PERTANDINGAN DIMULAI! Topik: [${currentTopicLevel} • ${
+            currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+          } • ${currentTopicCategory.toUpperCase()}]`,
+        ];
       } else if (!allReady && status === "countdown") {
         status = "waiting";
         countdownSeconds = 5;
@@ -314,6 +402,8 @@ export async function POST(req: NextRequest) {
         topicChapter: currentTopicChapter,
         topicCategory: currentTopicCategory,
         participants,
+        questions,
+        battleLog,
         updatedAt: now,
       })
       .where(eq(battleRooms.id, roomId));
@@ -326,6 +416,8 @@ export async function POST(req: NextRequest) {
       topicChapter: currentTopicChapter,
       topicCategory: currentTopicCategory,
       participants,
+      questions,
+      battleLog,
       updatedAt: now,
     };
 
