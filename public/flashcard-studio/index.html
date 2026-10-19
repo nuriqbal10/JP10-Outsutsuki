@@ -638,7 +638,8 @@
 
     .card-perspective-box {
       width: 100%;
-      height: 420px;
+      height: 440px;
+      min-height: 400px;
       perspective: 1400px;
       -webkit-perspective: 1400px;
       cursor: pointer;
@@ -672,12 +673,13 @@
       border-radius: 28px;
       box-shadow: var(--clay-shadow-out), inset 0 2px 0 rgba(255, 255, 255, 0.9);
       border: 2px solid var(--card-border);
-      padding: 32px;
+      padding: 24px 28px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       background: var(--clay-card-bg);
       -webkit-font-smoothing: antialiased;
+      overflow: hidden;
     }
 
     /* CARD BACKGROUND PATTERN WATERMARK */
@@ -813,28 +815,60 @@
       flex-direction: column;
       align-items: center;
       gap: 6px;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 8px;
     }
 
     .front-furigana-ruby {
       font-family: var(--font-kyokasho);
-      font-size: 1.35rem;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
       font-weight: 700;
       color: var(--text-sub);
       min-height: 1.5em;
+      line-height: 1.4;
+      word-break: break-word;
+      transition: opacity 0.2s ease;
+    }
+
+    body.hide-furigana .front-furigana-ruby,
+    body.hide-furigana .gallery-card-yomi,
+    body.hide-furigana .quiz-target-yomi {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none;
     }
 
     .front-kanji-monument {
       font-family: var(--font-kyokasho);
-      font-size: 3.6rem;
+      font-size: clamp(2rem, 5.5vw, 3.4rem);
       font-weight: 900;
-      line-height: 1.15;
+      line-height: 1.2;
       color: var(--text-main);
       text-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      word-break: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      transition: font-size 0.2s ease;
+    }
+
+    /* Dynamic size classes for extra-long text */
+    .front-kanji-monument.text-compact {
+      font-size: clamp(1.6rem, 4vw, 2.3rem);
+      line-height: 1.25;
+    }
+    .front-kanji-monument.text-micro {
+      font-size: clamp(1.2rem, 3.2vw, 1.8rem);
+      line-height: 1.3;
     }
 
     .front-pitch-accent {
       font-family: var(--font-kyokasho);
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #64748b;
       background: var(--clay-surface);
@@ -845,6 +879,10 @@
       align-items: center;
       gap: 6px;
       margin-top: 6px;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .card-flip-prompt {
@@ -855,6 +893,10 @@
       letter-spacing: 0.5px;
       position: relative;
       z-index: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     /* BACK CENTER CORE */
@@ -866,42 +908,70 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 8px;
     }
 
     .back-arti-indonesia {
-      font-size: 2.1rem;
+      font-size: clamp(1.4rem, 3.8vw, 2.1rem);
       font-weight: 900;
       line-height: 1.25;
       letter-spacing: -0.5px;
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      max-width: 100%;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .back-arti-indonesia.text-compact {
+      font-size: clamp(1.15rem, 3vw, 1.55rem);
+      line-height: 1.3;
     }
 
     .back-romaji-tag {
-      font-size: 1.1rem;
+      font-size: clamp(0.95rem, 2.2vw, 1.15rem);
       font-weight: 700;
       color: var(--text-sub);
       font-style: italic;
+      word-break: break-word;
+      max-width: 100%;
     }
 
     .back-english-tag {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
       font-weight: 600;
+      max-width: 95%;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .back-cultural-note {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       background: var(--clay-surface);
       border: 1px solid var(--card-border);
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 12px;
       color: var(--text-sub);
       box-shadow: var(--clay-shadow-pill);
-      max-width: 90%;
-      line-height: 1.4;
+      max-width: 95%;
+      line-height: 1.35;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     /* CARD BOTTOM CONTROLS DECK */
@@ -1449,6 +1519,9 @@
         </div>
 
         <div class="deck-buttons">
+          <button class="btn-clay" id="toggleFuriganaBtn" onclick="toggleFurigana()" title="Sembunyikan / Tampilkan Furigana (Bacaan Hiragana)">
+            <span id="furiganaBtnIcon">👁️</span> Furigana: <strong id="furiganaStatusText">ON</strong>
+          </button>
           <button class="btn-clay" onclick="shuffleWords()" title="Acak urutan kata">🔀 Acak</button>
           <button class="btn-clay" onclick="exportToCSV()" title="Ekspor daftar ini ke format CSV Anki/Quizlet">📥 Ekspor CSV</button>
         </div>
@@ -1692,6 +1765,9 @@
     let currentQuizIndex = 0;
     let quizScore = 0;
 
+    // Furigana Visibility State
+    let showFurigana = localStorage.getItem('irodori_show_furigana') !== 'false'; // default true
+
     // =========================================================
     // INITIALIZATION
     // =========================================================
@@ -1700,7 +1776,36 @@
       loadLevelData(currentLevel);
       setupKeyboardShortcuts();
       initTheme();
+      initFurigana();
     });
+
+    function initFurigana() {
+      applyFuriganaUI();
+    }
+
+    function toggleFurigana() {
+      showFurigana = !showFurigana;
+      localStorage.setItem('irodori_show_furigana', showFurigana ? 'true' : 'false');
+      applyFuriganaUI();
+      AudioFX.playPop();
+    }
+
+    function applyFuriganaUI() {
+      const btn = document.getElementById('toggleFuriganaBtn');
+      const icon = document.getElementById('furiganaBtnIcon');
+      const text = document.getElementById('furiganaStatusText');
+      if (showFurigana) {
+        document.body.classList.remove('hide-furigana');
+        if (text) text.textContent = 'ON';
+        if (icon) icon.textContent = '👁️';
+        if (btn) btn.classList.add('btn-clay-primary');
+      } else {
+        document.body.classList.add('hide-furigana');
+        if (text) text.textContent = 'OFF';
+        if (icon) icon.textContent = '🙈';
+        if (btn) btn.classList.remove('btn-clay-primary');
+      }
+    }
 
     function toggleTheme() {
       const current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -1884,7 +1989,17 @@
       document.getElementById('cardChapBadge').textContent = `第${word.chapter}課`;
       document.getElementById('cardPosBadge').textContent = word.pos || 'N';
       document.getElementById('cardMemBadge').style.display = isMem ? 'inline-flex' : 'none';
-      document.getElementById('cardFrontKanji').textContent = word.midashi;
+      
+      const kanjiEl = document.getElementById('cardFrontKanji');
+      kanjiEl.textContent = word.midashi;
+      kanjiEl.classList.remove('text-compact', 'text-micro');
+      const midashiLen = (word.midashi || '').length;
+      if (midashiLen > 12) {
+        kanjiEl.classList.add('text-micro');
+      } else if (midashiLen > 6) {
+        kanjiEl.classList.add('text-compact');
+      }
+
       document.getElementById('cardFrontKana').textContent = word.yomi !== word.midashi ? word.yomi : '';
       document.getElementById('cardFrontAccent').textContent = word.accent ? `アクセント: ${word.accent}` : `Level ${word.level}`;
 
@@ -1892,7 +2007,15 @@
       document.getElementById('cardBackLevelBadge').textContent = word.level || currentLevel;
       document.getElementById('cardBackChapBadge').textContent = `第${word.chapter}課`;
       document.getElementById('cardBackPosBadge').textContent = word.pos || 'N';
-      document.getElementById('cardBackArti').textContent = word.id_arti || '-';
+      
+      const artiEl = document.getElementById('cardBackArti');
+      artiEl.textContent = word.id_arti || '-';
+      artiEl.classList.remove('text-compact');
+      const artiLen = (word.id_arti || '').length;
+      if (artiLen > 25) {
+        artiEl.classList.add('text-compact');
+      }
+
       document.getElementById('cardBackRomaji').textContent = word.romaji ? `[${word.romaji}]` : '';
       document.getElementById('cardBackEn').textContent = word.en || '';
 
