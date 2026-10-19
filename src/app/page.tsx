@@ -7,6 +7,7 @@ import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@cl
 import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import GamificationBanner from "@/components/lms/GamificationBanner";
+import DailyQuestsLeaderboardSection from "@/components/lms/DailyQuestsLeaderboardSection";
 
 export default function HomePage() {
   return (
@@ -126,8 +127,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* GAMIFICATION BASE (LEVEL, XP, STREAK & KOTOBA MINIGAME) */}
+        {/* GAMIFICATION BASE (LEVEL, XP, STREAK & KOTOBA MINIGAME & BATTLE ROYALE) */}
         <GamificationBanner />
+
+        {/* DAILY QUESTS & CLASS LEADERBOARD SECTION */}
+        <DailyQuestsLeaderboardSection />
 
         {/* SPOTLIGHT: RAPOR & RANKING OUTSUTSUKI */}
         <section className="clay-card p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-amber-500/10 via-transparent to-amber-500/5">

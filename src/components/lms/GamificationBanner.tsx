@@ -28,7 +28,9 @@ import {
   AVAILABLE_BADGES,
   RANKS,
 } from "@/lib/gamification";
+import { advanceDailyQuest } from "@/lib/dailyQuests";
 import { sfx } from "@/lib/soundEffects";
+import BattleRoyaleModal from "@/components/lms/BattleRoyaleModal";
 
 interface KotobaQuestion {
   ja: string;
@@ -103,6 +105,9 @@ export default function GamificationBanner() {
 
   // Level Adjust Modal
   const [showLevelModal, setShowLevelModal] = useState(false);
+
+  // Battle Royale Modal State
+  const [showBattleModal, setShowBattleModal] = useState(false);
 
   // Minigame State
   const [showGameModal, setShowGameModal] = useState(false);
@@ -246,6 +251,7 @@ export default function GamificationBanner() {
       const earnedXp = Math.round(finalScore * 15 * DIFFICULTY_CONFIG[difficulty].xpMultiplier);
       if (earnedXp > 0) {
         addXp(earnedXp, `Kotoba Reflex Game (${difficulty})`);
+        advanceDailyQuest("quiz", 1);
       }
     }
   };
@@ -360,10 +366,18 @@ export default function GamificationBanner() {
           </div>
 
           <button
+            onClick={() => setShowBattleModal(true)}
+            className="px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md hover:scale-105 transition bg-gradient-to-r from-rose-600 to-amber-600 text-white border border-rose-400/40"
+          >
+            <Swords className="w-4 h-4 animate-bounce" />
+            Battle Royale Arena
+          </button>
+
+          <button
             onClick={handleOpenGameModal}
             className="clay-btn-gold px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-md hover:scale-105 transition"
           >
-            <Swords className="w-4 h-4" />
+            <Zap className="w-4 h-4" />
             Kotoba Reflex Game
           </button>
         </div>
@@ -640,6 +654,13 @@ export default function GamificationBanner() {
           </div>
         </div>
       )}
+
+      {/* MODAL 3: BATTLE ROYALE SHINOBI ARENA */}
+      <BattleRoyaleModal
+        isOpen={showBattleModal}
+        onClose={() => setShowBattleModal(false)}
+        initialMode="1vs1"
+      />
     </>
   );
 }

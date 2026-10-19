@@ -188,6 +188,84 @@ class SoundFX {
       });
     } catch (e) {}
   }
+
+  public playSlash() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } catch (e) {}
+  }
+
+  public playBlast() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "square";
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.32);
+    } catch (e) {}
+  }
+
+  public playEliminated() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const notes = [220, 196, 174, 130];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(freq, now + idx * 0.1);
+
+        gain.gain.setValueAtTime(0.2, now + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.1 + 0.3);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.1);
+        osc.stop(now + idx * 0.1 + 0.35);
+      });
+    } catch (e) {}
+  }
 }
 
 export const sfx = new SoundFX();
+
