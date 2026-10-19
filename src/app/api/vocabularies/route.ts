@@ -36,11 +36,18 @@ export async function GET(request: NextRequest) {
       .where(and(...conditions))
       .orderBy(vocabularies.id);
 
-    return NextResponse.json({
-      success: true,
-      total: result.length,
-      data: result,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        total: result.length,
+        data: result,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error: any) {
     console.error("Gagal mengambil kosakata dari Neon:", error);
     return NextResponse.json(

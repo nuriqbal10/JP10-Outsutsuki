@@ -98,19 +98,26 @@ export async function GET(request: Request) {
       kanji: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.kanji, 0) / (totalCount || 1)),
     };
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        key: levelData.key,
-        title: levelData.title,
-        sub: levelData.sub,
-        classSummary: levelData.classSummary,
-        chapterClassAverages: levelData.chapterClassAverages,
-        classPilarAvg,
-        students: enrichedStudents,
-        rankedStudents,
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          key: levelData.key,
+          title: levelData.title,
+          sub: levelData.sub,
+          classSummary: levelData.classSummary,
+          chapterClassAverages: levelData.chapterClassAverages,
+          classPilarAvg,
+          students: enrichedStudents,
+          rankedStudents,
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (error: any) {
     console.error("Gagal memproses data rapor:", error);
     return NextResponse.json(

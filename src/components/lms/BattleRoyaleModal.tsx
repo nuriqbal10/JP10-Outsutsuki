@@ -28,12 +28,21 @@ import {
   KeyRound,
   Check,
   LogIn,
-  User as UserIcon,
+  BookOpen,
+  Filter,
+  Layers,
+  HelpCircle,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { addXp } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
 import { sfx } from "@/lib/soundEffects";
+import {
+  generateBattleQuestions,
+  VocabCategory,
+  VocabLevel,
+  BattleQuestion,
+} from "@/data/battleQuestionBank";
 
 export type BattleMode = "1vs1" | "group" | "all_members";
 
@@ -55,14 +64,11 @@ interface RoomData {
   requiredCount: number;
   status: "waiting" | "countdown" | "in_battle" | "finished";
   countdownSeconds: number;
+  topicLevel: VocabLevel;
+  topicChapter: number;
+  topicCategory: VocabCategory;
   participants: Participant[];
-}
-
-interface BattleQuestion {
-  ja: string;
-  romaji?: string;
-  correct: string;
-  options: string[];
+  updatedAt: number;
 }
 
 const AVATAR_OPTIONS = [
@@ -74,19 +80,13 @@ const AVATAR_OPTIONS = [
   { emoji: "🐲", label: "Ryu" },
 ];
 
-const BATTLE_QUESTIONS: BattleQuestion[] = [
-  { ja: "残業 (ざんぎょう)", romaji: "zangyou", correct: "Kerja lembur", options: ["Kerja lembur", "Shift malam", "Cuti tahunan", "Tepat waktu"] },
-  { ja: "避難所 (ひなんじょ)", romaji: "hinanjo", correct: "Tempat evakuasi darurat", options: ["Tempat evakuasi darurat", "Halte bus", "Rumah sakit", "Kantor polisi"] },
-  { ja: "分別 (ぶんべつ)", romaji: "bunbetsu", correct: "Pemilahan jenis sampah", options: ["Pemilahan jenis sampah", "Daur ulang", "Penghematan listrik", "Pembakaran sampah"] },
-  { ja: "安全第一 (あんぜんだいいち)", romaji: "anzen daiichi", correct: "Utamakan keselamatan K3", options: ["Utamakan keselamatan K3", "Kerja cepat", "Waktu santai", "Aturan pakaian"] },
-  { ja: "特定技能 (とくていぎのう)", romaji: "tokutei ginou", correct: "Pekerja Berketerampilan Spesifik (SSW)", options: ["Pekerja Berketerampilan Spesifik (SSW)", "Pelajar asing", "Turis", "Magang teknis"] },
-  { ja: "体調 (たいちょう)", romaji: "taichou", correct: "Kondisi fisik kesehatan", options: ["Kondisi fisik kesehatan", "Suhu ruangan", "Berat barang", "Jadwal meeting"] },
-  { ja: "締切 (しめきり)", romaji: "shimekiri", correct: "Batas waktu / deadline", options: ["Batas waktu / deadline", "Awal pembukaan", "Libur kerja", "Gaji bulanan"] },
-  { ja: "粗大ゴミ (そだいごみ)", romaji: "sodaigomi", correct: "Sampah perabot / ukuran besar", options: ["Sampah perabot / ukuran besar", "Sampah dapur", "Botol plastik", "Kaleng minuman"] },
-  { ja: "美容院 (びよういん)", romaji: "biyouin", correct: "Salon pangkas rambut", options: ["Salon pangkas rambut", "Rumah sakit", "Dry cleaning", "Toko pakaian"] },
-  { ja: "点検 (てんけん)", romaji: "tenken", correct: "Pemeriksaan / inspeksi rutin", options: ["Pemeriksaan / inspeksi rutin", "Perbaikan mesin", "Pembersihan lantai", "Penggantian ban"] },
-  { ja: "非常口 (ひじょうぐち)", romaji: "hijouguchi", correct: "Pintu keluar darurat", options: ["Pintu keluar darurat", "Pintu gerbang utama", "Pintu gudang", "Pintu lift"] },
-  { ja: "賞味期限 (しょうみきげん)", romaji: "shoumikigen", correct: "Batas tanggal terbaik konsumsi", options: ["Batas tanggal terbaik konsumsi", "Tanggal pembuatan", "Harga diskon", "Berat bersih"] },
+const CATEGORY_OPTIONS: { key: VocabCategory; label: string; icon: string }[] = [
+  { key: "all", label: "Acak / Semua Kategori", icon: "🎲" },
+  { key: "noun", label: "Kata Benda (Meishi - N)", icon: "📦" },
+  { key: "adj", label: "Kata Sifat (Keiyoushi - i & na)", icon: "✨" },
+  { key: "verb1", label: "Kata Kerja Gol. 1 (Godan - V1)", icon: "🏃" },
+  { key: "verb2", label: "Kata Kerja Gol. 2 (Ichidan - V2)", icon: "🚶" },
+  { key: "verb3", label: "Kata Kerja Gol. 3 (Suru / Fukisoku)", icon: "⚡" },
 ];
 
 export default function BattleRoyaleModal({
@@ -105,6 +105,11 @@ export default function BattleRoyaleModal({
   const [customRoomCode, setCustomRoomCode] = useState<string>("");
   const [isUsingCustomRoom, setIsUsingCustomRoom] = useState<boolean>(false);
   const [room, setRoom] = useState<RoomData | null>(null);
+
+  // Topic & Category Customization State
+  const [topicLevel, setTopicLevel] = useState<VocabLevel>("A2.2");
+  const [topicChapter, setTopicChapter] = useState<number>(0); // 0 = Semua Bab
+  const [topicCategory, setTopicCategory] = useState<VocabCategory>("all");
 
   // Identity State
   const [myEmail, setMyEmail] = useState<string>("");
@@ -126,6 +131,7 @@ export default function BattleRoyaleModal({
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [activeCombatants, setActiveCombatants] = useState<Participant[]>([]);
 
+  const lastSeenUpdatedAtRef = useRef<number>(0);
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const questionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const countdownTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -156,18 +162,34 @@ export default function BattleRoyaleModal({
   // Active room code resolving
   const currentActiveRoomCode = isUsingCustomRoom && customRoomCode.trim() ? customRoomCode.trim().toUpperCase() : "";
 
-  // Poll Lobby Status from /api/battle-lobby
-  const fetchLobbyStatus = async (targetMode: BattleMode, roomCodeParam?: string) => {
+  // Poll Lobby Status from /api/battle-lobby with delta optimization (Anti-Lag)
+  const fetchLobbyStatus = async (targetMode: BattleMode, roomCodeParam?: string, forceFull: boolean = false) => {
     try {
       const activeCode = roomCodeParam !== undefined ? roomCodeParam : currentActiveRoomCode;
-      const url = `/api/battle-lobby?mode=${targetMode}&roomCode=${encodeURIComponent(activeCode)}&email=${encodeURIComponent(myEmail)}`;
-      const res = await fetch(url);
+      const since = forceFull ? 0 : lastSeenUpdatedAtRef.current;
+      const url = `/api/battle-lobby?mode=${targetMode}&roomCode=${encodeURIComponent(activeCode)}&since=${since}&email=${encodeURIComponent(myEmail)}`;
+      
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) return;
       const data = await res.json();
-      if (data.success && data.room) {
-        setRoom(data.room);
+      
+      if (!data.success) return;
 
-        // Sync user's ready status from room
+      // Delta short-circuit: server says no changes, do nothing to save CPU
+      if (data.changed === false) {
+        return;
+      }
+
+      if (data.room) {
+        setRoom(data.room);
+        lastSeenUpdatedAtRef.current = data.room.updatedAt || Date.now();
+
+        // Sync topic filters with room settings
+        if (data.room.topicLevel) setTopicLevel(data.room.topicLevel);
+        if (typeof data.room.topicChapter === "number") setTopicChapter(data.room.topicChapter);
+        if (data.room.topicCategory) setTopicCategory(data.room.topicCategory);
+
+        // Sync user's status from room participants
         const meInRoom = data.room.participants.find((p: Participant) => p.email.toLowerCase() === myEmail.toLowerCase());
         if (meInRoom) {
           setIsJoined(true);
@@ -195,12 +217,15 @@ export default function BattleRoyaleModal({
       return;
     }
 
-    fetchLobbyStatus(mode, currentActiveRoomCode);
+    lastSeenUpdatedAtRef.current = 0;
+    fetchLobbyStatus(mode, currentActiveRoomCode, true);
+
+    // Optimized Adaptive Polling: 3 seconds during lobby only
     pollIntervalRef.current = setInterval(() => {
       if (battleState === "lobby") {
         fetchLobbyStatus(mode, currentActiveRoomCode);
       }
-    }, 2000);
+    }, 3000);
 
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -214,7 +239,31 @@ export default function BattleRoyaleModal({
     setBattleState("lobby");
     setIsJoined(false);
     setIsMyReady(false);
-    fetchLobbyStatus(newMode, currentActiveRoomCode);
+    lastSeenUpdatedAtRef.current = 0;
+    fetchLobbyStatus(newMode, currentActiveRoomCode, true);
+  };
+
+  // Update Topic Filters & sync to room
+  const handleUpdateTopic = async (newLevel: VocabLevel, newChapter: number, newCategory: VocabCategory) => {
+    setTopicLevel(newLevel);
+    setTopicChapter(newChapter);
+    setTopicCategory(newCategory);
+
+    try {
+      await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "set_topic",
+          mode,
+          roomCode: currentActiveRoomCode,
+          topicLevel: newLevel,
+          topicChapter: newChapter,
+          topicCategory: newCategory,
+        }),
+      });
+      fetchLobbyStatus(mode, currentActiveRoomCode, true);
+    } catch (e) {}
   };
 
   // Join Lobby as current user
@@ -252,6 +301,7 @@ export default function BattleRoyaleModal({
       }
 
       setRoom(data.room);
+      lastSeenUpdatedAtRef.current = data.room?.updatedAt || Date.now();
       setIsJoined(true);
       setIsMyReady(false);
       localStorage.setItem("irodori_user_email", myEmail.trim().toLowerCase());
@@ -279,7 +329,8 @@ export default function BattleRoyaleModal({
       });
       setIsJoined(false);
       setIsMyReady(false);
-      fetchLobbyStatus(mode, currentActiveRoomCode);
+      lastSeenUpdatedAtRef.current = 0;
+      fetchLobbyStatus(mode, currentActiveRoomCode, true);
     } catch (e) {}
   };
 
@@ -304,6 +355,7 @@ export default function BattleRoyaleModal({
       const data = await res.json();
       if (data.success && data.room) {
         setRoom(data.room);
+        lastSeenUpdatedAtRef.current = data.room.updatedAt || Date.now();
         setIsMyReady(nextReady);
         if (nextReady) {
           sfx.playCorrect();
@@ -338,7 +390,7 @@ export default function BattleRoyaleModal({
             team,
           }),
         });
-        fetchLobbyStatus(mode, currentActiveRoomCode);
+        fetchLobbyStatus(mode, currentActiveRoomCode, true);
       } catch (e) {}
     }
   };
@@ -359,7 +411,7 @@ export default function BattleRoyaleModal({
             avatar,
           }),
         });
-        fetchLobbyStatus(mode, currentActiveRoomCode);
+        fetchLobbyStatus(mode, currentActiveRoomCode, true);
       } catch (e) {}
     }
   };
@@ -380,25 +432,31 @@ export default function BattleRoyaleModal({
 
       if (counter <= 0) {
         clearInterval(countdownTimerRef.current!);
-        startMatch(currentRoom.participants);
+        startMatch(currentRoom);
       }
     }, 1000);
   };
 
-  const startMatch = (participants: Participant[]) => {
-    const questions = [...BATTLE_QUESTIONS]
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 5)
-      .map((q) => ({
-        ...q,
-        options: [...q.options].sort(() => 0.5 - Math.random()),
-      }));
+  // Start match generating questions dynamically with Fisher-Yates shuffled options
+  const startMatch = (currentRoom: RoomData) => {
+    // Generate questions matching the selected Level, Chapter, and Category
+    const questions = generateBattleQuestions({
+      level: currentRoom.topicLevel || topicLevel,
+      chapter: currentRoom.topicChapter !== undefined ? currentRoom.topicChapter : topicChapter,
+      category: currentRoom.topicCategory || topicCategory,
+      count: 5,
+    });
 
     setShuffledQuestions(questions);
     setCurrentQIndex(0);
     setTimeLeft(8);
     setSelectedAnswer(null);
-    setBattleLog([`🔥 PERTANDINGAN DIMULAI! Seluruh peserta telah konfirmasi SIAP!`]);
+
+    const topicLabel = `[${currentRoom.topicLevel || "A2.2"} • ${
+      currentRoom.topicChapter ? `Bab ${currentRoom.topicChapter}` : "Semua Bab"
+    } • ${currentRoom.topicCategory?.toUpperCase() || "ACAK"}]`;
+
+    setBattleLog([`🔥 PERTANDINGAN DIMULAI! Topik: ${topicLabel}`]);
     setBattleState("in_battle");
     sfx.playBlast();
   };
@@ -557,11 +615,11 @@ export default function BattleRoyaleModal({
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl sm:text-2xl font-black">Lobi Battle Royale Real-Member</h2>
                   <span className="text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
-                    <Radio className="w-3 h-3 animate-pulse" /> Akun Siswa Mandiri
+                    <Radio className="w-3 h-3 animate-pulse" /> Anti-Lag Engine
                   </span>
                 </div>
                 <p className="text-xs opacity-75 mt-0.5">
-                  Setiap siswa masuk dengan akunnya sendiri dan menentukan sendiri mode, avatar, kubu tim, serta konfirmasi kesiapan tanding.
+                  Tentukan materi soal (Bab, Level, Kategori Kata), avatar, dan klik SIAP untuk bertanding bersama.
                 </p>
               </div>
             </div>
@@ -571,7 +629,7 @@ export default function BattleRoyaleModal({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
                   <UserCheck className="w-4 h-4" />
-                  {user ? "Akun Login Terverifikasi (Clerk SSO)" : "Identitas Siswa (Akun Mandiri)"}
+                  {user ? "Akun Terverifikasi (Clerk SSO)" : "Identitas Akun Siswa Mandiri"}
                 </div>
                 {user && (
                   <span className="text-[10px] bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md font-mono font-bold flex items-center gap-1">
@@ -581,39 +639,35 @@ export default function BattleRoyaleModal({
               </div>
 
               {user ? (
-                // Tampilan Siswa yang sudah login di Portal / Clerk
                 <div className="flex items-center justify-between p-3 rounded-xl bg-black/10 dark:bg-black/30 border border-current/10">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl font-black">
                       {myAvatar}
                     </div>
                     <div>
-                      <h4 className="text-sm font-black flex items-center gap-1.5">
-                        {myName || "Siswa Terdaftar"}
-                      </h4>
+                      <h4 className="text-sm font-black">{myName || "Siswa Terdaftar"}</h4>
                       <p className="text-[11px] opacity-70 font-mono">{myEmail}</p>
                     </div>
                   </div>
                   <span className="text-[10px] text-amber-500 font-bold bg-amber-500/10 px-2.5 py-1 rounded-lg">
-                    Akun Aktif Anda
+                    Akun Anda
                   </span>
                 </div>
               ) : (
-                // Siswa menentukan sendiri email & namanya (input mandiri, BUKAN comot dropdown teman)
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Nama Lengkap Siswa</label>
+                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Nama Siswa</label>
                     <input
                       type="text"
                       disabled={isJoined}
                       value={myName}
                       onChange={(e) => setMyName(e.target.value)}
-                      placeholder="Masukkan nama Anda..."
+                      placeholder="Nama lengkap Anda..."
                       className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Email Resmi Siswa</label>
+                    <label className="text-[10px] uppercase font-black opacity-70 block mb-1">Email Resmi</label>
                     <input
                       type="email"
                       disabled={isJoined}
@@ -627,11 +681,82 @@ export default function BattleRoyaleModal({
               )}
             </div>
 
-            {/* 2. SISWA MENENTUKAN SENDIRI: AVATAR & ROOM */}
+            {/* 2. CUSTOM KONTROL SOAL: LEVEL, BAB, & KATEGORI KATA (FITUR BARU) */}
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
+                  <Filter className="w-4 h-4" /> Kustomisasi Soal Pertandingan
+                </div>
+                <span className="text-[10px] font-mono opacity-70">
+                  Bank Soal: 4.245 Kosakata Irodori
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {/* 2.1 PILIH LEVEL */}
+                <div>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
+                    Level Materi
+                  </label>
+                  <select
+                    disabled={isJoined}
+                    value={topicLevel}
+                    onChange={(e) => handleUpdateTopic(e.target.value as VocabLevel, topicChapter, topicCategory)}
+                    className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold font-sans"
+                  >
+                    <option value="A2.2">Level A2.2 (Target Saat Ini)</option>
+                    <option value="A2.1">Level A2.1 (Dasar 1)</option>
+                    <option value="A1">Level A1 (Pemula)</option>
+                    <option value="all">Semua Level (Campuran)</option>
+                  </select>
+                </div>
+
+                {/* 2.2 PILIH BAB */}
+                <div>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
+                    Pilihan Bab
+                  </label>
+                  <select
+                    disabled={isJoined}
+                    value={topicChapter}
+                    onChange={(e) => handleUpdateTopic(topicLevel, parseInt(e.target.value, 10), topicCategory)}
+                    className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold font-sans"
+                  >
+                    <option value={0}>Semua Bab (Bab 1 - 18 Acak)</option>
+                    {Array.from({ length: 18 }, (_, i) => i + 1).map((ch) => (
+                      <option key={ch} value={ch}>
+                        Bab {ch} (課 {ch})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* 2.3 PILIH KELAS KATA (POS) */}
+                <div>
+                  <label className="text-[10px] uppercase font-black opacity-75 block mb-1">
+                    Kategori Kelas Kata
+                  </label>
+                  <select
+                    disabled={isJoined}
+                    value={topicCategory}
+                    onChange={(e) => handleUpdateTopic(topicLevel, topicChapter, e.target.value as VocabCategory)}
+                    className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold font-sans"
+                  >
+                    {CATEGORY_OPTIONS.map((cat) => (
+                      <option key={cat.key} value={cat.key}>
+                        {cat.icon} {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 3. AVATAR & ROOM SELECTION */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Avatar Selector */}
               <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase opacity-75">Tentukan Avatar Shinobi Anda</span>
+                <span className="text-[10px] font-black uppercase opacity-75">Tentukan Avatar Shinobi</span>
                 <div className="flex items-center justify-between gap-1">
                   {AVATAR_OPTIONS.map((av) => (
                     <button
@@ -678,13 +803,13 @@ export default function BattleRoyaleModal({
                 ) : (
                   <div className="text-xs font-bold py-1.5 opacity-80 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
-                    Lobi Publik Bersama (Semua Siswa Terdaftar)
+                    Lobi Publik Bersama (Semua Siswa)
                   </div>
                 )}
               </div>
             </div>
 
-            {/* 3. MODE SELECTION TABS */}
+            {/* 4. MODE SELECTION TABS */}
             <div className="flex flex-col gap-2">
               <span className="text-[10px] font-black uppercase opacity-75">Pilih Mode Pertandingan</span>
               <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10">
@@ -746,7 +871,7 @@ export default function BattleRoyaleModal({
               </div>
             )}
 
-            {/* 4. ACTIONS BAR: MASUK LOBI / SAYA SIAP */}
+            {/* 5. ACTIONS BAR: MASUK LOBI / SAYA SIAP */}
             {!isJoined ? (
               <div className="flex flex-col gap-2">
                 <button
@@ -811,7 +936,7 @@ export default function BattleRoyaleModal({
               </div>
             )}
 
-            {/* 5. WAITING ROOM HUD & REAL-TIME PESERTA */}
+            {/* 6. WAITING ROOM HUD & REAL-TIME PESERTA */}
             <div className="p-5 rounded-3xl bg-black/5 dark:bg-black/30 border border-current/10 flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-current/10 pb-3 gap-2">
                 <div className="flex items-center gap-2 text-xs font-black uppercase">
@@ -896,7 +1021,10 @@ export default function BattleRoyaleModal({
 
               {/* PETUNJUK MULTIPLAYER */}
               <div className="text-[11px] opacity-75 text-center mt-1">
-                💡 Bagikan kode room <span className="font-mono font-bold text-amber-400">{room?.roomCode || mode.toUpperCase()}</span> ke teman sekelas Anda. Siswa yang bersangkutan membuka link ini di perangkat masing-masing untuk bertanding bersama!
+                💡 Bagikan kode room <span className="font-mono font-bold text-amber-400">{room?.roomCode || mode.toUpperCase()}</span> ke teman sekelas. Topik latihan yang dipilih:{" "}
+                <span className="font-bold text-emerald-400">
+                  {topicLevel} • {topicChapter ? `Bab ${topicChapter}` : "Semua Bab"} • {topicCategory.toUpperCase()}
+                </span>
               </div>
             </div>
           </div>
@@ -940,6 +1068,11 @@ export default function BattleRoyaleModal({
                   Ronde {currentQIndex + 1} / {shuffledQuestions.length}
                 </span>
                 <span className="text-[11px] font-mono opacity-50">• {mode.toUpperCase()}</span>
+                {currentQ.level && (
+                  <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">
+                    {currentQ.level} Bab {currentQ.chapter}
+                  </span>
+                )}
               </div>
 
               {/* TIMER HITUNG MUNDUR */}
@@ -995,12 +1128,15 @@ export default function BattleRoyaleModal({
                 Tentukan Arti Kosakata
               </span>
               <h3 className="text-2xl sm:text-3xl font-black tracking-wide">{currentQ.ja}</h3>
+              {currentQ.yomi && currentQ.yomi !== currentQ.ja && (
+                <span className="text-xs font-mono opacity-80 text-amber-400">{currentQ.yomi}</span>
+              )}
               {currentQ.romaji && (
                 <span className="text-xs font-mono opacity-60">[{currentQ.romaji}]</span>
               )}
             </div>
 
-            {/* OPTIONS BUTTONS */}
+            {/* OPTIONS BUTTONS (FISHER-YATES SHUFFLED) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {currentQ.options.map((opt, idx) => {
                 let btnClass = "clay-btn p-3.5 rounded-xl text-xs font-bold text-left transition relative";

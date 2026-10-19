@@ -44,13 +44,20 @@ export async function GET(request: NextRequest) {
       .where(and(...conditions))
       .orderBy(questions.questionNumber);
 
-    return NextResponse.json({
-      success: true,
-      chapter,
-      section: section || "all",
-      total: result.length,
-      data: result,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        chapter,
+        section: section || "all",
+        total: result.length,
+        data: result,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=1800",
+        },
+      }
+    );
   } catch (error: any) {
     console.error("Gagal mengambil soal dari Neon:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
