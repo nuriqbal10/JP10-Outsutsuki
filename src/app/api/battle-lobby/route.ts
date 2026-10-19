@@ -1,6 +1,9 @@
 export const runtime = "edge";
 
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { battleRooms, BattleRoomEntity } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 export type BattleMode = "1vs1" | "group" | "all_members";
 
@@ -15,29 +18,29 @@ export interface Participant {
   isReady: boolean;
 }
 
-export interface BattleRoom {
-  id: string;
-  mode: BattleMode;
-  roomCode: string;
-  requiredCount: number;
-  status: "waiting" | "countdown" | "in_battle" | "finished";
-  countdownSeconds: number;
-  topicLevel: "all" | "A1" | "A2.1" | "A2.2";
-  topicChapter: number; // 0 = all
-  topicCategory: "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3";
-  participants: Participant[];
-  createdAt: number;
-  updatedAt: number;
+function resolveRoomId(mode: BattleMode, roomCode?: string | null): { roomId: string; isCustom: boolean; cleanCode: string } {
+  if (roomCode && roomCode.trim().length > 0) {
+    const cleanCode = roomCode.trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "");
+    return { roomId: `custom_${cleanCode}`, isCustom: true, cleanCode };
+  }
+  return { roomId: `room_${mode}`, isCustom: false, cleanCode: mode.toUpperCase() };
 }
 
-// Global in-memory storage on Edge instance
-const globalRooms: Map<string, BattleRoom> = new Map();
-
-function resolveRoomId(mode: BattleMode, roomCode?: string | null): string {
-  if (roomCode && roomCode.trim().length > 0) {
-    return `custom_${roomCode.trim().toUpperCase()}`;
-  }
-  return `room_${mode}`;
+function formatRoom(r: BattleRoomEntity) {
+  return {
+    id: r.id,
+    mode: r.mode as BattleMode,
+    roomCode: r.roomCode,
+    requiredCount: r.requiredCount,
+    status: r.status as "waiting" | "countdown" | "in_battle" | "finished",
+    countdownSeconds: r.countdownSeconds,
+    topicLevel: r.topicLevel as "all" | "A1" | "A2.1" | "A2.2",
+    topicChapter: r.topicChapter,
+    topicCategory: r.topicCategory as "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3",
+    participants: (r.participants as Participant[]) || [],
+    updatedAt: r.updatedAt,
+    createdAt: r.createdAt,
+  };
 }
 
 export async function GET(req: NextRequest) {
@@ -48,46 +51,40 @@ export async function GET(req: NextRequest) {
     const sinceParam = searchParams.get("since");
     const since = sinceParam ? parseInt(sinceParam, 10) : 0;
 
+    const { roomId, cleanCode } = resolveRoomId(mode, roomCode);
     const now = Date.now();
-    // Prune rooms inactive for > 15 minutes
-    for (const [key, r] of globalRooms.entries()) {
-      if (now - r.updatedAt > 15 * 60 * 1000) {
-        globalRooms.delete(key);
-      }
-    }
 
-    const roomId = resolveRoomId(mode, roomCode);
-    let room = globalRooms.get(roomId);
+    const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
+    let roomEntity = existingList[0];
 
     const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
 
-    if (!room) {
-      room = {
+    if (!roomEntity) {
+      const newRoom = {
         id: roomId,
         mode,
-        roomCode: roomCode ? roomCode.trim().toUpperCase() : mode.toUpperCase(),
+        roomCode: cleanCode,
         requiredCount: requiredQuota,
         status: "waiting",
         countdownSeconds: 5,
         topicLevel: "A2.2",
         topicChapter: 0,
         topicCategory: "all",
-        participants: [],
-        createdAt: now,
+        participants: [] as Participant[],
         updatedAt: now,
+        createdAt: now,
       };
-      globalRooms.set(roomId, room);
+
+      await db.insert(battleRooms).values(newRoom).onConflictDoNothing();
+      const refetch = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
+      roomEntity = refetch[0] || newRoom;
     }
 
-    // Delta Short-Circuit: If client already has the latest state, return tiny response
-    if (since > 0 && room.updatedAt <= since) {
+    // Delta Short-Circuit: If state hasn't changed since client's last seen timestamp
+    if (since > 0 && roomEntity.updatedAt <= since) {
       return NextResponse.json(
-        { success: true, changed: false, updatedAt: room.updatedAt },
-        {
-          headers: {
-            "Cache-Control": "no-store, no-cache, must-revalidate",
-          },
-        }
+        { success: true, changed: false, updatedAt: roomEntity.updatedAt },
+        { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
       );
     }
 
@@ -95,15 +92,12 @@ export async function GET(req: NextRequest) {
       {
         success: true,
         changed: true,
-        room,
+        room: formatRoom(roomEntity),
       },
-      {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-        },
-      }
+      { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
     );
   } catch (err: any) {
+    console.error("GET battle-lobby error:", err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
@@ -137,96 +131,91 @@ export async function POST(req: NextRequest) {
       topicCategory?: "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3";
     };
 
-    const roomId = resolveRoomId(mode, roomCode);
+    const { roomId, cleanCode } = resolveRoomId(mode, roomCode);
     const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
     const now = Date.now();
 
-    let room = globalRooms.get(roomId);
+    const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
+    let room = existingList[0];
+
     if (!room) {
-      room = {
+      const initialRoom = {
         id: roomId,
         mode,
-        roomCode: roomCode ? roomCode.trim().toUpperCase() : mode.toUpperCase(),
+        roomCode: cleanCode,
         requiredCount: requiredQuota,
         status: "waiting",
         countdownSeconds: 5,
         topicLevel: "A2.2",
         topicChapter: 0,
         topicCategory: "all",
-        participants: [],
-        createdAt: now,
+        participants: [] as Participant[],
         updatedAt: now,
+        createdAt: now,
       };
-      globalRooms.set(roomId, room);
+      await db.insert(battleRooms).values(initialRoom).onConflictDoNothing();
+      const refetch = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
+      room = refetch[0] || initialRoom;
     }
 
+    let participants = (room.participants as Participant[]) || [];
+    let status = room.status;
+    let countdownSeconds = room.countdownSeconds;
+    let currentTopicLevel = room.topicLevel;
+    let currentTopicChapter = room.topicChapter;
+    let currentTopicCategory = room.topicCategory;
+
     if (action === "reset") {
-      room.status = "waiting";
-      room.countdownSeconds = 5;
-      room.participants = [];
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
+      status = "waiting";
+      countdownSeconds = 5;
+      participants = [];
     }
 
     if (action === "set_topic") {
-      if (topicLevel) room.topicLevel = topicLevel;
-      if (typeof topicChapter === "number") room.topicChapter = topicChapter;
-      if (topicCategory) room.topicCategory = topicCategory;
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
+      if (topicLevel) currentTopicLevel = topicLevel;
+      if (typeof topicChapter === "number") currentTopicChapter = topicChapter;
+      if (topicCategory) currentTopicCategory = topicCategory;
     }
 
-    if (action === "leave") {
-      if (email) {
-        room.participants = room.participants.filter((p) => p.email.toLowerCase() !== email.toLowerCase());
+    if (action === "leave" && email) {
+      participants = participants.filter((p) => p.email.toLowerCase() !== email.toLowerCase());
+      if (status === "countdown" && participants.length < room.requiredCount) {
+        status = "waiting";
+        countdownSeconds = 5;
       }
-      if (room.status === "countdown" && room.participants.length < room.requiredCount) {
-        room.status = "waiting";
-        room.countdownSeconds = 5;
-      }
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
     }
 
-    if (action === "toggle_ready") {
-      const p = room.participants.find((part) => part.email.toLowerCase() === (email || "").toLowerCase());
+    if (action === "toggle_ready" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
       if (p) {
         p.isReady = typeof isReady === "boolean" ? isReady : !p.isReady;
       }
 
-      // Check if all participants are ready and quota is met
       const allReady =
-        room.participants.length >= room.requiredCount &&
-        room.participants.every((part) => part.isReady);
+        participants.length >= room.requiredCount &&
+        participants.every((part) => part.isReady);
 
-      if (allReady && room.status === "waiting") {
-        room.status = "countdown";
-        room.countdownSeconds = 5;
-      } else if (!allReady && room.status === "countdown") {
-        room.status = "waiting";
-        room.countdownSeconds = 5;
+      if (allReady && status === "waiting") {
+        status = "countdown";
+        countdownSeconds = 5;
+      } else if (!allReady && status === "countdown") {
+        status = "waiting";
+        countdownSeconds = 5;
       }
-
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
     }
 
-    if (action === "choose_team") {
-      const p = room.participants.find((part) => part.email.toLowerCase() === (email || "").toLowerCase());
+    if (action === "choose_team" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
       if (p) {
         p.team = team;
       }
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
     }
 
-    if (action === "choose_avatar") {
-      const p = room.participants.find((part) => part.email.toLowerCase() === (email || "").toLowerCase());
+    if (action === "choose_avatar" && email) {
+      const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
       if (p) {
         p.avatar = avatar;
       }
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
     }
 
     if (action === "join") {
@@ -237,21 +226,21 @@ export async function POST(req: NextRequest) {
       const cleanEmail = email.trim().toLowerCase();
       const cleanName = name?.trim() || cleanEmail.split("@")[0].toUpperCase();
 
-      const existingIdx = room.participants.findIndex((p) => p.email.toLowerCase() === cleanEmail);
+      const existingIdx = participants.findIndex((p) => p.email.toLowerCase() === cleanEmail);
       if (existingIdx >= 0) {
-        room.participants[existingIdx].joinedAt = now;
-        room.participants[existingIdx].name = cleanName;
-        room.participants[existingIdx].avatar = avatar;
-        if (team) room.participants[existingIdx].team = team;
+        participants[existingIdx].joinedAt = now;
+        participants[existingIdx].name = cleanName;
+        participants[existingIdx].avatar = avatar;
+        if (team) participants[existingIdx].team = team;
       } else {
-        if (room.participants.length >= room.requiredCount) {
+        if (participants.length >= room.requiredCount) {
           return NextResponse.json(
-            { error: `Lobi sudah penuh (${room.requiredCount}/${room.requiredCount}). Pilih atau buat room lain.` },
+            { error: `Lobi sudah penuh (${room.requiredCount}/${room.requiredCount}). Buat atau gunakan kode room lain.` },
             { status: 400 }
           );
         }
 
-        room.participants.push({
+        participants.push({
           email: cleanEmail,
           name: cleanName,
           avatar,
@@ -262,13 +251,39 @@ export async function POST(req: NextRequest) {
           isReady: false,
         });
       }
-
-      room.updatedAt = now;
-      return NextResponse.json({ success: true, room });
     }
 
-    return NextResponse.json({ success: true, room });
+    // Save back to Neon PostgreSQL
+    await db
+      .update(battleRooms)
+      .set({
+        status,
+        countdownSeconds,
+        topicLevel: currentTopicLevel,
+        topicChapter: currentTopicChapter,
+        topicCategory: currentTopicCategory,
+        participants,
+        updatedAt: now,
+      })
+      .where(eq(battleRooms.id, roomId));
+
+    const updatedRoom: BattleRoomEntity = {
+      ...room,
+      status,
+      countdownSeconds,
+      topicLevel: currentTopicLevel,
+      topicChapter: currentTopicChapter,
+      topicCategory: currentTopicCategory,
+      participants,
+      updatedAt: now,
+    };
+
+    return NextResponse.json({
+      success: true,
+      room: formatRoom(updatedRoom),
+    });
   } catch (err: any) {
+    console.error("POST battle-lobby error:", err);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

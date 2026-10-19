@@ -1,4 +1,4 @@
-import { pgTable, serial, text, varchar, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, varchar, integer, boolean, timestamp, jsonb, bigint } from "drizzle-orm/pg-core";
 
 // ==============================================================================
 // 1. USERS & PROFILES (Synced from Clerk Webhooks)
@@ -107,6 +107,24 @@ export const lkpdSubmissions = pgTable("lkpd_submissions", {
   gradedAt: timestamp("graded_at"),
 });
 
+// ==============================================================================
+// 7. MULTIPLAYER BATTLE ROYALE ROOMS (Cross-Instance Real-Time Sync)
+// ==============================================================================
+export const battleRooms = pgTable("battle_rooms", {
+  id: text("id").primaryKey(),
+  mode: text("mode").notNull(),
+  roomCode: text("room_code").notNull(),
+  requiredCount: integer("required_count").notNull(),
+  status: text("status").notNull(),
+  countdownSeconds: integer("countdown_seconds").notNull(),
+  topicLevel: text("topic_level").notNull(),
+  topicChapter: integer("topic_chapter").notNull(),
+  topicCategory: text("topic_category").notNull(),
+  participants: jsonb("participants").notNull(),
+  updatedAt: bigint("updated_at", { mode: "number" }).notNull(),
+  createdAt: bigint("created_at", { mode: "number" }).notNull(),
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -118,3 +136,6 @@ export type ExamSession = typeof examSessions.$inferSelect;
 export type NewExamSession = typeof examSessions.$inferInsert;
 export type LkpdSubmission = typeof lkpdSubmissions.$inferSelect;
 export type NewLkpdSubmission = typeof lkpdSubmissions.$inferInsert;
+export type BattleRoomEntity = typeof battleRooms.$inferSelect;
+export type NewBattleRoomEntity = typeof battleRooms.$inferInsert;
+

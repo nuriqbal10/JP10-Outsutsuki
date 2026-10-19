@@ -220,12 +220,12 @@ export default function BattleRoyaleModal({
     lastSeenUpdatedAtRef.current = 0;
     fetchLobbyStatus(mode, currentActiveRoomCode, true);
 
-    // Optimized Adaptive Polling: 3 seconds during lobby only
+    // Optimized polling: 2.5 seconds during lobby only
     pollIntervalRef.current = setInterval(() => {
       if (battleState === "lobby") {
         fetchLobbyStatus(mode, currentActiveRoomCode);
       }
-    }, 3000);
+    }, 2500);
 
     return () => {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
@@ -792,14 +792,41 @@ export default function BattleRoyaleModal({
                 </div>
 
                 {isUsingCustomRoom ? (
-                  <input
-                    type="text"
-                    disabled={isJoined}
-                    value={customRoomCode}
-                    onChange={(e) => setCustomRoomCode(e.target.value.toUpperCase())}
-                    placeholder="Contoh: A22-DUEL / LPK-99"
-                    className="p-2 rounded-xl border border-amber-500/40 bg-white dark:bg-stone-900 text-xs font-mono font-black uppercase"
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        disabled={isJoined}
+                        value={customRoomCode}
+                        onChange={(e) => setCustomRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, ""))}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            lastSeenUpdatedAtRef.current = 0;
+                            fetchLobbyStatus(mode, customRoomCode.trim().toUpperCase(), true);
+                          }
+                        }}
+                        placeholder="Ketik Kode: A22 / DUEL01"
+                        className="flex-1 p-2 rounded-xl border border-amber-500/40 bg-white dark:bg-stone-900 text-xs font-mono font-black uppercase"
+                      />
+                      <button
+                        type="button"
+                        disabled={isJoined || !customRoomCode.trim()}
+                        onClick={() => {
+                          lastSeenUpdatedAtRef.current = 0;
+                          fetchLobbyStatus(mode, customRoomCode.trim().toUpperCase(), true);
+                        }}
+                        className="px-3 py-2 rounded-xl bg-amber-500 text-stone-950 text-[10px] font-black uppercase disabled:opacity-50 hover:bg-amber-400 transition"
+                      >
+                        Cari Room
+                      </button>
+                    </div>
+                    {customRoomCode.trim() && (
+                      <span className="text-[10px] font-mono text-amber-500 flex items-center gap-1">
+                        <Check className="w-3 h-3" /> Target Room: #{customRoomCode.trim().toUpperCase()}
+                      </span>
+                    )}
+                  </div>
                 ) : (
                   <div className="text-xs font-bold py-1.5 opacity-80 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
