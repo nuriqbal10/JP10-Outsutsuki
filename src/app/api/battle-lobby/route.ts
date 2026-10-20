@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
     let roomEntity = existingList[0];
 
-    const requiredQuota = (mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6;
+    const requiredQuota = mode === "1vs1" ? 2 : mode === "tournament" ? 3 : mode === "group" ? 4 : 6;
 
     if (!roomEntity) {
       const newRoom = {
@@ -86,6 +86,9 @@ export async function GET(req: NextRequest) {
       await db.insert(battleRooms).values(newRoom).onConflictDoNothing();
       const refetch = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
       roomEntity = refetch[0] || newRoom;
+    } else if (roomEntity.mode === "tournament" && roomEntity.requiredCount !== 3 && roomEntity.status === "waiting") {
+      roomEntity.requiredCount = 3;
+      await db.update(battleRooms).set({ requiredCount: 3 }).where(eq(battleRooms.id, roomId));
     }
 
     // Delta Short-Circuit: If state hasn't changed since client's last seen timestamp
@@ -146,7 +149,7 @@ export async function POST(req: NextRequest) {
     };
 
     const { roomId, cleanCode } = resolveRoomId(mode, roomCode);
-    const requiredQuota = (mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6;
+    const requiredQuota = mode === "1vs1" ? 2 : mode === "tournament" ? 3 : mode === "group" ? 4 : 6;
     const now = Date.now();
 
     const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
@@ -172,6 +175,9 @@ export async function POST(req: NextRequest) {
       await db.insert(battleRooms).values(initialRoom).onConflictDoNothing();
       const refetch = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
       room = refetch[0] || initialRoom;
+    } else if (room.mode === "tournament" && room.requiredCount !== 3 && room.status === "waiting") {
+      room.requiredCount = 3;
+      await db.update(battleRooms).set({ requiredCount: 3 }).where(eq(battleRooms.id, roomId));
     }
 
     let participants = (room.participants as Participant[]) || [];

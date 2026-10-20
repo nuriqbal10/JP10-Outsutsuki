@@ -537,7 +537,7 @@ export default function DailyQuestsLeaderboardSection({
                   </span>
                 </h4>
                 <p className="text-xs opacity-75 mt-0.5">
-                  Setiap kemenangan turnamen resmi membuka Avatar & Badge Legendaris bertingkat!
+                  Format 3 Peserta • Setiap kemenangan turnamen resmi membuka Avatar & Badge Legendaris bertingkat!
                 </p>
               </div>
             </div>
