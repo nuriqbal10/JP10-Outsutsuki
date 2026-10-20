@@ -45,11 +45,11 @@ export interface LeaderboardEntry {
 }
 
 function resolveRankTitle(wins: number): string {
-  if (wins >= 50) return "Kage Legendaris (Hokage)";
-  if (wins >= 25) return "Jonin Elit (Sensei)";
-  if (wins >= 10) return "Chunin Berpengalaman";
+  if (wins >= 20) return "Kage Legendaris (Hokage)";
+  if (wins >= 10) return "Jonin Elit (Sensei)";
+  if (wins >= 6) return "Chunin Berpengalaman";
   if (wins >= 3) return "Genin Tangguh";
-  return "Murid Akademi Baru";
+  return "Murid Akademi";
 }
 
 export async function GET(req: NextRequest) {
@@ -86,19 +86,20 @@ export async function GET(req: NextRequest) {
       .select()
       .from(battleMatchHistory)
       .orderBy(desc(battleMatchHistory.createdAt))
-      .limit(200);
+      .limit(500);
 
     const statsMap: Record<string, LeaderboardEntry> = {};
 
     for (const match of allMatches) {
       const parts = (match.participants as MatchParticipant[]) || [];
       for (const p of parts) {
-        if (!p.email) continue;
-        const e = p.email.toLowerCase();
-        if (!statsMap[e]) {
-          statsMap[e] = {
-            email: e,
-            name: p.name || e.split("@")[0].toUpperCase(),
+        const key = (p.email || p.name || "").toLowerCase().trim();
+        if (!key) continue;
+
+        if (!statsMap[key]) {
+          statsMap[key] = {
+            email: p.email || "",
+            name: p.name || key,
             avatar: p.avatar || "🥷",
             team: p.team || "shinobi",
             matchesPlayed: 0,
@@ -106,17 +107,21 @@ export async function GET(req: NextRequest) {
             losses: 0,
             winRate: 0,
             totalScore: 0,
-            rankTitle: "Murid Akademi Baru",
+            rankTitle: "Murid Akademi",
           };
         }
 
-        statsMap[e].matchesPlayed += 1;
-        statsMap[e].totalScore += p.score || 0;
+        statsMap[key].matchesPlayed += 1;
+        statsMap[key].totalScore += p.score || 0;
 
-        if (match.winnerEmail && match.winnerEmail.toLowerCase() === e) {
-          statsMap[e].wins += 1;
+        const isWinner =
+          (match.winnerEmail && p.email && match.winnerEmail.toLowerCase().trim() === p.email.toLowerCase().trim()) ||
+          (match.winnerName && p.name && match.winnerName.toLowerCase().trim() === p.name.toLowerCase().trim());
+
+        if (isWinner) {
+          statsMap[key].wins += 1;
         } else {
-          statsMap[e].losses += 1;
+          statsMap[key].losses += 1;
         }
       }
     }
