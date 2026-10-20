@@ -4,6 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { battleMatchHistory } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
+import {
+  TOURNAMENT_REWARD_TIERS,
+  getTournamentUnlockStatus,
+} from "@/data/tournamentRewards";
 
 export interface MatchParticipant {
   email: string;
@@ -42,6 +46,11 @@ export interface LeaderboardEntry {
   winRate: number;
   totalScore: number;
   rankTitle: string;
+  tournamentWins: number;
+  tournamentPlayed: number;
+  tournamentTitle: string;
+  unlockedAvatars: string[];
+  unlockedBadges: any[];
 }
 
 function resolveRankTitle(wins: number): string {
@@ -92,6 +101,8 @@ export async function GET(req: NextRequest) {
 
     for (const match of allMatches) {
       const parts = (match.participants as MatchParticipant[]) || [];
+      const isTournament = match.mode === "tournament";
+
       for (const p of parts) {
         const key = (p.email || p.name || "").toLowerCase().trim();
         if (!key) continue;
@@ -108,11 +119,20 @@ export async function GET(req: NextRequest) {
             winRate: 0,
             totalScore: 0,
             rankTitle: "Murid Akademi",
+            tournamentWins: 0,
+            tournamentPlayed: 0,
+            tournamentTitle: "Peserta Turnamen Baru",
+            unlockedAvatars: [],
+            unlockedBadges: [],
           };
         }
 
         statsMap[key].matchesPlayed += 1;
         statsMap[key].totalScore += p.score || 0;
+
+        if (isTournament) {
+          statsMap[key].tournamentPlayed += 1;
+        }
 
         const isWinner =
           (match.winnerEmail && p.email && match.winnerEmail.toLowerCase().trim() === p.email.toLowerCase().trim()) ||
@@ -120,29 +140,48 @@ export async function GET(req: NextRequest) {
 
         if (isWinner) {
           statsMap[key].wins += 1;
+          if (isTournament) {
+            statsMap[key].tournamentWins += 1;
+          }
         } else {
           statsMap[key].losses += 1;
         }
       }
     }
 
-    // Calculate win rates and rank titles
+    // Calculate win rates, rank titles, and tournament rewards unlock status
     const leaderboard: LeaderboardEntry[] = Object.values(statsMap)
       .map((entry) => {
         const winRate = entry.matchesPlayed > 0 ? Math.round((entry.wins / entry.matchesPlayed) * 100) : 0;
+        const tournamentStatus = getTournamentUnlockStatus(entry.tournamentWins);
         return {
           ...entry,
           winRate,
           rankTitle: resolveRankTitle(entry.wins),
+          tournamentTitle: tournamentStatus.currentTitle,
+          unlockedAvatars: Array.from(tournamentStatus.unlockedAvatars),
+          unlockedBadges: tournamentStatus.unlockedBadges,
         };
       })
       .sort((a, b) => b.wins - a.wins || b.totalScore - a.totalScore);
+
+    // Dedicated tournament champions leaderboard
+    const tournamentLeaderboard = [...leaderboard]
+      .filter((e) => e.tournamentWins > 0 || e.tournamentPlayed > 0)
+      .sort(
+        (a, b) =>
+          b.tournamentWins - a.tournamentWins ||
+          b.wins - a.wins ||
+          b.totalScore - a.totalScore
+      );
 
     return NextResponse.json(
       {
         success: true,
         matches,
         leaderboard,
+        tournamentLeaderboard,
+        tournamentRewardTiers: TOURNAMENT_REWARD_TIERS,
       },
       {
         headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },

@@ -10,7 +10,7 @@ import {
   VocabLevel,
 } from "@/data/battleQuestionBank";
 
-export type BattleMode = "1vs1" | "group" | "all_members";
+export type BattleMode = "1vs1" | "group" | "all_members" | "tournament";
 
 export interface Participant {
   email: string;
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
     let roomEntity = existingList[0];
 
-    const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
+    const requiredQuota = (mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6;
 
     if (!roomEntity) {
       const newRoom = {
@@ -146,7 +146,7 @@ export async function POST(req: NextRequest) {
     };
 
     const { roomId, cleanCode } = resolveRoomId(mode, roomCode);
-    const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
+    const requiredQuota = (mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6;
     const now = Date.now();
 
     const existingList = await db.select().from(battleRooms).where(eq(battleRooms.id, roomId)).limit(1);
@@ -217,7 +217,7 @@ export async function POST(req: NextRequest) {
             winnerAvatar: winner?.avatar || null,
             winnerTeam: winner?.team || null,
             participants,
-            totalQuestions: 5,
+            totalQuestions: questions.length || (mode === "tournament" ? 8 : 5),
             createdAt: now,
           });
         } catch (histErr) {
@@ -268,13 +268,17 @@ export async function POST(req: NextRequest) {
           level: currentTopicLevel as VocabLevel,
           chapter: currentTopicChapter,
           category: currentTopicCategory as VocabCategory,
-          count: 5,
+          count: mode === "tournament" ? 8 : 5,
         });
 
         battleLog = [
-          `🔥 REMATCH DIMULAI! Topik: [${currentTopicLevel} • ${
-            currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
-          } • ${currentTopicCategory.toUpperCase()}]`,
+          mode === "tournament"
+            ? `🏆 BABAK REMATCH TURNAMEN DIMULAI! Topik: [${currentTopicLevel} • ${
+                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+              } • ${currentTopicCategory.toUpperCase()}]`
+            : `🔥 REMATCH DIMULAI! Topik: [${currentTopicLevel} • ${
+                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+              } • ${currentTopicCategory.toUpperCase()}]`,
         ];
       }
     }
@@ -327,12 +331,16 @@ export async function POST(req: NextRequest) {
           level: currentTopicLevel as VocabLevel,
           chapter: currentTopicChapter,
           category: currentTopicCategory as VocabCategory,
-          count: 5,
+          count: mode === "tournament" ? 8 : 5,
         });
         battleLog = [
-          `🔥 PERTANDINGAN DIMULAI! Topik: [${currentTopicLevel} • ${
-            currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
-          } • ${currentTopicCategory.toUpperCase()}]`,
+          mode === "tournament"
+            ? `🏆 TURNAMEN RESMI OTSUTSUKI CUP DIMULAI! Perebutan Gelar Juara & Trophy Eksklusif! Topik: [${currentTopicLevel} • ${
+                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+              } • ${currentTopicCategory.toUpperCase()}]`
+            : `🔥 PERTANDINGAN DIMULAI! Topik: [${currentTopicLevel} • ${
+                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+              } • ${currentTopicCategory.toUpperCase()}]`,
         ];
       } else if (!allReady && status === "countdown") {
         status = "waiting";

@@ -47,8 +47,14 @@ import {
   VocabLevel,
   BattleQuestion,
 } from "@/data/battleQuestionBank";
+import {
+  DEFAULT_AVATARS,
+  EXCLUSIVE_TOURNAMENT_AVATARS,
+  TOURNAMENT_REWARD_TIERS,
+  getTournamentUnlockStatus,
+} from "@/data/tournamentRewards";
 
-export type BattleMode = "1vs1" | "group" | "all_members";
+export type BattleMode = "1vs1" | "group" | "all_members" | "tournament";
 
 interface Participant {
   email: string;
@@ -163,6 +169,10 @@ export default function BattleRoyaleModal({
   const [pendingInvite, setPendingInvite] = useState<PendingInvite | null>(null);
   const [inviteNotification, setInviteNotification] = useState<string | null>(null);
 
+  // Tournament Stats & Unlocks
+  const [tournamentWins, setTournamentWins] = useState<number>(0);
+  const [showTournamentShowcase, setShowTournamentShowcase] = useState(false);
+
   // Battle State
   const [battleState, setBattleState] = useState<"lobby" | "countdown" | "in_battle" | "victory" | "defeat">("lobby");
   const [countdownNum, setCountdownNum] = useState(5);
@@ -201,6 +211,24 @@ export default function BattleRoyaleModal({
       if (savedName) setMyName(savedName);
     }
   }, [user, isLoaded]);
+
+  // Fetch tournament stats for the user
+  useEffect(() => {
+    if (!myEmail) return;
+    fetch(`/api/battle-history?email=${encodeURIComponent(myEmail)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.leaderboard)) {
+          const found = data.leaderboard.find(
+            (e: any) => e.email?.toLowerCase() === myEmail.toLowerCase()
+          );
+          if (found && typeof found.tournamentWins === "number") {
+            setTournamentWins(found.tournamentWins);
+          }
+        }
+      })
+      .catch(() => {});
+  }, [myEmail, isOpen]);
 
   // Active room code resolving
   const currentActiveRoomCode = isUsingCustomRoom && customRoomCode.trim() ? customRoomCode.trim().toUpperCase() : "";
@@ -848,9 +876,12 @@ export default function BattleRoyaleModal({
       if (isIWinner && me && me.hp > 0) {
         setBattleState("victory");
         sfx.playVictory();
-        const earnedXp = mode === "all_members" ? 150 : mode === "group" ? 120 : 90;
-        addXp(earnedXp, `Battle Royale Member (${mode})`);
+        const earnedXp = mode === "tournament" ? 350 : mode === "all_members" ? 150 : mode === "group" ? 120 : 90;
+        addXp(earnedXp, mode === "tournament" ? "Juara Turnamen Otsutsuki Cup" : `Battle Royale Member (${mode})`);
         advanceDailyQuest("battle", 1);
+        if (mode === "tournament") {
+          setTournamentWins((prev) => prev + 1);
+        }
       } else {
         setBattleState("defeat");
         sfx.playEliminated();
@@ -867,7 +898,7 @@ export default function BattleRoyaleModal({
   if (!isOpen) return null;
 
   const currentQ = shuffledQuestions[currentQIndex];
-  const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : 6;
+  const requiredQuota = (mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6;
   const currentParticipants = room?.participants || [];
   const slotsLeft = Math.max(0, requiredQuota - currentParticipants.length);
   const allParticipantsReady =
@@ -889,7 +920,7 @@ export default function BattleRoyaleModal({
   const rivalParticipants = currentParticipants.filter((p) => p.email.toLowerCase() !== myEmail.toLowerCase());
   const myRematchVote = myParticipant?.rematchVote === true;
   const rivalRematchVote = rivalParticipants.length > 0 && rivalParticipants.every((p) => p.rematchVote === true);
-  const rivalLeft = isJoined && currentParticipants.length < (mode === "1vs1" ? 2 : mode === "group" ? 4 : 6);
+  const rivalLeft = isJoined && currentParticipants.length < ((mode === "1vs1" || mode === "tournament") ? 2 : mode === "group" ? 4 : 6);
   const rematchAgreedCount = currentParticipants.filter((p) => p.rematchVote).length;
 
   return (
@@ -1080,18 +1111,66 @@ export default function BattleRoyaleModal({
             {/* AVATAR & ROOM */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border flex flex-col gap-2">
-                <span className="text-[10px] font-black uppercase opacity-75">Pilih Avatar</span>
-                <div className="flex items-center justify-between gap-1">
-                  {AVATAR_OPTIONS.map((av) => (
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase opacity-75">
+                    Pilih Avatar ({tournamentWins}x Juara 🏆)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowTournamentShowcase(true)}
+                    className="text-[10px] font-black text-amber-500 hover:underline flex items-center gap-1"
+                  >
+                    <Trophy className="w-3 h-3" /> Hadiah Turnamen
+                  </button>
+                </div>
+
+                {/* DEFAULT & EXCLUSIVE AVATARS */}
+                <div className="flex items-center gap-1.5 overflow-x-auto py-1 custom-scrollbar">
+                  {/* Default Avatars */}
+                  {DEFAULT_AVATARS.map((av) => (
                     <button
                       key={av.emoji}
                       onClick={() => handleSelectAvatar(av.emoji)}
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg transition ${myAvatar === av.emoji ? "bg-amber-500 text-black scale-110 shadow-md" : "opacity-70"
-                        }`}
+                      title={av.label}
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition ${
+                        myAvatar === av.emoji
+                          ? "bg-amber-500 text-black scale-110 shadow-md ring-2 ring-amber-300"
+                          : "bg-black/5 dark:bg-white/5 opacity-75 hover:opacity-100"
+                      }`}
                     >
                       {av.emoji}
                     </button>
                   ))}
+
+                  {/* Separator */}
+                  <div className="w-[1px] h-6 bg-current/20 shrink-0 mx-0.5" />
+
+                  {/* Exclusive Tournament Avatars */}
+                  {EXCLUSIVE_TOURNAMENT_AVATARS.map((av) => {
+                    const isUnlocked = getTournamentUnlockStatus(tournamentWins).isAvatarUnlocked(av.emoji);
+                    return (
+                      <button
+                        key={av.emoji}
+                        disabled={!isUnlocked}
+                        onClick={() => isUnlocked && handleSelectAvatar(av.emoji)}
+                        title={isUnlocked ? `${av.label} (Terbuka!)` : `🔒 Terkunci: Butuh ${av.winsRequired}x Juara Turnamen`}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 relative transition ${
+                          myAvatar === av.emoji
+                            ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-black scale-110 shadow-lg ring-2 ring-amber-400"
+                            : isUnlocked
+                            ? "bg-amber-500/20 border border-amber-400/40 opacity-90 hover:opacity-100 hover:scale-105"
+                            : "bg-black/10 dark:bg-white/5 opacity-30 cursor-not-allowed grayscale"
+                        }`}
+                      >
+                        {av.emoji}
+                        {!isUnlocked && (
+                          <span className="absolute -bottom-1 -right-1 text-[9px] bg-black/80 rounded-full px-0.5">
+                            🔒
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1118,26 +1197,60 @@ export default function BattleRoyaleModal({
             </div>
 
             {/* MODE SELECTION */}
-            <div className="grid grid-cols-3 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border">
               <button
                 onClick={() => handleSelectMode("1vs1")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition ${mode === "1vs1" ? "bg-rose-500 text-white" : "opacity-70"}`}
+                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "1vs1" ? "bg-rose-500 text-white" : "opacity-70"}`}
               >
-                ⚔️ 1 vs 1
+                ⚔️ 1 vs 1 Duel
               </button>
               <button
                 onClick={() => handleSelectMode("group")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition ${mode === "group" ? "bg-indigo-600 text-white" : "opacity-70"}`}
+                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "group" ? "bg-indigo-600 text-white" : "opacity-70"}`}
               >
-                🛡️ 2 vs 2
+                🛡️ 2 vs 2 Tim
               </button>
               <button
                 onClick={() => handleSelectMode("all_members")}
-                className={`py-2 px-3 rounded-xl text-xs font-black transition ${mode === "all_members" ? "bg-amber-500 text-stone-950" : "opacity-70"}`}
+                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "all_members" ? "bg-amber-500 text-stone-950" : "opacity-70"}`}
               >
                 👑 Survival
               </button>
+              <button
+                onClick={() => handleSelectMode("tournament")}
+                className={`py-2 px-2.5 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 ${
+                  mode === "tournament"
+                    ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 shadow-md font-black ring-2 ring-amber-300"
+                    : "opacity-80 text-amber-500 hover:opacity-100"
+                }`}
+              >
+                🏆 Turnamen
+              </button>
             </div>
+
+            {/* TOURNAMENT BANNER IF TOURNAMENT MODE IS ACTIVE */}
+            {mode === "tournament" && (
+              <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl animate-bounce">🏆</span>
+                  <div>
+                    <h5 className="text-xs font-black text-amber-500 flex items-center gap-1.5">
+                      Turnamen Otsutsuki Cup (8 Soal Championship)
+                    </h5>
+                    <p className="text-[10px] opacity-75">
+                      Raih piala turnamen untuk membuka avatar eksklusif & badge bertingkat!
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTournamentShowcase(true)}
+                  className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500 text-stone-950 shrink-0 hover:scale-105 transition"
+                >
+                  Hadiah
+                </button>
+              </div>
+            )}
 
             {/* JOIN & READY BUTTONS */}
             {!isJoined ? (
@@ -1233,9 +1346,38 @@ export default function BattleRoyaleModal({
         {(battleState === "victory" || battleState === "defeat") && (
           <div className="text-center py-4 flex flex-col items-center gap-5">
             <div className={`w-20 h-20 rounded-3xl flex items-center justify-center text-4xl shadow-2xl ${battleState === "victory" ? "bg-amber-500/20 text-amber-400 border animate-bounce" : "bg-rose-500/20 text-rose-500 border"}`}>
-              {battleState === "victory" ? "👑" : "💀"}
+              {battleState === "victory" ? (mode === "tournament" ? "🏆" : "👑") : "💀"}
             </div>
-            <h2 className="text-2xl font-black">{battleState === "victory" ? "CHAMPION ARENA!" : "Kekalahan Duel"}</h2>
+
+            {mode === "tournament" && battleState === "victory" ? (
+              <div className="flex flex-col items-center gap-2">
+                <h2 className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent animate-pulse">
+                  JUARA TURNAMEN OTSUTSUKI CUP!
+                </h2>
+                <div className="p-3.5 rounded-2xl bg-amber-500/15 border border-amber-400/50 max-w-sm w-full flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-400 flex items-center gap-1">
+                      <Trophy className="w-3.5 h-3.5" /> Total Piala Turnamen Anda
+                    </span>
+                    <span className="text-xs font-black font-mono bg-amber-500 text-stone-950 px-2 py-0.5 rounded-lg">
+                      {tournamentWins}x Juara 🏆
+                    </span>
+                  </div>
+                  <p className="text-[11px] opacity-80 text-left">
+                    Selamat! Trofi kejuaraan telah disimpan di database Neon! Cek avatar & badge eksklusif baru yang berhasil Anda unlock!
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowTournamentShowcase(true)}
+                    className="text-xs font-black text-amber-400 hover:underline flex items-center justify-center gap-1 pt-1.5 border-t border-amber-400/20"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" /> Buka Galeri Hadiah Eksklusif
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <h2 className="text-2xl font-black">{battleState === "victory" ? "CHAMPION ARENA!" : "Kekalahan Duel"}</h2>
+            )}
 
             <div className="flex gap-3 w-full max-w-sm">
               <button
@@ -1249,6 +1391,141 @@ export default function BattleRoyaleModal({
                 className="flex-1 clay-btn py-2.5 rounded-xl font-bold text-xs"
               >
                 <LogOut className="w-4 h-4 inline mr-1" /> Lobi
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* TOURNAMENT REWARDS MODAL OVERLAY */}
+        {showTournamentShowcase && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-md p-3 sm:p-5">
+            <div className="clay-card rounded-3xl p-5 sm:p-7 max-w-lg w-full border border-amber-500/50 shadow-2xl flex flex-col gap-5 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto custom-scrollbar">
+              <div className="flex items-center justify-between border-b border-current/10 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-3xl">🏆</span>
+                  <div>
+                    <h3 className="text-base font-black text-amber-500">
+                      Penghargaan Eksklusif Turnamen
+                    </h3>
+                    <p className="text-[11px] opacity-75">
+                      Raih kemenangan turnamen bertingkat untuk membuka seluruh avatar & badge legendaris!
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowTournamentShowcase(false)}
+                  className="p-1.5 rounded-xl bg-black/10 dark:bg-white/10 hover:opacity-100 opacity-60 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* CURRENT USER TOURNAMENT PROGRESS */}
+              <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-black uppercase opacity-75">Koleksi Trofi Anda</div>
+                  <div className="text-base font-black text-amber-500 flex items-center gap-1.5 mt-0.5">
+                    <Trophy className="w-4 h-4" /> {tournamentWins}x Juara Turnamen
+                  </div>
+                  <div className="text-[10px] opacity-75 mt-0.5">
+                    Gelar: <span className="font-bold text-amber-400">{getTournamentUnlockStatus(tournamentWins).currentTitle}</span>
+                  </div>
+                </div>
+                {getTournamentUnlockStatus(tournamentWins).nextTier ? (
+                  <div className="text-right">
+                    <span className="text-[10px] font-bold text-emerald-400">
+                      {getTournamentUnlockStatus(tournamentWins).winsToNextTier}x Menang Lagi
+                    </span>
+                    <div className="text-[10px] opacity-60">
+                      Menuju {getTournamentUnlockStatus(tournamentWins).nextTier?.tierName}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-right text-[10px] font-bold text-purple-400">
+                    Tier Tertinggi Tercapai! 🌌
+                  </div>
+                )}
+              </div>
+
+              {/* REWARD TIERS LIST */}
+              <div className="space-y-3">
+                {TOURNAMENT_REWARD_TIERS.map((tier) => {
+                  const isUnlocked = tournamentWins >= tier.winsRequired;
+                  return (
+                    <div
+                      key={tier.tierNumber}
+                      className={`p-3.5 rounded-2xl border transition flex flex-col gap-2.5 ${
+                        isUnlocked
+                          ? "bg-amber-500/10 border-amber-500/40"
+                          : "bg-black/5 dark:bg-white/5 border-current/10 opacity-70"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{tier.badge.icon}</span>
+                          <div>
+                            <h4 className="text-xs font-black flex items-center gap-1.5">
+                              <span>Tier {tier.tierNumber}: {tier.tierName}</span>
+                              {isUnlocked && (
+                                <span className="text-[9px] bg-emerald-500 text-white font-black px-1.5 py-0.5 rounded">
+                                  TERBUKA
+                                </span>
+                              )}
+                            </h4>
+                            <p className="text-[10px] opacity-70">
+                              Syarat: {tier.winsRequired}x Kemenangan Turnamen
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-xs font-black font-mono px-2 py-0.5 rounded-lg bg-black/10 dark:bg-white/10">
+                          {tier.winsRequired}x 🏆
+                        </span>
+                      </div>
+
+                      {/* AVATARS UNLOCKED IN THIS TIER */}
+                      <div className="pt-2 border-t border-current/10 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold opacity-75">Avatar:</span>
+                          <div className="flex items-center gap-1.5">
+                            {tier.avatars.map((av) => (
+                              <span
+                                key={av.emoji}
+                                title={`${av.label} - ${av.desc}`}
+                                className={`text-xl p-1 rounded-lg ${
+                                  isUnlocked ? "bg-amber-500/20" : "grayscale opacity-40"
+                                }`}
+                              >
+                                {av.emoji}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* BADGE */}
+                        <div className="flex items-center gap-1.5 text-right">
+                          <span className="text-[10px] font-bold opacity-75">Badge:</span>
+                          <span
+                            className={`text-[10px] font-black px-2 py-0.5 rounded-lg border ${
+                              isUnlocked
+                                ? "bg-amber-500/20 border-amber-400 text-amber-400"
+                                : "bg-black/10 border-current/10 opacity-50"
+                            }`}
+                          >
+                            {tier.badge.name}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowTournamentShowcase(false)}
+                className="clay-btn-gold py-2.5 rounded-xl text-xs font-black uppercase"
+              >
+                Tutup Galeri
               </button>
             </div>
           </div>

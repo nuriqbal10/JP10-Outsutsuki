@@ -20,6 +20,10 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { getDailyQuests, getLeaderboardData, DailyQuest, LeaderboardUser } from "@/lib/dailyQuests";
 import { UserGamificationState, getGamificationState } from "@/lib/gamification";
+import {
+  TOURNAMENT_REWARD_TIERS,
+  getTournamentUnlockStatus,
+} from "@/data/tournamentRewards";
 
 interface MatchParticipant {
   email: string;
@@ -58,6 +62,11 @@ interface LeaderboardEntry {
   winRate: number;
   totalScore: number;
   rankTitle: string;
+  tournamentWins: number;
+  tournamentPlayed: number;
+  tournamentTitle: string;
+  unlockedAvatars: string[];
+  unlockedBadges: any[];
 }
 
 function formatTimeAgo(timestamp: number): string {
@@ -80,7 +89,8 @@ export default function DailyQuestsLeaderboardSection({
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [battleMatches, setBattleMatches] = useState<MatchHistoryItem[]>([]);
   const [battleLeaderboard, setBattleLeaderboard] = useState<LeaderboardEntry[]>([]);
-  const [activeTab, setActiveTab] = useState<"quests" | "leaderboard" | "history">("quests");
+  const [tournamentLeaderboard, setTournamentLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [activeTab, setActiveTab] = useState<"quests" | "leaderboard" | "history" | "tournament">("quests");
   const [userState, setUserState] = useState<UserGamificationState | null>(null);
 
   const currentEmail = clerkUser?.primaryEmailAddress?.emailAddress?.toLowerCase() || "";
@@ -94,6 +104,7 @@ export default function DailyQuestsLeaderboardSection({
         if (data.success) {
           if (Array.isArray(data.matches)) setBattleMatches(data.matches);
           if (Array.isArray(data.leaderboard)) setBattleLeaderboard(data.leaderboard);
+          if (Array.isArray(data.tournamentLeaderboard)) setTournamentLeaderboard(data.tournamentLeaderboard);
         }
       }
     } catch (e) { }
@@ -180,6 +191,19 @@ export default function DailyQuestsLeaderboardSection({
           >
             <Swords className="w-3.5 h-3.5" />
             Riwayat Pertandingan ({battleMatches.length})
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("tournament");
+              fetchBattleData();
+            }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 ${activeTab === "tournament"
+                ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 shadow-md ring-2 ring-amber-300"
+                : "bg-black/5 dark:bg-white/5 hover:bg-black/10 opacity-80 text-amber-500"
+              }`}
+          >
+            <Crown className="w-3.5 h-3.5" />
+            Turnamen & Trofi
           </button>
         </div>
       </div>
@@ -495,6 +519,182 @@ export default function DailyQuestsLeaderboardSection({
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {/* CONTENT TAB 4: TOURNAMENT & TROPHY REWARDS */}
+      {activeTab === "tournament" && (
+        <div className="flex flex-col gap-5">
+          {/* TOURNAMENT HERO BANNER */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-amber-600/20 border border-amber-400/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl sm:text-4xl">🏆</span>
+              <div>
+                <h4 className="font-black text-sm sm:text-base text-amber-500 flex items-center gap-2">
+                  <span>Turnamen Resmi Otsutsuki Cup</span>
+                  <span className="text-[10px] bg-amber-500 text-stone-950 px-1.5 py-0.5 rounded font-black uppercase">
+                    CHAMPIONSHIP
+                  </span>
+                </h4>
+                <p className="text-xs opacity-75 mt-0.5">
+                  Setiap kemenangan turnamen resmi membuka Avatar & Badge Legendaris bertingkat!
+                </p>
+              </div>
+            </div>
+            {onOpenBattle && (
+              <button
+                onClick={onOpenBattle}
+                className="clay-btn-gold px-4 py-2 rounded-xl text-xs font-black uppercase flex items-center gap-1.5 shrink-0 shadow-lg hover:scale-105 transition"
+              >
+                <Swords className="w-3.5 h-3.5" /> Masuk Lobi Turnamen
+              </button>
+            )}
+          </div>
+
+          {/* HALL OF FAME JUARA TURNAMEN */}
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between px-1 text-xs opacity-75">
+              <span className="font-bold flex items-center gap-1.5">
+                <Crown className="w-4 h-4 text-amber-500" />
+                Hall of Fame • Pemenang Trofi Turnamen
+              </span>
+              <span className="text-[11px] font-mono">
+                {tournamentLeaderboard.length} Jawara Terdaftar
+              </span>
+            </div>
+
+            {tournamentLeaderboard.length === 0 ? (
+              <div className="text-center py-8 px-4 rounded-2xl bg-black/5 dark:bg-black/20 border border-current/10 flex flex-col items-center gap-2">
+                <span className="text-3xl">🥋</span>
+                <h5 className="font-black text-xs">Belum Ada Juara Turnamen</h5>
+                <p className="text-[11px] opacity-70 max-w-md">
+                  Turnamen Otsutsuki Cup baru saja dibuka! Bertandinglah di mode Turnamen untuk menjadi orang pertama yang mengoleksi Trofi Turnamen & membuka Avatar Eksklusif!
+                </p>
+              </div>
+            ) : (
+              <div className="max-h-60 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                {tournamentLeaderboard.map((champ, idx) => (
+                  <div
+                    key={champ.email || idx}
+                    className="p-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/30 flex items-center justify-center font-mono font-black text-xs text-amber-400">
+                        #{idx + 1}
+                      </div>
+                      <span className="text-2xl">{champ.avatar || "🥋"}</span>
+                      <div>
+                        <h5 className="text-xs font-black flex items-center gap-2">
+                          <span>{champ.name}</span>
+                          <span className="text-[9px] font-mono font-bold bg-amber-500 text-stone-950 px-1.5 py-0.2 rounded">
+                            {champ.tournamentWins}x Trofi 🏆
+                          </span>
+                        </h5>
+                        <p className="text-[10px] opacity-70">
+                          {champ.tournamentTitle} • {champ.winRate}% Win Rate
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-mono text-xs font-black text-amber-400 block">
+                        {champ.totalScore} PTS
+                      </span>
+                      <span className="text-[9px] opacity-60">
+                        {champ.tournamentPlayed} Match
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* SHOWCASE TIER PENGHARGAAN EKSKLUSIF (AVATAR & BADGE) */}
+          <div className="flex flex-col gap-3 pt-2 border-t border-current/10">
+            <div className="px-1 text-xs opacity-75 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              Tingkat Penghargaan Turnamen Berkelipatan
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {TOURNAMENT_REWARD_TIERS.map((tier) => {
+                const myUserInLeaderboard = battleLeaderboard.find(
+                  (b) =>
+                    (currentEmail && b.email && b.email.toLowerCase() === currentEmail) ||
+                    (currentName && b.name && b.name.toLowerCase().includes(currentName))
+                );
+                const myWins = myUserInLeaderboard?.tournamentWins || 0;
+                const isUnlocked = myWins >= tier.winsRequired;
+
+                return (
+                  <div
+                    key={tier.tierNumber}
+                    className={`p-4 rounded-2xl border transition flex flex-col justify-between gap-3 ${
+                      isUnlocked
+                        ? "bg-amber-500/15 border-amber-400/60 ring-1 ring-amber-400/30"
+                        : "bg-black/5 dark:bg-black/20 border-current/10 opacity-80"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{tier.badge.icon}</span>
+                          <div>
+                            <h5 className="font-black text-xs text-amber-500">
+                              Tier {tier.tierNumber}: {tier.tierName}
+                            </h5>
+                            <span className="text-[10px] opacity-70">
+                              Syarat: {tier.winsRequired}x Kemenangan Turnamen
+                            </span>
+                          </div>
+                        </div>
+                        {isUnlocked ? (
+                          <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-lg border border-emerald-500/30">
+                            TERBUKA
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono font-bold opacity-60">
+                            🔒 {tier.winsRequired}x 🏆
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-current/10 flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold opacity-75">Avatar:</span>
+                        <div className="flex items-center gap-1">
+                          {tier.avatars.map((av) => (
+                            <span
+                              key={av.emoji}
+                              title={`${av.label} - ${av.desc}`}
+                              className={`text-xl p-1 rounded-lg ${
+                                isUnlocked ? "bg-amber-500/20" : "grayscale opacity-40"
+                              }`}
+                            >
+                              {av.emoji}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <span
+                          className={`text-[9px] font-black px-2 py-0.5 rounded-lg border ${
+                            isUnlocked
+                              ? "bg-amber-500/20 border-amber-400 text-amber-400"
+                              : "bg-black/10 border-current/10 opacity-60"
+                          }`}
+                        >
+                          {tier.badge.name}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </div>
