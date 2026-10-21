@@ -117,6 +117,7 @@ export default function DiagnosticMatrixView({
     return students.filter(
       (s) =>
         s.name.toLowerCase().includes(q) ||
+        (s.nim && s.nim.toLowerCase().includes(q)) ||
         String(s.no).includes(q) ||
         (s.playerLevel && s.playerLevel.toLowerCase().includes(q))
     );
@@ -1083,8 +1084,11 @@ export default function DiagnosticMatrixView({
                       Rank #{selectedStudent.rank || selectedStudent.no} • Skor Komposit:{" "}
                       {selectedStudent.compositeScore ?? selectedStudent.summary?.compositeScore ?? 0}
                     </span>
+                    <span className="text-xs font-mono font-bold text-amber-500">
+                      {selectedStudent.nim ? `NIM: ${selectedStudent.nim}` : `Absen #${selectedStudent.no}`}
+                    </span>
                     <span className="text-xs font-mono opacity-70">
-                      Predikat: {selectedStudent.grade || "B"}
+                      • Predikat: {selectedStudent.grade || "B"}
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
@@ -1105,7 +1109,7 @@ export default function DiagnosticMatrixView({
                 >
                   {students.map((st) => (
                     <option key={st.no} value={st.no} className="bg-stone-900 text-white">
-                      #{st.rank || st.no} - {st.name} ({st.grade || "B"})
+                      {st.nim ? `${st.nim} - ${st.name}` : `#{st.rank || st.no} - ${st.name}`} ({st.grade || "B"})
                     </option>
                   ))}
                 </select>

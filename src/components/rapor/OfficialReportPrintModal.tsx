@@ -217,8 +217,8 @@ export default function OfficialReportPrintModal({
                   </span>
                 </div>
                 <div className="flex">
-                  <span className="w-28 font-bold text-slate-600">Nomor Absen</span>
-                  <span>: #{student.no}</span>
+                  <span className="w-28 font-bold text-slate-600">Nomor Induk (NIM)</span>
+                  <span>: <strong className="font-mono text-slate-900 font-bold">{student.nim || `#${student.no}`}</strong></span>
                 </div>
                 <div className="flex">
                   <span className="w-28 font-bold text-slate-600">Tingkat Kursus</span>

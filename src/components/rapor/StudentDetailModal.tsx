@@ -80,8 +80,11 @@ export default function StudentDetailModal({
                 <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-400">
                   {student.playerLevel || "Ninja Outsutsuki"}
                 </span>
-                <span className="text-xs font-mono opacity-70">
-                  Absen #{student.no} • {levelTitle}
+                <span className="text-xs font-mono font-bold text-amber-500">
+                  {student.nim ? `NIM: ${student.nim}` : `Absen #${student.no}`}
+                </span>
+                <span className="text-xs font-mono opacity-60">
+                  • {levelTitle}
                 </span>
               </div>
               <h2 className="text-lg sm:text-2xl font-black tracking-tight mt-0.5">

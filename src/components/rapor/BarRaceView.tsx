@@ -30,6 +30,7 @@ export default function BarRaceView({ students }: BarRaceViewProps) {
     const score = getStudentScoreAtChapter(s, currentChapter);
     return {
       no: s.no,
+      nim: s.nim,
       name: s.name,
       avatarColor: s.avatarColor || "from-amber-400 to-amber-600",
       score,
@@ -163,8 +164,9 @@ export default function BarRaceView({ students }: BarRaceViewProps) {
                         : "linear-gradient(90deg, #6366f1 0%, #4338ca 100%)",
                   }}
                 >
-                  <span className="text-xs font-bold truncate pr-2 drop-shadow-sm">
-                    {s.name}
+                  <span className="text-xs font-bold truncate pr-2 drop-shadow-sm flex items-center gap-1.5">
+                    <span>{s.name}</span>
+                    {s.nim && <span className="text-[10px] font-mono opacity-80">({s.nim})</span>}
                   </span>
                   <span className="text-xs font-mono font-black drop-shadow-sm shrink-0">
                     {s.score} pt

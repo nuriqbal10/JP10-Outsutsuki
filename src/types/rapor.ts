@@ -51,6 +51,7 @@ export interface StudentSummary {
 
 export interface StudentRaporItem {
   no: number;
+  nim?: string;
   name: string;
   avatarColor: string;
   xp?: number;

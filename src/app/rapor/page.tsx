@@ -146,9 +146,10 @@ export default function RaporDashboardPage() {
     fetchRapor();
   }, [selectedLevel]);
 
-  // Filter siswa
+  // Filter siswa (Bisa cari berdasarkan Nama atau NIM)
   const filteredStudents = (raporData?.rankedStudents || []).filter((s) => {
-    const matchName = s.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = searchQuery.toLowerCase();
+    const matchName = s.name.toLowerCase().includes(q) || (s.nim && s.nim.toLowerCase().includes(q));
     const matchGrade = selectedGrade === "all" || s.grade === selectedGrade;
     return matchName && matchGrade;
   });
@@ -713,7 +714,7 @@ export default function RaporDashboardPage() {
                     <h3 className="font-bold text-base truncate mt-0.5 group-hover:text-amber-500 transition">
                       {top3[1].name}
                     </h3>
-                    <p className="text-xs opacity-60">Nomor Absen #{top3[1].no}</p>
+                    <p className="text-xs font-mono font-bold text-slate-500">{top3[1].nim || `#${top3[1].no}`}</p>
 
                     <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-xs font-bold">
                       <span>Nilai Akhir: <strong className="text-blue-600 dark:text-blue-400">{top3[1].compositeScore}</strong></span>
@@ -746,7 +747,7 @@ export default function RaporDashboardPage() {
                     <h3 className="font-extrabold text-lg truncate mt-0.5 group-hover:text-amber-500 transition">
                       {top3[0].name}
                     </h3>
-                    <p className="text-xs opacity-60">Nomor Absen #{top3[0].no}</p>
+                    <p className="text-xs font-mono font-black text-amber-600 dark:text-amber-400">{top3[0].nim || `#${top3[0].no}`}</p>
 
                     <div className="mt-4 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-xs font-black text-amber-700 dark:text-amber-300 border border-amber-500/30">
                       <span>Nilai Akhir: <strong className="text-sm">{top3[0].compositeScore}</strong></span>
@@ -779,7 +780,7 @@ export default function RaporDashboardPage() {
                     <h3 className="font-bold text-base truncate mt-0.5 group-hover:text-amber-500 transition">
                       {top3[2].name}
                     </h3>
-                    <p className="text-xs opacity-60">Nomor Absen #{top3[2].no}</p>
+                    <p className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400">{top3[2].nim || `#${top3[2].no}`}</p>
 
                     <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/5 dark:bg-white/10 text-xs font-bold">
                       <span>Nilai Akhir: <strong className="text-blue-600 dark:text-blue-400">{top3[2].compositeScore}</strong></span>
@@ -843,7 +844,7 @@ export default function RaporDashboardPage() {
                     <tr className="border-b border-current/10 bg-black/5 dark:bg-white/5 opacity-80 font-bold uppercase text-[10px] tracking-wider">
                       <th className="p-3 text-center w-14">Peringkat</th>
                       <th className="p-3">Nama Lengkap Siswa</th>
-                      <th className="p-3 text-center w-20">Absen</th>
+                      <th className="p-3 text-center w-36">NIM Peserta Didik</th>
                       <th className="p-3 text-center w-28">Nilai Komulatif</th>
                       <th className="p-3 text-center w-24">Predikat</th>
                       <th className="p-3 text-center w-36">Penguasaan 4 Aspek</th>
@@ -876,7 +877,9 @@ export default function RaporDashboardPage() {
                             <span className="font-bold text-sm">{st.name}</span>
                           </div>
                         </td>
-                        <td className="p-3 text-center opacity-70 font-mono">#{st.no}</td>
+                        <td className="p-3 text-center font-mono font-bold text-xs text-amber-600 dark:text-amber-400">
+                          {st.nim || `#${st.no}`}
+                        </td>
                         <td className="p-3 text-center font-bold text-sm text-blue-600 dark:text-blue-400">
                           {getStudentScore(st)}
                         </td>
@@ -1097,7 +1100,7 @@ export default function RaporDashboardPage() {
                   >
                     {(raporData?.students || []).map((st) => (
                       <option key={st.no} value={st.no} className="bg-stone-900 text-white">
-                        #{st.no} - {st.name} (Peringkat #{st.rank || st.no})
+                        {st.nim ? `${st.nim} - ${st.name}` : `#${st.no} - ${st.name}`} (Peringkat #{st.rank || st.no})
                       </option>
                     ))}
                   </select>
@@ -1118,6 +1121,9 @@ export default function RaporDashboardPage() {
                     {portalStudent.name.substring(0, 2).toUpperCase()}
                   </div>
                   <h3 className="font-bold text-base text-[var(--text-heading)]">{portalStudent.name}</h3>
+                  <p className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">
+                    {portalStudent.nim || `NIM: #${portalStudent.no}`}
+                  </p>
                   <p className="text-xs opacity-70 text-[var(--text-body)]">
                     Peringkat Kelas #{portalStudent.rank || portalStudent.no}
                   </p>
