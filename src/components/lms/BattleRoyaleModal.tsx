@@ -65,6 +65,7 @@ interface Participant {
   score: number;
   hp: number;
   isReady: boolean;
+  isHost?: boolean;
   rematchVote?: boolean;
 }
 
@@ -496,6 +497,43 @@ export default function BattleRoyaleModal({
       }
     } catch (e) {
       setActionError("Gagal memperbarui status kesiapan.");
+    } finally {
+      setLoadingAction(false);
+    }
+  };
+
+  // Start Battle (Room Master Only)
+  const handleStartBattle = async () => {
+    setLoadingAction(true);
+    setActionError(null);
+    try {
+      const res = await fetch("/api/battle-lobby", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "start_battle",
+          mode,
+          roomCode: currentActiveRoomCode,
+          email: myEmail,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setActionError(data.error || "Gagal memulai pertandingan.");
+        sfx.playWrong();
+        return;
+      }
+
+      if (data.room) {
+        setRoom(data.room);
+        lastSeenUpdatedAtRef.current = data.room.updatedAt || Date.now();
+        if (data.room.status === "countdown") {
+          triggerLobbyCountdown(data.room);
+        }
+      }
+    } catch (e: any) {
+      setActionError("Gagal menghubungi server untuk memulai duel.");
     } finally {
       setLoadingAction(false);
     }
@@ -1252,32 +1290,277 @@ export default function BattleRoyaleModal({
               </div>
             )}
 
-            {/* JOIN & READY BUTTONS */}
+            {/* JOIN & ROOM LOBBY ROSTER */}
             {!isJoined ? (
-              <button
-                disabled={loadingAction || !myEmail.trim()}
-                onClick={() => handleJoinLobby()}
-                className="clay-btn-gold py-3 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg"
-              >
-                {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
-                Masuk ke Lobi Pertandingan
-              </button>
-            ) : (
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-3">
-                <div>
-                  <h4 className="text-sm font-black">{myName} (Di Lobi)</h4>
-                </div>
+              <div className="flex flex-col gap-3">
+                {room && room.participants.length > 0 && (
+                  <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                      <span className="font-bold opacity-80">Peserta di Ruangan ({room.participants.length}/{room.requiredCount}):</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-mono font-bold text-amber-500">
+                      <div className="flex -space-x-2">
+                        {room.participants.slice(0, 5).map((p, i) => (
+                          <span
+                            key={i}
+                            className="inline-block text-lg bg-black/10 dark:bg-stone-800 rounded-full px-1 border border-current/20"
+                            title={`${p.name} ${p.isHost ? "(Room Master 👑)" : ""}`}
+                          >
+                            {p.avatar}
+                          </span>
+                        ))}
+                      </div>
+                      {room.participants.length > 5 && (
+                        <span className="text-[10px] opacity-75">+{room.participants.length - 5}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <button
-                  disabled={loadingAction}
-                  onClick={handleToggleReady}
-                  className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 ${isMyReady ? "bg-emerald-500 text-white" : "clay-btn-gold"
-                    }`}
+                  disabled={loadingAction || !myEmail.trim()}
+                  onClick={() => handleJoinLobby()}
+                  className="clay-btn-gold py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:scale-[1.01] transition"
                 >
-                  {isMyReady ? <CheckCircle2 className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
-                  {isMyReady ? "SIAP! (Batal)" : "SAYA SIAP!"}
+                  {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+                  Masuk ke Lobi Pertandingan
                 </button>
               </div>
-            )}
+            ) : (() => {
+              const roomParticipants = room?.participants || [];
+              const meParticipant = roomParticipants.find((p) => p.email.toLowerCase() === myEmail.toLowerCase());
+              const isMeHost = !!meParticipant?.isHost;
+              const hostParticipant = roomParticipants.find((p) => p.isHost) || roomParticipants[0];
+              const requiredQuota = room?.requiredCount || (mode === "1vs1" ? 2 : mode === "group" ? 4 : mode === "tournament" ? 8 : 6);
+              const readyCount = roomParticipants.filter((p) => p.isReady).length;
+              const canStart = isMeHost && roomParticipants.length >= 2 && roomParticipants.every((p) => p.isReady);
+              const emptySlotsCount = Math.max(0, requiredQuota - roomParticipants.length);
+
+              return (
+                <div className="flex flex-col gap-4 p-4 rounded-3xl bg-black/5 dark:bg-white/5 border border-amber-500/30">
+                  {/* LOBBY HEADER */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-current/10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold text-lg shrink-0">
+                        {mode === "tournament" ? "🏆" : mode === "group" ? "🛡️" : mode === "1vs1" ? "⚔️" : "👑"}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-sm font-black tracking-wide">
+                            {mode === "tournament" ? "Lobi Turnamen (8 Peserta)" : mode === "group" ? "Lobi Tim 2v2" : mode === "1vs1" ? "Lobi Duel 1v1" : "Lobi Survival"}
+                          </h4>
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30">
+                            {room?.roomCode || currentActiveRoomCode || "UMUM"}
+                          </span>
+                        </div>
+                        <p className="text-[10px] opacity-75 mt-0.5">
+                          Room Master: <strong className="text-amber-500 font-black">👑 {hostParticipant?.name || "Memuat..."}</strong> {isMeHost && "(Anda)"}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="px-3 py-1 rounded-xl bg-black/10 dark:bg-white/10 text-[11px] font-mono font-black flex items-center gap-1.5">
+                        <Users className="w-3.5 h-3.5 text-amber-500" />
+                        <span>{roomParticipants.length}/{requiredQuota} Peserta</span>
+                      </div>
+                      <div className={`px-3 py-1 rounded-xl text-[11px] font-mono font-black flex items-center gap-1.5 ${
+                        readyCount === roomParticipants.length && roomParticipants.length >= 2
+                          ? "bg-emerald-500/20 text-emerald-500 border border-emerald-500/40 animate-pulse"
+                          : "bg-amber-500/15 text-amber-500"
+                      }`}>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>{readyCount}/{roomParticipants.length} Siap</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PARTICIPANTS ROSTER GRID */}
+                  <div className="flex flex-col gap-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase opacity-75 flex items-center gap-1">
+                        Daftar Peserta di Ruangan Ini
+                      </span>
+                      <span className="text-[10px] font-mono opacity-60">
+                        {canStart ? "✅ Siap dimulai oleh Room Master" : "Semua harus SIAP untuk memulai"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {roomParticipants.map((p, idx) => {
+                        const isSelf = p.email.toLowerCase() === myEmail.toLowerCase();
+                        return (
+                          <div
+                            key={p.email || idx}
+                            className={`p-3 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                              isSelf
+                                ? "bg-amber-500/15 border-amber-500/60 shadow-sm ring-1 ring-amber-400/40"
+                                : "bg-black/5 dark:bg-white/5 border-current/10"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="relative">
+                                <span className="text-2xl">{p.avatar}</span>
+                                {p.isHost && (
+                                  <span className="absolute -top-2 -right-1.5 text-xs animate-bounce" title="Room Master (Host)">
+                                    👑
+                                  </span>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                  <span className="text-xs font-black truncate max-w-[120px] sm:max-w-[140px]">
+                                    {p.name}
+                                  </span>
+                                  {isSelf && (
+                                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500 text-stone-950 font-black uppercase">
+                                      Anda
+                                    </span>
+                                  )}
+                                  {p.isHost && (
+                                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-gradient-to-r from-amber-500 to-yellow-400 text-stone-950 font-black uppercase flex items-center gap-0.5 shadow-sm">
+                                      👑 Master
+                                    </span>
+                                  )}
+                                </div>
+                                {p.team && (
+                                  <span className="text-[10px] opacity-70 block capitalize">
+                                    Tim {p.team}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* STATUS BADGE */}
+                            <div>
+                              {p.isReady ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500 text-white shadow-sm shadow-emerald-500/30">
+                                  <CheckCircle2 className="w-3 h-3" /> SIAP
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-bold uppercase bg-stone-500/15 text-stone-600 dark:text-stone-400 border border-current/20">
+                                  <Clock className="w-3 h-3 animate-spin" /> BELUM
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* EMPTY SLOTS */}
+                      {Array.from({ length: emptySlotsCount }).map((_, emptyIdx) => (
+                        <div
+                          key={`empty-${emptyIdx}`}
+                          className="p-3 rounded-2xl border border-dashed border-current/20 bg-black/5 dark:bg-white/[0.02] flex items-center justify-between opacity-60"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl border border-dashed border-current/30 flex items-center justify-center text-xs font-mono opacity-50">
+                              #{roomParticipants.length + emptyIdx + 1}
+                            </div>
+                            <span className="text-xs font-medium italic opacity-70">
+                              Slot Kosong #{roomParticipants.length + emptyIdx + 1}...
+                            </span>
+                          </div>
+                          <span className="text-[10px] px-2 py-0.5 rounded-lg bg-black/10 dark:bg-white/10 font-mono">
+                            Tersedia
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CONTROLS ROW */}
+                  <div className="pt-2 flex flex-col gap-3">
+                    {/* PLAYER'S OWN READY TOGGLE & LEAVE BUTTON */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        disabled={loadingAction}
+                        onClick={handleToggleReady}
+                        className={`flex-1 py-3 px-4 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition ${
+                          isMyReady
+                            ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-600/30"
+                            : "clay-btn-gold"
+                        }`}
+                      >
+                        {loadingAction ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : isMyReady ? (
+                          <CheckCircle2 className="w-4 h-4" />
+                        ) : (
+                          <Zap className="w-4 h-4" />
+                        )}
+                        {isMyReady ? "✅ STATUS: SIAP (Klik Batal)" : "⚡ SAYA SIAP! (READY)"}
+                      </button>
+
+                      <button
+                        disabled={loadingAction}
+                        onClick={handleLeaveLobby}
+                        title="Keluar dari Lobi"
+                        className="py-3 px-4 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-rose-500/40 text-rose-500 hover:bg-rose-500/10 transition"
+                      >
+                        <LogOut className="w-4 h-4" /> Keluar
+                      </button>
+                    </div>
+
+                    {/* ROOM MASTER CONTROLS vs PARTICIPANT STATUS */}
+                    {isMeHost ? (
+                      <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/40 flex flex-col gap-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-black text-amber-500 flex items-center gap-1.5">
+                            👑 Kontrol Room Master
+                          </span>
+                          <span className="text-[10px] font-mono font-bold opacity-75">
+                            {canStart ? "🟢 Siap Dimulai" : "🟡 Menunggu Syarat"}
+                          </span>
+                        </div>
+
+                        {!canStart && (
+                          <p className="text-[11px] opacity-80 leading-relaxed">
+                            {roomParticipants.length < 2
+                              ? "⚠️ Minimal harus ada 2 peserta di dalam ruangan agar Room Master dapat memulai pertandingan."
+                              : `⚠️ Pertandingan belum bisa dimulai. Masih ada peserta yang BELUM SIAP (${
+                                  roomParticipants.filter((p) => !p.isReady).map((p) => p.name).join(", ")
+                                }).`}
+                          </p>
+                        )}
+
+                        <button
+                          disabled={!canStart || loadingAction}
+                          onClick={handleStartBattle}
+                          className={`py-3.5 px-4 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg ${
+                            canStart
+                              ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 font-black ring-2 ring-amber-300 hover:scale-[1.02] cursor-pointer animate-pulse"
+                              : "bg-black/10 dark:bg-white/10 text-stone-400 dark:text-stone-500 cursor-not-allowed border border-current/10"
+                          }`}
+                        >
+                          {loadingAction ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Crown className="w-4 h-4" />
+                          )}
+                          {canStart ? "👑 MULAI PERTANDINGAN SEKARANG!" : "👑 Mulai Pertandingan (Tunggu Semua Siap)"}
+                        </button>
+                      </div>
+                    ) : (
+                      /* NON-HOST STATUS MESSAGE */
+                      <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex items-center justify-between gap-3 text-xs">
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-lg animate-spin">⏳</span>
+                          <div>
+                            <p className="font-bold">
+                              {roomParticipants.length >= 2 && roomParticipants.every((p) => p.isReady)
+                                ? `Semua peserta sudah siap! Menunggu Room Master (${hostParticipant?.name || "Host"}) memulai pertandingan...`
+                                : `Menunggu seluruh peserta berstatus SIAP (${readyCount}/${roomParticipants.length} Siap)...`}
+                            </p>
+                            <p className="text-[10px] opacity-70 mt-0.5">Pertandingan hanya dapat dimulai oleh Room Master (👑).</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 

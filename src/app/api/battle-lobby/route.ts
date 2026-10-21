@@ -21,6 +21,7 @@ export interface Participant {
   score: number;
   hp: number;
   isReady: boolean;
+  isHost?: boolean;
   rematchVote?: boolean;
 }
 
@@ -32,7 +33,17 @@ function resolveRoomId(mode: BattleMode, roomCode?: string | null): { roomId: st
   return { roomId: `room_${mode}`, isCustom: false, cleanCode: mode.toUpperCase() };
 }
 
+function ensureRoomHost(participants: Participant[]): Participant[] {
+  if (!Array.isArray(participants) || participants.length === 0) return [];
+  const hasHost = participants.some((p) => p.isHost);
+  if (!hasHost) {
+    participants[0].isHost = true;
+  }
+  return participants;
+}
+
 function formatRoom(r: BattleRoomEntity) {
+  const parts = ensureRoomHost((r.participants as Participant[]) || []);
   return {
     id: r.id,
     mode: r.mode as BattleMode,
@@ -43,7 +54,7 @@ function formatRoom(r: BattleRoomEntity) {
     topicLevel: r.topicLevel as "all" | "A1" | "A2.1" | "A2.2",
     topicChapter: r.topicChapter,
     topicCategory: r.topicCategory as "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3",
-    participants: (r.participants as Participant[]) || [],
+    participants: parts,
     questions: (r.questions as any[]) || [],
     battleLog: (r.battleLog as string[]) || [],
     updatedAt: r.updatedAt,
@@ -132,7 +143,7 @@ export async function POST(req: NextRequest) {
       chosenAnswer,
       questionIndex,
     } = body as {
-      action: "join" | "leave" | "toggle_ready" | "choose_team" | "choose_avatar" | "set_topic" | "reset" | "finish_match" | "request_rematch" | "cancel_rematch" | "submit_turn";
+      action: "join" | "leave" | "toggle_ready" | "start_battle" | "choose_team" | "choose_avatar" | "set_topic" | "reset" | "finish_match" | "request_rematch" | "cancel_rematch" | "submit_turn";
       mode?: BattleMode;
       roomCode?: string;
       email?: string;
@@ -303,19 +314,25 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "leave" && email) {
+      const wasHost = participants.find((p) => p.email.toLowerCase() === email.toLowerCase())?.isHost;
       participants = participants.filter((p) => p.email.toLowerCase() !== email.toLowerCase());
       if (participants.length === 0) {
         status = "waiting";
         countdownSeconds = 5;
         questions = [];
         battleLog = [];
-      } else if (status === "finished" || (status === "countdown" && participants.length < room.requiredCount)) {
-        status = "waiting";
-        countdownSeconds = 5;
-        participants.forEach((p) => {
-          p.rematchVote = false;
-          p.isReady = false;
-        });
+      } else {
+        if (wasHost && participants.length > 0) {
+          participants[0].isHost = true;
+        }
+        if (status === "finished" || (status === "countdown" && participants.length < 2)) {
+          status = "waiting";
+          countdownSeconds = 5;
+          participants.forEach((p) => {
+            p.rematchVote = false;
+            p.isReady = false;
+          });
+        }
       }
     }
 
@@ -323,35 +340,68 @@ export async function POST(req: NextRequest) {
       const p = participants.find((part) => part.email.toLowerCase() === email.toLowerCase());
       if (p) {
         p.isReady = typeof isReady === "boolean" ? isReady : !p.isReady;
+        if (!p.isReady && status === "countdown") {
+          status = "waiting";
+          countdownSeconds = 5;
+        }
+      }
+    }
+
+    if (action === "start_battle") {
+      participants = ensureRoomHost(participants);
+      const host = participants.find((p) => p.isHost);
+      const requesterEmail = email?.trim().toLowerCase() || "";
+      const isRequesterHost = host
+        ? host.email.toLowerCase() === requesterEmail
+        : participants[0]?.email.toLowerCase() === requesterEmail;
+
+      if (!isRequesterHost) {
+        return NextResponse.json(
+          { success: false, error: "Hanya Room Master (👑) yang dapat memulai pertandingan." },
+          { status: 403 }
+        );
       }
 
-      const allReady =
-        participants.length >= room.requiredCount &&
-        participants.every((part) => part.isReady);
-
-      if (allReady && status === "waiting") {
-        status = "countdown";
-        countdownSeconds = 5;
-        // Generate authentic shared questions on server for all participants!
-        questions = generateBattleQuestions({
-          level: currentTopicLevel as VocabLevel,
-          chapter: currentTopicChapter,
-          category: currentTopicCategory as VocabCategory,
-          count: mode === "tournament" ? 8 : 5,
-        });
-        battleLog = [
-          mode === "tournament"
-            ? `🏆 TURNAMEN RESMI OTSUTSUKI CUP DIMULAI! Perebutan Gelar Juara & Trophy Eksklusif! Topik: [${currentTopicLevel} • ${
-                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
-              } • ${currentTopicCategory.toUpperCase()}]`
-            : `🔥 PERTANDINGAN DIMULAI! Topik: [${currentTopicLevel} • ${
-                currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
-              } • ${currentTopicCategory.toUpperCase()}]`,
-        ];
-      } else if (!allReady && status === "countdown") {
-        status = "waiting";
-        countdownSeconds = 5;
+      if (participants.length < 2) {
+        return NextResponse.json(
+          { success: false, error: "Minimal harus ada 2 peserta di dalam ruangan untuk memulai pertandingan." },
+          { status: 400 }
+        );
       }
+
+      const unreadyList = participants.filter((p) => !p.isReady);
+      if (unreadyList.length > 0) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Pertandingan belum dapat dimulai! Seluruh peserta harus berstatus SIAP (Ready). Menunggu: ${unreadyList.map((u) => u.name).join(", ")}.`,
+          },
+          { status: 400 }
+        );
+      }
+
+      status = "countdown";
+      countdownSeconds = 5;
+      participants.forEach((part) => {
+        part.hp = 100;
+        part.score = 0;
+        part.rematchVote = false;
+      });
+
+      questions = generateBattleQuestions({
+        level: currentTopicLevel as VocabLevel,
+        chapter: currentTopicChapter,
+        category: currentTopicCategory as VocabCategory,
+        count: mode === "tournament" ? 8 : 5,
+      });
+
+      battleLog = [
+        mode === "tournament"
+          ? `🏆 TURNAMEN RESMI OTSUTSUKI CUP DIMULAI OLEH ROOM MASTER (${host?.name || "Host"})! Perebutan Gelar Juara & Trophy Eksklusif!`
+          : `🔥 PERTANDINGAN DIMULAI OLEH ROOM MASTER (${host?.name || "Host"})! Topik: [${currentTopicLevel} • ${
+              currentTopicChapter ? `Bab ${currentTopicChapter}` : "Semua Bab"
+            } • ${currentTopicCategory.toUpperCase()}]`,
+      ];
     }
 
     if (action === "choose_team" && email) {
@@ -393,6 +443,8 @@ export async function POST(req: NextRequest) {
           );
         }
 
+        const isFirst = participants.length === 0;
+
         participants.push({
           email: cleanEmail,
           name: cleanName,
@@ -402,9 +454,12 @@ export async function POST(req: NextRequest) {
           score: 0,
           hp: 100,
           isReady: false,
+          isHost: isFirst,
         });
       }
     }
+
+    participants = ensureRoomHost(participants);
 
     // Save back to Neon PostgreSQL
     await db
