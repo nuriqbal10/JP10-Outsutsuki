@@ -18,6 +18,8 @@ import {
   Flame,
   Download,
   Share2,
+  Puzzle,
+  ArrowRight,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import BunpouCard from "@/components/bunpou/BunpouCard";
@@ -180,6 +182,13 @@ export default function IrodoriBunpouPage() {
 
           <div className="flex items-center gap-2">
             <Link
+              href="/bunpou/test"
+              className="text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 transition inline-flex items-center gap-1.5 shadow-sm"
+            >
+              <Puzzle className="w-3.5 h-3.5" />
+              <span>Mini Test Puzzle</span>
+            </Link>
+            <Link
               href="/kanji"
               className="text-xs font-bold px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-purple-400 transition hidden lg:inline-flex items-center gap-1.5"
             >
@@ -227,6 +236,18 @@ export default function IrodoriBunpouPage() {
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   <span>Status: Siap Simulasi JFT-Basic & Ujian A2</span>
                 </div>
+              </div>
+
+              {/* Arena Mini Test CTA */}
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/bunpou/test"
+                  className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-xs shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition inline-flex items-center gap-2"
+                >
+                  <Puzzle className="w-4 h-4" />
+                  <span>🎮 Arena Mini Test & Kotoba Puzzle</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
 
