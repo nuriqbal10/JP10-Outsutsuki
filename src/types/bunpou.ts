@@ -1,3 +1,10 @@
+export interface BunpouPuzzle {
+  sentence: string;
+  translation: string;
+  tokens: string[];
+  shuffledTokens?: string[];
+}
+
 export interface BunpouItem {
   id: string;
   level: "a1" | "a2-1" | "a2-2";
@@ -9,6 +16,10 @@ export interface BunpouItem {
   pattern: string;
   example: string;
   marugoto: string;
+  formulaDetailed?: string;
+  meaning?: string;
+  usageRule?: string;
+  puzzle?: BunpouPuzzle;
 }
 
 export type BunpouLevelFilter = "all" | "a1" | "a2-1" | "a2-2";

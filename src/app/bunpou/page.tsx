@@ -557,6 +557,16 @@ export default function IrodoriBunpouPage() {
                           <div className="font-black text-stone-900 dark:text-stone-100 text-sm whitespace-pre-line font-sans">
                             {item.pattern}
                           </div>
+                          {item.meaning && (
+                            <div className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold mt-1 leading-snug">
+                              💡 {item.meaning}
+                            </div>
+                          )}
+                          {item.formulaDetailed && (
+                            <div className="text-[10px] text-stone-500 font-mono mt-0.5 line-clamp-1">
+                              {item.formulaDetailed.split(/[\r\n]+/)[0]}
+                            </div>
+                          )}
                         </td>
                         <td className="p-3.5">
                           <div className="text-stone-800 dark:text-stone-200 text-xs whitespace-pre-line leading-relaxed font-semibold">
