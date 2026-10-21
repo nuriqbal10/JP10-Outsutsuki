@@ -86,6 +86,17 @@ export default function RaporDashboardPage() {
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
+  const handleSetKkm = (val: number) => {
+    const clamped = Math.max(50, Math.min(100, val));
+    setKkm(clamped);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("outsutsuki_kkm", String(clamped));
+        window.dispatchEvent(new Event("storage"));
+      } catch {}
+    }
+  };
+
   // Fetch data saat ganti level
   useEffect(() => {
     async function fetchRapor() {
@@ -114,6 +125,27 @@ export default function RaporDashboardPage() {
 
   const top3 = (raporData?.rankedStudents || []).slice(0, 3);
   const portalStudent = (raporData?.students || []).find((s) => s.no === portalStudentId) || raporData?.students[0];
+
+  // Perhitungan Metrik Kelas & Regulasi KKM Dinamis
+  const allStudents = (raporData?.rankedStudents && raporData.rankedStudents.length > 0)
+    ? raporData.rankedStudents
+    : (raporData?.students || []);
+  const totalStudentsCount = allStudents.length || 28;
+
+  const passedStudents = allStudents.filter((s) => {
+    const sc = s.compositeScore ?? s.summary?.compositeScore ?? 0;
+    return sc >= kkm;
+  });
+  const passedStudentsCount = passedStudents.length;
+  const kkmPercentage = totalStudentsCount > 0
+    ? Math.round((passedStudentsCount / totalStudentsCount) * 100)
+    : 0;
+
+  const calculatedClassAvg = totalStudentsCount > 0
+    ? (allStudents.reduce((acc, s) => acc + (s.compositeScore ?? s.summary?.compositeScore ?? 0), 0) / totalStudentsCount).toFixed(1)
+    : (raporData?.classSummary?.average?.toFixed(1) || "73.8");
+
+  const highestScore = top3[0]?.compositeScore ?? raporData?.classSummary?.highest ?? 94.0;
 
   const viewTitles = {
     overview: "Ikhtisar & Ringkasan Eksekutif (統括概要)",
@@ -447,10 +479,16 @@ export default function RaporDashboardPage() {
             {/* Quick Badges Indikator Kelas */}
             <div className="hidden md:flex items-center gap-2 text-xs">
               <span className="px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 font-medium">
-                Rata-Rata: <strong className="text-amber-600 dark:text-amber-400">{raporData?.classSummary?.classAverage || 73.8}</strong>
+                Rata-Rata: <strong className="text-amber-600 dark:text-amber-400">{calculatedClassAvg}</strong>
               </span>
-              <span className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
-                Ketuntasan: 100%
+              <span className={`px-3 py-1 rounded-full border font-bold ${
+                kkmPercentage >= 75
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                  : kkmPercentage >= 40
+                  ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                  : "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20"
+              }`}>
+                Ketuntasan KKM: {kkmPercentage}% ({passedStudentsCount}/{totalStudentsCount})
               </span>
             </div>
 
@@ -525,21 +563,34 @@ export default function RaporDashboardPage() {
                 <div className="clay-card-compact p-3.5 rounded-2xl text-center">
                   <span className="text-[11px] opacity-70 block font-medium">Rata-Rata Kelas</span>
                   <span className="text-xl sm:text-2xl font-black text-amber-600 dark:text-amber-400 mt-0.5 block">
-                    {raporData?.classSummary?.classAverage || 73.8}
+                    {calculatedClassAvg}
                   </span>
                   <span className="text-[10px] opacity-60">Skala 100 pt</span>
                 </div>
-                <div className="clay-card-compact p-3.5 rounded-2xl text-center">
+                <div className="clay-card-compact p-3.5 rounded-2xl text-center relative group">
                   <span className="text-[11px] opacity-70 block font-medium">Ketuntasan KKM</span>
-                  <span className="text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">
-                    100%
+                  <span className={`text-xl sm:text-2xl font-black mt-0.5 block ${
+                    kkmPercentage >= 75
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : kkmPercentage >= 40
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-rose-600 dark:text-rose-400"
+                  }`}>
+                    {kkmPercentage}%
                   </span>
-                  <span className="text-[10px] opacity-60">28 / 28 Siswa</span>
+                  <span className="text-[10px] opacity-60">
+                    {passedStudentsCount} / {totalStudentsCount} Siswa
+                  </span>
+                  <div className="mt-1">
+                    <span className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 opacity-80">
+                      Standar KKM: ≥{kkm} pt
+                    </span>
+                  </div>
                 </div>
                 <div className="clay-card-compact p-3.5 rounded-2xl text-center">
                   <span className="text-[11px] opacity-70 block font-medium">Skor Tertinggi</span>
                   <span className="text-xl sm:text-2xl font-black text-purple-600 dark:text-purple-400 mt-0.5 block">
-                    {top3[0]?.compositeScore || 94.0}
+                    {highestScore}
                   </span>
                   <span className="text-[10px] opacity-60">Peringkat Kehormatan</span>
                 </div>
@@ -560,6 +611,29 @@ export default function RaporDashboardPage() {
               <p className="text-[11px] opacity-75 leading-normal">
                 Nilai akhir dikalkulasi dari rata-rata harian 18 bab (40%), ujian berkala Fukushuu 1 s.d. 3 (30%), serta ujian komprehensif akhir (30%).
               </p>
+              
+              {/* Pengaturan Cepat Standar Regulasi KKM */}
+              <div className="pt-2 border-t border-current/10 flex items-center justify-between text-[11px]">
+                <span className="opacity-70 font-medium">Regulasi KKM:</span>
+                <div className="flex items-center gap-1">
+                  {[70, 75, 80, 85, 90].map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => handleSetKkm(preset)}
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold transition cursor-pointer ${
+                        kkm === preset
+                          ? "bg-amber-500 text-stone-950 font-black shadow-xs scale-105"
+                          : "bg-black/5 dark:bg-white/10 opacity-70 hover:opacity-100"
+                      }`}
+                      title={`Terapkan Standar Regulasi KKM ${preset} pt`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                  <span className="text-[10px] opacity-50 ml-0.5">pt</span>
+                </div>
+              </div>
+
               <div className="pt-2 border-t border-current/10 flex items-center justify-between text-[11px]">
                 <span className="opacity-70">Instruktur Penanggung Jawab:</span>
                 <strong className="text-amber-600 dark:text-amber-400">イクバル先生</strong>
@@ -778,17 +852,28 @@ export default function RaporDashboardPage() {
                           {st.compositeScore}
                         </td>
                         <td className="p-3 text-center">
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border ${
-                              st.grade === "A"
-                                ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
-                                : st.grade === "B"
-                                ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30"
-                                : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
-                            }`}
-                          >
-                            Grade {st.grade}
-                          </span>
+                          <div className="flex flex-col items-center gap-1">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border ${
+                                st.grade === "A"
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                                  : st.grade === "B"
+                                  ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30"
+                                  : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+                              }`}
+                            >
+                              Grade {st.grade}
+                            </span>
+                            <span
+                              className={`text-[9px] font-bold ${
+                                (st.compositeScore || 0) >= kkm
+                                  ? "text-emerald-600 dark:text-emerald-400"
+                                  : "text-rose-500"
+                              }`}
+                            >
+                              {(st.compositeScore || 0) >= kkm ? "✓ Tuntas KKM" : "✕ Remedial"}
+                            </span>
+                          </div>
                         </td>
                         <td className="p-3 text-center">
                           <div className="flex items-center justify-center gap-1 text-[10px] opacity-75">
