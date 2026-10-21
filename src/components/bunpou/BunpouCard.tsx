@@ -44,12 +44,7 @@ export default function BunpouCard({
     if (puzzle.shuffledTokens && puzzle.shuffledTokens.length > 0) {
       return [...puzzle.shuffledTokens];
     }
-    const shuf = [...puzzle.tokens];
-    for (let i = shuf.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuf[i], shuf[j]] = [shuf[j], shuf[i]];
-    }
-    return shuf;
+    return [...puzzle.tokens];
   }, [puzzle]);
 
   const [availableTokens, setAvailableTokens] = useState<string[]>(initialAvailableTokens);
@@ -85,9 +80,11 @@ export default function BunpouCard({
 
   const handleCopy = () => {
     const textToCopy = `【${bunpou.levelJapanese} - Bab ${bunpou.lesson}】 ${bunpou.pattern}\nArti: ${bunpou.meaning || ""}\nRumus: ${bunpou.formulaDetailed || bunpou.pattern}\nContoh:\n${bunpou.example}`;
-    navigator.clipboard.writeText(textToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   // Puzzle handlers
