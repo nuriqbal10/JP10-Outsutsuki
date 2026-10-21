@@ -33,6 +33,31 @@ import BarRaceView from "@/components/rapor/BarRaceView";
 import DiagnosticMatrixView from "@/components/rapor/DiagnosticMatrixView";
 import masterRaporData from "@/data/raporMasterData.json";
 
+function getStudentScore(s: any): number {
+  if (typeof s.compositeScore === "number" && s.compositeScore > 0) return s.compositeScore;
+  if (s.harian && Array.isArray(s.harian)) {
+    const validDai = s.harian.filter((h: any) => h.daiTesuto && h.daiTesuto.total > 0);
+    if (validDai.length > 0) {
+      let sumM = 0, sumK = 0, sumC = 0, sumD = 0;
+      validDai.forEach((h: any) => {
+        sumM += (h.daiTesuto.mojiGoi / 24) * 100;
+        sumK += (h.daiTesuto.kaiwa / 24) * 100;
+        sumC += (h.daiTesuto.choukai / 24) * 100;
+        sumD += (h.daiTesuto.dokkai / 28) * 100;
+      });
+      const validKanji = s.harian.filter((h: any) => h.kanji > 0);
+      const avgKanji = validKanji.length > 0 ? validKanji.reduce((acc: number, cur: any) => acc + cur.kanji, 0) / validKanji.length : 0;
+      const mojiGoi = Math.min(100, Math.round(sumM / validDai.length));
+      const kaiwa = Math.min(100, Math.round(sumK / validDai.length));
+      const choukai = Math.min(100, Math.round(sumC / validDai.length));
+      const dokkai = Math.min(100, Math.round(sumD / validDai.length));
+      const kanji = Math.min(100, Math.round(avgKanji));
+      return Math.round((mojiGoi * 0.2 + kaiwa * 0.2 + choukai * 0.25 + dokkai * 0.25 + kanji * 0.1) * 10) / 10;
+    }
+  }
+  return s.summary?.compositeScore ?? 0;
+}
+
 export default function RaporDashboardPage() {
   const [selectedLevel, setSelectedLevel] = useState<"A1" | "A21" | "A22">("A22");
   const [activeTab, setActiveTab] = useState<"overview" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
@@ -42,13 +67,18 @@ export default function RaporDashboardPage() {
   const [raporData, setRaporData] = useState<LevelRaporData | null>(() => {
     const raw = (masterRaporData as any).levels.A22;
     if (!raw) return null;
-    const ranked = [...raw.students].sort((a: any, b: any) => {
-      const scoreA = a.compositeScore ?? a.summary?.compositeScore ?? 0;
-      const scoreB = b.compositeScore ?? b.summary?.compositeScore ?? 0;
-      return scoreB - scoreA;
+    const enriched = raw.students.map((st: any) => {
+      const comp = getStudentScore(st);
+      return {
+        ...st,
+        compositeScore: comp,
+        grade: comp >= 85 ? "A" : comp >= 70 ? "B" : comp >= 55 ? "C" : "D",
+      };
     });
+    const ranked = [...enriched].sort((a: any, b: any) => b.compositeScore - a.compositeScore);
     return {
       ...raw,
+      students: enriched,
       rankedStudents: ranked,
     };
   });
@@ -133,8 +163,7 @@ export default function RaporDashboardPage() {
   const totalStudentsCount = allStudents.length || 28;
 
   const passedStudents = allStudents.filter((s) => {
-    const sc = s.compositeScore ?? s.summary?.compositeScore ?? 0;
-    return sc >= kkm;
+    return getStudentScore(s) >= kkm;
   });
   const passedStudentsCount = passedStudents.length;
   const kkmPercentage = totalStudentsCount > 0
@@ -142,10 +171,10 @@ export default function RaporDashboardPage() {
     : 0;
 
   const calculatedClassAvg = totalStudentsCount > 0
-    ? (allStudents.reduce((acc, s) => acc + (s.compositeScore ?? s.summary?.compositeScore ?? 0), 0) / totalStudentsCount).toFixed(1)
+    ? (allStudents.reduce((acc, s) => acc + getStudentScore(s), 0) / totalStudentsCount).toFixed(1)
     : (raporData?.classSummary?.average?.toFixed(1) || "73.8");
 
-  const highestScore = top3[0]?.compositeScore ?? raporData?.classSummary?.highest ?? 94.0;
+  const highestScore = top3[0] ? getStudentScore(top3[0]) : (raporData?.classSummary?.highest ?? 94.0);
 
   const viewTitles = {
     overview: "Ikhtisar & Ringkasan Eksekutif (統括概要)",
@@ -849,7 +878,7 @@ export default function RaporDashboardPage() {
                         </td>
                         <td className="p-3 text-center opacity-70 font-mono">#{st.no}</td>
                         <td className="p-3 text-center font-bold text-sm text-blue-600 dark:text-blue-400">
-                          {st.compositeScore}
+                          {getStudentScore(st)}
                         </td>
                         <td className="p-3 text-center">
                           <div className="flex flex-col items-center gap-1">
@@ -866,12 +895,12 @@ export default function RaporDashboardPage() {
                             </span>
                             <span
                               className={`text-[9px] font-bold ${
-                                (st.compositeScore || 0) >= kkm
+                                getStudentScore(st) >= kkm
                                   ? "text-emerald-600 dark:text-emerald-400"
                                   : "text-rose-500"
                               }`}
                             >
-                              {(st.compositeScore || 0) >= kkm ? "✓ Tuntas KKM" : "✕ Remedial"}
+                              {getStudentScore(st) >= kkm ? "✓ Tuntas KKM" : "✕ Remedial"}
                             </span>
                           </div>
                         </td>
