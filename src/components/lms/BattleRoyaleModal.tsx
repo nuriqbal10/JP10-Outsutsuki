@@ -898,7 +898,7 @@ export default function BattleRoyaleModal({
   if (!isOpen) return null;
 
   const currentQ = shuffledQuestions[currentQIndex];
-  const requiredQuota = mode === "1vs1" ? 2 : mode === "tournament" ? 3 : mode === "group" ? 4 : 6;
+  const requiredQuota = mode === "1vs1" ? 2 : mode === "group" ? 4 : mode === "tournament" ? 8 : 6;
   const currentParticipants = room?.participants || [];
   const slotsLeft = Math.max(0, requiredQuota - currentParticipants.length);
   const allParticipantsReady =
@@ -920,7 +920,7 @@ export default function BattleRoyaleModal({
   const rivalParticipants = currentParticipants.filter((p) => p.email.toLowerCase() !== myEmail.toLowerCase());
   const myRematchVote = myParticipant?.rematchVote === true;
   const rivalRematchVote = rivalParticipants.length > 0 && rivalParticipants.every((p) => p.rematchVote === true);
-  const rivalLeft = isJoined && currentParticipants.length < (mode === "1vs1" ? 2 : mode === "tournament" ? 3 : mode === "group" ? 4 : 6);
+  const rivalLeft = isJoined && currentParticipants.length < (mode === "1vs1" ? 2 : mode === "group" ? 4 : mode === "tournament" ? 8 : 6);
   const rematchAgreedCount = currentParticipants.filter((p) => p.rematchVote).length;
 
   return (
@@ -1224,7 +1224,7 @@ export default function BattleRoyaleModal({
                     : "opacity-80 text-amber-500 hover:opacity-100"
                 }`}
               >
-                🏆 Turnamen (3P)
+                🏆 Turnamen (8P)
               </button>
             </div>
 
@@ -1235,10 +1235,10 @@ export default function BattleRoyaleModal({
                   <span className="text-2xl animate-bounce">🏆</span>
                   <div>
                     <h5 className="text-xs font-black text-amber-500 flex items-center gap-1.5">
-                      Turnamen Otsutsuki Cup (3 Peserta • 8 Soal Championship)
+                      Turnamen Akbar Otsutsuki Cup (8 Peserta • 8 Soal Championship)
                     </h5>
                     <p className="text-[10px] opacity-75">
-                      3 peserta bersaing langsung memperebutkan 1 Trofi Juara & membuka avatar eksklusif bertingkat!
+                      8 peserta bersaing serentak memperebutkan 1 Trofi Juara & membuka avatar eksklusif bertingkat!
                     </p>
                   </div>
                 </div>
