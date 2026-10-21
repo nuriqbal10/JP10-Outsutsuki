@@ -3,11 +3,11 @@
 
 export type VocabCategory = "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3" | "other";
 export type VocabLevel = "all" | "A1" | "A2.1" | "A2.2";
+export type QuestionType = "kanji_to_yomi" | "hiragana_to_kanji" | "meaning";
 
 export interface VocabItem {
   ja: string;
   yomi: string;
-  romaji?: string;
   arti: string;
   pos: string;
   level: string;
@@ -15,9 +15,12 @@ export interface VocabItem {
 }
 
 export interface BattleQuestion {
+  questionType?: QuestionType;
+  prompt?: string;
+  display?: string;
+  subDisplay?: string;
   ja: string;
   yomi?: string;
-  romaji?: string;
   correct: string;
   options: string[];
   pos: string;
@@ -47,6 +50,100 @@ function shuffle<T>(array: T[]): T[] {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
+}
+
+// Helper to generate authentic JFT yomikata distractors
+function generateJftYomikataDistractors(correctYomi: string, pool: VocabItem[]): string[] {
+  const distractors = new Set<string>();
+
+  // 1. Phonetic mutation: Long vowels
+  if (correctYomi.includes("ょう")) {
+    distractors.add(correctYomi.replace(/ょう/g, "ょ"));
+    distractors.add(correctYomi.replace(/ょう/g, "お"));
+  }
+  if (correctYomi.includes("ゅう")) {
+    distractors.add(correctYomi.replace(/ゅう/g, "ゅ"));
+  }
+  if (correctYomi.includes("おう")) {
+    distractors.add(correctYomi.replace(/おう/g, "お"));
+    distractors.add(correctYomi.replace(/おう/g, "う"));
+  }
+  if (correctYomi.includes("とう")) {
+    distractors.add(correctYomi.replace(/とう/g, "と"));
+  }
+  if (correctYomi.includes("こう")) {
+    distractors.add(correctYomi.replace(/こう/g, "こ"));
+  }
+
+  // 2. Sokuon (っ) mutations
+  if (correctYomi.includes("っ")) {
+    distractors.add(correctYomi.replace(/っ/g, ""));
+  } else if (correctYomi.length >= 3) {
+    distractors.add(correctYomi.slice(0, 1) + "っ" + correctYomi.slice(1));
+  }
+
+  // 3. Voicing (Dakuten) mutations
+  const dakuPairs: [string, string][] = [
+    ["か", "が"], ["き", "ぎ"], ["く", "ぐ"], ["け", "げ"], ["こ", "ご"],
+    ["さ", "ざ"], ["し", "じ"], ["す", "ず"], ["せ", "ぜ"], ["そ", "ぞ"],
+    ["た", "だ"], ["ち", "ぢ"], ["つ", "づ"], ["て", "で"], ["と", "ど"],
+    ["は", "ば"], ["ひ", "び"], ["ふ", "ぶ"], ["へ", "べ"], ["ほ", "ぼ"],
+    ["は", "ぱ"], ["ひ", "ぴ"], ["ふ", "ぷ"], ["へ", "ぺ"], ["ほ", "ぽ"]
+  ];
+  for (const [plain, voiced] of dakuPairs) {
+    if (correctYomi.includes(plain)) {
+      distractors.add(correctYomi.replace(plain, voiced));
+    } else if (correctYomi.includes(voiced)) {
+      distractors.add(correctYomi.replace(voiced, plain));
+    }
+  }
+
+  distractors.delete(correctYomi);
+
+  // 4. Fill from authentic pool with similar length
+  const similarItems = pool.filter(
+    (item) => item.yomi !== correctYomi && Math.abs(item.yomi.length - correctYomi.length) <= 1
+  );
+  const shuffledSimilar = shuffle(similarItems);
+  for (const item of shuffledSimilar) {
+    if (distractors.size >= 3) break;
+    distractors.add(item.yomi);
+  }
+
+  // Fallback to any other yomi
+  const fallbackShuffled = shuffle(pool);
+  for (const item of fallbackShuffled) {
+    if (distractors.size >= 3) break;
+    if (item.yomi !== correctYomi) {
+      distractors.add(item.yomi);
+    }
+  }
+
+  return Array.from(distractors).slice(0, 3);
+}
+
+// Helper to generate authentic JFT Kanji distractors (when question prompt is Hiragana)
+function generateJftKanjiDistractors(targetJa: string, pool: VocabItem[]): string[] {
+  const kanjiPool = pool.filter(
+    (item) => item.ja !== item.yomi && item.ja !== targetJa && /[\u4e00-\u9faf]/.test(item.ja)
+  );
+  const similarLength = kanjiPool.filter((item) => Math.abs(item.ja.length - targetJa.length) <= 1);
+  const shuffled = shuffle(similarLength.length >= 3 ? similarLength : kanjiPool);
+  const selected: string[] = [];
+  for (const item of shuffled) {
+    if (selected.length >= 3) break;
+    if (!selected.includes(item.ja)) {
+      selected.push(item.ja);
+    }
+  }
+
+  while (selected.length < 3) {
+    const fallback = pool[Math.floor(Math.random() * pool.length)].ja;
+    if (fallback !== targetJa && !selected.includes(fallback)) {
+      selected.push(fallback);
+    }
+  }
+  return selected;
 }
 
 export function generateBattleQuestions(params: {
@@ -81,38 +178,93 @@ export function generateBattleQuestions(params: {
   const shuffledPool = shuffle(pool);
   const selectedItems = shuffledPool.slice(0, Math.min(count, pool.length));
 
-  // 3. For each selected item, pick 3 distinct distractors from the pool
-  return selectedItems.map((target) => {
-    const distractorCandidates = VOCAB_BANK.filter(
-      (cand) => cand.arti !== target.arti && (cand.pos === target.pos || cand.level === target.level)
-    );
+  // 3. Generate questions in 3 Authentic JFT Types:
+  // - kanji_to_yomi: Kanji shown -> 4 Hiragana Yomikata options
+  // - hiragana_to_kanji: Hiragana shown -> 4 Kanji options
+  // - meaning: Kanji/Kana shown -> 4 Indonesian translation options
+  // NO ROMAJI anywhere!
+  return selectedItems.map((target, idx) => {
+    const hasKanji = target.ja !== target.yomi && /[\u4e00-\u9faf]/.test(target.ja);
 
-    const shuffledCandidates = shuffle(distractorCandidates.length >= 3 ? distractorCandidates : VOCAB_BANK);
-    const chosenDistractors = shuffledCandidates
-      .filter((c) => c.arti !== target.arti)
-      .slice(0, 3)
-      .map((c) => c.arti);
-
-    // Ensure 4 unique options
-    const uniqueOptions = Array.from(new Set([target.arti, ...chosenDistractors]));
-    while (uniqueOptions.length < 4) {
-      const fallback = VOCAB_BANK[Math.floor(Math.random() * VOCAB_BANK.length)].arti;
-      if (!uniqueOptions.includes(fallback)) {
-        uniqueOptions.push(fallback);
+    let qType: QuestionType = "meaning";
+    if (hasKanji) {
+      const typeMod = idx % 3;
+      if (typeMod === 0) {
+        qType = "kanji_to_yomi";
+      } else if (typeMod === 1) {
+        qType = "hiragana_to_kanji";
+      } else {
+        qType = "meaning";
       }
     }
 
-    // Shuffle options with Fisher-Yates so correct answer is NOT always 'A'
-    const shuffledOptions = shuffle(uniqueOptions);
+    if (qType === "kanji_to_yomi") {
+      const distractors = generateJftYomikataDistractors(target.yomi, VOCAB_BANK);
+      const options = shuffle(Array.from(new Set([target.yomi, ...distractors])));
+      return {
+        questionType: "kanji_to_yomi",
+        prompt: "Pilih Cara Baca (Yomikata) Kanji:",
+        display: target.ja,
+        subDisplay: undefined, // Must NOT show reading because that's the question!
+        ja: target.ja,
+        yomi: undefined,
+        correct: target.yomi,
+        options,
+        pos: target.pos,
+        level: target.level,
+        chapter: target.chapter,
+      };
+    } else if (qType === "hiragana_to_kanji") {
+      const distractors = generateJftKanjiDistractors(target.ja, VOCAB_BANK);
+      const options = shuffle(Array.from(new Set([target.ja, ...distractors])));
+      return {
+        questionType: "hiragana_to_kanji",
+        prompt: "Pilih Kanji yang Tepat:",
+        display: target.yomi,
+        subDisplay: undefined,
+        ja: target.yomi,
+        yomi: undefined,
+        correct: target.ja,
+        options,
+        pos: target.pos,
+        level: target.level,
+        chapter: target.chapter,
+      };
+    } else {
+      // Type: meaning
+      const distractorCandidates = VOCAB_BANK.filter(
+        (cand) => cand.arti !== target.arti && (cand.pos === target.pos || cand.level === target.level)
+      );
 
-    return {
-      ja: target.ja,
-      yomi: target.yomi,
-      correct: target.arti,
-      options: shuffledOptions,
-      pos: target.pos,
-      level: target.level,
-      chapter: target.chapter,
-    };
+      const shuffledCandidates = shuffle(distractorCandidates.length >= 3 ? distractorCandidates : VOCAB_BANK);
+      const chosenDistractors = shuffledCandidates
+        .filter((c) => c.arti !== target.arti)
+        .slice(0, 3)
+        .map((c) => c.arti);
+
+      const uniqueOptions = Array.from(new Set([target.arti, ...chosenDistractors]));
+      while (uniqueOptions.length < 4) {
+        const fallback = VOCAB_BANK[Math.floor(Math.random() * VOCAB_BANK.length)].arti;
+        if (!uniqueOptions.includes(fallback)) {
+          uniqueOptions.push(fallback);
+        }
+      }
+
+      const shuffledOptions = shuffle(uniqueOptions);
+
+      return {
+        questionType: "meaning",
+        prompt: "Tentukan Arti Bahasa Indonesia:",
+        display: target.ja,
+        subDisplay: target.ja !== target.yomi ? target.yomi : undefined, // Yomikata only, NEVER ROMAJI!
+        ja: target.ja,
+        yomi: target.ja !== target.yomi ? target.yomi : undefined,
+        correct: target.arti,
+        options: shuffledOptions,
+        pos: target.pos,
+        level: target.level,
+        chapter: target.chapter,
+      };
+    }
   });
 }

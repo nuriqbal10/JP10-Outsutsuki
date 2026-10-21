@@ -56,6 +56,19 @@ import {
 
 export type BattleMode = "1vs1" | "group" | "all_members" | "tournament";
 
+export interface TournamentMatchState {
+  id: string; // "qf_1", "qf_2", "qf_3", "qf_4", "sf_1", "sf_2", "final"
+  round: "qf" | "sf" | "final";
+  matchLabel: string;
+  p1: Participant;
+  p2: Participant;
+  score1: number;
+  score2: number;
+  winnerEmail?: string | null;
+  winner?: Participant | null;
+  status: "pending" | "in_battle" | "finished";
+}
+
 interface Participant {
   email: string;
   name: string;
@@ -173,6 +186,19 @@ export default function BattleRoyaleModal({
   // Tournament Stats & Unlocks
   const [tournamentWins, setTournamentWins] = useState<number>(0);
   const [showTournamentShowcase, setShowTournamentShowcase] = useState(false);
+  const [tournamentBracket, setTournamentBracket] = useState<TournamentMatchState[] | null>(null);
+  const [currentTournamentRound, setCurrentTournamentRound] = useState<"qf" | "sf" | "final">("qf");
+  const [showBracketModal, setShowBracketModal] = useState<boolean>(false);
+  const [tournamentChampion, setTournamentChampion] = useState<Participant | null>(null);
+  const [tournamentRoundModal, setTournamentRoundModal] = useState<{
+    show: boolean;
+    type: "advancing" | "eliminated";
+    roundWon: "qf" | "sf";
+    myScore: number;
+    oppScore: number;
+    opponentName: string;
+    nextOpponent?: Participant;
+  } | null>(null);
 
   // Battle State
   const [battleState, setBattleState] = useState<"lobby" | "countdown" | "in_battle" | "victory" | "defeat">("lobby");
@@ -324,7 +350,9 @@ export default function BattleRoyaleModal({
           }
 
           if (battleState === "in_battle" && Array.isArray(data.room.participants)) {
-            setActiveCombatants(data.room.participants);
+            if (mode !== "tournament") {
+              setActiveCombatants(data.room.participants);
+            }
             if (Array.isArray(data.room.battleLog) && data.room.battleLog.length > 0) {
               setBattleLog(data.room.battleLog);
             }
@@ -673,6 +701,178 @@ export default function BattleRoyaleModal({
     }, 1000);
   };
 
+  const initTournamentBracket = (participantsList: Participant[]) => {
+    const pool = [...participantsList];
+    const botRoster = [
+      { name: "Sasuke Uchiha", avatar: "⚡" },
+      { name: "Kakashi Hatake", avatar: "🥷" },
+      { name: "Itachi Uchiha", avatar: "🦅" },
+      { name: "Minato Namikaze", avatar: "🦊" },
+      { name: "Hinata Hyuuga", avatar: "🌸" },
+      { name: "Gaara Sabaku", avatar: "🌪️" },
+      { name: "Shikamaru Nara", avatar: "♟️" },
+      { name: "Jiraiya Sensei", avatar: "🐸" },
+    ];
+
+    let bIdx = 0;
+    while (pool.length < 8) {
+      const bot = botRoster[bIdx % botRoster.length];
+      pool.push({
+        email: `bot_${bIdx + 1}@shinobi.otsutsuki`,
+        name: bot.name,
+        avatar: bot.avatar,
+        joinedAt: Date.now(),
+        score: 0,
+        hp: 100,
+        isReady: true,
+        isHost: false,
+      });
+      bIdx++;
+    }
+
+    // Acak peserta untuk pasangan 1 vs 1 (CUP Bracket)
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    const qfMatches: TournamentMatchState[] = [
+      {
+        id: "qf_1",
+        round: "qf",
+        matchLabel: "Babak 8 Besar #1",
+        p1: shuffled[0],
+        p2: shuffled[1],
+        score1: 0,
+        score2: 0,
+        status: "in_battle",
+      },
+      {
+        id: "qf_2",
+        round: "qf",
+        matchLabel: "Babak 8 Besar #2",
+        p1: shuffled[2],
+        p2: shuffled[3],
+        score1: 0,
+        score2: 0,
+        status: "in_battle",
+      },
+      {
+        id: "qf_3",
+        round: "qf",
+        matchLabel: "Babak 8 Besar #3",
+        p1: shuffled[4],
+        p2: shuffled[5],
+        score1: 0,
+        score2: 0,
+        status: "in_battle",
+      },
+      {
+        id: "qf_4",
+        round: "qf",
+        matchLabel: "Babak 8 Besar #4",
+        p1: shuffled[6],
+        p2: shuffled[7],
+        score1: 0,
+        score2: 0,
+        status: "in_battle",
+      },
+    ];
+
+    const sfMatches: TournamentMatchState[] = [
+      {
+        id: "sf_1",
+        round: "sf",
+        matchLabel: "Semifinal #1",
+        p1: { name: "Pemenang QF 1", avatar: "⏳", email: "pending_sf1_1", joinedAt: 0, score: 0, hp: 100, isReady: false },
+        p2: { name: "Pemenang QF 2", avatar: "⏳", email: "pending_sf1_2", joinedAt: 0, score: 0, hp: 100, isReady: false },
+        score1: 0,
+        score2: 0,
+        status: "pending",
+      },
+      {
+        id: "sf_2",
+        round: "sf",
+        matchLabel: "Semifinal #2",
+        p1: { name: "Pemenang QF 3", avatar: "⏳", email: "pending_sf2_1", joinedAt: 0, score: 0, hp: 100, isReady: false },
+        p2: { name: "Pemenang QF 4", avatar: "⏳", email: "pending_sf2_2", joinedAt: 0, score: 0, hp: 100, isReady: false },
+        score1: 0,
+        score2: 0,
+        status: "pending",
+      },
+    ];
+
+    const finalMatch: TournamentMatchState = {
+      id: "final",
+      round: "final",
+      matchLabel: "Grand Final 🏆",
+      p1: { name: "Finalis 1", avatar: "👑", email: "pending_f_1", joinedAt: 0, score: 0, hp: 100, isReady: false },
+      p2: { name: "Finalis 2", avatar: "👑", email: "pending_f_2", joinedAt: 0, score: 0, hp: 100, isReady: false },
+      score1: 0,
+      score2: 0,
+      status: "pending",
+    };
+
+    const initialBracket = [...qfMatches, ...sfMatches, finalMatch];
+    setTournamentBracket(initialBracket);
+    setCurrentTournamentRound("qf");
+    setTournamentChampion(null);
+
+    // Cari pertandingan user di QF
+    const myMatch = qfMatches.find(
+      (m) =>
+        m.p1.email.toLowerCase() === myEmail.toLowerCase() ||
+        m.p2.email.toLowerCase() === myEmail.toLowerCase()
+    ) || qfMatches[0];
+
+    const opp = myMatch.p1.email.toLowerCase() === myEmail.toLowerCase() ? myMatch.p2 : myMatch.p1;
+    const meP = myMatch.p1.email.toLowerCase() === myEmail.toLowerCase() ? myMatch.p1 : myMatch.p2;
+
+    setActiveCombatants([
+      { ...meP, hp: 100, score: 0 },
+      { ...opp, hp: 100, score: 0 },
+    ]);
+  };
+
+  const startNextTournamentRound = () => {
+    if (!tournamentRoundModal || !tournamentBracket) return;
+    const nextRound: "sf" | "final" = tournamentRoundModal.roundWon === "qf" ? "sf" : "final";
+    setCurrentTournamentRound(nextRound);
+    setTournamentRoundModal(null);
+
+    // Buat soal baru untuk babak berikutnya
+    const freshQuestions = generateBattleQuestions({
+      level: topicLevel,
+      chapter: topicChapter,
+      category: topicCategory,
+      count: 5,
+    });
+    setShuffledQuestions(freshQuestions);
+    setCurrentQIndex(0);
+    setTimeLeft(8);
+    setSelectedAnswer(null);
+
+    // Set combatants untuk match baru user
+    const nextMatch = tournamentBracket.find(
+      (m) =>
+        m.round === nextRound &&
+        (m.p1.email.toLowerCase() === myEmail.toLowerCase() ||
+          m.p2.email.toLowerCase() === myEmail.toLowerCase())
+    );
+
+    if (nextMatch) {
+      const opp = nextMatch.p1.email.toLowerCase() === myEmail.toLowerCase() ? nextMatch.p2 : nextMatch.p1;
+      const mePart = nextMatch.p1.email.toLowerCase() === myEmail.toLowerCase() ? nextMatch.p1 : nextMatch.p2;
+      setActiveCombatants([
+        { ...mePart, hp: 100, score: 0 },
+        { ...opp, hp: 100, score: 0 },
+      ]);
+    }
+    setBattleState("in_battle");
+    sfx.playBlast();
+  };
+
   const startMatch = (currentRoom: RoomData) => {
     let questions = currentRoom.questions && currentRoom.questions.length > 0 ? currentRoom.questions : [];
     if (questions.length === 0) {
@@ -688,6 +888,10 @@ export default function BattleRoyaleModal({
     setCurrentQIndex(0);
     setTimeLeft(8);
     setSelectedAnswer(null);
+
+    if (mode === "tournament") {
+      initTournamentBracket(currentRoom.participants);
+    }
 
     const topicLabel = `[${currentRoom.topicLevel || "A2.2"} • ${currentRoom.topicChapter ? `Bab ${currentRoom.topicChapter}` : "Semua Bab"
       } • ${currentRoom.topicCategory?.toUpperCase() || "ACAK"}]`;
@@ -759,8 +963,19 @@ export default function BattleRoyaleModal({
           const hp = isCorrect ? c.hp : Math.max(0, c.hp - dmg);
           const score = c.score + earnedPts;
           return { ...c, hp, score };
+        } else {
+          if (mode === "tournament") {
+            const oppCorrect = Math.random() < 0.65;
+            const oppPts = oppCorrect ? Math.round(500 + Math.random() * 350) : 0;
+            const oppDmg = oppCorrect ? 0 : 25;
+            return {
+              ...c,
+              hp: Math.max(0, c.hp - oppDmg),
+              score: c.score + oppPts,
+            };
+          }
+          return c;
         }
-        return c;
       });
     });
 
@@ -789,7 +1004,7 @@ export default function BattleRoyaleModal({
         .then((data) => {
           if (data.success && data.room) {
             setRoom(data.room);
-            if (Array.isArray(data.room.participants)) {
+            if (mode !== "tournament" && Array.isArray(data.room.participants)) {
               setActiveCombatants(data.room.participants);
             }
             if (Array.isArray(data.room.battleLog) && data.room.battleLog.length > 0) {
@@ -867,6 +1082,9 @@ export default function BattleRoyaleModal({
     setIsJoined(false);
     setIsMyReady(false);
     setBattleState("lobby");
+    setTournamentBracket(null);
+    setTournamentRoundModal(null);
+    setTournamentChampion(null);
     lastSeenUpdatedAtRef.current = 0;
     setLoadingAction(false);
     sfx.playTick();
@@ -891,18 +1109,185 @@ export default function BattleRoyaleModal({
     setIsJoined(false);
     setIsMyReady(false);
     setBattleState("lobby");
+    setTournamentBracket(null);
+    setTournamentRoundModal(null);
+    setTournamentChampion(null);
     onClose();
   };
 
-  // PERBAIKAN UTAMA: Logika Pemenang & Skor Akurat
+  // Logika Pertandingan Cup & Penentuan Pemenang
   const checkBattleOver = () => {
     const me = activeCombatants.find((c) => c.email.toLowerCase() === myEmail.toLowerCase());
     const others = activeCombatants.filter((c) => c.email.toLowerCase() !== myEmail.toLowerCase());
     const othersAlive = others.filter((c) => c.hp > 0).length;
 
-    // Jika HP habis atau soal sudah habis, tentukan pemenang berdasarkan skor tertinggi & sisa HP
+    // CUP TOURNAMENT BRACKET LOGIC: 8 Besar -> Semifinal -> Grand Final
+    if (mode === "tournament" && tournamentBracket) {
+      if ((me && me.hp <= 0) || othersAlive === 0 || currentQIndex + 1 >= shuffledQuestions.length) {
+        const mePart = activeCombatants.find((c) => c.email.toLowerCase() === myEmail.toLowerCase()) || activeCombatants[0];
+        const oppPart = activeCombatants.find((c) => c.email.toLowerCase() !== myEmail.toLowerCase()) || activeCombatants[1];
+
+        const didIWin = (mePart?.score || 0) >= (oppPart?.score || 0) && (mePart?.hp || 0) > 0;
+        const updatedBracket = [...tournamentBracket];
+
+        if (currentTournamentRound === "qf") {
+          const qf1 = updatedBracket.find((m) => m.id === "qf_1")!;
+          const qf2 = updatedBracket.find((m) => m.id === "qf_2")!;
+          const qf3 = updatedBracket.find((m) => m.id === "qf_3")!;
+          const qf4 = updatedBracket.find((m) => m.id === "qf_4")!;
+
+          [qf1, qf2, qf3, qf4].forEach((m) => {
+            if (m.p1.email.toLowerCase() === myEmail.toLowerCase()) {
+              m.score1 = mePart.score;
+              m.score2 = oppPart.score;
+              m.winner = didIWin ? m.p1 : m.p2;
+            } else if (m.p2.email.toLowerCase() === myEmail.toLowerCase()) {
+              m.score1 = oppPart.score;
+              m.score2 = mePart.score;
+              m.winner = didIWin ? m.p2 : m.p1;
+            } else {
+              const s1 = Math.floor(Math.random() * 3 + 2) * 500;
+              const s2 = Math.floor(Math.random() * 3 + 1) * 500;
+              m.score1 = s1;
+              m.score2 = s2;
+              m.winner = s1 >= s2 ? m.p1 : m.p2;
+            }
+            m.status = "finished";
+          });
+
+          const sf1 = updatedBracket.find((m) => m.id === "sf_1")!;
+          const sf2 = updatedBracket.find((m) => m.id === "sf_2")!;
+          sf1.p1 = qf1.winner!;
+          sf1.p2 = qf2.winner!;
+          sf1.status = "in_battle";
+
+          sf2.p1 = qf3.winner!;
+          sf2.p2 = qf4.winner!;
+          sf2.status = "in_battle";
+
+          setTournamentBracket(updatedBracket);
+
+          if (didIWin) {
+            sfx.playVictory();
+            const mySf = [sf1, sf2].find(
+              (m) =>
+                m.p1.email.toLowerCase() === myEmail.toLowerCase() ||
+                m.p2.email.toLowerCase() === myEmail.toLowerCase()
+            )!;
+            const nextOpp = mySf.p1.email.toLowerCase() === myEmail.toLowerCase() ? mySf.p2 : mySf.p1;
+
+            setTournamentRoundModal({
+              show: true,
+              type: "advancing",
+              roundWon: "qf",
+              myScore: mePart.score,
+              oppScore: oppPart.score,
+              opponentName: oppPart.name,
+              nextOpponent: nextOpp,
+            });
+          } else {
+            sfx.playEliminated();
+            setTournamentRoundModal({
+              show: true,
+              type: "eliminated",
+              roundWon: "qf",
+              myScore: mePart.score,
+              oppScore: oppPart.score,
+              opponentName: oppPart.name,
+            });
+          }
+          return;
+        }
+
+        if (currentTournamentRound === "sf") {
+          const sf1 = updatedBracket.find((m) => m.id === "sf_1")!;
+          const sf2 = updatedBracket.find((m) => m.id === "sf_2")!;
+
+          [sf1, sf2].forEach((m) => {
+            if (m.p1.email.toLowerCase() === myEmail.toLowerCase()) {
+              m.score1 = mePart.score;
+              m.score2 = oppPart.score;
+              m.winner = didIWin ? m.p1 : m.p2;
+            } else if (m.p2.email.toLowerCase() === myEmail.toLowerCase()) {
+              m.score1 = oppPart.score;
+              m.score2 = mePart.score;
+              m.winner = didIWin ? m.p2 : m.p1;
+            } else {
+              const s1 = Math.floor(Math.random() * 3 + 2) * 500;
+              const s2 = Math.floor(Math.random() * 3 + 1) * 500;
+              m.score1 = s1;
+              m.score2 = s2;
+              m.winner = s1 >= s2 ? m.p1 : m.p2;
+            }
+            m.status = "finished";
+          });
+
+          const finalM = updatedBracket.find((m) => m.id === "final")!;
+          finalM.p1 = sf1.winner!;
+          finalM.p2 = sf2.winner!;
+          finalM.status = "in_battle";
+
+          setTournamentBracket(updatedBracket);
+
+          if (didIWin) {
+            sfx.playVictory();
+            const nextOpp = finalM.p1.email.toLowerCase() === myEmail.toLowerCase() ? finalM.p2 : finalM.p1;
+            setTournamentRoundModal({
+              show: true,
+              type: "advancing",
+              roundWon: "sf",
+              myScore: mePart.score,
+              oppScore: oppPart.score,
+              opponentName: oppPart.name,
+              nextOpponent: nextOpp,
+            });
+          } else {
+            sfx.playEliminated();
+            setTournamentRoundModal({
+              show: true,
+              type: "eliminated",
+              roundWon: "sf",
+              myScore: mePart.score,
+              oppScore: oppPart.score,
+              opponentName: oppPart.name,
+            });
+          }
+          return;
+        }
+
+        if (currentTournamentRound === "final") {
+          const finalM = updatedBracket.find((m) => m.id === "final")!;
+          if (finalM.p1.email.toLowerCase() === myEmail.toLowerCase()) {
+            finalM.score1 = mePart.score;
+            finalM.score2 = oppPart.score;
+            finalM.winner = didIWin ? finalM.p1 : finalM.p2;
+          } else {
+            finalM.score1 = oppPart.score;
+            finalM.score2 = mePart.score;
+            finalM.winner = didIWin ? finalM.p2 : finalM.p1;
+          }
+          finalM.status = "finished";
+          setTournamentBracket(updatedBracket);
+          setTournamentChampion(finalM.winner || null);
+
+          if (didIWin) {
+            setBattleState("victory");
+            sfx.playVictory();
+            addXp(500, "Juara Turnamen Otsutsuki Cup (CUP Champion)");
+            advanceDailyQuest("battle", 1);
+            setTournamentWins((prev) => prev + 1);
+          } else {
+            setBattleState("defeat");
+            sfx.playEliminated();
+          }
+          notifyMatchFinished();
+          return;
+        }
+      }
+    }
+
+    // Standard Modes (1v1, Group, Survival)
     if ((me && me.hp <= 0) || othersAlive === 0 || currentQIndex + 1 >= shuffledQuestions.length) {
-      // Urutkan peserta berdasarkan Skor tertinggi, lalu sisa HP tertinggi
       const sortedCombatants = [...activeCombatants].sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
         return b.hp - a.hp;
@@ -914,12 +1299,9 @@ export default function BattleRoyaleModal({
       if (isIWinner && me && me.hp > 0) {
         setBattleState("victory");
         sfx.playVictory();
-        const earnedXp = mode === "tournament" ? 350 : mode === "all_members" ? 150 : mode === "group" ? 120 : 90;
-        addXp(earnedXp, mode === "tournament" ? "Juara Turnamen Otsutsuki Cup" : `Battle Royale Member (${mode})`);
+        const earnedXp = mode === "all_members" ? 150 : mode === "group" ? 120 : 90;
+        addXp(earnedXp, `Battle Royale Member (${mode})`);
         advanceDailyQuest("battle", 1);
-        if (mode === "tournament") {
-          setTournamentWins((prev) => prev + 1);
-        }
       } else {
         setBattleState("defeat");
         sfx.playEliminated();
@@ -1268,25 +1650,34 @@ export default function BattleRoyaleModal({
 
             {/* TOURNAMENT BANNER IF TOURNAMENT MODE IS ACTIVE */}
             {mode === "tournament" && (
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   <span className="text-2xl animate-bounce">🏆</span>
                   <div>
                     <h5 className="text-xs font-black text-amber-500 flex items-center gap-1.5">
-                      Turnamen Akbar Otsutsuki Cup (8 Peserta • 8 Soal Championship)
+                      Turnamen Cup 8 Peserta (Sistem Gugur: 8 Besar ➔ Semifinal ➔ Final)
                     </h5>
                     <p className="text-[10px] opacity-75">
-                      8 peserta bersaing serentak memperebutkan 1 Trofi Juara & membuka avatar eksklusif bertingkat!
+                      2 orang bertemu acak tiap babak, pemenang melaju ke Semifinal & Grand Final perebutan Trofi Juara!
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowTournamentShowcase(true)}
-                  className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500 text-stone-950 shrink-0 hover:scale-105 transition"
-                >
-                  Hadiah
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowBracketModal(true)}
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:scale-105 transition flex items-center gap-1"
+                  >
+                    🏆 Bagan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowTournamentShowcase(true)}
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500 text-stone-950 hover:scale-105 transition"
+                  >
+                    Hadiah
+                  </button>
+                </div>
               </div>
             )}
 
@@ -1577,10 +1968,29 @@ export default function BattleRoyaleModal({
         {/* IN BATTLE STATE */}
         {battleState === "in_battle" && currentQ && (
           <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b pb-3">
-              <span className="text-xs font-black uppercase text-amber-500">
-                Ronde {currentQIndex + 1} / {shuffledQuestions.length}
-              </span>
+            <div className="flex items-center justify-between border-b border-current/10 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase text-amber-500">
+                  {mode === "tournament"
+                    ? `🏆 CUP • ${
+                        currentTournamentRound === "qf"
+                          ? "BABAK 8 BESAR"
+                          : currentTournamentRound === "sf"
+                          ? "SEMIFINAL"
+                          : "GRAND FINAL"
+                      } (Soal ${currentQIndex + 1}/${shuffledQuestions.length})`
+                    : `Ronde ${currentQIndex + 1} / ${shuffledQuestions.length}`}
+                </span>
+                {mode === "tournament" && (
+                  <button
+                    type="button"
+                    onClick={() => setShowBracketModal(true)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:scale-105 transition flex items-center gap-1"
+                  >
+                    🏆 Bagan
+                  </button>
+                )}
+              </div>
               <div className={`px-3 py-1 rounded-xl font-mono font-black text-sm ${timeLeft <= 3 ? "bg-rose-500 text-white animate-bounce" : "bg-black/10 dark:bg-white/10"}`}>
                 <Clock className="w-4 h-4 inline mr-1" /> {timeLeft}s
               </div>
@@ -1588,24 +1998,53 @@ export default function BattleRoyaleModal({
 
             {/* COMBATANTS HP */}
             <div className="grid grid-cols-2 gap-2.5">
-              {activeCombatants.map((c) => {
+              {activeCombatants.slice(0, 2).map((c) => {
                 const isMe = c.email.toLowerCase() === myEmail.toLowerCase();
                 return (
-                  <div key={c.email} className={`p-2.5 rounded-xl border flex flex-col gap-1 ${isMe ? "bg-amber-500/15 border-amber-400" : "bg-black/10"}`}>
-                    <div className="flex justify-between text-xs font-black">
-                      <span>{c.avatar} {c.name.split(" ")[0]}</span>
-                      <span className="text-amber-400 font-mono">{c.score} PTS</span>
+                  <div
+                    key={c.email}
+                    className={`p-2.5 rounded-2xl border flex flex-col gap-1.5 transition ${
+                      isMe ? "bg-amber-500/15 border-amber-400 shadow-sm" : "bg-black/10 dark:bg-white/5 border-current/10"
+                    }`}
+                  >
+                    <div className="flex justify-between items-center text-xs font-black">
+                      <span className="truncate max-w-[120px] flex items-center gap-1">
+                        <span>{c.avatar}</span> {c.name.split(" ")[0]} {isMe && "(Anda)"}
+                      </span>
+                      <span className="text-amber-400 font-mono text-[11px]">{c.score} PTS</span>
+                    </div>
+                    {/* HP Bar */}
+                    <div className="w-full bg-black/20 dark:bg-white/10 rounded-full h-1.5 overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          c.hp > 50 ? "bg-emerald-500" : c.hp > 25 ? "bg-amber-500" : "bg-rose-500"
+                        }`}
+                        style={{ width: `${Math.max(0, Math.min(100, c.hp))}%` }}
+                      />
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* QUESTION */}
-            <div className="p-6 rounded-3xl bg-black/5 dark:bg-white/5 border text-center">
-              <span className="text-[10px] font-black uppercase text-amber-500">Tentukan Arti Kosakata</span>
-              <h3 className="text-2xl sm:text-3xl font-black mt-1">{currentQ.ja}</h3>
-              {currentQ.yomi && <span className="text-xs font-mono text-amber-400 block mt-1">{currentQ.yomi}</span>}
+            {/* QUESTION - JFT STANDARD FORMAT (TANPA ROMAJI) */}
+            <div className="p-6 rounded-3xl bg-black/5 dark:bg-white/5 border text-center flex flex-col items-center gap-1.5 shadow-sm">
+              <span className="text-[11px] font-black uppercase text-amber-500 tracking-wider px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
+                {currentQ.prompt ||
+                  (currentQ.questionType === "kanji_to_yomi"
+                    ? "Pilih Cara Baca (Yomikata) Kanji:"
+                    : currentQ.questionType === "hiragana_to_kanji"
+                    ? "Pilih Kanji yang Tepat:"
+                    : "Tentukan Arti Bahasa Indonesia:")}
+              </span>
+              <h3 className="text-3xl sm:text-4xl font-black mt-2 tracking-wide font-japanese">
+                {currentQ.display || currentQ.ja}
+              </h3>
+              {currentQ.subDisplay && (
+                <span className="text-xs font-mono font-bold text-amber-500 bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/20 mt-1">
+                  【よみ: {currentQ.subDisplay}】
+                </span>
+              )}
             </div>
 
             {/* OPTIONS */}
@@ -1615,10 +2054,25 @@ export default function BattleRoyaleModal({
                   key={idx}
                   disabled={selectedAnswer !== null}
                   onClick={() => handleUserAnswer(opt)}
-                  className="clay-btn p-3.5 rounded-xl text-xs font-bold text-left transition"
+                  className={`clay-btn p-3.5 rounded-xl text-xs sm:text-sm font-bold text-left transition flex items-center justify-between ${
+                    selectedAnswer === opt
+                      ? opt === currentQ.correct
+                        ? "bg-emerald-500/30 border-emerald-400 text-emerald-300"
+                        : "bg-rose-500/30 border-rose-400 text-rose-300"
+                      : selectedAnswer !== null && opt === currentQ.correct
+                      ? "bg-emerald-500/20 border-emerald-400 text-emerald-400 animate-pulse"
+                      : ""
+                  }`}
                 >
-                  <span className="font-mono text-amber-400 mr-2 font-black">{String.fromCharCode(65 + idx)}.</span>
-                  {opt}
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="font-mono text-amber-400 font-black shrink-0 w-6 h-6 rounded-lg bg-black/10 dark:bg-white/10 flex items-center justify-center text-xs">
+                      {String.fromCharCode(65 + idx)}
+                    </span>
+                    <span className="font-japanese tracking-wide text-sm truncate">{opt}</span>
+                  </div>
+                  {selectedAnswer !== null && opt === currentQ.correct && (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  )}
                 </button>
               ))}
             </div>
@@ -1810,6 +2264,252 @@ export default function BattleRoyaleModal({
               >
                 Tutup Galeri
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* TOURNAMENT CUP BRACKET MODAL */}
+        {showBracketModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/85 backdrop-blur-md animate-fade-in">
+            <div className="bg-stone-900 border border-amber-500/50 rounded-3xl w-full max-w-4xl p-5 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl animate-bounce">🏆</span>
+                  <div>
+                    <h3 className="text-base font-black text-amber-500 flex items-center gap-1.5">
+                      Bagan Turnamen Otsutsuki Cup (8 Peserta)
+                    </h3>
+                    <p className="text-[11px] opacity-70">
+                      Sistem Gugur Klasik: Babak 8 Besar ➔ Semifinal ➔ Grand Final
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowBracketModal(false)}
+                  className="p-1.5 rounded-xl bg-white/5 hover:bg-white/10 transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Bracket Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-2">
+                {/* Column 1: Babak 8 Besar */}
+                <div className="flex flex-col gap-3">
+                  <div className="text-center py-1.5 px-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs font-black uppercase text-amber-400">
+                    ⚔️ 8 Besar (QF)
+                  </div>
+                  {(tournamentBracket?.filter((m) => m.round === "qf") || []).map((m, idx) => (
+                    <div
+                      key={m.id}
+                      className={`p-3 rounded-2xl border flex flex-col gap-1.5 ${
+                        m.status === "in_battle"
+                          ? "bg-amber-500/10 border-amber-500/60 ring-1 ring-amber-400/40"
+                          : "bg-black/20 border-white/10"
+                      }`}
+                    >
+                      <span className="text-[9px] font-mono opacity-60 uppercase">Match {idx + 1}</span>
+                      {/* Player 1 */}
+                      <div className={`flex items-center justify-between text-xs p-1.5 rounded-lg ${
+                        m.winner?.email === m.p1.email ? "bg-emerald-500/20 font-black text-emerald-400" : ""
+                      }`}>
+                        <span className="truncate max-w-[120px] flex items-center gap-1">
+                          <span>{m.p1.avatar}</span> {m.p1.name} {m.p1.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                        </span>
+                        <span className="font-mono text-[10px]">{m.status === "finished" ? `${m.score1}p` : ""}</span>
+                      </div>
+                      {/* Player 2 */}
+                      <div className={`flex items-center justify-between text-xs p-1.5 rounded-lg ${
+                        m.winner?.email === m.p2.email ? "bg-emerald-500/20 font-black text-emerald-400" : ""
+                      }`}>
+                        <span className="truncate max-w-[120px] flex items-center gap-1">
+                          <span>{m.p2.avatar}</span> {m.p2.name} {m.p2.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                        </span>
+                        <span className="font-mono text-[10px]">{m.status === "finished" ? `${m.score2}p` : ""}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Column 2: Semifinal */}
+                <div className="flex flex-col gap-3 md:justify-around">
+                  <div className="text-center py-1.5 px-2 rounded-xl bg-indigo-500/15 border border-indigo-500/30 text-xs font-black uppercase text-indigo-400">
+                    🛡️ Semifinal (SF)
+                  </div>
+                  {(tournamentBracket?.filter((m) => m.round === "sf") || []).map((m, idx) => (
+                    <div
+                      key={m.id}
+                      className={`p-3 rounded-2xl border flex flex-col gap-1.5 ${
+                        m.status === "in_battle"
+                          ? "bg-indigo-500/15 border-indigo-500/60 ring-1 ring-indigo-400/40"
+                          : "bg-black/20 border-white/10"
+                      }`}
+                    >
+                      <span className="text-[9px] font-mono opacity-60 uppercase">SF #{idx + 1}</span>
+                      {/* Player 1 */}
+                      <div className={`flex items-center justify-between text-xs p-1.5 rounded-lg ${
+                        m.winner?.email === m.p1.email ? "bg-emerald-500/20 font-black text-emerald-400" : ""
+                      }`}>
+                        <span className="truncate max-w-[120px] flex items-center gap-1">
+                          <span>{m.p1.avatar}</span> {m.p1.name} {m.p1.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                        </span>
+                        <span className="font-mono text-[10px]">{m.status === "finished" ? `${m.score1}p` : ""}</span>
+                      </div>
+                      {/* Player 2 */}
+                      <div className={`flex items-center justify-between text-xs p-1.5 rounded-lg ${
+                        m.winner?.email === m.p2.email ? "bg-emerald-500/20 font-black text-emerald-400" : ""
+                      }`}>
+                        <span className="truncate max-w-[120px] flex items-center gap-1">
+                          <span>{m.p2.avatar}</span> {m.p2.name} {m.p2.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                        </span>
+                        <span className="font-mono text-[10px]">{m.status === "finished" ? `${m.score2}p` : ""}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Column 3: Grand Final */}
+                <div className="flex flex-col gap-3 md:justify-center">
+                  <div className="text-center py-1.5 px-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-xs font-black uppercase text-amber-300">
+                    👑 Grand Final
+                  </div>
+                  {(() => {
+                    const finalM = tournamentBracket?.find((m) => m.round === "final");
+                    if (!finalM) return null;
+                    return (
+                      <div
+                        className={`p-3.5 rounded-2xl border flex flex-col gap-2 ${
+                          finalM.status === "in_battle"
+                            ? "bg-amber-500/20 border-amber-400 shadow-lg ring-2 ring-amber-400/50"
+                            : "bg-black/20 border-white/10"
+                        }`}
+                      >
+                        <span className="text-[9px] font-mono text-amber-400 uppercase font-black">Perebutan Gelar</span>
+                        {/* Finalist 1 */}
+                        <div className={`flex items-center justify-between text-xs p-2 rounded-xl ${
+                          finalM.winner?.email === finalM.p1.email ? "bg-amber-500/30 font-black text-amber-300" : ""
+                        }`}>
+                          <span className="truncate max-w-[120px] flex items-center gap-1.5 font-bold">
+                            <span>{finalM.p1.avatar}</span> {finalM.p1.name} {finalM.p1.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                          </span>
+                          <span className="font-mono text-xs">{finalM.status === "finished" ? `${finalM.score1}p` : ""}</span>
+                        </div>
+                        {/* Finalist 2 */}
+                        <div className={`flex items-center justify-between text-xs p-2 rounded-xl ${
+                          finalM.winner?.email === finalM.p2.email ? "bg-amber-500/30 font-black text-amber-300" : ""
+                        }`}>
+                          <span className="truncate max-w-[120px] flex items-center gap-1.5 font-bold">
+                            <span>{finalM.p2.avatar}</span> {finalM.p2.name} {finalM.p2.email.toLowerCase() === myEmail.toLowerCase() && "(Anda)"}
+                          </span>
+                          <span className="font-mono text-xs">{finalM.status === "finished" ? `${finalM.score2}p` : ""}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Column 4: Champion Trophy Card */}
+                <div className="flex flex-col gap-3 md:justify-center">
+                  <div className="text-center py-1.5 px-2 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 text-xs font-black uppercase shadow-md">
+                    🏆 Trofi Juara
+                  </div>
+                  <div className="p-4 rounded-3xl bg-gradient-to-b from-amber-500/20 to-yellow-500/10 border-2 border-amber-400/60 flex flex-col items-center justify-center text-center gap-2">
+                    <span className="text-4xl animate-bounce">🏆</span>
+                    {tournamentChampion ? (
+                      <div className="flex flex-col items-center">
+                        <span className="text-2xl">{tournamentChampion.avatar}</span>
+                        <span className="text-sm font-black text-amber-400 mt-1">{tournamentChampion.name}</span>
+                        <span className="text-[10px] uppercase font-bold text-emerald-400">Pemenang Otsutsuki Cup!</span>
+                      </div>
+                    ) : (
+                      <div className="opacity-60 text-xs italic">
+                        Menunggu pemenang Grand Final...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-white/10 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowBracketModal(false)}
+                  className="clay-btn-gold px-4 py-2 rounded-xl text-xs font-black uppercase"
+                >
+                  Tutup Bagan
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TOURNAMENT ROUND ADVANCEMENT / ELIMINATION MODAL */}
+        {tournamentRoundModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fade-in">
+            <div className="bg-stone-900 border border-amber-500/50 rounded-3xl max-w-md w-full p-6 text-center flex flex-col items-center gap-4 shadow-2xl">
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${
+                tournamentRoundModal.type === "advancing" ? "bg-amber-500/20 text-amber-400 border border-amber-400/50 animate-bounce" : "bg-rose-500/20 text-rose-400 border border-rose-400/50"
+              }`}>
+                {tournamentRoundModal.type === "advancing" ? "⚔️" : "💀"}
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <h3 className="text-lg font-black uppercase tracking-wide">
+                  {tournamentRoundModal.type === "advancing"
+                    ? `🎉 MENANG DI ${tournamentRoundModal.roundWon === "qf" ? "BABAK 8 BESAR!" : "BABAK SEMIFINAL!"}`
+                    : `GUGUR DI ${tournamentRoundModal.roundWon === "qf" ? "BABAK 8 BESAR" : "BABAK SEMIFINAL"}`}
+                </h3>
+                <p className="text-xs opacity-75">
+                  Skor: <strong>Anda ({tournamentRoundModal.myScore} PTS)</strong> vs <strong>{tournamentRoundModal.opponentName} ({tournamentRoundModal.oppScore} PTS)</strong>
+                </p>
+              </div>
+
+              {tournamentRoundModal.type === "advancing" && tournamentRoundModal.nextOpponent && (
+                <div className="w-full p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                  <div className="text-left text-xs">
+                    <span className="text-[10px] font-black uppercase text-amber-400 block">Lawan di {tournamentRoundModal.roundWon === "qf" ? "Semifinal" : "Grand Final"}:</span>
+                    <span className="font-bold flex items-center gap-1.5 mt-0.5">
+                      <span>{tournamentRoundModal.nextOpponent.avatar}</span> {tournamentRoundModal.nextOpponent.name}
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono font-black text-amber-400 uppercase px-2 py-1 rounded-lg bg-black/30">
+                    {tournamentRoundModal.roundWon === "qf" ? "SF" : "FINAL"}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-2.5 w-full mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowBracketModal(true)}
+                  className="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 transition"
+                >
+                  🏆 Lihat Bagan
+                </button>
+
+                {tournamentRoundModal.type === "advancing" ? (
+                  <button
+                    type="button"
+                    onClick={startNextTournamentRound}
+                    className="flex-1 clay-btn-gold py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md"
+                  >
+                    Lanjut Tanding ➔
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTournamentRoundModal(null);
+                      setBattleState("defeat");
+                    }}
+                    className="flex-1 py-3 px-4 rounded-xl text-xs font-bold uppercase bg-stone-800 hover:bg-stone-700 transition"
+                  >
+                    Selesai
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         )}
