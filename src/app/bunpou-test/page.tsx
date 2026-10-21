@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -17,7 +16,6 @@ import {
   ArrowRight,
   Flame,
   Trophy,
-  Filter,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import rawBunpouData from "@/data/bunpouData.json";
@@ -25,12 +23,7 @@ import { BunpouItem, BunpouLevelFilter } from "@/types/bunpou";
 
 const allBunpou: BunpouItem[] = rawBunpouData as BunpouItem[];
 
-function BunpouTestContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const initialId = searchParams.get("id");
-
+export default function BunpouTestPage() {
   const [selectedLevel, setSelectedLevel] = useState<BunpouLevelFilter>("all");
   const [selectedLesson, setSelectedLesson] = useState<string>("all");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -49,24 +42,28 @@ function BunpouTestContent() {
     });
   }, [selectedLevel, selectedLesson]);
 
-  // Jump to specific item if id param is provided
+  // Read URL search query safely on client mount without triggering SSR de-opt
   useEffect(() => {
-    if (initialId) {
-      const idx = filteredItems.findIndex((b) => b.id === initialId);
-      if (idx !== -1) {
-        setCurrentIndex(idx);
-      } else {
-        const globalIdx = allBunpou.findIndex((b) => b.id === initialId);
-        if (globalIdx !== -1) {
-          setSelectedLevel("all");
-          setSelectedLesson("all");
-          setCurrentIndex(globalIdx);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const targetId = params.get("id");
+      if (targetId) {
+        const idx = filteredItems.findIndex((b) => b.id === targetId);
+        if (idx !== -1) {
+          setCurrentIndex(idx);
+        } else {
+          const globalIdx = allBunpou.findIndex((b) => b.id === targetId);
+          if (globalIdx !== -1) {
+            setSelectedLevel("all");
+            setSelectedLesson("all");
+            setCurrentIndex(globalIdx);
+          }
         }
       }
     }
-  }, [initialId, filteredItems]);
+  }, [filteredItems]);
 
-  const currentItem: BunpouItem | undefined = filteredItems[currentIndex] || filteredItems[0];
+  const currentItem: BunpouItem = filteredItems[currentIndex] || allBunpou[0];
   const puzzle = currentItem?.puzzle;
 
   // Puzzle State
@@ -79,7 +76,7 @@ function BunpouTestContent() {
   useEffect(() => {
     if (puzzle && puzzle.tokens) {
       const shuf = [...(puzzle.shuffledTokens || puzzle.tokens)];
-      // Extra shuffle if needed
+      // Extra shuffle on client
       for (let i = shuf.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuf[i], shuf[j]] = [shuf[j], shuf[i]];
@@ -180,14 +177,6 @@ function BunpouTestContent() {
     return Array.from(new Set(pool.map((b) => b.lesson))).sort((a, b) => a - b);
   }, [selectedLevel]);
 
-  if (!currentItem) {
-    return (
-      <div className="p-8 text-center text-stone-500">
-        Tidak ada data pola kalimat yang ditemukan untuk filter ini.
-      </div>
-    );
-  }
-
   const levelColor =
     currentItem.level === "a1"
       ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
@@ -195,284 +184,6 @@ function BunpouTestContent() {
       ? "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30"
       : "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-6 w-full">
-      {/* TOP GAMIFICATION BAR */}
-      <div className="clay-card p-4 rounded-2xl border border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5 text-xs font-black text-amber-600 dark:text-amber-400">
-            <Trophy className="w-4 h-4" />
-            <span>Skor: {score} XP</span>
-          </div>
-
-          <div className="h-4 w-px bg-black/10 dark:bg-white/10" />
-
-          <div className="flex items-center gap-1 text-xs font-black text-rose-500">
-            <Flame className="w-4 h-4 animate-bounce" />
-            <span>Streak: {streak}x</span>
-          </div>
-
-          <div className="h-4 w-px bg-black/10 dark:bg-white/10 hidden sm:block" />
-
-          <div className="text-xs font-bold text-stone-500 hidden sm:block">
-            Selesai: {completedCount} Soal
-          </div>
-        </div>
-
-        {/* PROGRESS PILL */}
-        <div className="text-xs font-bold text-stone-600 dark:text-stone-300">
-          Soal <strong className="text-stone-900 dark:text-stone-100">{currentIndex + 1}</strong> dari {filteredItems.length}
-        </div>
-      </div>
-
-      {/* FILTER CONTROLS */}
-      <div className="clay-card p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5">
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Level Filter */}
-          <select
-            value={selectedLevel}
-            onChange={(e) => {
-              setSelectedLevel(e.target.value as any);
-              setSelectedLesson("all");
-              setCurrentIndex(0);
-            }}
-            className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
-          >
-            <option value="all">Semua Buku (264)</option>
-            <option value="a1">入門 A1 (82)</option>
-            <option value="a2-1">初級1 A2.1 (95)</option>
-            <option value="a2-2">初級2 A2.2 (87)</option>
-          </select>
-
-          {/* Lesson Filter */}
-          <select
-            value={selectedLesson}
-            onChange={(e) => {
-              setSelectedLesson(e.target.value);
-              setCurrentIndex(0);
-            }}
-            className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
-          >
-            <option value="all">Semua Bab</option>
-            {availableLessons.map((l) => (
-              <option key={l} value={l}>
-                Bab {l}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Jump Directly to Pattern */}
-        <select
-          value={currentItem.id}
-          onChange={(e) => {
-            const idx = filteredItems.findIndex((b) => b.id === e.target.value);
-            if (idx !== -1) setCurrentIndex(idx);
-          }}
-          className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer max-w-[220px] truncate"
-        >
-          {filteredItems.map((b, i) => (
-            <option key={b.id} value={b.id}>
-              {i + 1}. [{b.levelJapanese} Bab {b.lesson}] {b.pattern.split(/[\r\n]+/)[0]}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* MAIN TEST CARD */}
-      <div className="clay-card p-5 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-xl space-y-6 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5">
-        {/* Pattern Information Header */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={`text-xs font-black px-3 py-1 rounded-full border shadow-xs ${levelColor}`}>
-              {currentItem.levelJapanese} ({currentItem.level.toUpperCase()})
-            </span>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-stone-500/10 border border-current/15 text-stone-700 dark:text-stone-300">
-              第{currentItem.lesson}課 • Bab {currentItem.lesson} {currentItem.num}
-            </span>
-            <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-stone-200/50 dark:bg-stone-800/60 text-stone-600 dark:text-stone-400">
-              {currentItem.topic}
-            </span>
-          </div>
-
-          <Link
-            href={`/bunpou#${currentItem.id}`}
-            className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-          >
-            Lihat di Daftar Bunpou ›
-          </Link>
-        </div>
-
-        {/* Pola Kalimat & Arti */}
-        <div className="space-y-2">
-          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-            Pola Tata Bahasa Yang Diuji:
-          </div>
-          <div className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white font-sans">
-            {currentItem.pattern.split(/[\r\n]+/)[0]}
-          </div>
-          {currentItem.meaning && (
-            <div className="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-400">
-              💡 {currentItem.meaning}
-            </div>
-          )}
-        </div>
-
-        {/* Target Translation / Meaning of Puzzle */}
-        <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 space-y-1">
-          <div className="text-[11px] font-black uppercase text-indigo-700 dark:text-indigo-300 tracking-wider flex items-center justify-between">
-            <span>Target Arti Kalimat:</span>
-            <span className="text-[10px] text-stone-500 font-normal">
-              Susun kata & partikel di bawah agar membentuk kalimat ini
-            </span>
-          </div>
-          <div className="text-base sm:text-lg font-black text-stone-900 dark:text-stone-100">
-            &ldquo;{puzzle?.translation}&rdquo;
-          </div>
-        </div>
-
-        {/* USER ASSEMBLED SENTENCE DROPZONE */}
-        <div className="space-y-1.5">
-          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Susunan Kalimat Anda:</span>
-            {selectedTokens.length > 0 && (
-              <span className="text-[10px] text-stone-400">
-                (Klik kepingan untuk membatalkan)
-              </span>
-            )}
-          </div>
-
-          <div
-            className={`min-h-[70px] sm:min-h-[80px] p-3 sm:p-4 rounded-2xl border flex flex-wrap items-center gap-2 transition ${
-              puzzleStatus === "correct"
-                ? "bg-emerald-500/10 border-emerald-500/50 ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/10"
-                : puzzleStatus === "incorrect"
-                ? "bg-rose-500/10 border-rose-500/50 ring-2 ring-rose-500/30"
-                : "bg-white dark:bg-stone-900/90 border-indigo-500/30 shadow-inner"
-            }`}
-          >
-            {selectedTokens.length === 0 ? (
-              <span className="text-stone-400 text-xs sm:text-sm italic mx-auto">
-                Ketuk kepingan kata & partikel di bawah untuk menyusun kalimat...
-              </span>
-            ) : (
-              selectedTokens.map((tok, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleUnselectToken(tok, idx)}
-                  className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-rose-600 text-white font-extrabold text-sm sm:text-base shadow-sm hover:scale-105 active:scale-95 transition flex items-center gap-1.5 group/chip animate-in fade-in zoom-in-95 duration-150"
-                  title="Klik untuk kembalikan ke tumpukan"
-                >
-                  <span>{tok}</span>
-                  <span className="text-xs opacity-70 group-hover/chip:opacity-100">✕</span>
-                </button>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* FEEDBACK STATUS ALERT */}
-        {puzzleStatus === "correct" && (
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
-            <div className="flex items-center gap-2 text-xs sm:text-sm font-black text-emerald-700 dark:text-emerald-300">
-              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-500" />
-              <span>🎉 Luar Biasa! Susunan kalimat tepat dan sempurna! (+10 XP)</span>
-            </div>
-            <button
-              onClick={() => puzzle && speak(puzzle.sentence)}
-              className="p-2 rounded-xl bg-emerald-500 text-white hover:scale-105 transition shrink-0"
-              title="Dengarkan pelafalan audio"
-            >
-              <Volume2 className="w-4 h-4" />
-            </button>
-          </div>
-        )}
-
-        {puzzleStatus === "incorrect" && (
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-rose-500/15 border border-rose-500/40 flex items-center gap-2 text-xs sm:text-sm font-black text-rose-700 dark:text-rose-300 animate-in fade-in shake">
-            <XCircle className="w-5 h-5 shrink-0 text-rose-500" />
-            <span>Susunan masih belum pas. Perhatikan posisi partikel dan kata kerjanya!</span>
-          </div>
-        )}
-
-        {/* POOL OF SCRAMBLED WORDS & PARTICLES */}
-        <div className="space-y-2">
-          <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Kepingan Kata & Partikel ({availableTokens.length}):</span>
-            <span className="text-[10px] text-stone-400">
-              Setiap kata dan partikel telah dipisahkan
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 min-h-[50px] p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
-            {availableTokens.map((tok, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSelectToken(tok, idx)}
-                className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-extrabold text-sm sm:text-base border border-stone-200 dark:border-stone-700 shadow-sm hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:scale-105 active:scale-95 transition"
-              >
-                {tok}
-              </button>
-            ))}
-            {availableTokens.length === 0 && selectedTokens.length > 0 && (
-              <span className="text-xs text-stone-400 italic mx-auto">
-                Semua kepingan sudah dirangkai. Klik tombol &ldquo;Cek Susunan&rdquo; di bawah!
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* ACTION CONTROLS BUTTONS */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-black/10 dark:border-white/10">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleCheck}
-              disabled={selectedTokens.length === 0}
-              className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/25 transition flex items-center gap-2"
-            >
-              <Check className="w-4 h-4" />
-              Cek Susunan
-            </button>
-
-            <button
-              onClick={handleReset}
-              className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-600 dark:text-stone-300 transition"
-              title="Acak Ulang Kepingan Kata"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-
-            <button
-              onClick={handleRevealSolution}
-              className="px-3.5 py-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-600 dark:text-stone-300 font-bold text-xs transition"
-              title="Bantuan susunan yang benar"
-            >
-              Lihat Kunci
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrevQuestion}
-              className="px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-700 dark:text-stone-200 font-extrabold text-xs transition"
-            >
-              ← Sebelumnya
-            </button>
-            <button
-              onClick={handleNextQuestion}
-              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black text-xs shadow-md transition flex items-center gap-1.5"
-            >
-              <span>Soal Berikutnya</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function BunpouTestPage() {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans transition-colors duration-200">
       {/* NAVBAR */}
@@ -502,17 +213,279 @@ export default function BunpouTestPage() {
         </div>
       </header>
 
-      {/* BODY WITH SUSPENSE */}
-      <main className="flex-1 flex flex-col">
-        <Suspense
-          fallback={
-            <div className="max-w-md mx-auto p-12 text-center text-stone-500 text-sm">
-              Memuat arena mini test...
+      {/* BODY CONTENT */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 flex flex-col gap-6 w-full">
+        {/* TOP GAMIFICATION BAR */}
+        <div className="clay-card p-4 rounded-2xl border border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5 text-xs font-black text-amber-600 dark:text-amber-400">
+              <Trophy className="w-4 h-4" />
+              <span>Skor: {score} XP</span>
             </div>
-          }
-        >
-          <BunpouTestContent />
-        </Suspense>
+
+            <div className="h-4 w-px bg-black/10 dark:bg-white/10" />
+
+            <div className="flex items-center gap-1 text-xs font-black text-rose-500">
+              <Flame className="w-4 h-4 animate-bounce" />
+              <span>Streak: {streak}x</span>
+            </div>
+
+            <div className="h-4 w-px bg-black/10 dark:bg-white/10 hidden sm:block" />
+
+            <div className="text-xs font-bold text-stone-500 hidden sm:block">
+              Selesai: {completedCount} Soal
+            </div>
+          </div>
+
+          {/* PROGRESS PILL */}
+          <div className="text-xs font-bold text-stone-600 dark:text-stone-300">
+            Soal <strong className="text-stone-900 dark:text-stone-100">{currentIndex + 1}</strong> dari {filteredItems.length}
+          </div>
+        </div>
+
+        {/* FILTER CONTROLS */}
+        <div className="clay-card p-3.5 sm:p-4 rounded-2xl border border-black/10 dark:border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Level Filter */}
+            <select
+              value={selectedLevel}
+              onChange={(e) => {
+                setSelectedLevel(e.target.value as any);
+                setSelectedLesson("all");
+                setCurrentIndex(0);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
+            >
+              <option value="all">Semua Buku (264)</option>
+              <option value="a1">入門 A1 (82)</option>
+              <option value="a2-1">初級1 A2.1 (95)</option>
+              <option value="a2-2">初級2 A2.2 (87)</option>
+            </select>
+
+            {/* Lesson Filter */}
+            <select
+              value={selectedLesson}
+              onChange={(e) => {
+                setSelectedLesson(e.target.value);
+                setCurrentIndex(0);
+              }}
+              className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer"
+            >
+              <option value="all">Semua Bab</option>
+              {availableLessons.map((l) => (
+                <option key={l} value={l}>
+                  Bab {l}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Jump Directly to Pattern */}
+          <select
+            value={currentItem.id}
+            onChange={(e) => {
+              const idx = filteredItems.findIndex((b) => b.id === e.target.value);
+              if (idx !== -1) setCurrentIndex(idx);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 cursor-pointer max-w-[220px] truncate"
+          >
+            {filteredItems.map((b, i) => (
+              <option key={b.id} value={b.id}>
+                {i + 1}. [{b.levelJapanese} Bab {b.lesson}] {b.pattern.split(/[\r\n]+/)[0]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* MAIN TEST CARD */}
+        <div className="clay-card p-5 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-xl space-y-6 bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5">
+          {/* Pattern Information Header */}
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black/10 dark:border-white/10 pb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-xs font-black px-3 py-1 rounded-full border shadow-xs ${levelColor}`}>
+                {currentItem.levelJapanese} ({currentItem.level.toUpperCase()})
+              </span>
+              <span className="text-xs font-bold px-3 py-1 rounded-full bg-stone-500/10 border border-current/15 text-stone-700 dark:text-stone-300">
+                第{currentItem.lesson}課 • Bab {currentItem.lesson} {currentItem.num}
+              </span>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-lg bg-stone-200/50 dark:bg-stone-800/60 text-stone-600 dark:text-stone-400">
+                {currentItem.topic}
+              </span>
+            </div>
+
+            <Link
+              href={`/bunpou#${currentItem.id}`}
+              className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            >
+              Lihat di Daftar Bunpou ›
+            </Link>
+          </div>
+
+          {/* Pola Kalimat & Arti */}
+          <div className="space-y-2">
+            <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+              Pola Tata Bahasa Yang Diuji:
+            </div>
+            <div className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white font-sans">
+              {currentItem.pattern.split(/[\r\n]+/)[0]}
+            </div>
+            {currentItem.meaning && (
+              <div className="text-xs sm:text-sm font-semibold text-amber-600 dark:text-amber-400">
+                💡 {currentItem.meaning}
+              </div>
+            )}
+          </div>
+
+          {/* Target Translation / Meaning of Puzzle */}
+          <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 space-y-1">
+            <div className="text-[11px] font-black uppercase text-indigo-700 dark:text-indigo-300 tracking-wider flex items-center justify-between">
+              <span>Target Arti Kalimat:</span>
+              <span className="text-[10px] text-stone-500 font-normal">
+                Susun kata & partikel di bawah agar membentuk kalimat ini
+              </span>
+            </div>
+            <div className="text-base sm:text-lg font-black text-stone-900 dark:text-stone-100">
+              &ldquo;{puzzle?.translation}&rdquo;
+            </div>
+          </div>
+
+          {/* USER ASSEMBLED SENTENCE DROPZONE */}
+          <div className="space-y-1.5">
+            <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Susunan Kalimat Anda:</span>
+              {selectedTokens.length > 0 && (
+                <span className="text-[10px] text-stone-400">
+                  (Klik kepingan untuk membatalkan)
+                </span>
+              )}
+            </div>
+
+            <div
+              className={`min-h-[70px] sm:min-h-[80px] p-3 sm:p-4 rounded-2xl border flex flex-wrap items-center gap-2 transition ${
+                puzzleStatus === "correct"
+                  ? "bg-emerald-500/10 border-emerald-500/50 ring-2 ring-emerald-500/30 shadow-md shadow-emerald-500/10"
+                  : puzzleStatus === "incorrect"
+                  ? "bg-rose-500/10 border-rose-500/50 ring-2 ring-rose-500/30"
+                  : "bg-white dark:bg-stone-900/90 border-indigo-500/30 shadow-inner"
+              }`}
+            >
+              {selectedTokens.length === 0 ? (
+                <span className="text-stone-400 text-xs sm:text-sm italic mx-auto">
+                  Ketuk kepingan kata & partikel di bawah untuk menyusun kalimat...
+                </span>
+              ) : (
+                selectedTokens.map((tok, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleUnselectToken(tok, idx)}
+                    className="px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-rose-600 text-white font-extrabold text-sm sm:text-base shadow-sm hover:scale-105 active:scale-95 transition flex items-center gap-1.5 group/chip animate-in fade-in zoom-in-95 duration-150"
+                    title="Klik untuk kembalikan ke tumpukan"
+                  >
+                    <span>{tok}</span>
+                    <span className="text-xs opacity-70 group-hover/chip:opacity-100">✕</span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* FEEDBACK STATUS ALERT */}
+          {puzzleStatus === "correct" && (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-black text-emerald-700 dark:text-emerald-300">
+                <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-500" />
+                <span>🎉 Luar Biasa! Susunan kalimat tepat dan sempurna! (+10 XP)</span>
+              </div>
+              <button
+                onClick={() => puzzle && speak(puzzle.sentence)}
+                className="p-2 rounded-xl bg-emerald-500 text-white hover:scale-105 transition shrink-0"
+                title="Dengarkan pelafalan audio"
+              >
+                <Volume2 className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {puzzleStatus === "incorrect" && (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-rose-500/15 border border-rose-500/40 flex items-center gap-2 text-xs sm:text-sm font-black text-rose-700 dark:text-rose-300 animate-in fade-in shake">
+              <XCircle className="w-5 h-5 shrink-0 text-rose-500" />
+              <span>Susunan masih belum pas. Perhatikan posisi partikel dan kata kerjanya!</span>
+            </div>
+          )}
+
+          {/* POOL OF SCRAMBLED WORDS & PARTICLES */}
+          <div className="space-y-2">
+            <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Kepingan Kata & Partikel ({availableTokens.length}):</span>
+              <span className="text-[10px] text-stone-400">
+                Setiap kata dan partikel telah dipisahkan
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 min-h-[50px] p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">
+              {availableTokens.map((tok, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSelectToken(tok, idx)}
+                  className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-extrabold text-sm sm:text-base border border-stone-200 dark:border-stone-700 shadow-sm hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:scale-105 active:scale-95 transition"
+                >
+                  {tok}
+                </button>
+              ))}
+              {availableTokens.length === 0 && selectedTokens.length > 0 && (
+                <span className="text-xs text-stone-400 italic mx-auto">
+                  Semua kepingan sudah dirangkai. Klik tombol &ldquo;Cek Susunan&rdquo; di bawah!
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* ACTION CONTROLS BUTTONS */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-black/10 dark:border-white/10">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleCheck}
+                disabled={selectedTokens.length === 0}
+                className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white font-extrabold text-sm shadow-lg shadow-indigo-500/25 transition flex items-center gap-2"
+              >
+                <Check className="w-4 h-4" />
+                Cek Susunan
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-600 dark:text-stone-300 transition"
+                title="Acak Ulang Kepingan Kata"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={handleRevealSolution}
+                className="px-3.5 py-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-600 dark:text-stone-300 font-bold text-xs transition"
+                title="Bantuan susunan yang benar"
+              >
+                Lihat Kunci
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePrevQuestion}
+                className="px-4 py-3 rounded-2xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-stone-700 dark:text-stone-200 font-extrabold text-xs transition"
+              >
+                ← Sebelumnya
+              </button>
+              <button
+                onClick={handleNextQuestion}
+                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-black text-xs shadow-md transition flex items-center gap-1.5"
+              >
+                <span>Soal Berikutnya</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
       </main>
 
       {/* FOOTER */}
