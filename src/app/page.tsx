@@ -34,6 +34,13 @@ export default function HomePage() {
           <div className="flex items-center gap-2.5 sm:gap-3">
             <ThemeSwitcher />
             <Link
+              href="/bunpou"
+              className="text-xs font-bold px-3 py-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:scale-105 transition flex items-center gap-1.5 shadow-sm"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              文法 Bunpou
+            </Link>
+            <Link
               href="/rapor"
               className="text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:scale-105 transition flex items-center gap-1.5 shadow-sm"
             >
@@ -110,6 +117,12 @@ export default function HomePage() {
               >
                 🎴 Flashcard 3D
               </Link>
+              <Link
+                href="/bunpou"
+                className="px-6 py-3 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-sm shadow-sm hover:scale-105 transition inline-flex items-center gap-2"
+              >
+                📖 IRODORI文法リスト
+              </Link>
             </div>
           </div>
 
@@ -159,8 +172,8 @@ export default function HomePage() {
           </Link>
         </section>
 
-        {/* 4 CORE MODULES GRID */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 5 CORE MODULES GRID */}
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {/* Card 1: CBT Simulation */}
           <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
             <div>
@@ -180,7 +193,7 @@ export default function HomePage() {
           {/* Card 2: 3D Flashcard */}
           <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-4">
                 <Sparkles className="w-6 h-6" />
               </div>
               <h3 className="font-extrabold text-lg">Flashcard Kosakata 3D</h3>
@@ -188,7 +201,7 @@ export default function HomePage() {
                 Kartu bolak-balik 3D dengan audio pelafalan asli, sistem Spaced Repetition (SRS), dan kuis kilat.
               </p>
             </div>
-            <Link href="/flashcard" className="text-xs font-black text-amber-500 hover:underline flex items-center gap-1">
+            <Link href="/flashcard" className="text-xs font-black text-rose-500 hover:underline flex items-center gap-1">
               Buka Flashcard ›
             </Link>
           </div>
@@ -196,7 +209,7 @@ export default function HomePage() {
           {/* Card 3: Kanji Studio */}
           <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 mb-4">
                 <BookOpen className="w-6 h-6" />
               </div>
               <h3 className="font-extrabold text-lg">Studio Huruf Kanji</h3>
@@ -204,16 +217,35 @@ export default function HomePage() {
                 Animasi urutan goresan (Stroke Order), latihan kotak 20-grid, dan lembar print-out A4 presisi.
               </p>
             </div>
-            <Link href="/kanji" className="text-xs font-black text-amber-500 hover:underline flex items-center gap-1">
+            <Link href="/kanji" className="text-xs font-black text-purple-500 hover:underline flex items-center gap-1">
               Masuk Studio Kanji ›
             </Link>
           </div>
 
-          {/* Card 4: Modul LMS & LKPD */}
+          {/* Card 4: IRODORI文法リスト */}
+          <div className="clay-card p-6 rounded-2xl border border-sky-500/30 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition bg-gradient-to-b from-sky-500/5 to-transparent">
+            <div>
+              <div className="w-12 h-12 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-500 mb-4">
+                <BookOpen className="w-6 h-6" />
+              </div>
+              <div className="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-300 border border-sky-500/30 mb-1">
+                全264文型
+              </div>
+              <h3 className="font-extrabold text-lg">IRODORI文法リスト</h3>
+              <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                264 pola kalimat lengkap A1, A2.1, dan A2.2. Rumus tata bahasa, contoh audio otentik, dan padanan JF Marugoto.
+              </p>
+            </div>
+            <Link href="/bunpou" className="text-xs font-black text-sky-500 hover:underline flex items-center gap-1">
+              Buka 文法リスト ›
+            </Link>
+          </div>
+
+          {/* Card 5: Modul LMS & LKPD */}
           <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
             <div>
               <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4">
-                <BookOpen className="w-6 h-6" />
+                <Layers className="w-6 h-6" />
               </div>
               <h3 className="font-extrabold text-lg">Modul LMS & LKPD</h3>
               <p className="text-xs opacity-75 mt-2 leading-relaxed">

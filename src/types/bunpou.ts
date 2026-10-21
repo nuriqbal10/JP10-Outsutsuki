@@ -1,0 +1,14 @@
+export interface BunpouItem {
+  id: string;
+  level: "a1" | "a2-1" | "a2-2";
+  levelJapanese: "入門" | "初級1" | "初級2";
+  lesson: number;
+  topic: string;
+  lessonTitle: string;
+  num: string;
+  pattern: string;
+  example: string;
+  marugoto: string;
+}
+
+export type BunpouLevelFilter = "all" | "a1" | "a2-1" | "a2-2";
