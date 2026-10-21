@@ -294,7 +294,7 @@ export default function BunpouCard({
       {/* 6. CALL-TO-ACTION: MINI TEST & PUZZLE MERANGKAI */}
       <div className="pt-2">
         <Link
-          href={`/bunpou/test?id=${bunpou.id}`}
+          href={`/bunpou-test?id=${bunpou.id}`}
           className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold text-xs shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2"
         >
           <Puzzle className="w-4 h-4" />

@@ -182,7 +182,7 @@ export default function IrodoriBunpouPage() {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/bunpou/test"
+              href="/bunpou-test"
               className="text-xs font-bold px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 transition inline-flex items-center gap-1.5 shadow-sm"
             >
               <Puzzle className="w-3.5 h-3.5" />
@@ -241,7 +241,7 @@ export default function IrodoriBunpouPage() {
               {/* Arena Mini Test CTA */}
               <div className="mt-5 flex flex-wrap items-center gap-3">
                 <Link
-                  href="/bunpou/test"
+                  href="/bunpou-test"
                   className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-xs shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition inline-flex items-center gap-2"
                 >
                   <Puzzle className="w-4 h-4" />
