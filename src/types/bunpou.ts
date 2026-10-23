@@ -3,6 +3,7 @@ export interface BunpouPuzzle {
   translation: string;
   tokens: string[];
   shuffledTokens?: string[];
+  variants?: BunpouPuzzle[];
 }
 
 export interface BunpouConnectionForm {

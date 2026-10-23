@@ -272,7 +272,14 @@ export function generateBunpouPuzzleQuestions(params: {
 
   return selectedItems.map(({ item: target, diff }) => {
     const puzzle = target.puzzle!;
-    const correctSentence = puzzle.sentence;
+    const variants = (puzzle as any).variants as { sentence: string; translation: string; tokens: string[] }[] | undefined;
+    const selectedVariant = variants && variants.length > 0
+      ? variants[Math.floor(Math.random() * variants.length)]
+      : puzzle;
+
+    const correctSentence = selectedVariant.sentence;
+    const correctTranslation = selectedVariant.translation;
+    const puzzleTokens = selectedVariant.tokens;
 
     // Distractors from other bunpou items
     const otherSentences = pool
@@ -294,7 +301,7 @@ export function generateBunpouPuzzleQuestions(params: {
     return {
       questionType: "meaning",
       prompt: "Susun Pola Kalimat JFT Sesuai Arti:",
-      display: puzzle.translation,
+      display: correctTranslation,
       subDisplay: target.formulaDetailed || target.pattern,
       ja: correctSentence,
       correct: correctSentence,
@@ -302,9 +309,9 @@ export function generateBunpouPuzzleQuestions(params: {
       pos: "bunpou_puzzle",
       level: target.level.toUpperCase(),
       chapter: target.lesson,
-      puzzleTokens: puzzle.tokens,
+      puzzleTokens,
       puzzleSentence: correctSentence,
-      puzzleTranslation: puzzle.translation,
+      puzzleTranslation: correctTranslation,
       pattern: target.pattern,
       formulaDetailed: target.formulaDetailed,
       usageRule: target.usageRule,

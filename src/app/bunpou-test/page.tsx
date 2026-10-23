@@ -68,7 +68,8 @@ export default function BunpouTestPage() {
   }, [filteredItems]);
 
   const currentItem: BunpouItem = filteredItems[currentIndex] || allBunpou[0];
-  const puzzle = currentItem?.puzzle;
+  const [activeVariant, setActiveVariant] = useState<any>(null);
+  const puzzle = activeVariant || currentItem?.puzzle;
 
   // Puzzle State
   const [availableTokens, setAvailableTokens] = useState<string[]>([]);
@@ -77,10 +78,17 @@ export default function BunpouTestPage() {
   const [showHint, setShowHint] = useState<boolean>(false);
   const [showReference, setShowReference] = useState<boolean>(false);
 
-  // Initialize/shuffle puzzle tokens whenever currentItem changes
+  // Initialize/shuffle puzzle tokens whenever currentItem changes (supports 2-5 variants)
   useEffect(() => {
-    if (puzzle && puzzle.tokens) {
-      const shuf = [...(puzzle.shuffledTokens || puzzle.tokens)];
+    if (currentItem?.puzzle) {
+      const p = currentItem.puzzle;
+      const variants = p.variants;
+      const chosen = variants && variants.length > 0
+        ? variants[Math.floor(Math.random() * variants.length)]
+        : p;
+      setActiveVariant(chosen);
+
+      const shuf = [...(chosen.shuffledTokens || chosen.tokens)];
       // Extra shuffle on client
       for (let i = shuf.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -121,8 +129,8 @@ export default function BunpouTestPage() {
 
   const handleCheck = () => {
     if (!puzzle) return;
-    const constructed = selectedTokens.join("").replace(/[、。！？\s]/g, "");
-    const target = puzzle.sentence.replace(/[、。！？\s]/g, "");
+    const constructed = selectedTokens.join("").replace(/[\s。、？！\?\!「」\(\)（）]/g, "").trim();
+    const target = puzzle.sentence.replace(/[\s。、？！\?\!「」\(\)（）]/g, "").trim();
 
     if (constructed === target) {
       setPuzzleStatus("correct");

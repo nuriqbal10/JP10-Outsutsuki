@@ -335,7 +335,7 @@ export default function BunpouPuzzleBattleArena({
     if (!currentQ || !currentQ.puzzleSentence) return;
 
     const userClean = cleanJapaneseText(placedTokens.join(""));
-    const correctClean = cleanJapaneseText(currentQ.puzzleSentence);
+    const correctClean = cleanJapaneseText(currentQ.puzzleSentence || "");
 
     const isMatch = userClean === correctClean;
     const timeSpent = Math.max(1, 30 - timeLeft);
@@ -991,7 +991,7 @@ export default function BunpouPuzzleBattleArena({
             {feedback === "wrong" && (
               <div className="p-3.5 rounded-2xl bg-red-950/80 border border-red-500/60 text-red-300 text-xs font-bold flex items-center gap-2 shadow-lg">
                 <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
-                <span>Susunan kurang tepat! Kunci: {currentQ.puzzleSentence} (Lihat penjelasan di refleksi akhir)</span>
+                <span>Susunan kurang tepat! Kunci: {cleanJapaneseText(currentQ.puzzleSentence || "")} (Lihat penjelasan di refleksi akhir)</span>
               </div>
             )}
 
@@ -1211,7 +1211,7 @@ export default function BunpouPuzzleBattleArena({
                               </button>
                             </div>
                             <div className="font-black text-sm text-amber-300">
-                              {item.question.puzzleSentence}
+                              {cleanJapaneseText(item.question.puzzleSentence || "")}
                             </div>
                             <div className="mt-2 text-[11px] text-purple-200">
                               Rumus: <span className="font-mono">{item.question.formulaDetailed || item.question.subDisplay || item.question.pattern}</span>
