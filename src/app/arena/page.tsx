@@ -68,17 +68,21 @@ export default function ShinobiArenaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-10 font-sans selection:bg-purple-600 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4 md:p-10 font-sans selection:bg-purple-600 selection:text-white arena-dark-surface">
       {/* HEADER ARENA */}
-      <div className="max-w-5xl mx-auto bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-950 rounded-2xl p-6 shadow-2xl border border-purple-500/30 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur">
-        <div>
-          <div className="flex items-center gap-3">
+      <div className="max-w-5xl mx-auto bg-gradient-to-r from-[#170a2c] via-[#220d3f] to-[#120824] rounded-3xl p-6 shadow-2xl border-2 border-purple-500/50 mb-8 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur relative overflow-hidden">
+        {/* Glow Effects */}
+        <div className="absolute -top-16 -left-16 w-48 h-48 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-16 -right-16 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10">
+          <div className="flex items-center gap-3.5">
             <span className="text-4xl shadow-inner">🥷</span>
             <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                SHINOBI ARENA • 大筒木クラス
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white flex items-center gap-2 drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)]">
+                SHINOBI ARENA <span className="text-amber-400">• 大筒木クラス</span>
               </h1>
-              <p className="text-purple-300 text-sm">
+              <p className="text-purple-200 text-sm font-semibold mt-0.5">
                 Pusat Latihan Tempur Kotoba, Pola Kalimat Bunpou & Simulasi JFT-Basic
               </p>
             </div>
@@ -86,22 +90,22 @@ export default function ShinobiArenaPage() {
         </div>
 
         {/* STATUS KARTU PROFIL XP */}
-        <div className="bg-slate-900/80 backdrop-blur border border-purple-500/40 rounded-xl p-4 flex items-center gap-4 w-full md:w-auto shadow-lg">
-          <div className="text-3xl font-black text-amber-400">{gamerState.rankBadge}</div>
+        <div className="relative z-10 bg-slate-900/90 backdrop-blur border-2 border-purple-500/50 rounded-2xl p-4 flex items-center gap-4 w-full md:w-auto shadow-xl">
+          <div className="text-3xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.6)]">{gamerState.rankBadge}</div>
           <div>
-            <div className="text-xs text-slate-400 uppercase tracking-wider">
-              {gamerState.rankTitle} (Lv. {gamerState.level})
+            <div className="text-xs text-slate-300 uppercase tracking-wider font-extrabold">
+              {gamerState.rankTitle} <span className="text-amber-400 font-black">(Lv. {gamerState.level})</span>
             </div>
-            <div className="text-lg font-bold text-white">
+            <div className="text-lg font-black text-white">
               {gamerState.xp} XP{" "}
-              <span className="text-xs text-emerald-400 font-normal">
+              <span className="text-xs text-emerald-400 font-bold ml-1">
                 🔥 {gamerState.dailyStreak} Hari Streak
               </span>
             </div>
             {/* Progress bar */}
-            <div className="w-36 bg-slate-800 h-2 rounded-full mt-1 overflow-hidden">
+            <div className="w-36 bg-slate-950 h-2.5 rounded-full mt-1.5 overflow-hidden border border-slate-700">
               <div
-                className="bg-gradient-to-r from-amber-500 to-emerald-400 h-full transition-all duration-500"
+                className="bg-gradient-to-r from-amber-400 via-orange-400 to-emerald-400 h-full transition-all duration-500"
                 style={{ width: `${gamerState.progressPercent}%` }}
               />
             </div>
@@ -115,12 +119,12 @@ export default function ShinobiArenaPage() {
           onClick={() => setActiveTab("puzzle_battle")}
           className={`px-4 py-2.5 rounded-xl font-black text-xs md:text-sm transition-all flex items-center gap-2 ${
             activeTab === "puzzle_battle"
-              ? "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 shadow-lg shadow-orange-500/30 scale-[1.02]"
-              : "bg-slate-900 text-amber-400 hover:bg-slate-800 border border-amber-500/30"
+              ? "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 scale-[1.02]"
+              : "bg-slate-900/90 text-amber-300 hover:text-white hover:bg-slate-800 border border-amber-500/40"
           }`}
         >
           🧩 Bunpou Puzzle Battle
-          <span className="text-[10px] uppercase px-1.5 py-0.2 rounded-full bg-black/20 font-bold">
+          <span className="text-[10px] uppercase px-1.5 py-0.2 rounded-full bg-black/30 font-black">
             Baru
           </span>
         </button>
@@ -129,8 +133,8 @@ export default function ShinobiArenaPage() {
           onClick={() => setActiveTab("hub")}
           className={`px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${
             activeTab === "hub"
-              ? "bg-purple-600 text-white shadow-lg shadow-purple-600/40"
-              : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] ring-1 ring-purple-400/60 font-black scale-[1.02]"
+              : "bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 border border-slate-700/80"
           }`}
         >
           ⚡ Beranda Arena
@@ -140,8 +144,8 @@ export default function ShinobiArenaPage() {
           onClick={() => setActiveTab("duel")}
           className={`px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${
             activeTab === "duel"
-              ? "bg-purple-600 text-white shadow-lg shadow-purple-600/40"
-              : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] ring-1 ring-purple-400/60 font-black scale-[1.02]"
+              : "bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 border border-slate-700/80"
           }`}
         >
           ⚔️ Duel 1v1 Kotoba
@@ -151,8 +155,8 @@ export default function ShinobiArenaPage() {
           onClick={() => setActiveTab("team")}
           className={`px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${
             activeTab === "team"
-              ? "bg-purple-600 text-white shadow-lg shadow-purple-600/40"
-              : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] ring-1 ring-purple-400/60 font-black scale-[1.02]"
+              : "bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 border border-slate-700/80"
           }`}
         >
           🛡️ Team Battle Squad
@@ -162,8 +166,8 @@ export default function ShinobiArenaPage() {
           onClick={() => setActiveTab("badges")}
           className={`px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm transition-all ${
             activeTab === "badges"
-              ? "bg-purple-600 text-white shadow-lg shadow-purple-600/40"
-              : "bg-slate-900 text-slate-400 hover:bg-slate-800"
+              ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)] ring-1 ring-purple-400/60 font-black scale-[1.02]"
+              : "bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 border border-slate-700/80"
           }`}
         >
           🏆 Koleksi Badge ({gamerState.badges.length})

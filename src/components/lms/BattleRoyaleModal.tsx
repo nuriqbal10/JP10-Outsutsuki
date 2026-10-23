@@ -1363,12 +1363,12 @@ export default function BattleRoyaleModal({
   const rematchAgreedCount = currentParticipants.filter((p) => p.rematchVote).length;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-5">
-      <div className="clay-card rounded-3xl p-5 sm:p-8 max-w-2xl w-full border border-rose-500/40 relative shadow-2xl flex flex-col gap-6 animate-in zoom-in-95 max-h-[94vh] overflow-y-auto custom-scrollbar">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl p-3 sm:p-5 arena-dark-surface">
+      <div className="bg-gradient-to-b from-[#180a2b] via-[#100c1e] to-[#0a0714] text-slate-100 rounded-3xl p-5 sm:p-8 max-w-2xl w-full border-2 border-purple-500/60 relative shadow-[0_0_60px_rgba(168,85,247,0.35)] flex flex-col gap-6 animate-in zoom-in-95 max-h-[94vh] overflow-y-auto custom-scrollbar">
         {/* CLOSE BUTTON */}
         <button
           onClick={handleCloseModal}
-          className="absolute right-5 top-5 p-1.5 rounded-xl bg-black/10 dark:bg-white/10 hover:opacity-100 opacity-60 transition"
+          className="absolute right-5 top-5 p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700 transition"
           title="Tutup Modal"
         >
           <X className="w-5 h-5" />
@@ -1416,51 +1416,57 @@ export default function BattleRoyaleModal({
         {/* LOBBY STATE */}
         {battleState === "lobby" && (
           <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-3 border-b border-current/10 pb-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center shadow-lg shrink-0">
+            <div className="flex items-center gap-3 border-b border-purple-500/30 pb-4">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-500 text-white flex items-center justify-center shadow-[0_0_15px_rgba(244,63,94,0.5)] shrink-0">
                 <Swords className="w-6 h-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl sm:text-2xl font-black">Lobi Battle Royale Real-Member</h2>
-                  <span className="text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
-                    <Radio className="w-3 h-3 animate-pulse" /> Live Arena
+                  <h2 className="text-xl sm:text-2xl font-black text-white drop-shadow-[0_2px_8px_rgba(245,158,11,0.4)]">
+                    Lobi Battle Royale Real-Member
+                  </h2>
+                  <span className="text-[10px] font-black uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
+                    <Radio className="w-3 h-3 animate-pulse text-emerald-400" /> Live Arena
                   </span>
                 </div>
-                <p className="text-xs opacity-75 mt-0.5">
+                <p className="text-xs text-purple-200/90 font-medium mt-0.5">
                   Tantang siswa online dengan sistem skor Kahoot (kecepatan menjawab menentukan poin bonus)!
                 </p>
               </div>
             </div>
 
             {/* RADAR SISWA ONLINE */}
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col gap-3">
+            <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/50 flex flex-col gap-3 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-black uppercase text-emerald-400">
-                  <Radio className="w-4 h-4 animate-pulse" /> Siswa Online di Akademi ({onlineStudents.length})
+                <div className="flex items-center gap-2 text-xs font-black uppercase text-emerald-300">
+                  <Radio className="w-4 h-4 animate-pulse text-emerald-400" /> Siswa Online di Akademi ({onlineStudents.length})
                 </div>
-                <span className="text-[10px] font-mono text-emerald-400 opacity-80">Klik untuk ajak duel</span>
+                <span className="text-[10px] font-mono text-emerald-300 bg-emerald-900/50 px-2 py-0.5 rounded-full border border-emerald-500/40">
+                  Klik untuk ajak duel
+                </span>
               </div>
 
               {onlineStudents.length === 0 ? (
-                <div className="text-center py-2 text-xs opacity-60">Belum ada siswa lain yang online saat ini.</div>
+                <div className="text-center py-3 text-xs text-emerald-200 font-semibold bg-emerald-950/60 rounded-xl border border-emerald-800/40">
+                  Belum ada siswa lain yang online saat ini.
+                </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto custom-scrollbar">
                   {onlineStudents.map((stu) => (
                     <div
                       key={stu.email}
-                      className="p-2.5 rounded-xl bg-black/10 dark:bg-white/5 border border-current/10 flex items-center justify-between gap-2"
+                      className="p-2.5 rounded-xl bg-slate-900/90 border border-emerald-500/40 flex items-center justify-between gap-2 shadow"
                     >
                       <div className="flex items-center gap-2 overflow-hidden">
                         <span className="text-xl">{stu.avatar}</span>
                         <div className="overflow-hidden">
-                          <div className="text-xs font-black truncate">{stu.name}</div>
-                          <span className="text-[9px] font-mono text-emerald-400">Online</span>
+                          <div className="text-xs font-black text-white truncate">{stu.name}</div>
+                          <span className="text-[9px] font-mono text-emerald-400 font-bold">🟢 Online</span>
                         </div>
                       </div>
                       <button
                         onClick={() => handleChallengeStudent(stu)}
-                        className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0"
+                        className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shrink-0 shadow"
                       >
                         <Swords className="w-3 h-3" /> Ajak Duel
                       </button>
@@ -1471,19 +1477,19 @@ export default function BattleRoyaleModal({
             </div>
 
             {/* IDENTITAS AKUN */}
-            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
-                <UserCheck className="w-4 h-4" /> Identitas Akun Siswa
+            <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex flex-col gap-3 shadow-lg">
+              <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-400">
+                <UserCheck className="w-4 h-4 text-amber-400" /> Identitas Akun Siswa
               </div>
               {user ? (
-                <div className="flex items-center justify-between p-3 rounded-xl bg-black/10 dark:bg-black/30 border">
+                <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-xl font-black">
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-xl font-black border border-amber-500/40 shadow-inner">
                       {myAvatar}
                     </div>
                     <div>
-                      <h4 className="text-sm font-black">{myName || "Siswa Terdaftar"}</h4>
-                      <p className="text-[11px] opacity-70 font-mono">{myEmail}</p>
+                      <h4 className="text-sm font-black text-white">{myName || "Siswa Terdaftar"}</h4>
+                      <p className="text-[11px] text-slate-400 font-mono font-medium">{myEmail}</p>
                     </div>
                   </div>
                 </div>
@@ -1494,54 +1500,54 @@ export default function BattleRoyaleModal({
                     value={myName}
                     onChange={(e) => setMyName(e.target.value)}
                     placeholder="Nama lengkap..."
-                    className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
+                    className="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs font-bold outline-none focus:border-amber-400"
                   />
                   <input
                     type="email"
                     value={myEmail}
                     onChange={(e) => setMyEmail(e.target.value)}
                     placeholder="Email siswa..."
-                    className="w-full p-2.5 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-mono font-bold"
+                    className="w-full p-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white text-xs font-mono font-bold outline-none focus:border-amber-400"
                   />
                 </div>
               )}
             </div>
 
             {/* KUSTOMISASI SOAL */}
-            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col gap-3">
-              <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-500">
-                <Filter className="w-4 h-4" /> Kustomisasi Soal Pertandingan
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/30 to-purple-950/30 border border-amber-500/50 flex flex-col gap-3 shadow-lg">
+              <div className="flex items-center gap-2 text-xs font-black uppercase text-amber-300">
+                <Filter className="w-4 h-4 text-amber-400" /> Kustomisasi Soal Pertandingan
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <select
                   disabled={isJoined}
                   value={topicLevel}
                   onChange={(e) => handleUpdateTopic(e.target.value as VocabLevel, topicChapter, topicCategory)}
-                  className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
+                  className="w-full p-2.5 rounded-xl border border-amber-500/50 bg-slate-950 text-amber-200 text-xs font-black outline-none focus:ring-2 focus:ring-amber-400 shadow cursor-pointer disabled:opacity-60"
                 >
-                  <option value="A2.2">Level A2.2</option>
-                  <option value="A2.1">Level A2.1</option>
-                  <option value="A1">Level A1</option>
+                  <option value="A2.2" className="bg-slate-900 text-amber-100">Level A2.2 (初級2)</option>
+                  <option value="A2.1" className="bg-slate-900 text-amber-100">Level A2.1 (初級1)</option>
+                  <option value="A1" className="bg-slate-900 text-amber-100">Level A1 (入門)</option>
                 </select>
                 <select
                   disabled={isJoined}
                   value={topicChapter}
                   onChange={(e) => handleUpdateTopic(topicLevel, parseInt(e.target.value, 10), topicCategory)}
-                  className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
+                  className="w-full p-2.5 rounded-xl border border-amber-500/50 bg-slate-950 text-amber-200 text-xs font-black outline-none focus:ring-2 focus:ring-amber-400 shadow cursor-pointer disabled:opacity-60"
                 >
-                  <option value={0}>Semua Bab (1 - 18)</option>
+                  <option value={0} className="bg-slate-900 text-amber-100">Semua Bab (1 - 18)</option>
                   {Array.from({ length: 18 }, (_, i) => i + 1).map((ch) => (
-                    <option key={ch} value={ch}>Bab {ch}</option>
+                    <option key={ch} value={ch} className="bg-slate-900 text-amber-100">Bab {ch}</option>
                   ))}
                 </select>
                 <select
                   disabled={isJoined}
                   value={topicCategory}
                   onChange={(e) => handleUpdateTopic(topicLevel, topicChapter, e.target.value as VocabCategory)}
-                  className="w-full p-2 rounded-xl border border-current/20 bg-white dark:bg-stone-900 text-xs font-bold"
+                  className="w-full p-2.5 rounded-xl border border-amber-500/50 bg-slate-950 text-amber-200 text-xs font-black outline-none focus:ring-2 focus:ring-amber-400 shadow cursor-pointer disabled:opacity-60"
                 >
                   {CATEGORY_OPTIONS.map((cat) => (
-                    <option key={cat.key} value={cat.key}>{cat.icon} {cat.label}</option>
+                    <option key={cat.key} value={cat.key} className="bg-slate-900 text-amber-100">{cat.icon} {cat.label}</option>
                   ))}
                 </select>
               </div>
@@ -1549,15 +1555,15 @@ export default function BattleRoyaleModal({
 
             {/* AVATAR & ROOM */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border flex flex-col gap-2">
+              <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex flex-col gap-2 shadow-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase opacity-75">
+                  <span className="text-[10px] font-black uppercase text-slate-300">
                     Pilih Avatar ({tournamentWins}x Juara 🏆)
                   </span>
                   <button
                     type="button"
                     onClick={() => setShowTournamentShowcase(true)}
-                    className="text-[10px] font-black text-amber-500 hover:underline flex items-center gap-1"
+                    className="text-[10px] font-black text-amber-400 hover:underline flex items-center gap-1"
                   >
                     <Trophy className="w-3 h-3" /> Hadiah Turnamen
                   </button>
@@ -1573,8 +1579,8 @@ export default function BattleRoyaleModal({
                       title={av.label}
                       className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition ${
                         myAvatar === av.emoji
-                          ? "bg-amber-500 text-black scale-110 shadow-md ring-2 ring-amber-300"
-                          : "bg-black/5 dark:bg-white/5 opacity-75 hover:opacity-100"
+                          ? "bg-amber-400 text-black scale-110 shadow-lg ring-2 ring-amber-300 font-black"
+                          : "bg-slate-800 text-slate-200 border border-slate-700 hover:border-amber-400 hover:text-white"
                       }`}
                     >
                       {av.emoji}
@@ -1582,7 +1588,7 @@ export default function BattleRoyaleModal({
                   ))}
 
                   {/* Separator */}
-                  <div className="w-[1px] h-6 bg-current/20 shrink-0 mx-0.5" />
+                  <div className="w-[1px] h-6 bg-slate-700 shrink-0 mx-0.5" />
 
                   {/* Exclusive Tournament Avatars */}
                   {EXCLUSIVE_TOURNAMENT_AVATARS.map((av) => {
@@ -1595,15 +1601,15 @@ export default function BattleRoyaleModal({
                         title={isUnlocked ? `${av.label} (Terbuka!)` : `🔒 Terkunci: Butuh ${av.winsRequired}x Juara Turnamen`}
                         className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 relative transition ${
                           myAvatar === av.emoji
-                            ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-black scale-110 shadow-lg ring-2 ring-amber-400"
+                            ? "bg-gradient-to-r from-amber-400 to-yellow-500 text-black scale-110 shadow-lg ring-2 ring-amber-400 font-black"
                             : isUnlocked
-                            ? "bg-amber-500/20 border border-amber-400/40 opacity-90 hover:opacity-100 hover:scale-105"
-                            : "bg-black/10 dark:bg-white/5 opacity-30 cursor-not-allowed grayscale"
+                            ? "bg-amber-500/20 border border-amber-400/50 text-white hover:scale-105"
+                            : "bg-slate-800/40 text-slate-600 border border-slate-800 opacity-40 cursor-not-allowed grayscale"
                         }`}
                       >
                         {av.emoji}
                         {!isUnlocked && (
-                          <span className="absolute -bottom-1 -right-1 text-[9px] bg-black/80 rounded-full px-0.5">
+                          <span className="absolute -bottom-1 -right-1 text-[9px] bg-black/90 rounded-full px-0.5 border border-slate-700">
                             🔒
                           </span>
                         )}
@@ -1613,12 +1619,12 @@ export default function BattleRoyaleModal({
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border flex flex-col gap-2">
+              <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex flex-col gap-2 shadow-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-black uppercase opacity-75">Kode Room</span>
+                  <span className="text-[10px] font-black uppercase text-slate-300">Kode Room</span>
                   <button
                     onClick={() => setIsUsingCustomRoom(!isUsingCustomRoom)}
-                    className="text-[10px] font-bold text-amber-500 hover:underline"
+                    className="text-[10px] font-black text-amber-400 hover:underline"
                   >
                     {isUsingCustomRoom ? "Pakai Lobi Umum" : "Pakai Kode Khusus"}
                   </button>
@@ -1629,38 +1635,59 @@ export default function BattleRoyaleModal({
                     value={customRoomCode}
                     onChange={(e) => setCustomRoomCode(e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, ""))}
                     placeholder="Contoh: DUEL01"
-                    className="w-full p-2 rounded-xl border border-amber-500/40 bg-white dark:bg-stone-900 text-xs font-mono font-black uppercase"
+                    className="w-full p-2.5 rounded-xl border border-amber-500/60 bg-slate-950 text-amber-200 text-xs font-mono font-black uppercase outline-none focus:ring-2 focus:ring-amber-400"
                   />
+                )}
+                {!isUsingCustomRoom && (
+                  <div className="text-[11px] font-medium text-slate-400 py-1">
+                    Mode Lobi Otomatis: Anda akan dipertemukan otomatis dengan teman sekelas yang sedang online.
+                  </div>
                 )}
               </div>
             </div>
 
             {/* MODE SELECTION */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 rounded-2xl bg-black/10 dark:bg-white/5 border">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 p-1.5 rounded-2xl bg-slate-950/90 border border-slate-800 shadow-inner">
               <button
+                type="button"
                 onClick={() => handleSelectMode("1vs1")}
-                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "1vs1" ? "bg-rose-500 text-white" : "opacity-70"}`}
+                className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  mode === "1vs1"
+                    ? "bg-gradient-to-r from-rose-600 to-red-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.5)] ring-1 ring-rose-400 scale-[1.02]"
+                    : "bg-slate-800/80 text-slate-200 hover:text-white hover:bg-slate-700 border border-slate-700 font-bold"
+                }`}
               >
                 ⚔️ 1 vs 1 Duel
               </button>
               <button
+                type="button"
                 onClick={() => handleSelectMode("group")}
-                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "group" ? "bg-indigo-600 text-white" : "opacity-70"}`}
+                className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  mode === "group"
+                    ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.5)] ring-1 ring-blue-400 scale-[1.02]"
+                    : "bg-slate-800/80 text-slate-200 hover:text-white hover:bg-slate-700 border border-slate-700 font-bold"
+                }`}
               >
                 🛡️ 2 vs 2 Tim
               </button>
               <button
+                type="button"
                 onClick={() => handleSelectMode("all_members")}
-                className={`py-2 px-2.5 rounded-xl text-xs font-black transition ${mode === "all_members" ? "bg-amber-500 text-stone-950" : "opacity-70"}`}
+                className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  mode === "all_members"
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 shadow-[0_0_15px_rgba(245,158,11,0.5)] ring-1 ring-amber-300 scale-[1.02]"
+                    : "bg-slate-800/80 text-slate-200 hover:text-white hover:bg-slate-700 border border-slate-700 font-bold"
+                }`}
               >
                 👑 Survival
               </button>
               <button
+                type="button"
                 onClick={() => handleSelectMode("tournament")}
-                className={`py-2 px-2.5 rounded-xl text-xs font-black transition flex items-center justify-center gap-1.5 ${
+                className={`py-2.5 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
                   mode === "tournament"
-                    ? "bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-stone-950 shadow-md font-black ring-2 ring-amber-300"
-                    : "opacity-80 text-amber-500 hover:opacity-100"
+                    ? "bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-stone-950 shadow-[0_0_18px_rgba(250,204,21,0.6)] ring-2 ring-yellow-300 font-black scale-[1.02]"
+                    : "bg-slate-800/80 text-amber-300 hover:text-white hover:bg-slate-700 border border-amber-500/30 font-bold"
                 }`}
               >
                 🏆 Turnamen (8P)
@@ -1669,14 +1696,14 @@ export default function BattleRoyaleModal({
 
             {/* TOURNAMENT BANNER IF TOURNAMENT MODE IS ACTIVE */}
             {mode === "tournament" && (
-              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/15 via-yellow-500/10 to-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-3 shadow-md">
                 <div className="flex items-center gap-2.5">
                   <span className="text-2xl animate-bounce">🏆</span>
                   <div>
-                    <h5 className="text-xs font-black text-amber-500 flex items-center gap-1.5">
+                    <h5 className="text-xs font-black text-amber-400 flex items-center gap-1.5">
                       Turnamen Cup 8 Peserta (Sistem Gugur: 8 Besar ➔ Semifinal ➔ Final)
                     </h5>
-                    <p className="text-[10px] opacity-75">
+                    <p className="text-[10px] text-slate-300 mt-0.5">
                       2 orang bertemu acak tiap babak, pemenang melaju ke Semifinal & Grand Final perebutan Trofi Juara!
                     </p>
                   </div>
@@ -1685,14 +1712,14 @@ export default function BattleRoyaleModal({
                   <button
                     type="button"
                     onClick={() => setShowBracketModal(true)}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-500 border border-amber-500/30 hover:scale-105 transition flex items-center gap-1"
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:scale-105 transition flex items-center gap-1"
                   >
                     🏆 Bagan
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowTournamentShowcase(true)}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-500 text-stone-950 hover:scale-105 transition"
+                    className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-amber-400 text-stone-950 hover:scale-105 transition font-black"
                   >
                     Hadiah
                   </button>
@@ -1704,17 +1731,19 @@ export default function BattleRoyaleModal({
             {!isJoined ? (
               <div className="flex flex-col gap-3">
                 {room && room.participants.length > 0 && (
-                  <div className="p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 flex items-center justify-between text-xs">
+                  <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 flex items-center justify-between text-xs shadow-md">
                     <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                      <span className="font-bold opacity-80">Peserta di Ruangan ({room.participants.length}/{room.requiredCount}):</span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="font-extrabold text-slate-200">
+                        Peserta di Ruangan ({room.participants.length}/{room.requiredCount}):
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1.5 font-mono font-bold text-amber-500">
+                    <div className="flex items-center gap-1.5 font-mono font-bold text-amber-400">
                       <div className="flex -space-x-2">
                         {room.participants.slice(0, 5).map((p, i) => (
                           <span
                             key={i}
-                            className="inline-block text-lg bg-black/10 dark:bg-stone-800 rounded-full px-1 border border-current/20"
+                            className="inline-block text-lg bg-slate-800 rounded-full px-1.5 border border-slate-600 shadow"
                             title={`${p.name} ${p.isHost ? "(Room Master 👑)" : ""}`}
                           >
                             {p.avatar}
@@ -1722,7 +1751,7 @@ export default function BattleRoyaleModal({
                         ))}
                       </div>
                       {room.participants.length > 5 && (
-                        <span className="text-[10px] opacity-75">+{room.participants.length - 5}</span>
+                        <span className="text-[10px] text-slate-300 font-bold">+{room.participants.length - 5}</span>
                       )}
                     </div>
                   </div>
@@ -1730,9 +1759,9 @@ export default function BattleRoyaleModal({
                 <button
                   disabled={loadingAction || !myEmail.trim()}
                   onClick={() => handleJoinLobby()}
-                  className="clay-btn-gold py-3.5 rounded-2xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg hover:scale-[1.01] transition"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-stone-950 font-black text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 hover:scale-[1.01] active:scale-[0.98] transition flex items-center justify-center gap-2"
                 >
-                  {loadingAction ? <Loader2 className="w-4 h-4 animate-spin" /> : <LogIn className="w-4 h-4" />}
+                  {loadingAction ? <Loader2 className="w-4 h-4 animate-spin text-stone-950" /> : <LogIn className="w-4 h-4" />}
                   Masuk ke Lobi Pertandingan
                 </button>
               </div>
@@ -2047,8 +2076,8 @@ export default function BattleRoyaleModal({
             </div>
 
             {/* QUESTION - JFT STANDARD FORMAT (TANPA ROMAJI) */}
-            <div className="p-6 rounded-3xl bg-black/5 dark:bg-white/5 border text-center flex flex-col items-center gap-1.5 shadow-sm">
-              <span className="text-[11px] font-black uppercase text-amber-500 tracking-wider px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30">
+            <div className="p-6 rounded-3xl bg-slate-900/90 border-2 border-slate-700/80 text-center flex flex-col items-center gap-2 shadow-xl">
+              <span className="text-[11px] font-black uppercase text-amber-300 tracking-wider px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 shadow-sm">
                 {currentQ.prompt ||
                   (currentQ.questionType === "kanji_to_yomi"
                     ? "Pilih Cara Baca (Yomikata) Kanji:"
@@ -2056,35 +2085,35 @@ export default function BattleRoyaleModal({
                     ? "Pilih Kanji yang Tepat:"
                     : "Tentukan Arti Bahasa Indonesia:")}
               </span>
-              <h3 className="text-3xl sm:text-4xl font-black mt-2 tracking-wide font-japanese">
+              <h3 className="text-3xl sm:text-4xl font-black mt-2 tracking-wide font-japanese text-white drop-shadow-[0_2px_10px_rgba(245,158,11,0.3)]">
                 {currentQ.display || currentQ.ja}
               </h3>
               {currentQ.subDisplay && (
-                <span className="text-xs font-mono font-bold text-amber-500 bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/20 mt-1">
+                <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/20 px-3 py-1 rounded-xl border border-amber-500/40 mt-1">
                   {currentQ.pos === "bunpou_puzzle" ? `【Rumus: ${currentQ.subDisplay}】` : `【よみ: ${currentQ.subDisplay}】`}
                 </span>
               )}
             </div>
 
             {/* OPTIONS */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {currentQ.options.map((opt, idx) => (
                 <button
                   key={idx}
                   disabled={selectedAnswer !== null}
                   onClick={() => handleUserAnswer(opt)}
-                  className={`clay-btn p-3.5 rounded-xl text-xs sm:text-sm font-bold text-left transition flex items-center justify-between ${
+                  className={`p-4 rounded-2xl text-xs sm:text-sm font-black text-left transition-all flex items-center justify-between border-2 shadow-md ${
                     selectedAnswer === opt
                       ? opt === currentQ.correct
-                        ? "bg-emerald-500/30 border-emerald-400 text-emerald-300"
-                        : "bg-rose-500/30 border-rose-400 text-rose-300"
+                        ? "bg-emerald-600/40 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+                        : "bg-rose-600/40 border-rose-400 text-rose-200 ring-2 ring-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.5)]"
                       : selectedAnswer !== null && opt === currentQ.correct
-                      ? "bg-emerald-500/20 border-emerald-400 text-emerald-400 animate-pulse"
-                      : ""
+                      ? "bg-emerald-600/30 border-emerald-400 text-emerald-300 ring-2 ring-emerald-400 animate-pulse"
+                      : "bg-slate-900/90 text-white hover:bg-slate-800 border-slate-700/80 hover:border-amber-400 hover:scale-[1.01]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="font-mono text-amber-400 font-black shrink-0 w-6 h-6 rounded-lg bg-black/10 dark:bg-white/10 flex items-center justify-center text-xs">
+                    <span className="font-mono text-amber-300 font-black shrink-0 w-7 h-7 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xs shadow-inner">
                       {String.fromCharCode(65 + idx)}
                     </span>
                     <span className="font-japanese tracking-wide text-sm truncate">{opt}</span>

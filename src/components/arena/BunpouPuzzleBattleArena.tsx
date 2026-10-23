@@ -480,29 +480,29 @@ export default function BunpouPuzzleBattleArena({
       {/* ==================================================================== */}
       {/* ARENA HEADER & MODE SELECTOR */}
       {/* ==================================================================== */}
-      <div className="bg-gradient-to-r from-slate-950 via-purple-950/80 to-slate-950 border-2 border-purple-500/40 rounded-3xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#140726] via-[#1e0d38] to-[#120622] border-2 border-purple-500/50 rounded-3xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden arena-dark-surface">
         {/* Glowing Ambient Aura */}
-        <div className="absolute -top-24 -left-24 w-52 h-52 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-52 h-52 bg-amber-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -left-24 w-52 h-52 bg-purple-600/30 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-52 h-52 bg-amber-500/25 rounded-full blur-3xl pointer-events-none" />
 
         <div className="flex flex-wrap items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-purple-600 p-0.5 shadow-xl shadow-purple-600/30 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-purple-600 p-0.5 shadow-xl shadow-purple-600/40 flex items-center justify-center">
               <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
                 🧩
               </div>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-purple-200 to-indigo-300 tracking-tight">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-xl md:text-2xl font-black text-amber-300 tracking-tight drop-shadow-[0_2px_10px_rgba(245,158,11,0.5)] flex items-center gap-2">
                   SHINOBI BUNPOU PUZZLE ARENA
                 </h2>
-                <span className="px-2 py-0.5 text-[10px] font-black uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                <span className="px-2.5 py-0.5 text-[10px] font-black uppercase rounded-full bg-amber-400 text-stone-950 border border-amber-300 shadow-sm">
                   30s / Soal
                 </span>
               </div>
-              <p className="text-xs text-purple-200/80">
-                Susun kalimat Irodori dari termudah ke tersulit • Adu kecepatan presisi tata bahasa
+              <p className="text-xs sm:text-sm text-purple-200 font-medium mt-0.5">
+                Susun kalimat Irodori dari termudah ke tersulit • Adu kecepatan & presisi tata bahasa
               </p>
             </div>
           </div>
@@ -513,7 +513,7 @@ export default function BunpouPuzzleBattleArena({
                 const muted = sfx.toggleMute();
                 setIsMuted(muted);
               }}
-              className="p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 transition shadow-md"
+              className="p-2.5 rounded-xl border border-slate-700 bg-slate-900/90 text-slate-200 hover:text-white hover:bg-slate-800 transition shadow-md"
               title={isMuted ? "Aktifkan Audio" : "Matikan Audio"}
             >
               {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
@@ -533,14 +533,14 @@ export default function BunpouPuzzleBattleArena({
 
         {/* MODE TABS (DOJO SOLO VS REALTIME MULTIPLAYER) */}
         {gameState === "lobby" && (
-          <div className="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-purple-500/20 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 pt-4 border-t border-purple-500/30 relative z-10">
             <button
               type="button"
               onClick={() => setArenaMode("solo_dojo")}
-              className={`py-3 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+              className={`py-3.5 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
                 arenaMode === "solo_dojo"
-                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 shadow-lg shadow-orange-500/30 scale-[1.01]"
-                  : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+                  ? "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 scale-[1.01]"
+                  : "bg-slate-900/90 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/80"
               }`}
             >
               🥋 SHINOBI TRAINING DOJO (SOLO VS RIVAL)
@@ -554,13 +554,13 @@ export default function BunpouPuzzleBattleArena({
                   setArenaMode("multiplayer_realtime");
                 }
               }}
-              className={`py-3 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+              className={`py-3.5 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
                 arenaMode === "multiplayer_realtime"
-                  ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 scale-[1.01]"
-                  : "bg-slate-900/80 text-purple-300 hover:text-white border border-purple-500/30"
+                  ? "bg-gradient-to-r from-purple-600 via-fuchsia-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.45)] ring-2 ring-fuchsia-400 scale-[1.01]"
+                  : "bg-slate-900/90 text-purple-200 hover:text-white hover:bg-slate-800 border-2 border-purple-500/40"
               }`}
             >
-              <Swords className="w-4 h-4 text-amber-400" />
+              <Swords className="w-4 h-4 text-amber-300" />
               ⚔️ DUEL REAL-TIME 1v1 (SISWA OTENTIK)
             </button>
           </div>

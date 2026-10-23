@@ -181,31 +181,50 @@ body {
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-theme-heading);
   letter-spacing: -0.015em;
-  color: var(--text-heading) !important;
   font-weight: 800;
 }
 
-/* Light Theme Overrides for perfect contrast */
-[data-theme="milk"] h1,
-[data-theme="milk"] h2,
-[data-theme="milk"] h3,
-[data-theme="milk"] h4,
-[data-theme="ivory"] h1,
-[data-theme="ivory"] h2,
-[data-theme="ivory"] h3,
-[data-theme="ivory"] h4 {
-  color: var(--text-heading) !important;
-  -webkit-text-fill-color: initial !important;
+/* Apply default theme heading color ONLY when no explicit text color or gradient is defined */
+h1:not([class*="text-"]),
+h2:not([class*="text-"]),
+h3:not([class*="text-"]),
+h4:not([class*="text-"]),
+.font-heading:not([class*="text-"]) {
+  color: var(--text-heading);
 }
 
-[data-theme="milk"] p,
-[data-theme="ivory"] p {
-  color: var(--text-body) !important;
+/* Light Theme Overrides for perfect contrast - preserve explicit utility classes & gradients */
+[data-theme="milk"] h1:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="milk"] h2:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="milk"] h3:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="milk"] h4:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="ivory"] h1:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="ivory"] h2:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="ivory"] h3:not([class*="text-"]):not(.bg-clip-text),
+[data-theme="ivory"] h4:not([class*="text-"]):not(.bg-clip-text) {
+  color: var(--text-heading);
 }
 
-[data-theme="milk"] strong,
-[data-theme="ivory"] strong {
-  color: var(--text-heading) !important;
+[data-theme="milk"] p:not([class*="text-"]),
+[data-theme="ivory"] p:not([class*="text-"]) {
+  color: var(--text-body);
+}
+
+[data-theme="milk"] strong:not([class*="text-"]),
+[data-theme="ivory"] strong:not([class*="text-"]) {
+  color: var(--text-heading);
+}
+
+/* Dedicated Protection: Gaming & Dark Arena Surfaces stay vibrant regardless of global theme */
+.arena-dark-surface,
+.arena-dark-surface h1,
+.arena-dark-surface h2,
+.arena-dark-surface h3,
+.arena-dark-surface h4,
+.arena-dark-surface p,
+.arena-dark-surface span,
+.arena-dark-surface strong {
+  -webkit-text-fill-color: unset;
 }
 
 [data-theme="milk"] .clay-card,
