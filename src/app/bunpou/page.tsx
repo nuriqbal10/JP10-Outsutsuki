@@ -18,7 +18,7 @@ import {
   Flame,
   Download,
   Share2,
-  Puzzle,
+  Puzzle, Swords,
   ArrowRight,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
@@ -279,6 +279,14 @@ export default function IrodoriBunpouPage() {
                 >
                   <Puzzle className="w-4 h-4" />
                   <span>🎮 Arena Mini Test & Kotoba Puzzle</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+                <Link
+                  href="/arena"
+                  className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95 transition inline-flex items-center gap-2 ring-1 ring-purple-400/40"
+                >
+                  <Swords className="w-4 h-4" />
+                  <span>⚔️ Shinobi Arena (Bunpou Puzzle Battle 1v1 & Solo)</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

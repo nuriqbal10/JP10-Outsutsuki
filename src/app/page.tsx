@@ -4,7 +4,7 @@ export const runtime = "edge";
 
 import Link from "next/link";
 import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy } from "lucide-react";
+import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy, Swords } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import GamificationBanner from "@/components/lms/GamificationBanner";
 import DailyQuestsLeaderboardSection from "@/components/lms/DailyQuestsLeaderboardSection";
@@ -33,6 +33,13 @@ export default function HomePage() {
 
           <div className="flex items-center gap-2.5 sm:gap-3">
             <ThemeSwitcher />
+            <Link
+              href="/arena"
+              className="text-xs font-black px-3.5 py-1.5 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 text-purple-600 dark:text-purple-300 hover:scale-105 transition flex items-center gap-1.5 shadow-sm ring-1 ring-purple-500/30"
+            >
+              <Swords className="w-3.5 h-3.5 text-purple-500" />
+              ⚔️ Shinobi Arena
+            </Link>
             <Link
               href="/bunpou"
               className="text-xs font-bold px-3 py-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:scale-105 transition flex items-center gap-1.5 shadow-sm"
@@ -122,6 +129,13 @@ export default function HomePage() {
                 className="px-6 py-3 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-sm shadow-sm hover:scale-105 transition inline-flex items-center gap-2"
               >
                 📖 IRODORI文法リスト
+              </Link>
+              <Link
+                href="/arena"
+                className="px-6 py-3 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-sm shadow-lg shadow-purple-500/30 hover:scale-105 transition inline-flex items-center gap-2 ring-1 ring-purple-400/40"
+              >
+                <Swords className="w-4 h-4" />
+                ⚔️ Shinobi Arena (Bunpou Puzzle)
               </Link>
             </div>
           </div>

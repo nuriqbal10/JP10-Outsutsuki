@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
+  ArrowLeft, Swords,
   BookOpen,
   Sparkles,
   Puzzle,
@@ -222,6 +222,13 @@ export default function BunpouTestPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/arena"
+              className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs shadow-md shadow-purple-500/25 hover:scale-105 transition inline-flex items-center gap-1.5 ring-1 ring-purple-400/40"
+            >
+              <Swords className="w-3.5 h-3.5" />
+              <span>⚔️ Buka Shinobi Battle Arena</span>
+            </Link>
             <ThemeSwitcher />
           </div>
         </div>

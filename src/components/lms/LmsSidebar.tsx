@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   Sparkles,
-  Trophy,
+  Trophy, Swords,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
@@ -136,6 +136,19 @@ export default function LmsSidebar({
           >
             <BookOpen className="w-4 h-4 text-amber-500 shrink-0" />
             {isOpen && <span>Silabus Bab (1–18)</span>}
+          </Link>
+
+          <Link
+            href="/arena"
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition ${
+              pathname === "/arena"
+                ? "bg-purple-600/20 text-purple-400 border border-purple-500/40 shadow-sm"
+                : "opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+            }`}
+            title="Shinobi Arena Bunpou & Kotoba Battle"
+          >
+            <Swords className="w-4 h-4 text-purple-400 shrink-0" />
+            {isOpen && <span>Shinobi Arena (文法バトル)</span>}
           </Link>
 
           <Link
