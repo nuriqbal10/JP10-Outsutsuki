@@ -33,12 +33,14 @@ interface BulkQuestionImporterProps {
   onSuccess: () => void;
   defaultChapter?: number;
   defaultSection?: string;
+  adminToken?: string;
 }
 
 export default function BulkQuestionImporter({
   onSuccess,
   defaultChapter = 1,
   defaultSection = "moji_goi",
+  adminToken,
 }: BulkQuestionImporterProps) {
   const [file, setFile] = useState<File | null>(null);
   const [parsing, setParsing] = useState(false);
@@ -80,8 +82,14 @@ export default function BulkQuestionImporter({
       const formData = new FormData();
       formData.append("file", selectedFile);
 
+      const headers: Record<string, string> = {};
+      if (adminToken) {
+        headers["x-admin-key"] = adminToken;
+      }
+
       const res = await fetch("/api/questions/import", {
         method: "POST",
+        headers,
         body: formData,
       });
 
@@ -114,7 +122,10 @@ export default function BulkQuestionImporter({
     try {
       const res = await fetch("/api/questions/import", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminToken ? { "x-admin-key": adminToken } : {}),
+        },
         body: JSON.stringify({
           chapter: targetChapter,
           section: targetSection,

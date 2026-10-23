@@ -4,15 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { questions } from "@/db/schema";
+import { verifyAdminRequest } from "@/lib/adminAuth";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const chapterStr = searchParams.get("chapter");
     const section = searchParams.get("section");
+    const includeAnswers = searchParams.get("includeAnswers") === "true";
 
     if (chapterStr === null) {
       return NextResponse.json({ error: "Parameter 'chapter' wajib diisi." }, { status: 400 });
+    }
+
+    // Keamanan: Kunci jawaban dan penjelasan hanya diberikan jika request adalah admin terverifikasi
+    const isAdmin = verifyAdminRequest(request);
+    if (includeAnswers && !isAdmin) {
+      return NextResponse.json(
+        { error: "Akses ditolak: Membutuhkan otentikasi admin untuk melihat kunci jawaban." },
+        { status: 401 }
+      );
     }
 
     const chapter = parseInt(chapterStr, 10);
@@ -44,17 +55,29 @@ export async function GET(request: NextRequest) {
       .where(and(...conditions))
       .orderBy(questions.questionNumber);
 
+    // Sanitasi payload: Sembunyikan answerKey dan explanation dari peserta ujian CBT jika bukan admin
+    const sanitizedData = result.map((q) => {
+      if (isAdmin || includeAnswers) {
+        return q;
+      }
+      return {
+        ...q,
+        answerKey: "",
+        explanation: "",
+      };
+    });
+
     return NextResponse.json(
       {
         success: true,
         chapter,
         section: section || "all",
-        total: result.length,
-        data: result,
+        total: sanitizedData.length,
+        data: sanitizedData,
       },
       {
         headers: {
-          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=1800",
+          "Cache-Control": isAdmin ? "no-store" : "public, s-maxage=120, stale-while-revalidate=600",
         },
       }
     );
@@ -66,6 +89,13 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    if (!verifyAdminRequest(request)) {
+      return NextResponse.json(
+        { error: "Akses ditolak: Otorisasi admin diperlukan untuk mengubah bank soal." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { id, questionText, optionA, optionB, optionC, optionD, answerKey, explanation, stimulusText, imageR2Url, audioR2Url } = body;
 
@@ -102,6 +132,13 @@ export async function PUT(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!verifyAdminRequest(request)) {
+      return NextResponse.json(
+        { error: "Akses ditolak: Otorisasi admin diperlukan untuk menambah bank soal." },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const {
       level = "A2.2",
@@ -170,6 +207,13 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    if (!verifyAdminRequest(request)) {
+      return NextResponse.json(
+        { error: "Akses ditolak: Otorisasi admin diperlukan untuk menghapus bank soal." },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const idStr = searchParams.get("id");
     if (!idStr) {

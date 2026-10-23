@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { lkpdSubmissions } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
+import { verifyAdminRequest } from "@/lib/adminAuth";
 
 export async function GET(req: NextRequest) {
   try {
@@ -39,7 +40,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const id = body.id || crypto.randomUUID();
 
-    const parsedScore = body.score !== undefined && body.score !== null ? Math.round(Number(body.score)) : null;
+    const isAdmin = verifyAdminRequest(req);
+    // Integritas penilaian: Siswa tidak boleh memalsukan nilai saat pengumpulan tugas
+    const parsedScore = isAdmin && body.score !== undefined && body.score !== null
+      ? Math.round(Number(body.score))
+      : null;
 
     const newSubmission = {
       id,
@@ -48,9 +53,9 @@ export async function POST(req: NextRequest) {
       chapter: body.chapter ? parseInt(body.chapter, 10) : 1,
       answersJson: body.answersJson || {},
       fileAttachmentUrl: body.fileAttachmentUrl || null,
-      status: body.status || "submitted",
+      status: isAdmin && parsedScore !== null ? "graded" : "submitted",
       score: parsedScore,
-      feedback: body.feedback || null,
+      feedback: isAdmin ? (body.feedback || null) : null,
       submittedAt: new Date(),
       gradedAt: parsedScore !== null ? new Date() : null,
     };
@@ -70,6 +75,13 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    if (!verifyAdminRequest(req)) {
+      return NextResponse.json(
+        { success: false, error: "Akses ditolak: Hanya Sensei/Admin yang dapat menilai dan memberi feedback LKPD." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { id, score, feedback } = body;
 

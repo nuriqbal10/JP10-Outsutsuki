@@ -63,6 +63,8 @@ const ADMIN_TABS = [
 export default function SiteAdministrationPage() {
   const [activeTab, setActiveTab] = useState("questions");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [adminToken, setAdminToken] = useState("");
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [passInput, setPassInput] = useState("");
 
   // Bank Soal State
@@ -93,12 +95,30 @@ export default function SiteAdministrationPage() {
     explanation: "",
   });
 
-  // Simple passgate for teacher / admin
-  const handleAuth = () => {
-    if (passInput === "sensei2026" || passInput === "iqbal123" || passInput === "admin") {
-      setIsAuthenticated(true);
-    } else {
-      alert("Kata sandi admin/guru salah!");
+  // Simple passgate for teacher / admin with secure server verification
+  const handleAuth = async () => {
+    if (!passInput) {
+      alert("Silakan masukkan kata sandi.");
+      return;
+    }
+    try {
+      setIsAuthenticating(true);
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: passInput }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success && data.token) {
+        setAdminToken(data.token);
+        setIsAuthenticated(true);
+      } else {
+        alert(data.error || "Kata sandi admin/guru salah!");
+      }
+    } catch (err: any) {
+      alert("Gagal memverifikasi kata sandi admin.");
+    } finally {
+      setIsAuthenticating(false);
     }
   };
 
@@ -106,7 +126,9 @@ export default function SiteAdministrationPage() {
     try {
       setLoading(true);
       const secParam = selectedSection !== "all" ? `&section=${selectedSection}` : "";
-      const res = await fetch(`/api/questions?chapter=${selectedChapter}${secParam}`);
+      const res = await fetch(`/api/questions?chapter=${selectedChapter}${secParam}&includeAnswers=true`, {
+        headers: adminToken ? { "x-admin-key": adminToken } : {},
+      });
       const json = await res.json();
       if (json.success) {
         setQuestions(json.data);
@@ -191,7 +213,10 @@ export default function SiteAdministrationPage() {
       setSavingGrade(true);
       const res = await fetch("/api/lkpd", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminToken ? { "x-admin-key": adminToken } : {}),
+        },
         body: JSON.stringify({
           id: selectedLkpd.id,
           score: gradeScoreInput,
@@ -253,7 +278,10 @@ export default function SiteAdministrationPage() {
       const method = isEditing ? "PUT" : "POST";
       const res = await fetch("/api/questions", {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminToken ? { "x-admin-key": adminToken } : {}),
+        },
         body: JSON.stringify(formData),
       });
       const json = await res.json();
@@ -274,12 +302,15 @@ export default function SiteAdministrationPage() {
   const handleDeleteQuestion = async (id: number) => {
     if (!confirm(`Apakah Anda yakin ingin menghapus butir soal #${id}? Tindakan ini permanen.`)) return;
     try {
-      const res = await fetch(`/api/questions?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/questions?id=${id}`, {
+        method: "DELETE",
+        headers: adminToken ? { "x-admin-key": adminToken } : {},
+      });
       const json = await res.json();
       if (json.success) {
         fetchQuestions();
       } else {
-        alert("Gagal menghapus soal.");
+        alert("Gagal menghapus soal: " + (json.error || "Terjadi kesalahan"));
       }
     } catch (err) {
       console.error(err);
@@ -319,9 +350,10 @@ export default function SiteAdministrationPage() {
             />
             <button
               onClick={handleAuth}
-              className="clay-btn-gold py-3.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition"
+              disabled={isAuthenticating}
+              className="clay-btn-gold py-3.5 rounded-xl font-black text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition disabled:opacity-50"
             >
-              Buka Panel Administrator
+              {isAuthenticating ? "Memverifikasi..." : "Buka Panel Administrator"}
             </button>
             <Link href="/" className="text-xs text-rose-300/60 hover:text-amber-200 transition">
               Kembali ke Beranda
@@ -568,6 +600,7 @@ export default function SiteAdministrationPage() {
           <BulkQuestionImporter
             defaultChapter={selectedChapter}
             defaultSection={selectedSection === "all" ? "moji_goi" : selectedSection}
+            adminToken={adminToken}
             onSuccess={() => {
               fetchQuestions();
               setActiveTab("questions");

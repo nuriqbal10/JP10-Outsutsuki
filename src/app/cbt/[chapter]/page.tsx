@@ -95,11 +95,14 @@ export default function CbtSessionPage() {
 
   // Mode Guru Inline Editing
   const [isTeacherMode, setIsTeacherMode] = useState<boolean>(false);
+  const [teacherToken, setTeacherToken] = useState<string>("");
   const [teacherPassInput, setTeacherPassInput] = useState<string>("");
   const [showTeacherAuthModal, setShowTeacherAuthModal] = useState<boolean>(false);
+  const [isVerifyingTeacher, setIsVerifyingTeacher] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editForm, setEditForm] = useState<Partial<Question>>({});
   const [savingEdit, setSavingEdit] = useState<boolean>(false);
+  const [submittingExam, setSubmittingExam] = useState<boolean>(false);
 
   useEffect(() => {
     async function fetchQuestions() {
@@ -178,15 +181,65 @@ export default function CbtSessionPage() {
     }
   };
 
-  const handleSubmit = () => {
-    let correct = 0;
-    allQuestions.forEach((q) => {
-      if (userAnswers[q.id]?.toLowerCase() === q.answerKey.toLowerCase()) {
-        correct++;
+  const handleSubmit = async () => {
+    try {
+      setSubmittingExam(true);
+      // Evaluasi ujian server-side secara aman dan catat ke database
+      const res = await fetch("/api/exam-sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chapter,
+          studentName: "Peserta CBT",
+          answersJson: userAnswers,
+          startedAt: new Date(Date.now() - (customMinutes * 60 - timeLeft) * 1000).toISOString(),
+        }),
+      });
+
+      const json = await res.json();
+      if (json.success && json.data) {
+        const { verifiedCorrectCount, totalQuestions, answerKeys } = json.data;
+        setScore(verifiedCorrectCount !== undefined ? verifiedCorrectCount : 0);
+
+        // Buka kunci jawaban dan penjelasan dari server untuk review siswa
+        if (answerKeys) {
+          setAllQuestions((prev) =>
+            prev.map((q) => {
+              const keyInfo = answerKeys[q.id];
+              if (keyInfo) {
+                return {
+                  ...q,
+                  answerKey: keyInfo.answerKey,
+                  explanation: keyInfo.explanation || q.explanation,
+                };
+              }
+              return q;
+            })
+          );
+        }
+      } else {
+        // Fallback jika terjadi kegagalan jaringan
+        let localCorrect = 0;
+        allQuestions.forEach((q) => {
+          if (q.answerKey && userAnswers[q.id]?.toLowerCase() === q.answerKey.toLowerCase()) {
+            localCorrect++;
+          }
+        });
+        setScore(localCorrect);
       }
-    });
-    setScore(correct);
-    setIsSubmitted(true);
+    } catch (err) {
+      console.error("Gagal mengirim sesi ujian ke server:", err);
+      let localCorrect = 0;
+      allQuestions.forEach((q) => {
+        if (q.answerKey && userAnswers[q.id]?.toLowerCase() === q.answerKey.toLowerCase()) {
+          localCorrect++;
+        }
+      });
+      setScore(localCorrect);
+    } finally {
+      setSubmittingExam(false);
+      setIsSubmitted(true);
+    }
   };
 
   // Kontrol Audio Choukai (Maksimal 2 kali putar)
@@ -201,14 +254,43 @@ export default function CbtSessionPage() {
     setIsPlayingAudio(false);
   };
 
-  // Mode Guru Auth
-  const handleTeacherLogin = () => {
-    if (teacherPassInput === "sensei2026" || teacherPassInput === "iqbal123" || teacherPassInput === "admin") {
-      setIsTeacherMode(true);
-      setShowTeacherAuthModal(false);
-      setTeacherPassInput("");
-    } else {
-      alert("Kata sandi guru salah. Silakan coba lagi.");
+  // Mode Guru Auth via Server Verification
+  const handleTeacherLogin = async () => {
+    if (!teacherPassInput) {
+      alert("Silakan masukkan kata sandi guru.");
+      return;
+    }
+
+    try {
+      setIsVerifyingTeacher(true);
+      const res = await fetch("/api/admin/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: teacherPassInput }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success && data.token) {
+        setTeacherToken(data.token);
+        setIsTeacherMode(true);
+        setShowTeacherAuthModal(false);
+        setTeacherPassInput("");
+
+        // Ambil ulang bank soal lengkap dengan kunci jawaban untuk keperluan editing guru
+        const qRes = await fetch(`/api/questions?chapter=${chapter}&includeAnswers=true`, {
+          headers: { "x-admin-key": data.token },
+        });
+        const qData = await qRes.json();
+        if (qData.success && qData.data.length > 0) {
+          setAllQuestions(qData.data);
+        }
+      } else {
+        alert(data.error || "Kata sandi guru salah. Silakan coba lagi.");
+      }
+    } catch (err: any) {
+      alert("Gagal memverifikasi kata sandi guru: " + err.message);
+    } finally {
+      setIsVerifyingTeacher(false);
     }
   };
 
@@ -245,7 +327,10 @@ export default function CbtSessionPage() {
       setSavingEdit(true);
       const res = await fetch("/api/questions", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": teacherToken,
+        },
         body: JSON.stringify(editForm),
       });
       const json = await res.json();
@@ -726,9 +811,10 @@ export default function CbtSessionPage() {
 
             <button
               onClick={handleTeacherLogin}
-              className="w-full py-3 clay-btn rounded-xl text-xs font-black shadow-lg"
+              disabled={isVerifyingTeacher}
+              className="w-full py-3 clay-btn rounded-xl text-xs font-black shadow-lg disabled:opacity-50"
             >
-              Masuk Mode Guru
+              {isVerifyingTeacher ? "Memverifikasi..." : "Masuk Mode Guru"}
             </button>
           </div>
         </div>

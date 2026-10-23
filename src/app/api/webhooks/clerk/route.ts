@@ -24,9 +24,8 @@ export async function POST(req: Request) {
     return new Response("Error: Missing Svix headers", { status: 400 });
   }
 
-  // Get body
-  const payload = await req.json();
-  const body = JSON.stringify(payload);
+  // Get raw body for cryptographic signature verification
+  const body = await req.text();
 
   const wh = new Webhook(WEBHOOK_SECRET);
   let evt: WebhookEvent;

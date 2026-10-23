@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { questions } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
+import { verifyAdminRequest } from "@/lib/adminAuth";
 import {
   parseWordDocxWithHighlights,
   parseAikenFormat,
@@ -14,6 +15,13 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!verifyAdminRequest(request)) {
+      return NextResponse.json(
+        { error: "Akses ditolak: Otorisasi admin diperlukan untuk mengimpor bank soal." },
+        { status: 401 }
+      );
+    }
+
     const contentType = request.headers.get("content-type") || "";
 
     // 1. JIKA MENERIMA JSON ARRAY SOAL TERVERIFIKASI UNTUK DISIMPAN KE NEON
