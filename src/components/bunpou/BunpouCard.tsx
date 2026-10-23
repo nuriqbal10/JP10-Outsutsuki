@@ -16,6 +16,8 @@ import {
   ChevronUp,
   Settings2,
   ArrowRight,
+  Layers,
+  GitCompare,
 } from "lucide-react";
 import { BunpouItem } from "@/types/bunpou";
 
@@ -33,6 +35,8 @@ export default function BunpouCard({
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState<number | null>(null);
   const [showUsageDetail, setShowUsageDetail] = useState(false);
+  const [showConnectionDetail, setShowConnectionDetail] = useState(true);
+  const [showRelatedDetail, setShowRelatedDetail] = useState(true);
 
   const speak = (text: string, index?: number) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -231,6 +235,63 @@ export default function BunpouCard({
         </div>
       )}
 
+      {/* 3. KATA YANG BISA DIGUNAKAN & SAMBUNGAN BENTUK (接続・単語バリエーション) */}
+      {bunpou.connectionForms && bunpou.connectionForms.length > 0 && (
+        <div className="rounded-xl border border-indigo-500/20 overflow-hidden bg-indigo-500/[0.03]">
+          <button
+            onClick={() => setShowConnectionDetail(!showConnectionDetail)}
+            className="w-full p-3 flex items-center justify-between text-left text-[11px] font-extrabold text-indigo-900 dark:text-indigo-200 hover:bg-indigo-500/10 transition"
+          >
+            <div className="flex items-center gap-1.5">
+              <Layers className="w-3.5 h-3.5 text-indigo-500" />
+              <span>3. KATA YANG BISA DIGUNAKAN & SAMBUNGAN BENTUK</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-300">
+                {bunpou.connectionForms.length} Jenis Bentuk
+              </span>
+              {showConnectionDetail ? (
+                <ChevronUp className="w-3.5 h-3.5 text-stone-400" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
+              )}
+            </div>
+          </button>
+
+          {showConnectionDetail && (
+            <div className="p-3.5 pt-1 text-xs border-t border-indigo-500/15 space-y-2.5">
+              {bunpou.connectionForms.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-2.5 rounded-lg bg-white/70 dark:bg-stone-900/70 border border-black/5 dark:border-white/5 space-y-1.5"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-1">
+                    <span className="font-black text-[11px] text-indigo-600 dark:text-indigo-400">
+                      • {item.category}
+                    </span>
+                    <span className="text-[10px] font-mono font-medium text-stone-500 dark:text-stone-400 bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded">
+                      {item.rule}
+                    </span>
+                  </div>
+                  {item.examples && item.examples.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {item.examples.map((ex, exIdx) => (
+                        <span
+                          key={exIdx}
+                          className="text-[10px] sm:text-[11px] font-medium px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-stone-800 dark:text-stone-200"
+                        >
+                          {ex}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 4. CARA MEMAKAI, CARA MEMBUAT & SYARAT BENTUK */}
       {bunpou.usageRule && (
         <div className="rounded-xl border border-black/10 dark:border-white/10 overflow-hidden bg-black/[0.02] dark:bg-white/[0.02]">
@@ -240,7 +301,7 @@ export default function BunpouCard({
           >
             <div className="flex items-center gap-1.5">
               <Settings2 className="w-3.5 h-3.5 text-sky-500" />
-              <span>3. CARA MEMAKAI & SYARAT BENTUK</span>
+              <span>4. CARA MEMAKAI & SYARAT BENTUK</span>
             </div>
             {showUsageDetail ? (
               <ChevronUp className="w-3.5 h-3.5 text-stone-400" />
@@ -259,11 +320,85 @@ export default function BunpouCard({
         </div>
       )}
 
-      {/* 5. CONTOH PERCAKAPAN OTENTIK (例文) */}
+      {/* 5. KETERKAITAN POLA LAIN & KOMPARASI (関連文型・使い分け) */}
+      {bunpou.relatedPatterns && bunpou.relatedPatterns.length > 0 && (
+        <div className="rounded-xl border border-amber-500/20 overflow-hidden bg-amber-500/[0.03]">
+          <button
+            onClick={() => setShowRelatedDetail(!showRelatedDetail)}
+            className="w-full p-3 flex items-center justify-between text-left text-[11px] font-extrabold text-amber-900 dark:text-amber-200 hover:bg-amber-500/10 transition"
+          >
+            <div className="flex items-center gap-1.5">
+              <GitCompare className="w-3.5 h-3.5 text-amber-500" />
+              <span>5. KETERKAITAN POLA LAIN & KOMPARASI PERBEDAAN</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                {bunpou.relatedPatterns.length} Pola Pembanding
+              </span>
+              {showRelatedDetail ? (
+                <ChevronUp className="w-3.5 h-3.5 text-stone-400" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5 text-stone-400" />
+              )}
+            </div>
+          </button>
+
+          {showRelatedDetail && (
+            <div className="p-3.5 pt-1 text-xs border-t border-amber-500/15 space-y-2">
+              {bunpou.relatedPatterns.map((rel, idx) => {
+                const relationColor =
+                  rel.relation === "serupa"
+                    ? "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30"
+                    : rel.relation === "lawan"
+                    ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30"
+                    : rel.relation === "dasar"
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                    : rel.relation === "lanjutan"
+                    ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30"
+                    : "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
+
+                const relationLabel =
+                  rel.relation === "serupa"
+                    ? "Pola Serupa"
+                    : rel.relation === "lawan"
+                    ? "Lawan Arti (Antonim)"
+                    : rel.relation === "dasar"
+                    ? "Pola Dasar"
+                    : rel.relation === "lanjutan"
+                    ? "Pola Lanjutan"
+                    : "Perbedaan Penggunaan";
+
+                return (
+                  <div
+                    key={idx}
+                    className="p-2.5 rounded-lg bg-white/70 dark:bg-stone-900/70 border border-black/5 dark:border-white/5 space-y-1"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-1.5">
+                      <span className="font-extrabold text-[11px] text-stone-900 dark:text-stone-100">
+                        {rel.target}
+                      </span>
+                      <span
+                        className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${relationColor}`}
+                      >
+                        {relationLabel}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-600 dark:text-stone-300 leading-relaxed pt-0.5">
+                      {rel.comparison}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 6. CONTOH PERCAKAPAN OTENTIK (例文) */}
       <div className="space-y-2">
         <div className="text-[10px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500 flex items-center gap-1.5">
           <Sparkles className="w-3 h-3 text-amber-500" />
-          <span>Contoh Percakapan Otentik (例文):</span>
+          <span>6. CONTOH PERCAKAPAN OTENTIK (例文):</span>
         </div>
 
         <div className="space-y-1.5">
@@ -291,19 +426,19 @@ export default function BunpouCard({
         </div>
       </div>
 
-      {/* 6. CALL-TO-ACTION: MINI TEST & PUZZLE MERANGKAI */}
+      {/* 7. CALL-TO-ACTION: MINI TEST & PUZZLE MERANGKAI */}
       <div className="pt-2">
         <Link
           href={`/bunpou-test?id=${bunpou.id}`}
           className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-extrabold text-xs shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2"
         >
           <Puzzle className="w-4 h-4" />
-          <span>🧩 Latihan Rangkai Kalimat (Mini Test)</span>
+          <span>🧩 Uji Pemahaman di Mini Test (Kotoba Puzzle)</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
 
-      {/* 7. MARUGOTO CROSS-REFERENCE FOOTER */}
+      {/* 8. MARUGOTO CROSS-REFERENCE FOOTER */}
       {bunpou.marugoto && (
         <div className="pt-2 border-t border-black/10 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-stone-500 dark:text-stone-400">
           <span className="font-medium opacity-75">

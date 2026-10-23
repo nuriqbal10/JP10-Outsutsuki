@@ -16,6 +16,10 @@ import {
   ArrowRight,
   Flame,
   Trophy,
+  Layers,
+  GitCompare,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import rawBunpouData from "@/data/bunpouData.json";
@@ -71,6 +75,7 @@ export default function BunpouTestPage() {
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
   const [puzzleStatus, setPuzzleStatus] = useState<"idle" | "correct" | "incorrect">("idle");
   const [showHint, setShowHint] = useState<boolean>(false);
+  const [showReference, setShowReference] = useState<boolean>(false);
 
   // Initialize/shuffle puzzle tokens whenever currentItem changes
   useEffect(() => {
@@ -485,6 +490,121 @@ export default function BunpouTestPage() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* PEDAGOGICAL REFERENCE: KATA YANG BISA DIGUNAKAN & POLA TERKAIT */}
+        <div className="clay-card p-4 sm:p-5 rounded-3xl border border-black/10 dark:border-white/10 shadow-sm space-y-4">
+          <button
+            onClick={() => setShowReference(!showReference)}
+            className="w-full flex items-center justify-between text-left transition group"
+          >
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <Layers className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="font-extrabold text-xs sm:text-sm text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                  <span>Pedoman Belajar: Kata Yang Bisa Digunakan & Pola Terkait</span>
+                </h3>
+                <p className="text-[11px] text-stone-500">
+                  Lihat variasi kata/sambungan bentuk dan perbandingan dengan pola serupa
+                </p>
+              </div>
+            </div>
+            <div className="p-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-stone-400 group-hover:text-stone-700 dark:group-hover:text-stone-200">
+              {showReference ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )}
+            </div>
+          </button>
+
+          {showReference && (
+            <div className="pt-3 border-t border-black/10 dark:border-white/10 space-y-4 animate-in fade-in duration-200">
+              {/* Connection Forms */}
+              {currentItem.connectionForms && currentItem.connectionForms.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5" />
+                    <span>Kata yang bisa digunakan (Variasi Bentuk):</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {currentItem.connectionForms.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/15 space-y-1.5"
+                      >
+                        <div className="font-black text-xs text-indigo-700 dark:text-indigo-300">
+                          {item.category}
+                        </div>
+                        <div className="text-[10px] font-mono text-stone-500 dark:text-stone-400">
+                          {item.rule}
+                        </div>
+                        {item.examples && item.examples.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {item.examples.map((ex, exIdx) => (
+                              <span
+                                key={exIdx}
+                                className="text-[10px] px-2 py-0.5 rounded bg-white dark:bg-stone-800 border border-black/5 dark:border-white/10 text-stone-800 dark:text-stone-200"
+                              >
+                                {ex}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Related Patterns */}
+              {currentItem.relatedPatterns && currentItem.relatedPatterns.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                    <GitCompare className="w-3.5 h-3.5" />
+                    <span>Keterkaitan Pola Lain & Komparasi Perbedaan:</span>
+                  </div>
+                  <div className="space-y-2">
+                    {currentItem.relatedPatterns.map((rel, idx) => {
+                      const badgeBg =
+                        rel.relation === "serupa"
+                          ? "bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30"
+                          : rel.relation === "lawan"
+                          ? "bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-500/30"
+                          : rel.relation === "dasar"
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30"
+                          : rel.relation === "lanjutan"
+                          ? "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30"
+                          : "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30";
+
+                      return (
+                        <div
+                          key={idx}
+                          className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/15 space-y-1"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-1.5">
+                            <span className="font-extrabold text-xs text-stone-900 dark:text-stone-100">
+                              {rel.target}
+                            </span>
+                            <span
+                              className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${badgeBg}`}
+                            >
+                              {rel.relation}
+                            </span>
+                          </div>
+                          <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed">
+                            {rel.comparison}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 

@@ -112,14 +112,47 @@ export default function IrodoriBunpouPage() {
       if (masteredFilter === "mastered" && !isM) return false;
       if (masteredFilter === "unmastered" && isM) return false;
 
-      // Search query
+      // Search query (supports pattern in JP/hiragana/kanji, Indonesian meaning, formula, and related words)
       if (q) {
         const inPattern = item.pattern.toLowerCase().includes(q);
+        const inMeaning = item.meaning ? item.meaning.toLowerCase().includes(q) : false;
+        const inFormula = item.formulaDetailed ? item.formulaDetailed.toLowerCase().includes(q) : false;
+        const inUsage = item.usageRule ? item.usageRule.toLowerCase().includes(q) : false;
+        const inPuzzleTrans = item.puzzle?.translation ? item.puzzle.translation.toLowerCase().includes(q) : false;
         const inExample = item.example.toLowerCase().includes(q);
         const inTopic = item.topic.toLowerCase().includes(q);
         const inLessonTitle = item.lessonTitle.toLowerCase().includes(q);
         const inMarugoto = item.marugoto ? item.marugoto.toLowerCase().includes(q) : false;
-        if (!inPattern && !inExample && !inTopic && !inLessonTitle && !inMarugoto) {
+        const inConnections = item.connectionForms
+          ? item.connectionForms.some(
+              (c) =>
+                c.category.toLowerCase().includes(q) ||
+                c.rule.toLowerCase().includes(q) ||
+                c.examples.some((ex) => ex.toLowerCase().includes(q))
+            )
+          : false;
+        const inRelated = item.relatedPatterns
+          ? item.relatedPatterns.some(
+              (r) =>
+                r.target.toLowerCase().includes(q) ||
+                r.comparison.toLowerCase().includes(q) ||
+                r.relation.toLowerCase().includes(q)
+            )
+          : false;
+
+        if (
+          !inPattern &&
+          !inMeaning &&
+          !inFormula &&
+          !inUsage &&
+          !inPuzzleTrans &&
+          !inExample &&
+          !inTopic &&
+          !inLessonTitle &&
+          !inMarugoto &&
+          !inConnections &&
+          !inRelated
+        ) {
           return false;
         }
       }
@@ -392,7 +425,7 @@ export default function IrodoriBunpouPage() {
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
             <input
               type="text"
-              placeholder="Cari pola kalimat, kata kunci, topik, atau contoh percakapan..."
+              placeholder="Cari pola kalimat, arti bahasa Indonesia (contoh: sambil, harus, suka, sebelum), topik..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition placeholder:text-stone-400"

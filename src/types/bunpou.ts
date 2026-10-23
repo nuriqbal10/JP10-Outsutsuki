@@ -5,6 +5,18 @@ export interface BunpouPuzzle {
   shuffledTokens?: string[];
 }
 
+export interface BunpouConnectionForm {
+  category: string;
+  rule: string;
+  examples: string[];
+}
+
+export interface BunpouRelatedPattern {
+  target: string;
+  relation: "serupa" | "lawan" | "perbedaan" | "dasar" | "lanjutan";
+  comparison: string;
+}
+
 export interface BunpouItem {
   id: string;
   level: "a1" | "a2-1" | "a2-2";
@@ -19,6 +31,8 @@ export interface BunpouItem {
   formulaDetailed?: string;
   meaning?: string;
   usageRule?: string;
+  connectionForms?: BunpouConnectionForm[];
+  relatedPatterns?: BunpouRelatedPattern[];
   puzzle?: BunpouPuzzle;
 }
 
