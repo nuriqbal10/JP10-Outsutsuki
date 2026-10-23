@@ -35,7 +35,7 @@ import {
 import rawBunpouData from "@/data/bunpouData.json";
 import { BunpouItem } from "@/types/bunpou";
 import { sfx } from "@/lib/soundEffects";
-import { addXp, getGamificationState } from "@/lib/gamification";
+import { addXp, getGamificationState, recordBattleOutcome, unlockBadge } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
 import {
   cleanJapaneseText,
@@ -109,14 +109,18 @@ export default function BunpouPuzzleBattleArena({
   // Arena Top Tabs: 'solo_dojo' | 'multiplayer_realtime'
   const [arenaMode, setArenaMode] = useState<"solo_dojo" | "multiplayer_realtime">("solo_dojo");
 
-  // Game Flow States: 'lobby' | 'battle' | 'victory' | 'defeat'
-  const [gameState, setGameState] = useState<"lobby" | "battle" | "victory" | "defeat">("lobby");
+  // Game Flow States: 'lobby' | 'ready_check' | 'battle' | 'victory' | 'defeat'
+  const [gameState, setGameState] = useState<"lobby" | "ready_check" | "battle" | "victory" | "defeat">("lobby");
+
+  // Pre-battle Ready Confirmation States
+  const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
+  const [readyCountdown, setReadyCountdown] = useState<number | null>(null);
 
   // Filter & Difficulty Settings
   const [selectedLevel, setSelectedLevel] = useState<"all" | "A1" | "A2.1" | "A2.2">("all");
   const [selectedLesson, setSelectedLesson] = useState<number>(0); // 0 = all
   const [selectedRivalIndex, setSelectedRivalIndex] = useState<number>(-1); // -1 = random
-  const [roundLimit, setRoundLimit] = useState<number>(5);
+  const [roundLimit, setRoundLimit] = useState<number>(10); // Standard 10 Rounds requirement
 
   // Active Combat State (Strict 30s per round)
   const [currentRound, setCurrentRound] = useState<number>(1);
@@ -210,14 +214,38 @@ export default function BunpouPuzzleBattleArena({
     setupQuestion(questions[0]);
 
     setBattleLogs([
-      `⚔️ DUEL DIMULAI melawan ${rival.name} (${rival.nim})!`,
-      `⏱️ Waktu: 30 Detik per Soal. Susun kata dan partikel secara presisi!`,
+      `⚔️ TANTANGAN DITERIMA! Menghadapi ${rival.name} (${rival.nim})!`,
+      `⏱️ Regulasi: 10 Ronde • 10 HP / Serangan Presisi • 30 Detik / Soal.`,
       `📈 Tingkat kesulitan meningkat secara bertahap dari mudah hingga menantang!`,
     ]);
 
-    setGameState("battle");
-    sfx.playSlash();
-    triggerActionFx("始め! HAJIME!");
+    setIsPlayerReady(false);
+    setReadyCountdown(null);
+    setGameState("ready_check");
+    sfx.playTick();
+  };
+
+  // Player confirms READY in lobby
+  const handleConfirmReady = () => {
+    setIsPlayerReady(true);
+    sfx.playCorrect();
+    let count = 3;
+    setReadyCountdown(count);
+    sfx.playCountdownHurry();
+
+    const interval = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        setReadyCountdown(count);
+        sfx.playCountdownHurry();
+      } else {
+        clearInterval(interval);
+        setReadyCountdown(null);
+        setGameState("battle");
+        sfx.playSlash();
+        triggerActionFx("始め! HAJIME!");
+      }
+    }, 1000);
   };
 
   const setupQuestion = (q: BattleQuestion) => {
@@ -284,20 +312,21 @@ export default function BunpouPuzzleBattleArena({
       ]);
     }
 
-    const dmg = 25;
+    const dmg = 10; // Exactly 10 HP per timeout / round
     const newPlayerHp = Math.max(0, playerHp - dmg);
     setPlayerHp(newPlayerHp);
     setCombo(0);
     triggerActionFx("⏰ WAKTU HABIS!");
 
     setBattleLogs((prev) => [
-      `⏰ Waktu habis! ${activeRival.name} melancarkan ${activeRival.specialJutsu} (-${dmg} HP)!`,
+      `⏰ Waktu habis! ${activeRival.name} melancarkan serangan (-${dmg} HP)!`,
       ...prev.slice(0, 5),
     ]);
 
     if (newPlayerHp <= 0) {
       setTimeout(() => {
         sfx.playEliminated();
+        recordBattleOutcome(false, "bunpou_puzzle");
         setGameState("defeat");
       }, 800);
     } else {
@@ -352,15 +381,15 @@ export default function BunpouPuzzleBattleArena({
       setCombo(nextCombo);
       if (nextCombo > highestCombo) setHighestCombo(nextCombo);
 
-      // Damage: 30 base + combo bonus
-      const dmg = Math.min(50, 30 + nextCombo * 5);
+      // Damage: Exactly 10 HP per correct answer (10 rounds = 100 HP)
+      const dmg = 10;
       const newRivalHp = Math.max(0, rivalHp - dmg);
       setRivalHp(newRivalHp);
 
       const addedScore = 600 + timeLeft * 25 + nextCombo * 100;
       setScore((s) => s + addedScore);
 
-      triggerActionFx(nextCombo > 1 ? `🔥 ${nextCombo}x JUTSU COMBO!` : "💥 SERANGAN TEPAT!");
+      triggerActionFx(nextCombo > 1 ? `🔥 ${nextCombo}x JUTSU COMBO!` : "💥 SERANGAN TEPAT (-10 HP)!");
 
       setBattleLogs((prev) => [
         `💥 JUTSU BERHASIL! [${currentQ.pattern}] menghantam ${activeRival.name} (-${dmg} HP)!`,
@@ -394,7 +423,7 @@ export default function BunpouPuzzleBattleArena({
       setTimeout(() => setIsHit(false), 700);
 
       setCombo(0);
-      const dmg = 20;
+      const dmg = 10; // Exactly 10 HP damage per mistake
       const newPlayerHp = Math.max(0, playerHp - dmg);
       setPlayerHp(newPlayerHp);
 
@@ -435,6 +464,7 @@ export default function BunpouPuzzleBattleArena({
       if (newPlayerHp <= 0) {
         setTimeout(() => {
           sfx.playEliminated();
+          recordBattleOutcome(false, "bunpou_puzzle", { bunpou: -2 });
           setGameState("defeat");
         }, 1200);
       } else {
@@ -454,6 +484,7 @@ export default function BunpouPuzzleBattleArena({
       if (rivalHp <= playerHp) {
         handleVictory();
       } else {
+        recordBattleOutcome(false, "bunpou_puzzle", { bunpou: -1 });
         setGameState("defeat");
       }
       return;
@@ -470,6 +501,10 @@ export default function BunpouPuzzleBattleArena({
     const xpReward = 180 + highestCombo * 25;
     addXp(xpReward, "Kemenangan Bunpou Puzzle Shinobi Arena!");
     advanceDailyQuest("battle");
+    recordBattleOutcome(true, "bunpou_puzzle", { bunpou: 5, mojiGoi: 3 });
+    if (roundLimit >= 10) {
+      unlockBadge("puzzle_master");
+    }
     setGameState("victory");
   };
 
@@ -658,28 +693,33 @@ export default function BunpouPuzzleBattleArena({
 
             {/* ROUND COUNT */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                4. Durasi Pertandingan (Jumlah Ronde)
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  4. Durasi Pertandingan (Jumlah Ronde)
+                </label>
+                <span className="text-[10px] text-amber-400 font-black">
+                  ★ Regulasi Resmi: 10 Ronde (10 HP/Hit)
+                </span>
+              </div>
               <div className="flex gap-3">
-                {[3, 5, 8, 10].map((rounds) => (
+                {[5, 10, 15].map((rounds) => (
                   <button
                     key={rounds}
                     type="button"
                     onClick={() => setRoundLimit(rounds)}
                     className={`flex-1 py-2.5 rounded-2xl border text-xs font-black transition-all ${
                       roundLimit === rounds
-                        ? "border-purple-500 bg-purple-950/60 text-purple-200 shadow-md shadow-purple-900/30"
+                        ? "border-amber-400 bg-amber-950/60 text-amber-300 shadow-md shadow-amber-900/30 ring-1 ring-amber-400"
                         : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
                     }`}
                   >
-                    {rounds} Ronde
+                    {rounds} Ronde {rounds === 10 && "⚔️ (Standar)"}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* START BUTTON */}
+            {/* START BUTTON TO LOBBY */}
             <div className="pt-2">
               <button
                 type="button"
@@ -687,7 +727,7 @@ export default function BunpouPuzzleBattleArena({
                 className="w-full py-4 rounded-2xl font-black text-stone-950 text-base md:text-lg bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 hover:from-amber-300 hover:to-orange-300 shadow-xl shadow-orange-500/30 active:scale-[0.99] transition flex items-center justify-center gap-2"
               >
                 <Play className="w-5 h-5 fill-current" />
-                MASUK SHINOBI DOJO (30 DETIK / SOAL)
+                MASUK LOBBY DUEL SHINOBI (CEK KESIAPAN KEDUA PETARUNG)
               </button>
             </div>
           </div>
@@ -739,7 +779,112 @@ export default function BunpouPuzzleBattleArena({
       )}
 
       {/* ==================================================================== */}
-      {/* 2. ACTIVE ARCADE BATTLE SCREEN (30s TIMER & CHAKRA STRIKE) */}
+      {/* 1.5. LOBBY ANTAR PEMAIN (MUTUAL READY CONFIRMATION SCREEN) */}
+      {/* ==================================================================== */}
+      {gameState === "ready_check" && (
+        <div className="bg-gradient-to-b from-[#13082a] via-[#1a0c36] to-[#0f061e] border-2 border-purple-500/60 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden space-y-6">
+          <div className="text-center space-y-1">
+            <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-400 text-stone-950 shadow">
+              Lobi Kesiapan Duel 1 vs 1
+            </span>
+            <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight mt-2">
+              Konfirmasi Kesiapan Kedua Petarung
+            </h3>
+            <p className="text-xs sm:text-sm text-purple-200">
+              Kedua petarung wajib memastikan status SIAP (READY) sebelum pertarungan 10 ronde dimulai!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+            {/* VS Badge Center */}
+            <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-stone-950 font-black text-lg items-center justify-center shadow-[0_0_25px_rgba(245,158,11,0.6)] z-20 border-2 border-amber-300 animate-pulse">
+              VS
+            </div>
+
+            {/* PLAYER CARD */}
+            <div className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center text-center justify-between space-y-4 ${
+              isPlayerReady
+                ? "bg-emerald-950/40 border-emerald-500 shadow-xl shadow-emerald-500/20"
+                : "bg-slate-900/90 border-slate-800"
+            }`}>
+              <div className="space-y-3">
+                <div className="w-24 h-24 rounded-3xl bg-slate-950 border-2 border-purple-500 flex items-center justify-center text-5xl mx-auto shadow-inner">
+                  🥷
+                </div>
+                <div>
+                  <div className="text-lg font-black text-white">Anda (Shinobi Penantang)</div>
+                  <div className="text-xs text-purple-300 font-bold">{roundLimit} Ronde • 10 HP / Kesalahan</div>
+                </div>
+              </div>
+
+              <div className="w-full pt-2">
+                {isPlayerReady ? (
+                  <div className="py-3 px-4 rounded-2xl bg-emerald-500/20 border border-emerald-500 text-emerald-400 font-black text-sm flex items-center justify-center gap-2">
+                    <CheckCircle2 className="w-5 h-5" />
+                    STATUS: SIAP BERTANDING (READY ✅)
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleConfirmReady}
+                    className="w-full py-4 rounded-2xl font-black text-stone-950 text-sm md:text-base bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-400 hover:scale-[1.02] active:scale-[0.98] transition shadow-[0_0_25px_rgba(52,211,153,0.5)] flex items-center justify-center gap-2"
+                  >
+                    <Check className="w-5 h-5 stroke-[3]" />
+                    KLIK UNTUK SIAP TANDING (READY)
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* RIVAL CARD */}
+            <div className="p-6 rounded-3xl border-2 border-amber-500/50 bg-amber-950/20 shadow-xl shadow-amber-500/10 flex flex-col items-center text-center justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="w-24 h-24 rounded-3xl bg-slate-950 border-2 border-amber-400 flex items-center justify-center text-5xl mx-auto shadow-inner">
+                  {activeRival.avatar}
+                </div>
+                <div>
+                  <div className="text-lg font-black text-white">{activeRival.name}</div>
+                  <div className="text-xs text-amber-400 font-bold">{activeRival.nim} • {activeRival.rank}</div>
+                  <div className="text-[11px] text-slate-300 mt-1">Jurus: {activeRival.specialJutsu}</div>
+                </div>
+              </div>
+
+              <div className="w-full pt-2">
+                <div className="py-3 px-4 rounded-2xl bg-amber-400/20 border border-amber-400 text-amber-300 font-black text-sm flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-amber-400" />
+                  RIVAL SIAP BERTANDING (READY ✅)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* COUNTDOWN OVERLAY IF READY */}
+          {readyCountdown !== null && (
+            <div className="text-center pt-4">
+              <div className="text-sm font-bold text-slate-300">Pertandingan Dimulai Dalam:</div>
+              <div className="text-5xl font-black text-amber-300 animate-ping my-2">
+                {readyCountdown}
+              </div>
+              <div className="text-xs font-japanese font-black text-purple-300">
+                集中せよ (Bersiaplah!)
+              </div>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center pt-2">
+            <button
+              type="button"
+              onClick={() => setGameState("lobby")}
+              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-slate-800/80 transition"
+            >
+              ← Kembali ke Pengaturan Dojo
+            </button>
+            <div className="text-xs text-slate-400 font-bold">
+              Regulasi Resmi: {roundLimit} Ronde • 10 HP Damage/Round
+            </div>
+          </div>
+        </div>
+      )}
       {/* ==================================================================== */}
       {gameState === "battle" && currentQ && (
         <div className="space-y-6">

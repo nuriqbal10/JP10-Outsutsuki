@@ -38,7 +38,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
-import { addXp } from "@/lib/gamification";
+import { addXp, recordBattleOutcome, unlockBadge } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
 import { sfx } from "@/lib/soundEffects";
 import {
@@ -212,6 +212,11 @@ export default function BattleRoyaleModal({
     opponentName: string;
     nextOpponent?: Participant;
   } | null>(null);
+
+  // Custom Team & Next Round Readiness
+  const [customTeamName, setCustomTeamName] = useState<string>("");
+  const [isNextRoundReady, setIsNextRoundReady] = useState<boolean>(false);
+  const [nextRoundCountdown, setNextRoundCountdown] = useState<number | null>(null);
 
   // Battle State
   const [battleState, setBattleState] = useState<"lobby" | "countdown" | "in_battle" | "victory" | "defeat">("lobby");
@@ -854,12 +859,12 @@ export default function BattleRoyaleModal({
     setCurrentTournamentRound(nextRound);
     setTournamentRoundModal(null);
 
-    // Buat soal baru untuk babak berikutnya
+    // Buat soal baru untuk babak berikutnya (Standar 15 Soal per game)
     const freshQuestions = generateBattleQuestions({
       level: topicLevel,
       chapter: topicChapter,
       category: topicCategory,
-      count: 5,
+      count: 15,
     });
     setShuffledQuestions(freshQuestions);
     setCurrentQIndex(0);
@@ -890,12 +895,45 @@ export default function BattleRoyaleModal({
   const startMatch = (currentRoom: RoomData) => {
     let questions = currentRoom.questions && currentRoom.questions.length > 0 ? currentRoom.questions : [];
     if (questions.length === 0) {
-      questions = generateBattleQuestions({
-        level: currentRoom.topicLevel || topicLevel,
-        chapter: currentRoom.topicChapter !== undefined ? currentRoom.topicChapter : topicChapter,
-        category: currentRoom.topicCategory || topicCategory,
-        count: 5,
-      });
+      if (mode === "all_members" || currentRoom.mode === "all_members") {
+        // Survival Multi-Stage: Stage 1 = Kotoba, Stage 2 = Kanji, Stage 3 = Bunpou (Total 15 Soal)
+        const stage1 = generateBattleQuestions({
+          level: currentRoom.topicLevel || topicLevel,
+          chapter: currentRoom.topicChapter,
+          category: "noun",
+          count: 5,
+        });
+        const stage2 = generateBattleQuestions({
+          level: currentRoom.topicLevel || topicLevel,
+          chapter: currentRoom.topicChapter,
+          category: "verb1",
+          count: 5,
+        });
+        const stage3 = generateBattleQuestions({
+          level: currentRoom.topicLevel || topicLevel,
+          chapter: currentRoom.topicChapter,
+          category: "bunpou_puzzle",
+          count: 5,
+        });
+        questions = [...stage1, ...stage2, ...stage3];
+        if (questions.length < 15) {
+          const fallback = generateBattleQuestions({
+            level: currentRoom.topicLevel || topicLevel,
+            chapter: currentRoom.topicChapter,
+            category: "all",
+            count: 15 - questions.length,
+          });
+          questions = [...questions, ...fallback];
+        }
+      } else {
+        // Standard 15 Questions per Game
+        questions = generateBattleQuestions({
+          level: currentRoom.topicLevel || topicLevel,
+          chapter: currentRoom.topicChapter !== undefined ? currentRoom.topicChapter : topicChapter,
+          category: currentRoom.topicCategory || topicCategory,
+          count: 15,
+        });
+      }
     }
 
     setShuffledQuestions(questions);
@@ -1260,6 +1298,9 @@ export default function BattleRoyaleModal({
             });
           } else {
             sfx.playEliminated();
+            addXp(150, "Juara 3 Turnamen Otsutsuki Cup (Podium 3 Besar 🥉)");
+            recordBattleOutcome(false, "tournament", { mojiGoi: 2, bunpou: 2 }, 3);
+            unlockBadge("tournament_3rd");
             setTournamentRoundModal({
               show: true,
               type: "eliminated",
@@ -1290,12 +1331,17 @@ export default function BattleRoyaleModal({
           if (didIWin) {
             setBattleState("victory");
             sfx.playVictory();
-            addXp(500, "Juara Turnamen Otsutsuki Cup (CUP Champion)");
+            addXp(500, "Juara 1 Turnamen Otsutsuki Cup (CUP Champion 🥇)");
+            recordBattleOutcome(true, "tournament", { mojiGoi: 5, bunpou: 5, kanji: 5 }, 1);
+            unlockBadge("tournament_1st");
             advanceDailyQuest("battle", 1);
             setTournamentWins((prev) => prev + 1);
           } else {
             setBattleState("defeat");
             sfx.playEliminated();
+            addXp(300, "Juara 2 Turnamen Otsutsuki Cup (Runner-Up 🥈)");
+            recordBattleOutcome(false, "tournament", { mojiGoi: 3, bunpou: 3 }, 2);
+            unlockBadge("tournament_2nd");
           }
           notifyMatchFinished();
           return;
@@ -1316,12 +1362,14 @@ export default function BattleRoyaleModal({
       if (isIWinner && me && me.hp > 0) {
         setBattleState("victory");
         sfx.playVictory();
-        const earnedXp = mode === "all_members" ? 150 : mode === "group" ? 120 : 90;
-        addXp(earnedXp, `Battle Royale Member (${mode})`);
+        const earnedXp = mode === "all_members" ? 180 : mode === "group" ? 140 : 100;
+        addXp(earnedXp, `Kemenangan Shinobi Arena (${mode})`);
+        recordBattleOutcome(true, mode);
         advanceDailyQuest("battle", 1);
       } else {
         setBattleState("defeat");
         sfx.playEliminated();
+        recordBattleOutcome(false, mode);
       }
       notifyMatchFinished();
       return;
@@ -1811,6 +1859,94 @@ export default function BattleRoyaleModal({
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{readyCount}/{roomParticipants.length} Siap</span>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* TEAM SQUAD CUSTOMIZATION (2v2 MODE) */}
+                  {mode === "group" && (
+                    <div className="p-3.5 rounded-2xl bg-indigo-950/40 border border-indigo-500/40 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-indigo-300 flex items-center gap-1.5 uppercase tracking-wide">
+                          🛡️ Pilihan Tim & Kustomisasi Nama Skuad
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-bold">2 vs 2 Faction War</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectTeam("shinobi")}
+                          className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2 ${
+                            myTeam === "shinobi"
+                              ? "bg-indigo-600/40 border-indigo-400 text-white shadow-md ring-1 ring-indigo-400"
+                              : "bg-slate-900/60 border-slate-700 text-slate-400 hover:text-slate-200"
+                          }`}
+                        >
+                          <span className="text-xl">🥷</span>
+                          <div>
+                            <div className="text-xs font-black">Tim Shinobi</div>
+                            <div className="text-[10px] text-indigo-300">Aliansi Kaminari</div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleSelectTeam("samurai")}
+                          className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2 ${
+                            myTeam === "samurai"
+                              ? "bg-rose-600/40 border-rose-400 text-white shadow-md ring-1 ring-rose-400"
+                              : "bg-slate-900/60 border-slate-700 text-slate-400 hover:text-slate-200"
+                          }`}
+                        >
+                          <span className="text-xl">⚔️</span>
+                          <div>
+                            <div className="text-xs font-black">Tim Samurai</div>
+                            <div className="text-[10px] text-rose-300">Klan Honoo</div>
+                          </div>
+                        </button>
+                      </div>
+
+                      {/* Custom Team Name Input */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-300 mb-1">
+                          Nama Khusus Skuad Anda (Opsional):
+                        </label>
+                        <input
+                          type="text"
+                          value={customTeamName}
+                          onChange={(e) => setCustomTeamName(e.target.value)}
+                          placeholder="Contoh: Skuad Akatsuki / Garuda Jonin"
+                          className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-400"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* CATEGORY SELECTOR FOR QUIZ */}
+                  <div className="p-3 rounded-2xl bg-black/10 dark:bg-white/5 border border-current/10 space-y-2">
+                    <span className="text-[10px] font-black uppercase opacity-75 block">
+                      Kategori Soal Pertandingan:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        { key: "all", label: "🌐 Semua Topik" },
+                        { key: "noun", label: "📖 Kotoba (Benda)" },
+                        { key: "verb1", label: "🈸 Kanji & Kerja" },
+                        { key: "bunpou_puzzle", label: "🧩 Bunpou Tata Bahasa" },
+                      ].map((cat) => (
+                        <button
+                          key={cat.key}
+                          type="button"
+                          onClick={() => setTopicCategory(cat.key as any)}
+                          className={`px-2.5 py-1 rounded-xl text-[10px] font-black transition ${
+                            topicCategory === cat.key
+                              ? "bg-amber-400 text-stone-950 shadow"
+                              : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
@@ -2515,16 +2651,39 @@ export default function BattleRoyaleModal({
               </div>
 
               {tournamentRoundModal.type === "advancing" && tournamentRoundModal.nextOpponent && (
-                <div className="w-full p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
-                  <div className="text-left text-xs">
-                    <span className="text-[10px] font-black uppercase text-amber-400 block">Lawan di {tournamentRoundModal.roundWon === "qf" ? "Semifinal" : "Grand Final"}:</span>
-                    <span className="font-bold flex items-center gap-1.5 mt-0.5">
-                      <span>{tournamentRoundModal.nextOpponent.avatar}</span> {tournamentRoundModal.nextOpponent.name}
+                <div className="w-full space-y-2">
+                  <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
+                    <div className="text-left text-xs">
+                      <span className="text-[10px] font-black uppercase text-amber-400 block">Lawan di {tournamentRoundModal.roundWon === "qf" ? "Semifinal" : "Grand Final"}:</span>
+                      <span className="font-bold flex items-center gap-1.5 mt-0.5">
+                        <span>{tournamentRoundModal.nextOpponent.avatar}</span> {tournamentRoundModal.nextOpponent.name}
+                      </span>
+                    </div>
+                    <span className="text-xs font-mono font-black text-amber-400 uppercase px-2 py-1 rounded-lg bg-black/30">
+                      {tournamentRoundModal.roundWon === "qf" ? "SF" : "FINAL"}
                     </span>
                   </div>
-                  <span className="text-xs font-mono font-black text-amber-400 uppercase px-2 py-1 rounded-lg bg-black/30">
-                    {tournamentRoundModal.roundWon === "qf" ? "SF" : "FINAL"}
-                  </span>
+
+                  {/* Status Kesiapan & Menunggu Lawan */}
+                  <div className="p-2.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-[11px] text-purple-200 text-left space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-amber-300">
+                      <Clock className="w-3.5 h-3.5 animate-spin" />
+                      Status Lawan: Siap di Arena Tempur
+                    </div>
+                    <p className="opacity-80">
+                      Konfirmasi kesiapan Anda sebelum babak berikutnya dimulai. Pastikan fokus dan koneksi stabil!
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* COUNTDOWN DISPLAY */}
+              {nextRoundCountdown !== null && (
+                <div className="my-2">
+                  <div className="text-xs text-amber-400 font-bold">Babak Berikutnya Dimulai Dalam:</div>
+                  <div className="text-4xl font-black text-amber-300 animate-ping my-1">
+                    {nextRoundCountdown}
+                  </div>
                 </div>
               )}
 
@@ -2538,13 +2697,39 @@ export default function BattleRoyaleModal({
                 </button>
 
                 {tournamentRoundModal.type === "advancing" ? (
-                  <button
-                    type="button"
-                    onClick={startNextTournamentRound}
-                    className="flex-1 clay-btn-gold py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md"
-                  >
-                    Lanjut Tanding ➔
-                  </button>
+                  isNextRoundReady ? (
+                    <div className="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Status: SIAP (READY ✅)
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsNextRoundReady(true);
+                        sfx.playCorrect();
+                        let count = 3;
+                        setNextRoundCountdown(count);
+                        sfx.playCountdownHurry();
+                        const interval = setInterval(() => {
+                          count -= 1;
+                          if (count > 0) {
+                            setNextRoundCountdown(count);
+                            sfx.playCountdownHurry();
+                          } else {
+                            clearInterval(interval);
+                            setNextRoundCountdown(null);
+                            setIsNextRoundReady(false);
+                            startNextTournamentRound();
+                          }
+                        }, 1000);
+                      }}
+                      className="flex-1 clay-btn-gold py-3 px-4 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition"
+                    >
+                      <Check className="w-4 h-4 stroke-[3]" />
+                      KONFIRMASI SIAP (READY) ➔
+                    </button>
+                  )
                 ) : (
                   <button
                     type="button"

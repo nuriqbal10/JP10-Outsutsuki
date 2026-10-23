@@ -43,7 +43,28 @@ function calculateRank(state: UserGamificationState): UserGamificationState {
     rankBadge,
     progressPercent,
   };
-} export interface UserGamificationState {
+} export interface UserBattleStats {
+  totalMatches: number;
+  wins: number;
+  losses: number;
+  winRate: number; // percentage 0-100
+  podiums: {
+    first: number;
+    second: number;
+    third: number;
+  };
+  pillars: {
+    mojiGoi: number; // 0-100
+    bunpou: number;  // 0-100
+    dokkai: number;  // 0-100
+    choukai: number; // 0-100
+    kanji: number;   // 0-100
+  };
+  strengths: string[];
+  weaknesses: string[];
+}
+
+export interface UserGamificationState {
   xp: number;
   level: number;
   rankTitle: string;
@@ -53,6 +74,7 @@ function calculateRank(state: UserGamificationState): UserGamificationState {
   dailyStreak: number;
   lastActiveDate: string; // YYYY-MM-DD
   badges: string[];
+  battleStats?: UserBattleStats;
 }
 
 export const RANKS = [
@@ -76,9 +98,32 @@ export const AVAILABLE_BADGES = [
   { id: "choukai_sniper", name: "聴解スナイパー", desc: "Skor Choukai 100% pada simulasi", icon: "🎧" },
   { id: "lkpd_hero", name: "課題マスター", desc: "Menyelesaikan lembar LKPD", icon: "✍️" },
   { id: "cbt_champion", name: "CBT合格戦士", desc: "Lulus Ujian CBT nilai di atas 200", icon: "🏆" },
+  { id: "tournament_1st", name: "大筒木杯 覇者 (Juara 1)", desc: "Menjuarai Grand Final Turnamen Otsutsuki Cup", icon: "🥇" },
+  { id: "tournament_2nd", name: "大筒木杯 準優勝 (Juara 2)", desc: "Meraih posisi Runner-Up di Grand Final Otsutsuki Cup", icon: "🥈" },
+  { id: "tournament_3rd", name: "大筒木杯 3位 (Juara 3)", desc: "Menembus Podium 3 Besar Turnamen Otsutsuki Cup", icon: "🥉" },
+  { id: "puzzle_master", name: "文法パズル達人", desc: "Menyelesaikan 10 Ronde Bunpou Puzzle tanpa kalah", icon: "🧩" },
+  { id: "picture_detective", name: "写真・標識マスター", desc: "Menebak rambu dan foto otentik Jepang dengan akurasi 100%", icon: "🔍" },
+  { id: "shinobi_explorer", name: "忍の冒険者", desc: "Menuntaskan seluruh petualangan komprehensif Shinobi Quest", icon: "🗺️" },
 ];
 
 const STORAGE_KEY = "irodori_gamification_state";
+
+export const DEFAULT_BATTLE_STATS: UserBattleStats = {
+  totalMatches: 0,
+  wins: 0,
+  losses: 0,
+  winRate: 0,
+  podiums: { first: 0, second: 0, third: 0 },
+  pillars: {
+    mojiGoi: 70,
+    bunpou: 65,
+    dokkai: 60,
+    choukai: 75,
+    kanji: 55,
+  },
+  strengths: ["Kosakata Percakapan (Kaiwa Kotoba)", "Pengenalan Audio Choukai A2"],
+  weaknesses: ["Karakter Kanji N4/A2.2", "Pola Kalimat Bertingkat (Bunpou)"],
+};
 
 export function getGamificationState(): UserGamificationState {
   if (typeof window === "undefined") {
@@ -92,6 +137,7 @@ export function getGamificationState(): UserGamificationState {
       dailyStreak: 1,
       lastActiveDate: new Date().toISOString().split("T")[0],
       badges: ["first_step"],
+      battleStats: { ...DEFAULT_BATTLE_STATS },
     };
   }
 
@@ -110,12 +156,16 @@ export function getGamificationState(): UserGamificationState {
         dailyStreak: 1,
         lastActiveDate: today,
         badges: ["first_step"],
+        battleStats: { ...DEFAULT_BATTLE_STATS },
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
       return initial;
     }
 
     const state = JSON.parse(raw) as UserGamificationState;
+    if (!state.battleStats) {
+      state.battleStats = { ...DEFAULT_BATTLE_STATS };
+    }
 
     // Check streak logic
     const lastDate = state.lastActiveDate;
@@ -225,6 +275,107 @@ export function setGamificationLevel(targetLevel: number): UserGamificationState
   return finalState;
 }
 
+
+export function unlockBadge(badgeId: string): UserGamificationState {
+  const current = getGamificationState();
+  if (!current.badges.includes(badgeId)) {
+    const updated = {
+      ...current,
+      badges: [...current.badges, badgeId],
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent("gamification-updated", { detail: updated }));
+    }
+    return updated;
+  }
+  return current;
+}
+
+export function recordBattleOutcome(
+  won: boolean,
+  mode: string,
+  pillarGains?: Partial<UserBattleStats["pillars"]>,
+  tournamentRank?: 1 | 2 | 3
+): UserGamificationState {
+  const current = getGamificationState();
+  const prevStats = current.battleStats || { ...DEFAULT_BATTLE_STATS };
+
+  const totalMatches = prevStats.totalMatches + 1;
+  const wins = won ? prevStats.wins + 1 : prevStats.wins;
+  const losses = won ? prevStats.losses : prevStats.losses + 1;
+  const winRate = Math.round((wins / totalMatches) * 100);
+
+  const podiums = { ...prevStats.podiums };
+  const badges = [...current.badges];
+
+  if (tournamentRank === 1) {
+    podiums.first += 1;
+    if (!badges.includes("tournament_1st")) badges.push("tournament_1st");
+  } else if (tournamentRank === 2) {
+    podiums.second += 1;
+    if (!badges.includes("tournament_2nd")) badges.push("tournament_2nd");
+  } else if (tournamentRank === 3) {
+    podiums.third += 1;
+    if (!badges.includes("tournament_3rd")) badges.push("tournament_3rd");
+  }
+
+  // Adjust pillars based on gains
+  const pillars = {
+    mojiGoi: Math.min(100, Math.max(20, (prevStats.pillars?.mojiGoi || 70) + (pillarGains?.mojiGoi || (won ? 3 : -1)))),
+    bunpou: Math.min(100, Math.max(20, (prevStats.pillars?.bunpou || 65) + (pillarGains?.bunpou || (mode.includes("bunpou") ? (won ? 4 : -2) : (won ? 1 : 0))))),
+    dokkai: Math.min(100, Math.max(20, (prevStats.pillars?.dokkai || 60) + (pillarGains?.dokkai || (won ? 2 : -1)))),
+    choukai: Math.min(100, Math.max(20, (prevStats.pillars?.choukai || 75) + (pillarGains?.choukai || (won ? 2 : 0)))),
+    kanji: Math.min(100, Math.max(20, (prevStats.pillars?.kanji || 55) + (pillarGains?.kanji || (won ? 3 : -1)))),
+  };
+
+  // Re-calculate strengths and weaknesses dynamically
+  const pillarEntries = Object.entries(pillars) as [keyof typeof pillars, number][];
+  pillarEntries.sort((a, b) => b[1] - a[1]);
+
+  const pillarLabels: Record<string, string> = {
+    mojiGoi: "Kosakata Otentik (Moji-Goi)",
+    bunpou: "Pola Tata Bahasa (Bunpou A2.2)",
+    dokkai: "Pemahaman Teks & Rambu (Dokkai)",
+    choukai: "Ketajaman Audio (Choukai)",
+    kanji: "Penguasaan Kanji N4/A2",
+  };
+
+  const strengths = [
+    `${pillarLabels[pillarEntries[0][0]]} (${pillarEntries[0][1]}%)`,
+    `${pillarLabels[pillarEntries[1][0]]} (${pillarEntries[1][1]}%)`,
+  ];
+
+  const weaknesses = [
+    `${pillarLabels[pillarEntries[4][0]]} (${pillarEntries[4][1]}%)`,
+    `${pillarLabels[pillarEntries[3][0]]} (${pillarEntries[3][1]}%)`,
+  ];
+
+  const updatedStats: UserBattleStats = {
+    totalMatches,
+    wins,
+    losses,
+    winRate,
+    podiums,
+    pillars,
+    strengths,
+    weaknesses,
+  };
+
+  const updatedState: UserGamificationState = {
+    ...current,
+    badges,
+    battleStats: updatedStats,
+  };
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedState));
+    window.dispatchEvent(new CustomEvent("gamification-updated", { detail: updatedState }));
+  }
+
+  return updatedState;
+}
+
 export function resetGamificationState(): UserGamificationState {
   const initial: UserGamificationState = {
     xp: 0,
@@ -236,6 +387,7 @@ export function resetGamificationState(): UserGamificationState {
     dailyStreak: 1,
     lastActiveDate: new Date().toISOString().split("T")[0],
     badges: ["first_step"],
+    battleStats: { ...DEFAULT_BATTLE_STATS },
   };
 
   if (typeof window !== "undefined") {
