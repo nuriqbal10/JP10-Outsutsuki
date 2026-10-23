@@ -21,12 +21,28 @@ import {
   Play,
   Award,
   BookOpen,
+  Users,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  Radio,
+  UserCheck,
+  Loader2,
+  HelpCircle,
 } from "lucide-react";
 import rawBunpouData from "@/data/bunpouData.json";
 import { BunpouItem } from "@/types/bunpou";
 import { sfx } from "@/lib/soundEffects";
 import { addXp, getGamificationState } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
+import {
+  cleanJapaneseText,
+  generateBunpouPuzzleQuestions,
+  BattleQuestion,
+  VocabLevel,
+} from "@/data/battleQuestionBank";
 
 export interface ClassRival {
   nim: string;
@@ -68,15 +84,17 @@ export const CLASS_RIVALS: ClassRival[] = [
   { nim: "JP10-1803762", name: "ZAHRA PUTRI PADILAH", avatar: "💎", rank: "Permata Suci", specialJutsu: "Kongouseki Shuriken" },
 ];
 
-const allBunpouData: BunpouItem[] = rawBunpouData as BunpouItem[];
+const JAPANESE_PARTICLES = new Set([
+  "は", "が", "を", "に", "へ", "で", "と", "から", "まで", "より", "も", "か", "ね", "よ", "の"
+]);
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
+export interface MatchReflectionItem {
+  round: number;
+  question: BattleQuestion;
+  userAssembled: string[];
+  isCorrect: boolean;
+  timeSpentSeconds: number;
+  errorReason?: string;
 }
 
 export interface BunpouPuzzleBattleArenaProps {
@@ -88,61 +106,58 @@ export default function BunpouPuzzleBattleArena({
   onBackToHub,
   onOpenMultiplayerModal,
 }: BunpouPuzzleBattleArenaProps) {
+  // Arena Top Tabs: 'solo_dojo' | 'multiplayer_realtime'
+  const [arenaMode, setArenaMode] = useState<"solo_dojo" | "multiplayer_realtime">("solo_dojo");
+
   // Game Flow States: 'lobby' | 'battle' | 'victory' | 'defeat'
   const [gameState, setGameState] = useState<"lobby" | "battle" | "victory" | "defeat">("lobby");
 
-  // Lobby Filters
-  const [selectedLevel, setSelectedLevel] = useState<"all" | "a1" | "a2_1" | "a2_2">("all");
+  // Filter & Difficulty Settings
+  const [selectedLevel, setSelectedLevel] = useState<"all" | "A1" | "A2.1" | "A2.2">("all");
   const [selectedLesson, setSelectedLesson] = useState<number>(0); // 0 = all
   const [selectedRivalIndex, setSelectedRivalIndex] = useState<number>(-1); // -1 = random
   const [roundLimit, setRoundLimit] = useState<number>(5);
 
-  // Active Battle States
+  // Active Combat State (Strict 30s per round)
   const [currentRound, setCurrentRound] = useState<number>(1);
   const [playerHp, setPlayerHp] = useState<number>(100);
   const [rivalHp, setRivalHp] = useState<number>(100);
   const [combo, setCombo] = useState<number>(0);
   const [highestCombo, setHighestCombo] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
-  const [timeLeft, setTimeLeft] = useState<number>(25);
+  const [timeLeft, setTimeLeft] = useState<number>(30); // 30s exact requirement
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [isAttacking, setIsAttacking] = useState<boolean>(false);
   const [isHit, setIsHit] = useState<boolean>(false);
+  const [actionFx, setActionFx] = useState<string | null>(null);
   const [battleLogs, setBattleLogs] = useState<string[]>([]);
 
-  // Current Question
-  const [activeItems, setActiveItems] = useState<BunpouItem[]>([]);
-  const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
+  // Questions & Token Pools
+  const [matchQuestions, setMatchQuestions] = useState<BattleQuestion[]>([]);
+  const [currentQIndex, setCurrentQIndex] = useState<number>(0);
   const [availableTokens, setAvailableTokens] = useState<string[]>([]);
   const [placedTokens, setPlacedTokens] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<"idle" | "correct" | "wrong">("idle");
   const [activeRival, setActiveRival] = useState<ClassRival>(CLASS_RIVALS[0]);
 
-  // Player Profile
-  const [playerName, setPlayerName] = useState<string>("Shinobi Pelajar");
-  const [playerRank, setPlayerRank] = useState<string>("Genin");
+  // Post-Match Reflection Record
+  const [reflectionList, setReflectionList] = useState<MatchReflectionItem[]>([]);
+  const [expandedReflectionIdx, setExpandedReflectionIdx] = useState<number | null>(null);
+
+  // Real-Time Multiplayer Room State
+  const [multiplayerRoomCode, setMultiplayerRoomCode] = useState<string>("JP10");
+  const [myPlayerName, setMyPlayerName] = useState<string>("Shinobi Outsutsuki");
+  const [myAvatar, setMyAvatar] = useState<string>("🥷");
+  const [isRoomHost, setIsRoomHost] = useState<boolean>(false);
+  const [roomParticipants, setRoomParticipants] = useState<any[]>([]);
+  const [isMultiplayerWaiting, setIsMultiplayerWaiting] = useState<boolean>(false);
+  const [multiplayerStatusMsg, setMultiplayerStatusMsg] = useState<string>("");
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const roundStartTimeRef = useRef<number>(Date.now());
 
-  // Load initial gamification data
-  useEffect(() => {
-    const st = getGamificationState();
-    if (st) {
-      setPlayerRank(st.rankTitle);
-    }
-  }, []);
-
-  // Filter Bunpou Pool based on criteria
-  const filteredPool = useMemo(() => {
-    return allBunpouData.filter((b) => {
-      if (!b.puzzle || !b.puzzle.sentence) return false;
-      if (selectedLevel !== "all" && b.level !== selectedLevel) return false;
-      if (selectedLesson > 0 && b.lesson !== selectedLesson) return false;
-      return true;
-    });
-  }, [selectedLevel, selectedLesson]);
-
-  // Pronounce sentence using Web Speech API
+  // Pronounce Japanese Sentence via Web Speech Synthesis
   const speakJapanese = (text: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
@@ -153,10 +168,23 @@ export default function BunpouPuzzleBattleArena({
     }
   };
 
-  // Start Battle
-  const handleStartBattle = () => {
-    if (filteredPool.length === 0) {
-      alert("Tidak ada pola kalimat untuk filter ini! Silakan ubah level atau bab.");
+  // Trigger Anime Action FX
+  const triggerActionFx = (text: string) => {
+    setActionFx(text);
+    setTimeout(() => setActionFx(null), 1200);
+  };
+
+  // Start Solo Challenge (Progressive Difficulty: Easy -> Hard, No Duplicates)
+  const handleStartSoloBattle = () => {
+    // Generate questions with progressive difficulty: Easy -> Hard, zero duplicates
+    const questions = generateBunpouPuzzleQuestions({
+      level: selectedLevel,
+      chapter: selectedLesson,
+      count: roundLimit,
+    });
+
+    if (questions.length === 0) {
+      alert("Tidak ada pola kalimat untuk filter ini! Silakan ganti level atau bab.");
       return;
     }
 
@@ -169,45 +197,45 @@ export default function BunpouPuzzleBattleArena({
     }
     setActiveRival(rival);
 
-    // Shuffle and pick questions for the match
-    const shuffled = shuffleArray(filteredPool);
-    const chosen = shuffled.slice(0, Math.min(roundLimit, shuffled.length));
-    setActiveItems(chosen);
-    setActiveItemIndex(0);
-
-    // Setup first question
-    const firstItem = chosen[0];
-    setupQuestion(firstItem);
-
-    // Reset battle stats
+    setMatchQuestions(questions);
+    setCurrentQIndex(0);
+    setCurrentRound(1);
     setPlayerHp(100);
     setRivalHp(100);
     setCombo(0);
     setHighestCombo(0);
     setScore(0);
-    setCurrentRound(1);
-    setBattleLogs([
-      `⚔️ Duel dimulai melawan ${rival.name} (${rival.nim})!`,
-      `🎯 Susun pola kalimat dengan benar untuk melancarkan serangan Shinobi!`,
-    ]);
-    setGameState("battle");
+    setReflectionList([]);
 
-    // Audio effect
+    setupQuestion(questions[0]);
+
+    setBattleLogs([
+      `⚔️ DUEL DIMULAI melawan ${rival.name} (${rival.nim})!`,
+      `⏱️ Waktu: 30 Detik per Soal. Susun kata dan partikel secara presisi!`,
+      `📈 Tingkat kesulitan meningkat secara bertahap dari mudah hingga menantang!`,
+    ]);
+
+    setGameState("battle");
     sfx.playSlash();
+    triggerActionFx("始め! HAJIME!");
   };
 
-  const setupQuestion = (item: BunpouItem) => {
-    if (!item.puzzle) return;
-    const tokens = item.puzzle.shuffledTokens && item.puzzle.shuffledTokens.length > 0
-      ? shuffleArray(item.puzzle.shuffledTokens)
-      : shuffleArray(item.puzzle.tokens);
-    setAvailableTokens(tokens);
+  const setupQuestion = (q: BattleQuestion) => {
+    const tokens = q.puzzleTokens || [];
+    // Shuffle tokens thoroughly
+    const shuffled = [...tokens];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    setAvailableTokens(shuffled);
     setPlacedTokens([]);
     setFeedback("idle");
-    setTimeLeft(25);
+    setTimeLeft(30); // Exactly 30 seconds requirement
+    roundStartTimeRef.current = Date.now();
   };
 
-  // Countdown Timer Hook
+  // 30s Countdown Timer Hook
   useEffect(() => {
     if (gameState !== "battle") {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -218,10 +246,10 @@ export default function BunpouPuzzleBattleArena({
       setTimeLeft((prev) => {
         if (prev <= 1) {
           handleTimeout();
-          return 25;
+          return 30;
         }
         if (prev <= 5 && !isMuted) {
-          sfx.playTick();
+          sfx.playCountdownHurry();
         }
         return prev - 1;
       });
@@ -230,18 +258,38 @@ export default function BunpouPuzzleBattleArena({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [gameState, activeItemIndex, activeItems, placedTokens, combo, playerHp, rivalHp]);
+  }, [gameState, currentQIndex, matchQuestions, placedTokens, playerHp, rivalHp, combo]);
 
-  // Handle Timeout (Rival Counterattacks!)
+  // Handle Timeout (Rival Attacks)
   const handleTimeout = () => {
     sfx.playWrong();
     setIsHit(true);
-    setTimeout(() => setIsHit(false), 600);
+    setTimeout(() => setIsHit(false), 700);
 
-    const dmg = 20;
+    const currentQ = matchQuestions[currentQIndex];
+    const timeSpent = 30;
+
+    // Record reflection
+    if (currentQ) {
+      setReflectionList((prev) => [
+        ...prev,
+        {
+          round: currentRound,
+          question: currentQ,
+          userAssembled: placedTokens,
+          isCorrect: false,
+          timeSpentSeconds: timeSpent,
+          errorReason: "Waktu 30 detik habis sebelum susunan kalimat sempat diserahkan.",
+        },
+      ]);
+    }
+
+    const dmg = 25;
     const newPlayerHp = Math.max(0, playerHp - dmg);
     setPlayerHp(newPlayerHp);
     setCombo(0);
+    triggerActionFx("⏰ WAKTU HABIS!");
+
     setBattleLogs((prev) => [
       `⏰ Waktu habis! ${activeRival.name} melancarkan ${activeRival.specialJutsu} (-${dmg} HP)!`,
       ...prev.slice(0, 5),
@@ -251,98 +299,136 @@ export default function BunpouPuzzleBattleArena({
       setTimeout(() => {
         sfx.playEliminated();
         setGameState("defeat");
-      }, 700);
+      }, 800);
     } else {
       nextTurn();
     }
   };
 
-  // Move token from available pool to placed pool
+  // Move token from pool to placed zone
   const handlePickToken = (token: string, index: number) => {
     if (feedback !== "idle") return;
+    sfx.playTick();
     setAvailableTokens((prev) => prev.filter((_, i) => i !== index));
     setPlacedTokens((prev) => [...prev, token]);
   };
 
-  // Move token from placed pool back to available pool
+  // Move token from placed zone back to pool
   const handleRemoveToken = (token: string, index: number) => {
     if (feedback !== "idle") return;
+    sfx.playTick();
     setPlacedTokens((prev) => prev.filter((_, i) => i !== index));
     setAvailableTokens((prev) => [...prev, token]);
   };
 
-  // Reset placed tokens
+  // Reset tokens for current question
   const handleResetTokens = () => {
     if (feedback !== "idle") return;
-    const currentItem = activeItems[activeItemIndex];
-    if (currentItem && currentItem.puzzle) {
-      setupQuestion(currentItem);
-    }
+    const currentQ = matchQuestions[currentQIndex];
+    if (currentQ) setupQuestion(currentQ);
   };
 
-  // Check Sentence & Attack!
+  // Submit and Validate Sentence (Zero false negatives with thorough punctuation stripping)
   const handleSubmitSentence = () => {
     if (placedTokens.length === 0 || feedback !== "idle") return;
-    const currentItem = activeItems[activeItemIndex];
-    if (!currentItem || !currentItem.puzzle) return;
+    const currentQ = matchQuestions[currentQIndex];
+    if (!currentQ || !currentQ.puzzleSentence) return;
 
-    const assembled = placedTokens.join("");
-    const correctClean = currentItem.puzzle.sentence.replace(/[。、\s]/g, "");
-    const assembledClean = assembled.replace(/[。、\s]/g, "");
+    const userClean = cleanJapaneseText(placedTokens.join(""));
+    const correctClean = cleanJapaneseText(currentQ.puzzleSentence);
 
-    const isMatch = assembledClean === correctClean;
+    const isMatch = userClean === correctClean;
+    const timeSpent = Math.max(1, 30 - timeLeft);
 
     if (isMatch) {
-      // SUCCESSFUL JUTSU ATTACK!
+      // SUCCESSFUL ATTACK!
       setFeedback("correct");
       sfx.playCorrect();
       setIsAttacking(true);
-      setTimeout(() => setIsAttacking(false), 600);
+      setTimeout(() => setIsAttacking(false), 700);
 
       const nextCombo = combo + 1;
       setCombo(nextCombo);
       if (nextCombo > highestCombo) setHighestCombo(nextCombo);
 
-      // Damage formula: 30 base + combo bonus
+      // Damage: 30 base + combo bonus
       const dmg = Math.min(50, 30 + nextCombo * 5);
       const newRivalHp = Math.max(0, rivalHp - dmg);
       setRivalHp(newRivalHp);
 
-      const addedScore = 500 + timeLeft * 20 + nextCombo * 50;
+      const addedScore = 600 + timeLeft * 25 + nextCombo * 100;
       setScore((s) => s + addedScore);
 
+      triggerActionFx(nextCombo > 1 ? `🔥 ${nextCombo}x JUTSU COMBO!` : "💥 SERANGAN TEPAT!");
+
       setBattleLogs((prev) => [
-        `💥 JUTSU BERHASIL! [${currentItem.pattern}] menghantam ${activeRival.name} (-${dmg} HP)! 🔥 ${nextCombo}x Combo`,
+        `💥 JUTSU BERHASIL! [${currentQ.pattern}] menghantam ${activeRival.name} (-${dmg} HP)!`,
         ...prev.slice(0, 5),
       ]);
 
-      // Speak correct sentence
-      speakJapanese(currentItem.puzzle.sentence);
+      // Record to reflection list
+      setReflectionList((prev) => [
+        ...prev,
+        {
+          round: currentRound,
+          question: currentQ,
+          userAssembled: placedTokens,
+          isCorrect: true,
+          timeSpentSeconds: timeSpent,
+        },
+      ]);
+
+      speakJapanese(currentQ.puzzleSentence);
 
       if (newRivalHp <= 0) {
-        setTimeout(() => {
-          handleVictory();
-        }, 1200);
+        setTimeout(() => handleVictory(), 1200);
       } else {
-        setTimeout(() => {
-          nextTurn();
-        }, 1400);
+        setTimeout(() => nextTurn(), 1400);
       }
     } else {
-      // WRONG SENTENCE! RIVAL COUNTER-ATTACKS
+      // WRONG ASSEMBLY!
       setFeedback("wrong");
       sfx.playWrong();
       setIsHit(true);
-      setTimeout(() => setIsHit(false), 600);
+      setTimeout(() => setIsHit(false), 700);
 
       setCombo(0);
       const dmg = 20;
       const newPlayerHp = Math.max(0, playerHp - dmg);
       setPlayerHp(newPlayerHp);
 
+      triggerActionFx("🛡️ TANGKISAN RIVAL!");
+
+      // Analyze specific error reason
+      let errorReason = "Urutan kosakata atau partikel belum sesuai kaidah tata bahasa.";
+      if (placedTokens.length !== (currentQ.puzzleTokens?.length || 0)) {
+        errorReason = `Jumlah token belum lengkap (${placedTokens.length} dari ${currentQ.puzzleTokens?.length || 0} kata).`;
+      } else {
+        const lastPlaced = placedTokens[placedTokens.length - 1];
+        const lastExpected = currentQ.puzzleTokens?.[currentQ.puzzleTokens.length - 1];
+        if (lastPlaced !== lastExpected) {
+          errorReason = `Predikat / kata kerja utama (${lastExpected}) harus diletakkan di akhir kalimat.`;
+        } else {
+          errorReason = `Posisi partikel penanda (seperti は, を, に, で, と) belum menempel tepat pada kata benda yang sesuai.`;
+        }
+      }
+
       setBattleLogs((prev) => [
-        `❌ Susunan kata belum tepat! ${activeRival.name} melancarkan ${activeRival.specialJutsu} (-${dmg} HP)!`,
+        `❌ Susunan kata belum tepat! ${activeRival.name} melancarkan serangan balik (-${dmg} HP)!`,
         ...prev.slice(0, 5),
+      ]);
+
+      // Record to reflection list
+      setReflectionList((prev) => [
+        ...prev,
+        {
+          round: currentRound,
+          question: currentQ,
+          userAssembled: placedTokens,
+          isCorrect: false,
+          timeSpentSeconds: timeSpent,
+          errorReason,
+        },
       ]);
 
       if (newPlayerHp <= 0) {
@@ -354,7 +440,7 @@ export default function BunpouPuzzleBattleArena({
         setTimeout(() => {
           setFeedback("idle");
           handleResetTokens();
-        }, 1500);
+        }, 1600);
       }
     }
   };
@@ -362,9 +448,8 @@ export default function BunpouPuzzleBattleArena({
   // Next Round / Turn
   const nextTurn = () => {
     setFeedback("idle");
-    const nextIdx = activeItemIndex + 1;
-    if (nextIdx >= activeItems.length) {
-      // All questions done! Determine winner based on HP
+    const nextIdx = currentQIndex + 1;
+    if (nextIdx >= matchQuestions.length) {
       if (rivalHp <= playerHp) {
         handleVictory();
       } else {
@@ -373,102 +458,143 @@ export default function BunpouPuzzleBattleArena({
       return;
     }
 
-    setActiveItemIndex(nextIdx);
+    setCurrentQIndex(nextIdx);
     setCurrentRound(nextIdx + 1);
-    setupQuestion(activeItems[nextIdx]);
+    setupQuestion(matchQuestions[nextIdx]);
   };
 
-  // Victory Handler
+  // Victory
   const handleVictory = () => {
     sfx.playVictory();
-    const xpReward = 150 + highestCombo * 20;
+    const xpReward = 180 + highestCombo * 25;
     addXp(xpReward, "Kemenangan Bunpou Puzzle Shinobi Arena!");
     advanceDailyQuest("battle");
     setGameState("victory");
   };
 
-  const currentItem = activeItems[activeItemIndex];
+  const currentQ = matchQuestions[currentQIndex];
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6">
-      {/* ARENA TOP CONTROL BAR */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/90 border border-purple-500/30 rounded-2xl p-4 shadow-xl backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-purple-600/30 border border-purple-500/50 flex items-center justify-center text-2xl shadow-inner">
-            🧩
+    <div className="w-full max-w-5xl mx-auto space-y-6 select-none font-sans">
+      {/* ==================================================================== */}
+      {/* ARENA HEADER & MODE SELECTOR */}
+      {/* ==================================================================== */}
+      <div className="bg-gradient-to-r from-slate-950 via-purple-950/80 to-slate-950 border-2 border-purple-500/40 rounded-3xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+        {/* Glowing Ambient Aura */}
+        <div className="absolute -top-24 -left-24 w-52 h-52 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-52 h-52 bg-amber-600/20 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-wrap items-center justify-between gap-4 relative z-10">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-purple-600 p-0.5 shadow-xl shadow-purple-600/30 flex items-center justify-center">
+              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-2xl">
+                🧩
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-purple-200 to-indigo-300 tracking-tight">
+                  SHINOBI BUNPOU PUZZLE ARENA
+                </h2>
+                <span className="px-2 py-0.5 text-[10px] font-black uppercase rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                  30s / Soal
+                </span>
+              </div>
+              <p className="text-xs text-purple-200/80">
+                Susun kalimat Irodori dari termudah ke tersulit • Adu kecepatan presisi tata bahasa
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-lg md:text-xl font-black text-white flex items-center gap-2">
-              BUNPOU PUZZLE BATTLE
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-                Shinobi Mode
-              </span>
-            </h2>
-            <p className="text-xs text-purple-300">
-              Rangkai kata & partikel bahasa Jepang secara presisi untuk menumbangkan rival kelas
-            </p>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const muted = sfx.toggleMute();
+                setIsMuted(muted);
+              }}
+              className="p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-slate-300 hover:text-white hover:bg-slate-800 transition shadow-md"
+              title={isMuted ? "Aktifkan Audio" : "Matikan Audio"}
+            >
+              {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+            </button>
+
+            {gameState !== "lobby" && (
+              <button
+                onClick={() => setGameState("lobby")}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                Keluar Match
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              const muted = sfx.toggleMute();
-              setIsMuted(muted);
-            }}
-            className="p-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
-            title={isMuted ? "Aktifkan Suara" : "Matikan Suara"}
-          >
-            {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
-          </button>
-
-          {onOpenMultiplayerModal && (
+        {/* MODE TABS (DOJO SOLO VS REALTIME MULTIPLAYER) */}
+        {gameState === "lobby" && (
+          <div className="grid grid-cols-2 gap-3 mt-5 pt-4 border-t border-purple-500/20 relative z-10">
             <button
-              onClick={onOpenMultiplayerModal}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold border border-indigo-500/40 bg-indigo-950/60 text-indigo-300 hover:bg-indigo-900/80 transition flex items-center gap-1.5"
+              type="button"
+              onClick={() => setArenaMode("solo_dojo")}
+              className={`py-3 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+                arenaMode === "solo_dojo"
+                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 shadow-lg shadow-orange-500/30 scale-[1.01]"
+                  : "bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800"
+              }`}
             >
-              <Swords className="w-3.5 h-3.5 text-indigo-400" />
-              Lobi Multiplayer Cup
+              🥋 SHINOBI TRAINING DOJO (SOLO VS RIVAL)
             </button>
-          )}
-
-          {gameState !== "lobby" && (
             <button
-              onClick={() => setGameState("lobby")}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1.5"
+              type="button"
+              onClick={() => {
+                if (onOpenMultiplayerModal) {
+                  onOpenMultiplayerModal();
+                } else {
+                  setArenaMode("multiplayer_realtime");
+                }
+              }}
+              className={`py-3 px-4 rounded-2xl font-black text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+                arenaMode === "multiplayer_realtime"
+                  ? "bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-600/30 scale-[1.01]"
+                  : "bg-slate-900/80 text-purple-300 hover:text-white border border-purple-500/30"
+              }`}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Keluar Duel
+              <Swords className="w-4 h-4 text-amber-400" />
+              ⚔️ DUEL REAL-TIME 1v1 (SISWA OTENTIK)
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* ==================================================================== */}
-      {/* 1. LOBBY SCREEN */}
+      {/* 1. LOBBY SCREEN (SHINOBI DOJO CONFIGURATION) */}
       {/* ==================================================================== */}
-      {gameState === "lobby" && (
+      {gameState === "lobby" && arenaMode === "solo_dojo" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LOBBY SETTINGS */}
-          <div className="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <h3 className="font-extrabold text-white text-base md:text-lg">
-                Pengaturan Arena Tempur Bunpou
-              </h3>
+          <div className="lg:col-span-2 bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <h3 className="font-extrabold text-white text-base md:text-lg">
+                  Konfigurasi Latihan Tempur Shinobi
+                </h3>
+              </div>
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/30 text-emerald-400 font-bold">
+                ✓ Auto Progression Easy ➔ Hard
+              </span>
             </div>
 
             {/* LEVEL SELECTION */}
             <div>
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                1. Pilih Level Irodori
+                1. Tingkat Irodori
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {[
                   { key: "all", label: "Semua Level", sub: "A1, A2.1 & A2.2", icon: "🌐" },
-                  { key: "a1", label: "Level A1", sub: "入門 Nyuumon", icon: "🌱" },
-                  { key: "a2_1", label: "Level A2.1", sub: "初級1 Shokyuu 1", icon: "⚔️" },
-                  { key: "a2_2", label: "Level A2.2", sub: "初級2 Shokyuu 2", icon: "🔥" },
+                  { key: "A1", label: "Level A1", sub: "入門 Dasar", icon: "🌱" },
+                  { key: "A2.1", label: "Level A2.1", sub: "初級1 Menengah", icon: "⚔️" },
+                  { key: "A2.2", label: "Level A2.2", sub: "初級2 Mahir", icon: "🔥" },
                 ].map((lvl) => (
                   <button
                     key={lvl.key}
@@ -477,9 +603,9 @@ export default function BunpouPuzzleBattleArena({
                       setSelectedLevel(lvl.key as any);
                       setSelectedLesson(0);
                     }}
-                    className={`p-3 rounded-xl border text-left transition-all ${
+                    className={`p-3 rounded-2xl border text-left transition-all ${
                       selectedLevel === lvl.key
-                        ? "border-purple-500 bg-purple-950/60 shadow-lg shadow-purple-900/30 text-white"
+                        ? "border-amber-500 bg-amber-950/40 text-amber-300 shadow-lg shadow-amber-900/20"
                         : "border-slate-800 bg-slate-950/70 text-slate-400 hover:border-slate-700 hover:text-slate-200"
                     }`}
                   >
@@ -494,26 +620,23 @@ export default function BunpouPuzzleBattleArena({
             {/* CHAPTER SELECTION */}
             <div>
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
-                2. Pilih Bab Pelajaran (Irodori Lesson)
+                2. Bab Pelajaran (Irodori Lesson)
               </label>
               <select
                 value={selectedLesson}
                 onChange={(e) => setSelectedLesson(parseInt(e.target.value, 10))}
-                className="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-white font-medium text-sm focus:outline-none focus:border-purple-500"
+                className="w-full p-3 rounded-2xl border border-slate-700 bg-slate-950 text-white font-medium text-sm focus:outline-none focus:border-purple-500"
               >
-                <option value={0}>Semua Bab (Bab 1 - 18)</option>
+                <option value={0}>Semua Bab (Bab 1 - 18 Diacak Tanpa Duplikasi)</option>
                 {Array.from({ length: 18 }, (_, i) => i + 1).map((ch) => (
                   <option key={ch} value={ch}>
-                    Bab {ch} ({allBunpouData.filter((b) => (selectedLevel === "all" || b.level === selectedLevel) && b.lesson === ch).length} Pola Kalimat)
+                    Bab {ch}
                   </option>
                 ))}
               </select>
-              <p className="text-[11px] text-slate-400 mt-1.5">
-                Tersedia <span className="text-purple-400 font-bold">{filteredPool.length}</span> pola kalimat dengan puzzle susun kata siap uji.
-              </p>
             </div>
 
-            {/* RIVAL SELECTION */}
+            {/* RIVAL SELECTION (29 STUDENTS LIST) */}
             <div>
               <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
                 3. Pilih Penantang Rival Kelas Outsutsuki
@@ -521,9 +644,9 @@ export default function BunpouPuzzleBattleArena({
               <select
                 value={selectedRivalIndex}
                 onChange={(e) => setSelectedRivalIndex(parseInt(e.target.value, 10))}
-                className="w-full p-3 rounded-xl border border-slate-700 bg-slate-950 text-white font-medium text-sm focus:outline-none focus:border-purple-500"
+                className="w-full p-3 rounded-2xl border border-slate-700 bg-slate-950 text-white font-medium text-sm focus:outline-none focus:border-purple-500"
               >
-                <option value={-1}>🎲 Acak / Rival Otomatis (Matchmaking)</option>
+                <option value={-1}>🎲 Acak / Rival Otomatis (Matchmaking 29 Siswa)</option>
                 {CLASS_RIVALS.map((r, idx) => (
                   <option key={r.nim} value={idx}>
                     {r.avatar} {r.name} ({r.nim}) • {r.rank}
@@ -538,14 +661,14 @@ export default function BunpouPuzzleBattleArena({
                 4. Durasi Pertandingan (Jumlah Ronde)
               </label>
               <div className="flex gap-3">
-                {[3, 5, 10].map((rounds) => (
+                {[3, 5, 8, 10].map((rounds) => (
                   <button
                     key={rounds}
                     type="button"
                     onClick={() => setRoundLimit(rounds)}
-                    className={`flex-1 py-2.5 rounded-xl border text-xs font-bold transition-all ${
+                    className={`flex-1 py-2.5 rounded-2xl border text-xs font-black transition-all ${
                       roundLimit === rounds
-                        ? "border-amber-500 bg-amber-950/50 text-amber-300"
+                        ? "border-purple-500 bg-purple-950/60 text-purple-200 shadow-md shadow-purple-900/30"
                         : "border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700"
                     }`}
                   >
@@ -559,129 +682,165 @@ export default function BunpouPuzzleBattleArena({
             <div className="pt-2">
               <button
                 type="button"
-                onClick={handleStartBattle}
-                className="w-full py-4 rounded-xl font-black text-white text-base md:text-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 shadow-xl shadow-purple-600/30 active:scale-[0.99] transition flex items-center justify-center gap-2"
+                onClick={handleStartSoloBattle}
+                className="w-full py-4 rounded-2xl font-black text-stone-950 text-base md:text-lg bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 hover:from-amber-300 hover:to-orange-300 shadow-xl shadow-orange-500/30 active:scale-[0.99] transition flex items-center justify-center gap-2"
               >
-                <Swords className="w-5 h-5" />
-                MASUK ARENA TEMPUR BUNPOU
+                <Play className="w-5 h-5 fill-current" />
+                MASUK SHINOBI DOJO (30 DETIK / SOAL)
               </button>
             </div>
           </div>
 
-          {/* RIVAL PREVIEW CARD */}
-          <div className="bg-gradient-to-b from-slate-900 to-indigo-950/50 border border-indigo-500/30 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+          {/* RIVAL SHOWCASE CARD */}
+          <div className="bg-gradient-to-b from-slate-900 to-indigo-950/60 border border-indigo-500/30 rounded-3xl p-6 shadow-2xl flex flex-col justify-between">
             <div>
               <div className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-3 flex items-center gap-1.5">
                 <Shield className="w-4 h-4" />
-                Profil Rival Terpilih
+                Kartu Shinobi Rival
               </div>
 
               {(() => {
-                const previewRival =
+                const r =
                   selectedRivalIndex >= 0 && selectedRivalIndex < CLASS_RIVALS.length
                     ? CLASS_RIVALS[selectedRivalIndex]
                     : CLASS_RIVALS[0];
                 return (
                   <div className="text-center py-4">
-                    <div className="w-24 h-24 mx-auto rounded-2xl bg-indigo-900/60 border-2 border-indigo-400/40 flex items-center justify-center text-5xl shadow-2xl mb-4 animate-bounce">
-                      {previewRival.avatar}
+                    <div className="w-24 h-24 mx-auto rounded-3xl bg-indigo-900/40 border-2 border-indigo-400/40 flex items-center justify-center text-5xl shadow-2xl mb-4 animate-bounce">
+                      {r.avatar}
                     </div>
-                    <h4 className="font-extrabold text-white text-lg">{previewRival.name}</h4>
-                    <p className="text-xs font-mono text-purple-300">{previewRival.nim}</p>
+                    <h4 className="font-extrabold text-white text-lg">{r.name}</h4>
+                    <p className="text-xs font-mono text-purple-300">{r.nim}</p>
                     <div className="inline-block mt-2 px-3 py-1 rounded-full bg-indigo-950 border border-indigo-500/40 text-[11px] font-bold text-indigo-300">
-                      Rank: {previewRival.rank}
+                      Rank: {r.rank}
                     </div>
 
-                    <div className="mt-5 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 text-left">
-                      <div className="text-[11px] text-slate-400">Jutsu Rahasia:</div>
-                      <div className="text-xs font-bold text-amber-400">⚡ {previewRival.specialJutsu}</div>
-                      <div className="text-[11px] text-slate-400 mt-2">Kelemahan:</div>
-                      <div className="text-xs text-slate-300">Susunan partikel presisi & kecepatan kilat</div>
+                    <div className="mt-5 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800 text-left space-y-2">
+                      <div className="text-[11px] text-slate-400">Jurus Rahasia:</div>
+                      <div className="text-xs font-bold text-amber-400">⚡ {r.specialJutsu}</div>
+                      <div className="text-[11px] text-slate-400 mt-2">Aturan Tempur:</div>
+                      <div className="text-xs text-slate-300 leading-relaxed">
+                        • 30 detik tiap ronde<br />
+                        • Kalimat semakin panjang & menantang<br />
+                        • Evaluasi & pembahasan komprehensif di akhir
+                      </div>
                     </div>
                   </div>
                 );
               })()}
             </div>
 
-            <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30 text-xs text-purple-200">
-              💡 <strong>Tips Shinobi:</strong> Pastikan partikel (は, を, に, で, と) berada tepat setelah kata benda yang ditargetkan!
+            <div className="p-3.5 rounded-2xl bg-purple-950/40 border border-purple-500/30 text-xs text-purple-200">
+              💡 <strong>Tips Master:</strong> Partikel penanda (は, を, に, で) telah diberi sorotan khusus agar mudah dikenali posisinya!
             </div>
           </div>
         </div>
       )}
 
       {/* ==================================================================== */}
-      {/* 2. ACTIVE BATTLE SCREEN */}
+      {/* 2. ACTIVE ARCADE BATTLE SCREEN (30s TIMER & CHAKRA STRIKE) */}
       {/* ==================================================================== */}
-      {gameState === "battle" && currentItem && currentItem.puzzle && (
+      {gameState === "battle" && currentQ && (
         <div className="space-y-6">
-          {/* COMBAT HUD: PLAYER VS RIVAL */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl backdrop-blur-md">
-            {/* PLAYER CARD */}
-            <div className={`md:col-span-2 p-4 rounded-xl border transition-all duration-300 ${isHit ? "bg-red-950/60 border-red-500 animate-pulse" : "bg-slate-950/70 border-purple-500/30"}`}>
+          {/* FLOATING ACTION FX OVERLAY */}
+          {actionFx && (
+            <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center">
+              <div className="px-8 py-4 rounded-3xl bg-black/80 border-4 border-amber-400 text-amber-300 font-black text-2xl md:text-4xl shadow-2xl shadow-amber-500/50 animate-bounce tracking-widest uppercase">
+                {actionFx}
+              </div>
+            </div>
+          )}
+
+          {/* COMBAT HUD: ARCADE FIGHTING STANCE */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-center bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+            {/* PLAYER CHAKRA BAR */}
+            <div className={`md:col-span-2 p-4 rounded-2xl border transition-all duration-300 ${isHit ? "bg-red-950/70 border-red-500 animate-pulse scale-[0.98]" : "bg-slate-950/80 border-purple-500/40"}`}>
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🥷</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-3xl">🥷</span>
                   <div>
-                    <div className="font-extrabold text-sm text-white">{playerName}</div>
-                    <div className="text-[10px] text-purple-400">{playerRank}</div>
+                    <div className="font-extrabold text-sm text-white">Pemain (Anda)</div>
+                    <div className="text-[10px] text-purple-400 font-mono">Chunin Tangkas</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs font-mono font-bold text-emerald-400">{playerHp} / 100 HP</div>
+                  <div className={`text-xs font-mono font-black ${playerHp <= 30 ? "text-red-400 animate-ping" : "text-emerald-400"}`}>
+                    {playerHp} / 100 HP
+                  </div>
                 </div>
               </div>
-              {/* HP Bar */}
-              <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+              {/* Neon Chakra Bar */}
+              <div className="w-full bg-slate-800 h-3.5 rounded-full overflow-hidden border border-slate-700/80 p-0.5">
                 <div
-                  className={`h-full transition-all duration-500 ${
-                    playerHp > 50 ? "bg-gradient-to-r from-emerald-500 to-teal-400" : playerHp > 25 ? "bg-gradient-to-r from-amber-500 to-yellow-400" : "bg-gradient-to-r from-red-600 to-red-400"
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    playerHp > 50
+                      ? "bg-gradient-to-r from-emerald-500 to-teal-400 shadow-lg shadow-emerald-500/50"
+                      : playerHp > 25
+                      ? "bg-gradient-to-r from-amber-500 to-yellow-400 shadow-lg shadow-amber-500/50"
+                      : "bg-gradient-to-r from-red-600 to-red-400 shadow-lg shadow-red-500/50"
                   }`}
                   style={{ width: `${playerHp}%` }}
                 />
               </div>
             </div>
 
-            {/* ROUND & TIMER BADGE */}
+            {/* VS CENTER BADGE & 30s COUNTDOWN TIMER */}
             <div className="md:col-span-1 text-center flex flex-col items-center justify-center py-2">
-              <div className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">
-                Ronde {currentRound} / {activeItems.length}
+              <div className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
+                <span>Ronde {currentRound} / {matchQuestions.length}</span>
               </div>
+
+              {/* 30s Circular Timer */}
               <div
-                className={`w-14 h-14 rounded-full border-2 flex items-center justify-center font-black text-xl shadow-lg transition-all ${
+                className={`w-16 h-16 rounded-full border-4 flex flex-col items-center justify-center font-black shadow-xl transition-all ${
                   timeLeft <= 5
-                    ? "border-red-500 bg-red-950/80 text-red-300 animate-ping"
-                    : "border-purple-500 bg-purple-950/60 text-purple-200"
+                    ? "border-red-500 bg-red-950 text-red-300 animate-ping scale-110"
+                    : timeLeft <= 10
+                    ? "border-amber-500 bg-amber-950/80 text-amber-300"
+                    : "border-purple-500 bg-purple-950/80 text-purple-200"
                 }`}
               >
-                {timeLeft}s
+                <span className="text-xl leading-none">{timeLeft}</span>
+                <span className="text-[9px] uppercase tracking-wider opacity-75">DETIK</span>
               </div>
+
+              {/* Difficulty Tag */}
+              <div className="mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-slate-800 border border-slate-700 text-slate-300">
+                {currentQ.difficultyTier === "easy" ? "🌱 Mudah" : currentQ.difficultyTier === "medium" ? "⚔️ Menengah" : "🔥 Sulit"}
+              </div>
+
               {combo > 1 && (
-                <div className="mt-1.5 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-red-500 text-stone-950 font-black text-[10px] uppercase shadow-md animate-bounce">
+                <div className="mt-1 px-2.5 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-red-500 text-stone-950 font-black text-[10px] uppercase shadow-md animate-bounce">
                   🔥 {combo}x COMBO!
                 </div>
               )}
             </div>
 
-            {/* RIVAL CARD */}
-            <div className={`md:col-span-2 p-4 rounded-xl border transition-all duration-300 ${isAttacking ? "bg-red-950/60 border-red-500 animate-pulse" : "bg-slate-950/70 border-indigo-500/30"}`}>
+            {/* RIVAL CHAKRA BAR */}
+            <div className={`md:col-span-2 p-4 rounded-2xl border transition-all duration-300 ${isAttacking ? "bg-red-950/70 border-red-500 animate-pulse scale-[0.98]" : "bg-slate-950/80 border-indigo-500/40"}`}>
               <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">{activeRival.avatar}</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-3xl">{activeRival.avatar}</span>
                   <div>
                     <div className="font-extrabold text-sm text-white">{activeRival.name}</div>
                     <div className="text-[10px] text-indigo-400 font-mono">{activeRival.nim}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs font-mono font-bold text-indigo-400">{rivalHp} / 100 HP</div>
+                  <div className={`text-xs font-mono font-black ${rivalHp <= 30 ? "text-red-400 animate-ping" : "text-indigo-400"}`}>
+                    {rivalHp} / 100 HP
+                  </div>
                 </div>
               </div>
-              {/* Rival HP Bar */}
-              <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden border border-slate-700">
+              {/* Rival Neon Chakra Bar */}
+              <div className="w-full bg-slate-800 h-3.5 rounded-full overflow-hidden border border-slate-700/80 p-0.5">
                 <div
-                  className={`h-full transition-all duration-500 ${
-                    rivalHp > 50 ? "bg-gradient-to-r from-indigo-500 to-blue-400" : rivalHp > 25 ? "bg-gradient-to-r from-amber-500 to-orange-400" : "bg-gradient-to-r from-red-600 to-red-400"
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    rivalHp > 50
+                      ? "bg-gradient-to-r from-indigo-500 to-blue-400 shadow-lg shadow-indigo-500/50"
+                      : rivalHp > 25
+                      ? "bg-gradient-to-r from-amber-500 to-orange-400 shadow-lg shadow-amber-500/50"
+                      : "bg-gradient-to-r from-red-600 to-red-400 shadow-lg shadow-red-500/50"
                   }`}
                   style={{ width: `${rivalHp}%` }}
                 />
@@ -689,57 +848,61 @@ export default function BunpouPuzzleBattleArena({
             </div>
           </div>
 
-          {/* TARGET SENTENCE DISPLAY */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+          {/* TARGET MISSION BOX (SOAL BAHASA INDONESIA & RUMUS) */}
+          <div className="bg-gradient-to-r from-slate-900 via-slate-900/90 to-purple-950/60 border border-slate-800 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-purple-950/80 border border-purple-500/30 text-[11px] font-bold text-purple-300 uppercase">
-                  {currentItem.levelJapanese} • Bab {currentItem.lesson}
+                <span className="px-3 py-1 rounded-xl bg-purple-950/90 border border-purple-500/40 text-xs font-black text-purple-300 uppercase">
+                  {currentQ.level} • Bab {currentQ.chapter}
                 </span>
                 <span className="text-xs text-slate-400 font-medium">
-                  {currentItem.lessonTitle}
+                  {currentQ.pattern}
                 </span>
               </div>
+
               <button
                 type="button"
-                onClick={() => speakJapanese(currentItem.puzzle?.sentence || "")}
-                className="p-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition"
-                title="Dengarkan pengucapan audio bahasa Jepang"
+                onClick={() => speakJapanese(currentQ.puzzleSentence || "")}
+                className="px-3 py-1.5 rounded-xl border border-purple-500/30 bg-purple-950/50 text-purple-300 hover:text-white transition flex items-center gap-1.5 text-xs font-bold"
+                title="Dengarkan pelafalan bahasa Jepang otentik"
               >
-                <Volume2 className="w-4 h-4 text-purple-400" />
+                <Volume2 className="w-4 h-4 text-amber-400" />
+                Dengarkan Kunci Suara
               </button>
             </div>
 
-            {/* INDONESIAN MEANING (TARGET TO ASSEMBLE) */}
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 mb-3">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                Target Arti Bahasa Indonesia:
+            {/* INDONESIAN MEANING TO ASSEMBLE */}
+            <div className="p-4 rounded-2xl bg-slate-950/90 border border-slate-800/90 mb-3">
+              <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-1">
+                Target Terjemahan Bahasa Indonesia:
               </div>
-              <div className="text-base md:text-xl font-bold text-amber-300">
-                "{currentItem.puzzle.translation}"
+              <div className="text-lg md:text-2xl font-black text-amber-300 tracking-wide">
+                "{currentQ.puzzleTranslation || currentQ.display}"
               </div>
             </div>
 
-            {/* BUNPOU FORMULA HINT */}
-            <div className="flex items-center gap-2 text-xs text-slate-400">
-              <span className="font-semibold text-purple-400">Rumus:</span>
-              <span className="font-mono bg-purple-950/50 px-2 py-0.5 rounded border border-purple-500/20 text-purple-200">
-                {currentItem.formulaDetailed || currentItem.pattern}
+            {/* FORMULA CLUE */}
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="font-bold text-purple-400">Petunjuk Pola Kalimat:</span>
+              <span className="font-mono bg-purple-950/60 px-2.5 py-1 rounded-lg border border-purple-500/30 text-purple-200 font-semibold">
+                {currentQ.formulaDetailed || currentQ.subDisplay || currentQ.pattern}
               </span>
             </div>
           </div>
 
-          {/* PUZZLE ASSEMBLY ZONE (DROPZONE) */}
-          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          {/* INTERACTIVE SENTENCE DROPZONE */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                Susunan Kalimat Anda (Ketuk token untuk membatalkan):
+              <label className="text-xs font-black text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                <span>Susunan Kalimat Shinobi Anda:</span>
+                <span className="text-[11px] font-normal text-slate-400">(Ketuk kata untuk membatalkan)</span>
               </label>
+
               <button
                 type="button"
                 onClick={handleResetTokens}
                 disabled={placedTokens.length === 0}
-                className="text-xs text-slate-400 hover:text-white flex items-center gap-1 disabled:opacity-40 transition"
+                className="text-xs font-bold text-slate-400 hover:text-white flex items-center gap-1 disabled:opacity-40 transition"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Reset Susunan
@@ -748,84 +911,106 @@ export default function BunpouPuzzleBattleArena({
 
             {/* PLACED TOKENS CONTAINER */}
             <div
-              className={`min-h-[72px] p-4 rounded-xl border-2 border-dashed flex flex-wrap items-center gap-2.5 transition-all ${
+              className={`min-h-[84px] p-4 rounded-2xl border-2 border-dashed flex flex-wrap items-center gap-2.5 transition-all ${
                 feedback === "correct"
-                  ? "border-emerald-500 bg-emerald-950/30"
+                  ? "border-emerald-500 bg-emerald-950/40 shadow-lg shadow-emerald-500/20"
                   : feedback === "wrong"
-                  ? "border-red-500 bg-red-950/30"
+                  ? "border-red-500 bg-red-950/40 shadow-lg shadow-red-500/20"
                   : placedTokens.length > 0
-                  ? "border-purple-500/50 bg-slate-950/80"
-                  : "border-slate-800 bg-slate-950/40"
+                  ? "border-purple-500/60 bg-slate-950/90"
+                  : "border-slate-800 bg-slate-950/50"
               }`}
             >
               {placedTokens.length === 0 ? (
                 <div className="text-xs text-slate-500 italic">
-                  Ketuk kata-kata di bawah ini sesuai urutan tata bahasa yang tepat...
+                  Ketuk kartu gulungan kata & partikel di bawah sesuai urutan tata bahasa yang tepat...
                 </div>
               ) : (
-                placedTokens.map((token, idx) => (
-                  <button
-                    key={`${token}-${idx}`}
-                    type="button"
-                    onClick={() => handleRemoveToken(token, idx)}
-                    className="px-4 py-2.5 rounded-xl font-bold text-sm md:text-base border border-purple-400/50 bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-md active:scale-95 hover:border-red-400 hover:from-red-600 hover:to-red-700 transition"
-                    title="Klik untuk kembalikan ke pilihan"
-                  >
-                    {token}
-                  </button>
-                ))
+                placedTokens.map((token, idx) => {
+                  const isParticle = JAPANESE_PARTICLES.has(token);
+                  return (
+                    <button
+                      key={`${token}-${idx}`}
+                      type="button"
+                      onClick={() => handleRemoveToken(token, idx)}
+                      className={`px-4 py-2.5 rounded-2xl font-black text-sm md:text-base border shadow-md active:scale-95 transition-all flex items-center gap-1.5 ${
+                        isParticle
+                          ? "border-amber-400/60 bg-gradient-to-r from-amber-600 to-orange-600 text-stone-950 shadow-amber-500/20"
+                          : "border-purple-400/60 bg-gradient-to-r from-purple-700 to-indigo-700 text-white shadow-purple-600/30"
+                      } hover:border-red-400 hover:from-red-600 hover:to-red-700 hover:text-white`}
+                      title="Klik untuk kembalikan ke wadah kata"
+                    >
+                      {token}
+                      {isParticle && (
+                        <span className="text-[10px] px-1 py-0.2 rounded bg-black/20 text-stone-950 font-mono">
+                          partikel
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
               )}
             </div>
 
-            {/* AVAILABLE TOKEN POOL */}
+            {/* AVAILABLE CHAKRA SCROLL TILES (TOKEN POOL) */}
             <div className="pt-2">
-              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-                Pilihan Kata & Partikel:
+              <div className="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                <span>Pilihan Gulungan Kata & Partikel:</span>
+                <span className="text-[10px] text-amber-400 font-normal">
+                  ⚡ Warna kuning = Partikel Gramatikal
+                </span>
               </div>
               <div className="flex flex-wrap gap-2.5">
-                {availableTokens.map((token, idx) => (
-                  <button
-                    key={`${token}-${idx}`}
-                    type="button"
-                    onClick={() => handlePickToken(token, idx)}
-                    className="px-4 py-2.5 rounded-xl font-bold text-sm md:text-base border border-slate-700 bg-slate-800 text-slate-100 hover:border-purple-400 hover:bg-slate-700 hover:text-white shadow-md active:scale-95 transition"
-                  >
-                    {token}
-                  </button>
-                ))}
+                {availableTokens.map((token, idx) => {
+                  const isParticle = JAPANESE_PARTICLES.has(token);
+                  return (
+                    <button
+                      key={`${token}-${idx}`}
+                      type="button"
+                      onClick={() => handlePickToken(token, idx)}
+                      className={`px-4 py-3 rounded-2xl font-black text-sm md:text-base border shadow-lg active:scale-95 hover:scale-105 transition-all ${
+                        isParticle
+                          ? "border-amber-500/60 bg-amber-950/70 text-amber-300 hover:bg-amber-900/80 shadow-amber-900/20"
+                          : "border-slate-700 bg-slate-800 text-slate-100 hover:border-purple-400 hover:bg-slate-700 hover:text-white"
+                      }`}
+                    >
+                      {token}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            {/* FEEDBACK BANNER */}
+            {/* FEEDBACK STATUS BANNER */}
             {feedback === "correct" && (
-              <div className="p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-bold flex items-center gap-2 animate-bounce">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>SEMPURNA! Jutsu Bunpou berhasil dieksekusi dengan dahsyat!</span>
+              <div className="p-3.5 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-300 text-xs font-bold flex items-center gap-2 animate-bounce shadow-lg">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <span>SEMPURNA! Jutsu Bunpou berhasil dieksekusi dengan dahsyat! (+Skor Kecepatan)</span>
               </div>
             )}
             {feedback === "wrong" && (
-              <div className="p-3 rounded-xl bg-red-950/70 border border-red-500/50 text-red-300 text-xs font-bold flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-red-400" />
-                <span>Kurang tepat! Kunci jawaban: {currentItem.puzzle.sentence}</span>
+              <div className="p-3.5 rounded-2xl bg-red-950/80 border border-red-500/60 text-red-300 text-xs font-bold flex items-center gap-2 shadow-lg">
+                <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+                <span>Susunan kurang tepat! Kunci: {currentQ.puzzleSentence} (Lihat penjelasan di refleksi akhir)</span>
               </div>
             )}
 
-            {/* SUBMIT BUTTON */}
+            {/* SUBMIT JUTSU STRIKE BUTTON */}
             <div className="pt-2">
               <button
                 type="button"
                 onClick={handleSubmitSentence}
                 disabled={placedTokens.length === 0 || feedback !== "idle"}
-                className="w-full py-3.5 rounded-xl font-black text-white text-base bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-[0.99] transition flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl font-black text-white text-base md:text-lg bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-xl shadow-purple-600/30 active:scale-[0.99] transition flex items-center justify-center gap-2"
               >
-                <Swords className="w-5 h-5" />
+                <Swords className="w-5 h-5 text-amber-400" />
                 SERANG RIVAL DENGAN JUTSU INI!
               </button>
             </div>
           </div>
 
-          {/* BATTLE TICKER LOG */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-3.5 text-xs font-mono text-slate-400 space-y-1">
+          {/* COMBAT TICKER */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-3.5 text-xs font-mono text-slate-400 space-y-1">
             <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
               Catatan Tempur Arena:
             </div>
@@ -839,101 +1024,230 @@ export default function BunpouPuzzleBattleArena({
       )}
 
       {/* ==================================================================== */}
-      {/* 3. VICTORY SCREEN */}
+      {/* 3. VICTORY & DEFEAT SCREENS WITH POST-MATCH REFLECTION SHEET */}
       {/* ==================================================================== */}
-      {gameState === "victory" && (
-        <div className="bg-slate-900/95 border border-amber-500/50 rounded-2xl p-8 text-center shadow-2xl space-y-6">
-          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center text-5xl shadow-2xl shadow-amber-500/30 animate-pulse">
-            🏆
+      {(gameState === "victory" || gameState === "defeat") && (
+        <div className="space-y-6">
+          {/* RESULT HERO CARD */}
+          <div
+            className={`border-2 rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden ${
+              gameState === "victory"
+                ? "bg-slate-900/95 border-amber-500/60 shadow-amber-500/20"
+                : "bg-slate-900/95 border-red-500/60 shadow-red-500/20"
+            }`}
+          >
+            {/* MANGA / ANIME STAMP */}
+            <div className="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-5xl mb-4 shadow-2xl border-4 bg-slate-950">
+              {gameState === "victory" ? "🏆" : "💀"}
+            </div>
+
+            <div className="space-y-1 mb-5">
+              <div className="inline-block px-4 py-1 rounded-full font-mono text-xs font-black uppercase tracking-widest bg-black/40 border border-current mb-2">
+                {gameState === "victory" ? "「一本！完全勝利」" : "「無念！修行不足」"}
+              </div>
+              <h3 className="text-2xl md:text-4xl font-black text-white">
+                {gameState === "victory" ? "KEMENANGAN MUTLAK SHINOBI!" : "PERTAHANAN ANDA DITEMBUS!"}
+              </h3>
+              <p className="text-sm max-w-lg mx-auto text-slate-300">
+                {gameState === "victory"
+                  ? `Hebat! Anda berhasil menumbangkan ${activeRival.name} (${activeRival.nim}) dengan kecepatan dan ketepatan susunan tata bahasa!`
+                  : `${activeRival.name} (${activeRival.nim}) berhasil mengungguli duel ini. Pelajari lembar refleksi di bawah untuk membalas dendam!`}
+              </p>
+            </div>
+
+            {/* MATCH STATS */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto mb-6">
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                <div className="text-[11px] text-slate-400">Total Skor</div>
+                <div className="text-xl font-black text-amber-400">{score}</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                <div className="text-[11px] text-slate-400">Highest Combo</div>
+                <div className="text-xl font-black text-red-400">🔥 {highestCombo}x</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                <div className="text-[11px] text-slate-400">Sisa HP Anda</div>
+                <div className="text-xl font-black text-emerald-400">{playerHp} HP</div>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800">
+                <div className="text-[11px] text-slate-400">XP Hadiah</div>
+                <div className="text-xl font-black text-purple-400">
+                  +{gameState === "victory" ? 180 + highestCombo * 25 : 30} XP
+                </div>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handleStartSoloBattle}
+                className="px-6 py-3.5 rounded-2xl font-black bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 text-stone-950 shadow-xl shadow-orange-500/30 transition flex items-center gap-2"
+              >
+                <RotateCcw className="w-4 h-4" />
+                Tanding Ulang (Soal Baru & Acak)
+              </button>
+              <button
+                type="button"
+                onClick={() => setGameState("lobby")}
+                className="px-6 py-3.5 rounded-2xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
+              >
+                Kembali ke Lobi Arena
+              </button>
+            </div>
           </div>
 
-          <div>
-            <h3 className="text-2xl md:text-3xl font-black text-white mb-1">
-              KEMENANGAN SHINOBI!
-            </h3>
-            <p className="text-amber-300 text-sm">
-              Anda berhasil menumbangkan {activeRival.name} ({activeRival.nim}) dengan susunan tata bahasa sempurna!
+          {/* ==================================================================== */}
+          {/* REFLEKSI & PEMBAHASAN PASCA-PERTANDINGAN */}
+          {/* ==================================================================== */}
+          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+              <div className="flex items-center gap-2.5">
+                <BookOpen className="w-5 h-5 text-amber-400" />
+                <h3 className="text-lg md:text-xl font-black text-white">
+                  📜 Lembar Refleksi & Pembahasan Tata Bahasa
+                </h3>
+              </div>
+              <span className="text-xs text-slate-400">
+                {reflectionList.filter((r) => r.isCorrect).length} dari {reflectionList.length} Soal Berhasil Dijawab Benar
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Pelajari detail kesalahan dan kunci kaidah pola kalimat di bawah ini agar kemampuan bahasa Jepang Anda semakin berkembang:
             </p>
-          </div>
 
-          {/* MATCH STATS */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto">
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="text-[11px] text-slate-400">Total Skor</div>
-              <div className="text-lg font-black text-amber-400">{score}</div>
+            {/* LIST OF QUESTION REFLECTIONS */}
+            <div className="space-y-4">
+              {reflectionList.map((item, idx) => {
+                const isExpanded = expandedReflectionIdx === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`rounded-2xl border transition-all ${
+                      item.isCorrect
+                        ? "bg-slate-950/70 border-emerald-500/40"
+                        : "bg-slate-950/90 border-red-500/50 shadow-lg shadow-red-950/20"
+                    }`}
+                  >
+                    <div
+                      onClick={() => setExpandedReflectionIdx(isExpanded ? null : idx)}
+                      className="p-4 flex flex-wrap items-center justify-between gap-3 cursor-pointer hover:bg-white/5 rounded-2xl transition"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${
+                            item.isCorrect
+                              ? "bg-emerald-950 text-emerald-400 border border-emerald-500/40"
+                              : "bg-red-950 text-red-400 border border-red-500/40"
+                          }`}
+                        >
+                          {item.round}
+                        </span>
+
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-extrabold text-sm text-white">
+                              {item.question.puzzleTranslation || item.question.display}
+                            </span>
+                            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-500/30">
+                              {item.question.level} • Bab {item.question.chapter}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-400 mt-0.5">
+                            Pola: <span className="text-purple-300 font-mono">{item.question.pattern}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                            item.isCorrect
+                              ? "bg-emerald-950/80 text-emerald-300 border border-emerald-500/30"
+                              : "bg-red-950/80 text-red-300 border border-red-500/30"
+                          }`}
+                        >
+                          {item.isCorrect ? "✓ Benar" : "✕ Perlu Evaluasi"}
+                        </span>
+                        {isExpanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                      </div>
+                    </div>
+
+                    {/* EXPANDED REFLECTION DETAIL */}
+                    {isExpanded && (
+                      <div className="p-5 pt-0 border-t border-slate-800/80 space-y-4 text-xs mt-2">
+                        {/* Comparison between Student assembly & Correct answer */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3">
+                          {/* Student Answer */}
+                          <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+                            <div className="text-[11px] font-bold text-slate-400 mb-1.5 flex items-center justify-between">
+                              <span>Susunan Anda:</span>
+                              <span className={item.isCorrect ? "text-emerald-400" : "text-red-400"}>
+                                {item.isCorrect ? "Tepat" : "Ada Kesalahan"}
+                              </span>
+                            </div>
+                            <div className="font-bold text-sm text-slate-200">
+                              {item.userAssembled.length > 0 ? item.userAssembled.join(" ") : "(Kosong / Tidak sempat susun)"}
+                            </div>
+                            {item.errorReason && (
+                              <div className="mt-2 text-[11px] text-red-300 bg-red-950/40 p-2 rounded-lg border border-red-500/30">
+                                ⚠️ <strong>Catatan:</strong> {item.errorReason}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Correct Answer */}
+                          <div className="p-3.5 rounded-xl bg-purple-950/40 border border-purple-500/30">
+                            <div className="text-[11px] font-bold text-purple-300 mb-1.5 flex items-center justify-between">
+                              <span>Kunci Jawaban Otentik:</span>
+                              <button
+                                type="button"
+                                onClick={() => speakJapanese(item.question.puzzleSentence || "")}
+                                className="text-amber-400 hover:text-amber-300 flex items-center gap-1 font-bold"
+                              >
+                                <Volume2 className="w-3.5 h-3.5" />
+                                Dengarkan
+                              </button>
+                            </div>
+                            <div className="font-black text-sm text-amber-300">
+                              {item.question.puzzleSentence}
+                            </div>
+                            <div className="mt-2 text-[11px] text-purple-200">
+                              Rumus: <span className="font-mono">{item.question.formulaDetailed || item.question.subDisplay || item.question.pattern}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Grammatical Explanation from bunpouData */}
+                        {item.question.usageRule && (
+                          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div className="font-bold text-amber-400 mb-1 flex items-center gap-1.5">
+                              <Info className="w-3.5 h-3.5" />
+                              Penjelasan & Kaidah Tata Bahasa:
+                            </div>
+                            <p className="text-slate-300 leading-relaxed">
+                              {item.question.usageRule}
+                            </p>
+                          </div>
+                        )}
+
+                        {item.question.example && (
+                          <div className="p-3 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                            <div className="font-bold text-slate-400 text-[11px] mb-1">
+                              Contoh Pemakaian Lain:
+                            </div>
+                            <div className="font-mono text-slate-300 whitespace-pre-line">
+                              {item.question.example}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="text-[11px] text-slate-400">Highest Combo</div>
-              <div className="text-lg font-black text-red-400">🔥 {highestCombo}x</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="text-[11px] text-slate-400">Sisa HP Anda</div>
-              <div className="text-lg font-black text-emerald-400">{playerHp} HP</div>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-              <div className="text-[11px] text-slate-400">XP Hadiah</div>
-              <div className="text-lg font-black text-purple-400">+{150 + highestCombo * 20} XP</div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleStartBattle}
-              className="px-6 py-3 rounded-xl font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/30 transition flex items-center gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Tanding Lagi
-            </button>
-            <button
-              type="button"
-              onClick={() => setGameState("lobby")}
-              className="px-6 py-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
-            >
-              Kembali ke Lobi Arena
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ==================================================================== */}
-      {/* 4. DEFEAT SCREEN */}
-      {/* ==================================================================== */}
-      {gameState === "defeat" && (
-        <div className="bg-slate-900/95 border border-red-500/50 rounded-2xl p-8 text-center shadow-2xl space-y-6">
-          <div className="w-24 h-24 mx-auto rounded-full bg-red-950/80 border border-red-500/50 flex items-center justify-center text-5xl shadow-2xl shadow-red-900/30">
-            💀
-          </div>
-
-          <div>
-            <h3 className="text-2xl md:text-3xl font-black text-red-400 mb-1">
-              PERTAHANAN ANDA RUNTUH!
-            </h3>
-            <p className="text-slate-300 text-sm">
-              {activeRival.name} ({activeRival.nim}) melancarkan {activeRival.specialJutsu} yang melumpuhkan pertahanan Anda.
-            </p>
-          </div>
-
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
-            Jangan berkecil hati! Pelajari kembali posisi partikel dan sambungan kata kerja di daftar modul IRODORI 文法, lalu kembali tantang rival kelas.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <button
-              type="button"
-              onClick={handleStartBattle}
-              className="px-6 py-3 rounded-xl font-bold bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30 transition flex items-center gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Coba Lagi
-            </button>
-            <button
-              type="button"
-              onClick={() => setGameState("lobby")}
-              className="px-6 py-3 rounded-xl font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition"
-            >
-              Kembali ke Lobi Arena
-            </button>
           </div>
         </div>
       )}

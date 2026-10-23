@@ -142,19 +142,25 @@ function calculateKahootScore(isCorrect: boolean, timeLeftSeconds: number, maxTi
   if (!isCorrect) return 0;
   if (timeLeftSeconds <= 0) return 500; // Poin dasar jika benar di detik terakhir
 
-  const timeRatio = timeLeftSeconds / maxTimeSeconds;
+  const timeRatio = Math.max(0, Math.min(1, timeLeftSeconds / maxTimeSeconds));
   // 500 poin dasar + hingga 500 poin bonus kecepatan
   return Math.round(500 + (500 * timeRatio));
+}
+
+function getQuestionTimeLimit(category?: string, question?: BattleQuestion): number {
+  return category === "bunpou_puzzle" || question?.pos === "bunpou_puzzle" ? 30 : 8;
 }
 
 export default function BattleRoyaleModal({
   isOpen,
   onClose,
   initialMode = "1vs1",
+  initialCategory,
 }: {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: BattleMode;
+  initialCategory?: VocabCategory;
 }) {
   const { user, isLoaded } = useUser();
 
@@ -167,7 +173,13 @@ export default function BattleRoyaleModal({
   // Topic & Category Customization State
   const [topicLevel, setTopicLevel] = useState<VocabLevel>("A2.2");
   const [topicChapter, setTopicChapter] = useState<number>(0);
-  const [topicCategory, setTopicCategory] = useState<VocabCategory>("all");
+  const [topicCategory, setTopicCategory] = useState<VocabCategory>(initialCategory || "all");
+
+  useEffect(() => {
+    if (initialCategory) {
+      setTopicCategory(initialCategory);
+    }
+  }, [initialCategory]);
 
   // Identity State
   const [myEmail, setMyEmail] = useState<string>("");
@@ -851,7 +863,8 @@ export default function BattleRoyaleModal({
     });
     setShuffledQuestions(freshQuestions);
     setCurrentQIndex(0);
-    setTimeLeft(8);
+    const roundLimit = getQuestionTimeLimit(topicCategory, freshQuestions[0]);
+    setTimeLeft(roundLimit);
     setSelectedAnswer(null);
 
     // Set combatants untuk match baru user
@@ -887,7 +900,8 @@ export default function BattleRoyaleModal({
 
     setShuffledQuestions(questions);
     setCurrentQIndex(0);
-    setTimeLeft(8);
+    const roundLimit = getQuestionTimeLimit(currentRoom.topicCategory || topicCategory, questions[0]);
+    setTimeLeft(roundLimit);
     setSelectedAnswer(null);
 
     if (mode === "tournament") {
@@ -953,7 +967,9 @@ export default function BattleRoyaleModal({
 
   const resolveTurn = (isCorrect: boolean, chosen: string) => {
     // Hitung poin gaya Kahoot berdasarkan sisa detik (timeLeft)
-    const earnedPts = calculateKahootScore(isCorrect, timeLeft, 8);
+    const currentQ = shuffledQuestions[currentQIndex];
+    const currentLimit = getQuestionTimeLimit(topicCategory, currentQ);
+    const earnedPts = calculateKahootScore(isCorrect, timeLeft, currentLimit);
     const dmg = chosen === "__TIMEOUT__" || !isCorrect ? 30 : 0;
 
     // 1. Instantly update local client state
@@ -1313,7 +1329,9 @@ export default function BattleRoyaleModal({
 
     setCurrentQIndex((prev) => prev + 1);
     setSelectedAnswer(null);
-    setTimeLeft(8);
+    const nextQ = shuffledQuestions[currentQIndex + 1];
+    const nextLimit = getQuestionTimeLimit(topicCategory, nextQ);
+    setTimeLeft(nextLimit);
   };
 
   if (!isOpen) return null;
@@ -2043,7 +2061,7 @@ export default function BattleRoyaleModal({
               </h3>
               {currentQ.subDisplay && (
                 <span className="text-xs font-mono font-bold text-amber-500 bg-amber-500/10 px-2.5 py-0.5 rounded-lg border border-amber-500/20 mt-1">
-                  【よみ: {currentQ.subDisplay}】
+                  {currentQ.pos === "bunpou_puzzle" ? `【Rumus: ${currentQ.subDisplay}】` : `【よみ: ${currentQ.subDisplay}】`}
                 </span>
               )}
             </div>

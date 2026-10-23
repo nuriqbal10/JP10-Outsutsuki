@@ -30,6 +30,12 @@ export interface BattleQuestion {
   puzzleTokens?: string[];
   puzzleSentence?: string;
   puzzleTranslation?: string;
+  pattern?: string;
+  formulaDetailed?: string;
+  usageRule?: string;
+  example?: string;
+  difficultyScore?: number;
+  difficultyTier?: "easy" | "medium" | "hard";
 }
 
 // Compact tuple schema: [ja, yomi, arti, pos, level, chapter]
@@ -150,6 +156,12 @@ function generateJftKanjiDistractors(targetJa: string, pool: VocabItem[]): strin
   return selected;
 }
 
+export function cleanJapaneseText(s: string): string {
+  return (s || "")
+    .replace(/[\s。、？！\?\!「」\(\)（）\r\n\t]/g, "")
+    .trim();
+}
+
 interface BunpouItemLite {
   id: string;
   level: string;
@@ -157,6 +169,8 @@ interface BunpouItemLite {
   pattern: string;
   formulaDetailed?: string;
   meaning: string;
+  usageRule?: string;
+  example?: string;
   puzzle?: {
     sentence: string;
     translation: string;
@@ -166,6 +180,23 @@ interface BunpouItemLite {
 }
 
 const BUNPOU_ITEMS: BunpouItemLite[] = rawBunpouData as unknown as BunpouItemLite[];
+
+function calculateBunpouDifficulty(item: BunpouItemLite): { score: number; tier: "easy" | "medium" | "hard" } {
+  const tokenCount = item.puzzle?.tokens?.length || 4;
+  const levelWeight = item.level === "a2_2" ? 20 : item.level === "a2_1" ? 10 : 0;
+  const lessonWeight = (item.lesson || 1) * 0.5;
+  const score = tokenCount * 10 + levelWeight + lessonWeight;
+
+  let tier: "easy" | "medium" | "hard" = "medium";
+  if (tokenCount <= 4 && item.level === "a1") {
+    tier = "easy";
+  } else if (tokenCount >= 7 || item.level === "a2_2") {
+    tier = "hard";
+  } else {
+    tier = "medium";
+  }
+  return { score, tier };
+}
 
 export function generateBunpouPuzzleQuestions(params: {
   level?: VocabLevel;
@@ -191,10 +222,55 @@ export function generateBunpouPuzzleQuestions(params: {
     pool = BUNPOU_ITEMS.filter((item) => !!item.puzzle?.sentence);
   }
 
-  const shuffledPool = shuffle(pool);
-  const selected = shuffledPool.slice(0, Math.min(count, pool.length));
+  // Calculate difficulty for each pool item
+  const poolWithDifficulty = pool.map((item) => ({
+    item,
+    diff: calculateBunpouDifficulty(item),
+  }));
 
-  return selected.map((target) => {
+  // Sort pool from easiest to hardest
+  poolWithDifficulty.sort((a, b) => a.diff.score - b.diff.score);
+
+  // Group into tiers for progressive selection (termudah hingga tersulit)
+  const total = poolWithDifficulty.length;
+  let selectedItems: { item: BunpouItemLite; diff: { score: number; tier: "easy" | "medium" | "hard" } }[] = [];
+
+  if (total <= count) {
+    // If pool is small, take all and sort
+    selectedItems = shuffle(poolWithDifficulty).slice(0, count);
+  } else {
+    // Split into 3 difficulty tiers
+    const tierSize = Math.max(1, Math.floor(total / 3));
+    const easyBucket = poolWithDifficulty.slice(0, tierSize);
+    const medBucket = poolWithDifficulty.slice(tierSize, tierSize * 2);
+    const hardBucket = poolWithDifficulty.slice(tierSize * 2);
+
+    // Progressive quotas based on total count requested
+    // e.g. for count=5: 2 easy, 2 medium, 1 hard
+    const easyQuota = Math.max(1, Math.floor(count * 0.4));
+    const hardQuota = Math.max(1, Math.floor(count * 0.2));
+    const medQuota = Math.max(1, count - easyQuota - hardQuota);
+
+    const chosenEasy = shuffle(easyBucket).slice(0, easyQuota);
+    const chosenMed = shuffle(medBucket).slice(0, medQuota);
+    const chosenHard = shuffle(hardBucket).slice(0, hardQuota);
+
+    const combined = [...chosenEasy, ...chosenMed, ...chosenHard];
+    const pickedIds = new Set(combined.map((c) => c.item.id));
+
+    // Fill remaining if quota wasn't met due to small bucket
+    if (combined.length < count) {
+      const remaining = shuffle(poolWithDifficulty.filter((c) => !pickedIds.has(c.item.id)));
+      combined.push(...remaining.slice(0, count - combined.length));
+    }
+
+    selectedItems = combined.slice(0, count);
+  }
+
+  // Ensure strict ascending progression: Round 1 (easiest) -> Round N (hardest)
+  selectedItems.sort((a, b) => a.diff.score - b.diff.score);
+
+  return selectedItems.map(({ item: target, diff }) => {
     const puzzle = target.puzzle!;
     const correctSentence = puzzle.sentence;
 
@@ -229,6 +305,12 @@ export function generateBunpouPuzzleQuestions(params: {
       puzzleTokens: puzzle.tokens,
       puzzleSentence: correctSentence,
       puzzleTranslation: puzzle.translation,
+      pattern: target.pattern,
+      formulaDetailed: target.formulaDetailed,
+      usageRule: target.usageRule,
+      example: target.example,
+      difficultyScore: diff.score,
+      difficultyTier: diff.tier,
     };
   });
 }

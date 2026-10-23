@@ -30,6 +30,7 @@ export default function ShinobiArenaPage() {
   // Multiplayer Modal State
   const [isBattleModalOpen, setIsBattleModalOpen] = useState<boolean>(false);
   const [battleModalMode, setBattleModalMode] = useState<BattleMode>("1vs1");
+  const [battleModalCategory, setBattleModalCategory] = useState<any>("all");
   const [customRoomCode, setCustomRoomCode] = useState<string>("");
 
   useEffect(() => {
@@ -60,8 +61,9 @@ export default function ShinobiArenaPage() {
     );
   }
 
-  const openMultiplayer = (mode: BattleMode) => {
+  const openMultiplayer = (mode: BattleMode, category: string = "all") => {
     setBattleModalMode(mode);
+    setBattleModalCategory(category);
     setIsBattleModalOpen(true);
   };
 
@@ -176,7 +178,7 @@ export default function ShinobiArenaPage() {
         {activeTab === "puzzle_battle" && (
           <BunpouPuzzleBattleArena
             onBackToHub={() => setActiveTab("hub")}
-            onOpenMultiplayerModal={() => openMultiplayer("1vs1")}
+            onOpenMultiplayerModal={() => openMultiplayer("1vs1", "bunpou_puzzle")}
           />
         )}
 
@@ -410,6 +412,7 @@ export default function ShinobiArenaPage() {
         isOpen={isBattleModalOpen}
         onClose={() => setIsBattleModalOpen(false)}
         initialMode={battleModalMode}
+        initialCategory={battleModalCategory}
       />
     </div>
   );
