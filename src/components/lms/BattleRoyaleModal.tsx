@@ -129,6 +129,7 @@ const AVATAR_OPTIONS = [
 
 const CATEGORY_OPTIONS: { key: VocabCategory; label: string; icon: string }[] = [
   { key: "all", label: "Acak / Semua Kategori", icon: "🎲" },
+  { key: "bunpou_puzzle", label: "Puzzle Pola Kalimat (IRODORI 文法)", icon: "🧩" },
   { key: "noun", label: "Kata Benda (Meishi - N)", icon: "📦" },
   { key: "adj", label: "Kata Sifat (Keiyoushi - i & na)", icon: "✨" },
   { key: "verb1", label: "Kata Kerja Gol. 1 (Godan - V1)", icon: "🏃" },

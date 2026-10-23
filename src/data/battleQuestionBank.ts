@@ -1,7 +1,8 @@
 // Auto-generated Authentic IRODORI Battle Question Bank (Compact & High Performance)
 // Sourced from official IRODORI Japanese Online Course (A1, A2.1, A2.2)
+import rawBunpouData from "./bunpouData.json";
 
-export type VocabCategory = "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3" | "other";
+export type VocabCategory = "all" | "noun" | "adj" | "verb1" | "verb2" | "verb3" | "bunpou_puzzle" | "other";
 export type VocabLevel = "all" | "A1" | "A2.1" | "A2.2";
 export type QuestionType = "kanji_to_yomi" | "hiragana_to_kanji" | "meaning";
 
@@ -26,6 +27,9 @@ export interface BattleQuestion {
   pos: string;
   level: string;
   chapter: number;
+  puzzleTokens?: string[];
+  puzzleSentence?: string;
+  puzzleTranslation?: string;
 }
 
 // Compact tuple schema: [ja, yomi, arti, pos, level, chapter]
@@ -146,6 +150,89 @@ function generateJftKanjiDistractors(targetJa: string, pool: VocabItem[]): strin
   return selected;
 }
 
+interface BunpouItemLite {
+  id: string;
+  level: string;
+  lesson: number;
+  pattern: string;
+  formulaDetailed?: string;
+  meaning: string;
+  puzzle?: {
+    sentence: string;
+    translation: string;
+    tokens: string[];
+    shuffledTokens: string[];
+  };
+}
+
+const BUNPOU_ITEMS: BunpouItemLite[] = rawBunpouData as unknown as BunpouItemLite[];
+
+export function generateBunpouPuzzleQuestions(params: {
+  level?: VocabLevel;
+  chapter?: number;
+  count?: number;
+}): BattleQuestion[] {
+  const { level = "all", chapter = 0, count = 5 } = params;
+
+  const levelMap: Record<string, string> = {
+    "A1": "a1",
+    "A2.1": "a2_1",
+    "A2.2": "a2_2",
+  };
+
+  let pool = BUNPOU_ITEMS.filter((item) => {
+    if (!item.puzzle || !item.puzzle.sentence) return false;
+    if (level !== "all" && item.level !== levelMap[level]) return false;
+    if (chapter > 0 && item.lesson !== chapter) return false;
+    return true;
+  });
+
+  if (pool.length < 4) {
+    pool = BUNPOU_ITEMS.filter((item) => !!item.puzzle?.sentence);
+  }
+
+  const shuffledPool = shuffle(pool);
+  const selected = shuffledPool.slice(0, Math.min(count, pool.length));
+
+  return selected.map((target) => {
+    const puzzle = target.puzzle!;
+    const correctSentence = puzzle.sentence;
+
+    // Distractors from other bunpou items
+    const otherSentences = pool
+      .filter((i) => i.id !== target.id && i.puzzle?.sentence && i.puzzle.sentence !== correctSentence)
+      .map((i) => i.puzzle!.sentence);
+
+    const shuffledOthers = shuffle(otherSentences);
+    const chosenDistractors = shuffledOthers.slice(0, 3);
+
+    while (chosenDistractors.length < 3) {
+      const fallback = BUNPOU_ITEMS[Math.floor(Math.random() * BUNPOU_ITEMS.length)]?.puzzle?.sentence;
+      if (fallback && fallback !== correctSentence && !chosenDistractors.includes(fallback)) {
+        chosenDistractors.push(fallback);
+      }
+    }
+
+    const options = shuffle([correctSentence, ...chosenDistractors]);
+
+    return {
+      questionType: "meaning",
+      prompt: "Susun Pola Kalimat JFT Sesuai Arti:",
+      display: puzzle.translation,
+      subDisplay: target.formulaDetailed || target.pattern,
+      ja: correctSentence,
+      correct: correctSentence,
+      options,
+      pos: "bunpou_puzzle",
+      level: target.level.toUpperCase(),
+      chapter: target.lesson,
+      puzzleTokens: puzzle.tokens,
+      puzzleSentence: correctSentence,
+      puzzleTranslation: puzzle.translation,
+    };
+  });
+}
+
 export function generateBattleQuestions(params: {
   level?: VocabLevel;
   chapter?: number; // 0 = all
@@ -153,6 +240,10 @@ export function generateBattleQuestions(params: {
   count?: number;
 }): BattleQuestion[] {
   const { level = "all", chapter = 0, category = "all", count = 5 } = params;
+
+  if (category === "bunpou_puzzle") {
+    return generateBunpouPuzzleQuestions({ level, chapter, count });
+  }
 
   // 1. Filter pool
   let pool = VOCAB_BANK.filter((item) => {
