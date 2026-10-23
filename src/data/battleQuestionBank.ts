@@ -36,6 +36,7 @@ export interface BattleQuestion {
   example?: string;
   difficultyScore?: number;
   difficultyTier?: "easy" | "medium" | "hard";
+  acceptableSentences?: string[];
 }
 
 // Compact tuple schema: [ja, yomi, arti, pos, level, chapter]
@@ -318,6 +319,7 @@ export function generateBunpouPuzzleQuestions(params: {
       example: target.example,
       difficultyScore: diff.score,
       difficultyTier: diff.tier,
+      acceptableSentences: (selectedVariant as any).acceptableSentences || [correctSentence],
     };
   });
 }

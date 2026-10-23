@@ -4,6 +4,7 @@ export interface BunpouPuzzle {
   tokens: string[];
   shuffledTokens?: string[];
   variants?: BunpouPuzzle[];
+  acceptableSentences?: string[];
 }
 
 export interface BunpouConnectionForm {

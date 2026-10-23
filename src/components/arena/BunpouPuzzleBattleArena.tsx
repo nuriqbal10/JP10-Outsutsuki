@@ -336,8 +336,9 @@ export default function BunpouPuzzleBattleArena({
 
     const userClean = cleanJapaneseText(placedTokens.join(""));
     const correctClean = cleanJapaneseText(currentQ.puzzleSentence || "");
+    const acceptable = (currentQ.acceptableSentences || [currentQ.puzzleSentence || ""]).map(cleanJapaneseText);
 
-    const isMatch = userClean === correctClean;
+    const isMatch = acceptable.includes(userClean);
     const timeSpent = Math.max(1, 30 - timeLeft);
 
     if (isMatch) {

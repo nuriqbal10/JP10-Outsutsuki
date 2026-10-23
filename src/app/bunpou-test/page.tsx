@@ -129,10 +129,11 @@ export default function BunpouTestPage() {
 
   const handleCheck = () => {
     if (!puzzle) return;
-    const constructed = selectedTokens.join("").replace(/[\s。、？！\?\!「」\(\)（）]/g, "").trim();
-    const target = puzzle.sentence.replace(/[\s。、？！\?\!「」\(\)（）]/g, "").trim();
+    const cleanPunct = (s: string) => (s || "").replace(/[\s。、？！\?\!「」\(\)（）]/g, "").trim();
+    const constructed = cleanPunct(selectedTokens.join(""));
+    const acceptable = (puzzle.acceptableSentences || [puzzle.sentence]).map(cleanPunct);
 
-    if (constructed === target) {
+    if (acceptable.includes(constructed)) {
       setPuzzleStatus("correct");
       setScore((prev) => prev + 10);
       setStreak((prev) => prev + 1);
