@@ -56,78 +56,78 @@ interface QuestionItem {
 
 const CHAPTER_METADATA: Record<number, { title: string; topic: string; slidesEmbed?: string; driveEmbed?: string }> = {
   1: {
-    title: "私のこと",
-    topic: "Perkenalan Diri, Asal Daerah & Kehidupan di Jepang",
+    title: "先週、日本に来たばかりです",
+    topic: "私の周りの人たち・職場での自己紹介と生活の様子",
     slidesEmbed: "https://docs.google.com/presentation/d/e/2PACX-1vQLGyJ9sXk4h_UE1wHemR7Kp8_CH4YxnxFkHSpY25gvnRDJnwgbuz40g2FJM0TLRKvpjtsJfeshP3_o/embed?start=false&loop=false&delayms=3000",
     driveEmbed: "https://drive.google.com/file/d/1IFTn1P6Qrtgm2sNOPqB1jxneEM1fvcEU/preview",
   },
   2: {
-    title: "どんな人ですか",
-    topic: "Ciri Fisik, Karakter Orang & Pakaian Kerja",
+    title: "まじめそうな人ですね",
+    topic: "私の周りの人たち・外見・服装と性格の特徴",
   },
   3: {
-    title: "おすすめは何ですか",
-    topic: "Restoran, Menu Makanan, Alergi & Reservasi",
+    title: "アレルギーがあるので、食べられないんです",
+    topic: "レストランで・料理の注文・味の好みとアレルギー",
   },
   4: {
-    title: "何時からですか",
-    topic: "Jam Kerja, Lembur, Jadwal & Janji Temu",
+    title: "しょうゆをつけないで食べてください",
+    topic: "レストランで・食べ方・マナーと料理の楽しみ方",
   },
   5: {
-    title: "安全第一",
-    topic: "Aturan Pabrik, Keselamatan Kerja & Prosedur K3",
+    title: "早く予約したほうがいいですよ",
+    topic: "旅行に行こう・おすすめ観光地と予約の手続き",
   },
   6: {
-    title: "どうやって行きますか",
-    topic: "Transportasi, Tiket Kereta & Rute Perjalanan",
+    title: "いろいろなところに行けて、よかったです",
+    topic: "旅行に行こう・旅の感想と体験の振り返り",
   },
   7: {
     title: "雨が降ったら、ホールでやります",
-    topic: "Festival Komunitas, Cuaca & Partisipasi Acara",
+    topic: "地域のイベント・天気と催し物の開催案内",
   },
   8: {
     title: "屋台はどこかわかりますか？",
-    topic: "Festival Budaya, Lokasi Stan & Denah Acara",
+    topic: "地域のイベント・お祭りの屋台と道案内",
   },
   9: {
     title: "成人の日は、何をするんですか？",
-    topic: "Hari Libur Nasional, Perayaan Tradisional & Budaya Jepang",
+    topic: "年中行事とマナー・日本の伝統行事とお祝い",
   },
   10: {
     title: "どんな服を着て行けばいいですか？",
-    topic: "Tata Cara Berpakaian, Etiket Upacara & Kebiasaan Sosial",
+    topic: "年中行事とマナー・冠婚葬祭とマナー",
   },
   11: {
     title: "ポイントカードを忘れてしまいました",
-    topic: "Belanja di Toko, Ukuran Pakaian & Kejadian Tak Terduga",
+    topic: "上手な買い物・買い物とトラブル・試着とサイズ",
   },
   12: {
-    title: "このボタンを押すと、エコモードに変わります",
-    topic: "Pengoperasian Alat Elektronik, Tombol Fungsi & Rumah Tangga",
+    title: "こっちの店のほうが安いですね",
+    topic: "上手な買い物・商品の比較・使いやすさと配送",
   },
   13: {
     title: "いろいろな資料を展示してあります",
-    topic: "Fasilitas Umum, Balai Kota & Aturan Peminjaman",
+    topic: "さまざまなサービス・公共施設と利用案内",
   },
   14: {
-    title: "髪をもう少し短くしてください",
-    topic: "Layanan Jasa Publik, Salon Pangkas Rambut & Kurir Paket",
+    title: "前髪は、もう少し短く切ってもらえますか？",
+    topic: "さまざまなサービス・美容院と宅配サービス",
   },
   15: {
-    title: "ゴミを減らすために、マイバッグを持っています",
-    topic: "Lingkungan Hidup, Pemilahan Sampah & Gaya Hidup Eco",
+    title: "会議室の電気がついたままでした",
+    topic: "自然と環境・省エネルギーと日常の注意",
   },
   16: {
-    title: "地震が起きたら、どうすればいいですか？",
-    topic: "Mitigasi Bencana Alam, Peringatan Gempa Dini & Keselamatan",
+    title: "地震が来ても、あわてて動かないでください",
+    topic: "自然と環境・防災と緊急時の対応",
   },
   17: {
     title: "日本語が前より話せるようになりました",
-    topic: "Pertumbuhan Diri, Refleksi di Jepang & Peningkatan Kemampuan",
+    topic: "私の人生・成長と変化・日本語の上達",
   },
   18: {
-    title: "将来、自分の会社を作ろうと思っています",
-    topic: "Rencana Masa Depan, Karir Tokutei Ginou & Kelulusan A2",
+    title: "将来、自分の会社を作ろうと思います",
+    topic: "私の人生・将来の夢と計画・キャリア形成",
   },
 };
 

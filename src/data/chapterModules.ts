@@ -31,257 +31,665 @@ export interface ChapterModuleData {
 export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
   1: {
     chapter: 1,
-    titleJa: "第1課「私のこと」",
-    titleId: "Tentang Diriku",
-    topic: "Perkenalan Diri, Asal Daerah & Kehidupan di Jepang",
+    titleJa: "第1課「先週、日本に来たばかりです」",
+    titleId: "Baru Saja Tiba di Jepang Minggu Lalu",
+    topic: "私の周りの人たち・職場での自己紹介と生活の様子",
     pdfUrl: "/modul/bab1.pdf",
-    slidesUrl: "https://docs.google.com/presentation/d/e/2PACX-1vQLGyJ9sXk4h_UE1wHemR7Kp8_CH4YxnxFkHSpY25gvnRDJnwgbuz40g2FJM0TLRKvpjtsJfeshP3_o/embed?start=false&loop=false&delayms=3000",
     canDoList: [
-      "Can-do 1: Mampu memperkenalkan diri secara lebih rinci (asal, pengalaman di Jepang, pekerjaan/keahlian).",
-      "Can-do 2: Mampu menanyakan dan menceritakan kesan pertama serta pengalaman tinggal di Jepang.",
-      "Can-do 3: Mampu memahami profil singkat rekan kerja di papan pengumuman perusahaan.",
-      "Can-do 4: Mampu menuliskan profil singkat diri sendiri untuk forum atau perkenalan komunitas."
+          "Can-do 1: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 1.",
+          "Can-do 2: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 3: Mampu membaca teks praktis dan instruksi otentik pada Bab 1.",
+          "Can-do 4: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Asal & Pengalaman",
-        items: [
-          { ja: "出身 (しゅっしん)", id: "Asal daerah/negara" },
-          { ja: "専門 (せんもん)", id: "Bidang keahlian / spesialisasi" },
-          { ja: "慣れる (なれる)", id: "Terbiasa / beradaptasi" },
-          { ja: "暮らし (くらし)", id: "Kehidupan sehari-hari" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Vた＋ばかりです",
-        meaning: "Baru saja melakukan...",
-        explanation: "Menyatakan bahwa suatu perbuatan baru saja terjadi atau waktu yang berlalu masih terasa sangat baru bagi pembicara.",
-        examples: [
-          { ja: "先週、日本に来たばかりです。", romaji: "Senshuu, Nihon ni kita bakari desu.", id: "Saya baru saja datang ke Jepang minggu lalu." },
-          { ja: "仕事を始めたばかりで、まだ慣れていません。", romaji: "Shigoto o hajimeta bakari de, mada narete imasen.", id: "Saya baru mulai bekerja, jadi belum terbiasa." }
-        ]
-      },
-      {
-        pattern: "Vて＋います (Keadaan saat ini)",
-        meaning: "Sedang / berada dalam keadaan...",
-        explanation: "Menyatakan status tempat tinggal, status pernikahan, atau pekerjaan yang sedang dijalani.",
-        examples: [
-          { ja: "工場の寮に住んでいます。", romaji: "Koujou no ryou ni sunde imasu.", id: "Saya tinggal di asrama pabrik." }
-        ]
-      }
+          {
+                "pattern": "❶ N1というN2",
+                "meaning": "Menyebutkan nama benda atau orang yang belum tentu diketahui oleh lawan bicara ('[N2] yang bernama / disebut [N1]')",
+                "explanation": "[Kata Benda 1 (Nama Spesifik)] という [Kata Benda 2 (Kategori)] — N1 adalah nama unik/sebutan (misal nama makanan, kota, orang), diikuti という lalu N2 sebagai kategori umumnya.",
+                "examples": [
+                      {
+                            "ja": "ホアは「花」という意味です。",
+                            "romaji": "",
+                            "id": "Ini adalah bunga yang disebut Sakura."
+                      },
+                      {
+                            "ja": "これは桜という花です",
+                            "romaji": "",
+                            "id": "Ini adalah bunga yang disebut Sakura."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-たばかりです",
+                "meaning": "Menyatakan bahwa suatu aktivitas baru saja terjadi beberapa saat yang lalu menurut perasaan pembicara ('Baru saja...')",
+                "explanation": "[Kata Kerja Bentuk-Ta] ばかりです — Kata kerja diubah ke bentuk lampau biasa (ta-kei) + ばかりです.",
+                "examples": [
+                      {
+                            "ja": "先週、日本に来たばかりです。",
+                            "romaji": "",
+                            "id": "Saya baru saja tiba di Jepang."
+                      },
+                      {
+                            "ja": "私は日本に来たばかりです",
+                            "romaji": "",
+                            "id": "Saya baru saja tiba di Jepang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-ていました",
+                "meaning": "Menyatakan kegiatan yang sedang berlangsung di masa lampau atau rutinitas masa lalu ('Dulu sedang/rutin melakukan...')",
+                "explanation": "[Kata Kerja Bentuk-Te] いました — Bentuk lampau dari 〜ています, yaitu 〜ていました.",
+                "examples": [
+                      {
+                            "ja": "ベトナムでは、ホテルで働いていました。",
+                            "romaji": "",
+                            "id": "Dulu saya mengajar bahasa Inggris di negara asal."
+                      },
+                      {
+                            "ja": "国で英語を教えていました",
+                            "romaji": "",
+                            "id": "Dulu saya mengajar bahasa Inggris di negara asal."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ それ／そこ　＜文脈指示＞",
+                "meaning": "Merujuk kembali pada topik atau tempat yang baru saja disebutkan oleh lawan bicara",
+                "explanation": "Kata Tunjuk Konteks Percakapan (それ／そこ ＜文脈指示＞) — それ dan そこ digunakan untuk mengacu pada hal yang telah diangkat dalam alur dialog.",
+                "examples": [
+                      {
+                            "ja": "ジャワ島に、ジョグジャカルタという大きい町があります。ウォノソボは、そこから、バスで4時間ぐらいです。",
+                            "romaji": "",
+                            "id": "Saya juga pernah pergi ke tempat itu."
+                      },
+                      {
+                            "ja": "私もそこへ行ったことがあります",
+                            "romaji": "",
+                            "id": "Saya juga pernah pergi ke tempat itu."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ ～て、～\r\n～から、～\r\n～けど、～\r\n＜2つの文を1つにする＞",
+                "meaning": "Menggabungkan dua klausa menjadi satu kalimat yang utuh dan mengalir",
+                "explanation": "Penggabungan Dua Kalimat: 〜て (urutan) ／ 〜から (alasan) ／ 〜けど (kontras) — Pilih partikel sambung sesuai hubungan logika: urutan kronologis (て), sebab-akibat (から), atau kontras/pengantar (けど).",
+                "examples": [
+                      {
+                            "ja": "お茶の畑がたくさんあって、のんびりしています。\r\nウランバートルは首都だから、都会ですよ。\r\n首都ではないけど、とてもにぎやかです。",
+                            "romaji": "",
+                            "id": "Saya memakan makanan yang murah dan lezat."
+                      },
+                      {
+                            "ja": "安くて美味しい料理を食べました",
+                            "romaji": "",
+                            "id": "Saya memakan makanan yang murah dan lezat."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Kesan Pertama & Etiket Perkenalan di Perusahaan Jepang",
-        content: "Di tempat kerja Jepang (職場), membungkuk (お辞儀 - Ojigi) dengan sudut 30-45 derajat saat menyebutkan nama dan bidang keahlian meninggalkan kesan profesional dan sopan."
+        title: "Tips Budaya & Kehidupan Bab 1",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   2: {
     chapter: 2,
-    titleJa: "第2課「どんな人ですか」",
-    titleId: "Orang yang Seperti Apakah Dia?",
-    topic: "Ciri Fisik, Karakter Orang & Pakaian Kerja",
+    titleJa: "第2課「まじめそうな人ですね」",
+    titleId: "Orangnya Kelihatan Rajin ya",
+    topic: "私の周りの人たち・外見・服装と性格の特徴",
     pdfUrl: "/modul/bab2.pdf",
     canDoList: [
-      "Can-do 5: Mampu mendeskripsikan penampilan fisik dan gaya berpakaian rekan kerja.",
-      "Can-do 6: Mampu menjelaskan sifat atau karakter seseorang (rajin, ramah, pendiam).",
-      "Can-do 7: Mampu mendengarkan deskripsi ciri-ciri seseorang dan mengidentifikasinya dalam kelompok.",
-      "Can-do 8: Mampu membaca artikel profil pendek tentang tokoh atau rekan teladan."
+          "Can-do 5: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 2.",
+          "Can-do 6: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 7: Mampu membaca teks praktis dan instruksi otentik pada Bab 2.",
+          "Can-do 8: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Sifat & Karakter",
-        items: [
-          { ja: "まじめ（な）", id: "Rajin / tekun / bersungguh-sungguh" },
-          { ja: "親切（な）(しんせつ)", id: "Ramah / baik hati" },
-          { ja: "明るい (あかるい)", id: "Ceria / periang" },
-          { ja: "おとなしい", id: "Pendiam / tenang" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Kata Sifat (tanpa -i/-na)＋そう（な／です）",
-        meaning: "Kelihatannya / tampaknya...",
-        explanation: "Menyatakan dugaan atau penilaian sekilas berdasarkan penampilan visual yang dilihat.",
-        examples: [
-          { ja: "あの人はとてもまじめそうな人ですね。", romaji: "Ano hito wa totemo majimesou na hito desu ne.", id: "Orang itu kelihatannya orang yang sangat tekun ya." },
-          { ja: "優しそうな先輩で、安心しました。", romaji: "Yasashisou na senpai de, anshin shimashita.", id: "Senior yang kelihatannya ramah, jadi saya merasa lega." }
-        ]
-      }
+          {
+                "pattern": "❶ N1はN2が ナA-です／イA-いです　②",
+                "meaning": "Mendeskripsikan ciri fisik atau penampilan seseorang (mata besar, rambut panjang, perawakan tinggi)",
+                "explanation": "[Kata Benda 1] は [Kata Benda 2] が [Kata Sifat] ② — Orang yang digambarkan ditandai topik は, bagian tubuh spesifik ditandai partikel が.",
+                "examples": [
+                      {
+                            "ja": "江口さんは、髪が短いです。",
+                            "romaji": "",
+                            "id": "Tanaka-san badannya tinggi."
+                      },
+                      {
+                            "ja": "田中さんは背が高いです",
+                            "romaji": "",
+                            "id": "Tanaka-san badannya tinggi."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-ている＋人",
+                "meaning": "Mengidentifikasi atau menerangkan orang berdasarkan apa yang sedang ia kenakan atau lakukan ('Orang yang sedang...')",
+                "explanation": "[Kata Kerja Bentuk-Te います] + 人 — Frasa 〜ている diletakkan tepat di depan kata 人 (hito) untuk memodifikasi orang tersebut.",
+                "examples": [
+                      {
+                            "ja": "ナインさんは、帽子をかぶっている人です。\r\n加藤さんは、あそこで、コピーをしている人です。",
+                            "romaji": "",
+                            "id": "Orang yang memakai kacamata adalah Yamada-san."
+                      },
+                      {
+                            "ja": "眼鏡をかけている人が山田さんです",
+                            "romaji": "",
+                            "id": "Orang yang memakai kacamata adalah Yamada-san."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ Sよ",
+                "meaning": "Memberikan informasi baru yang belum diketahui oleh lawan bicara secara ramah ('Lho / kok / nih')",
+                "explanation": "[Kalimat] よ — Partikel よ di akhir tuturan memberi tahu lawan bicara mengenai fakta penting.",
+                "examples": [
+                      {
+                            "ja": "原さんは、座って、本を読んでる人ですよ。",
+                            "romaji": "",
+                            "id": "Besok kita kumpul pagi-pagi lho."
+                      },
+                      {
+                            "ja": "明日は早く集合するよ",
+                            "romaji": "",
+                            "id": "Besok kita kumpul pagi-pagi lho."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ Sし、～",
+                "meaning": "Menyebutkan satu dari beberapa alasan atau kelebihan pendukung ('Lagipula... dan...')",
+                "explanation": "[Kalimat Bentuk Biasa] し、〜 — Bentuk biasa + し untuk merangkai alasan yang searah.",
+                "examples": [
+                      {
+                            "ja": "三船敏郎は、演技が上手だし、本当にかっこいいです。",
+                            "romaji": "",
+                            "id": "Toko ini murah, lagipula masakannya enak."
+                      },
+                      {
+                            "ja": "この店は安いし美味しいです",
+                            "romaji": "",
+                            "id": "Toko ini murah, lagipula masakannya enak."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Penilaian Karakter di Tempat Kerja Jepang",
-        content: "Sifat 'まじめ' (majime - tekun/bertanggung jawab) adalah sifat yang paling dihargai oleh atasan dan rekan kerja di Jepang."
+        title: "Tips Budaya & Kehidupan Bab 2",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   3: {
     chapter: 3,
-    titleJa: "第3課「おすすめは何ですか」",
-    titleId: "Apa Rekomendasinya?",
-    topic: "Restoran, Menu Makanan, Alergi & Reservasi",
+    titleJa: "第3課「アレルギーがあるので、食べられないんです」",
+    titleId: "Karena Punya Alergi, Saya Tidak Bisa Memakannya",
+    topic: "レストランで・料理の注文・味の好みとアレルギー",
     pdfUrl: "/modul/bab3.pdf",
     canDoList: [
-      "Can-do 9: Mampu menanyakan rekomendasi menu makanan di restoran atau warung makan.",
-      "Can-do 10: Mampu menyampaikan pantangan makanan atau alergi (halal, vegetarian, alergi kacang/seafood).",
-      "Can-do 11: Mampu memesan makanan dan melakukan reservasi meja sederhana.",
-      "Can-do 12: Mampu membaca daftar menu dan label bahan makanan pada kemasan."
+          "Can-do 9: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 3.",
+          "Can-do 10: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 11: Mampu membaca teks praktis dan instruksi otentik pada Bab 3.",
+          "Can-do 12: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Restoran & Makanan",
-        items: [
-          { ja: "おすすめ", id: "Rekomendasi" },
-          { ja: "アレルギー", id: "Alergi" },
-          { ja: "豚肉 (ぶたにく)", id: "Daging babi" },
-          { ja: "禁煙席 (きんえんせき)", id: "Area bebas rokok" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "～が入っていますか (～ ga haitte imasu ka)",
-        meaning: "Apakah mengandung / ada bahan...?",
-        explanation: "Digunakan untuk menanyakan kandungan bahan makanan demi memastikan kehalalan atau menghindari alergi.",
-        examples: [
-          { ja: "この料理に豚肉が入っていますか？", romaji: "Kono ryouri ni butaniku ga haitte imasu ka?", id: "Apakah masakan ini mengandung daging babi?" }
-        ]
-      }
+          {
+                "pattern": "❶ S1ので、S2",
+                "meaning": "Menyatakan alasan objektif yang sopan dan terdengar wajar ('Karena / berhubung...')",
+                "explanation": "[Kalimat Bentuk Biasa] ので、〜 — Lebih halus dan objektif daripada から. Untuk kata sifat-na dan kata benda ditambah な + ので.",
+                "examples": [
+                      {
+                            "ja": "今日は自転車で来たので、飲めないんです。",
+                            "romaji": "",
+                            "id": "Berhubung ada urusan, saya mohon pamit lebih dulu."
+                      },
+                      {
+                            "ja": "用事があるのでお先に失礼します",
+                            "romaji": "",
+                            "id": "Berhubung ada urusan, saya mohon pamit lebih dulu."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ Sよね",
+                "meaning": "Meminta konfirmasi empati atas hal yang dirasakan bersama ('Iya kan ya?')",
+                "explanation": "[Kalimat] よね — Kombinasi よ (penegasan) dan ね (empati) untuk meminta persetujuan hangat.",
+                "examples": [
+                      {
+                            "ja": "おすし、わさび、入ってますよね。",
+                            "romaji": "",
+                            "id": "Masakan ini benar-benar pedas kan ya?"
+                      },
+                      {
+                            "ja": "この料理は本当に辛いよね",
+                            "romaji": "",
+                            "id": "Masakan ini benar-benar pedas kan ya?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ Nで～",
+                "meaning": "Menyatakan batasan cakupan, kategori, atau kuantitas total",
+                "explanation": "[Kata Benda] で〜 — Partikel で membatasi lingkup perbandingan atau batas kategori (misal: 一人で, 全部で).",
+                "examples": [
+                      {
+                            "ja": "A：テーブルと座敷がございますが…。　\r\nB：テーブルでお願いします。",
+                            "romaji": "",
+                            "id": "Semuanya menjadi seribu yen."
+                      },
+                      {
+                            "ja": "全部で千円になります",
+                            "romaji": "",
+                            "id": "Semuanya menjadi seribu yen."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ ナA-な／イA-い／V-る のは、Nです",
+                "meaning": "Memberikan penekanan fokus informasi pada kata benda di akhir kalimat ('Yang ... adalah [N]')",
+                "explanation": "[Kata Sifat-na な / Sifat-i / V-ru] のは、[Kata Benda] です — Anak kalimat diubah menjadi frasa subjek dengan のは, lalu fokus utama diletakkan di akhir sebelum です.",
+                "examples": [
+                      {
+                            "ja": "人気があるのは、お刺身定食です。",
+                            "romaji": "",
+                            "id": "Yang paling berharga adalah kesehatan."
+                      },
+                      {
+                            "ja": "一番大切なのは健康です",
+                            "romaji": "",
+                            "id": "Yang paling berharga adalah kesehatan."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Konfirmasi Alergi & Halal di Jepang",
-        content: "Restoran di Jepang kini semakin memahami kebutuhan diet khusus (アレルギー表示). Jangan ragu menanyakan bahan makanan ke pelayan (店員)."
+        title: "Tips Budaya & Kehidupan Bab 3",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   4: {
     chapter: 4,
-    titleJa: "第4課「何時からですか」",
-    titleId: "Dari Jam Berapa?",
-    topic: "Jam Kerja, Lembur, Jadwal & Janji Temu",
+    titleJa: "第4課「しょうゆをつけないで食べてください」",
+    titleId: "Silakan Santap Tanpa Menggunakan Kecap Asin",
+    topic: "レストランで・食べ方・マナーと料理の楽しみ方",
     pdfUrl: "/modul/bab4.pdf",
     canDoList: [
-      "Can-do 13: Mampu menanyakan dan memahami jam kerja, sistem shift, dan waktu istirahat pabrik.",
-      "Can-do 14: Mampu mengonfirmasi kesediaan jam lembur (残業 - zangyou).",
-      "Can-do 15: Mampu membuat dan menyepakati janji temu dengan rekan kerja atau dokter.",
-      "Can-do 16: Mampu membaca tabel jadwal shift kerja bulanan (勤務表)."
+          "Can-do 13: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 4.",
+          "Can-do 14: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 15: Mampu membaca teks praktis dan instruksi otentik pada Bab 4.",
+          "Can-do 16: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Jadwal & Shift Kerja",
-        items: [
-          { ja: "残業 (ざんぎょう)", id: "Lembur" },
-          { ja: "早番 (はやばん)", id: "Shift pagi" },
-          { ja: "遅番 (おそばん)", id: "Shift siang/sore" },
-          { ja: "夜勤 (やきん)", id: "Shift malam" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Waktu＋までに",
-        meaning: "Paling lambat sebelum / sampai dengan batas...",
-        explanation: "Menyatakan batas akhir (deadline) suatu tindakan harus sudah selesai dilakukan.",
-        examples: [
-          { ja: "明日の午後5時までにレポートを出してください。", romaji: "Ashita no gogo goji made ni repooto o dashite kudasai.", id: "Kumpulkan laporan paling lambat jam 5 sore besok." }
-        ]
-      }
+          {
+                "pattern": "❶ Nなら、～",
+                "meaning": "Menanggapi topik usulan lawan bicara dan memberikan rekomendasi khusus ('Kalau bicara tentang [N], maka...')",
+                "explanation": "[Kata Benda / Topik] なら、〜 — Kata benda langsung ditambah なら tanpa partikel lain, diikuti usulan atau saran terbaik.",
+                "examples": [
+                      {
+                            "ja": "A：この近くに、おすすめの店がありますか？\r\nB：この近くなら、「平兵衛」がおすすめです。",
+                            "romaji": "",
+                            "id": "Kalau masakan Jepang, sushi sangat direkomendasikan."
+                      },
+                      {
+                            "ja": "日本料理なら寿司がおすすめです",
+                            "romaji": "",
+                            "id": "Kalau masakan Jepang, sushi sangat direkomendasikan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-て、～　＜方法＞",
+                "meaning": "Menyatakan cara, metode, atau sarana dalam melakukan suatu perbuatan ('Dengan cara melakukan V')",
+                "explanation": "[Kata Kerja Bentuk-Te]、〜 ＜方法＞ — Bentuk-Te berfungsi menerangkan bagaimana tindakan utama di belakangnya dikerjakan.",
+                "examples": [
+                      {
+                            "ja": "こちらの野菜の天ぷらは、つゆにつけて食べてください。",
+                            "romaji": "",
+                            "id": "Saya pergi ke sekolah dengan cara berjalan kaki."
+                      },
+                      {
+                            "ja": "歩いて学校へ通っています",
+                            "romaji": "",
+                            "id": "Saya pergi ke sekolah dengan cara berjalan kaki."
+                      }
+                ]
+          },
+          {
+                "pattern": "V-ないで、～　＜方法＞",
+                "meaning": "Melakukan suatu tindakan utama tanpa melakukan perbuatan lain yang sewajarnya dilakukan ('Tanpa melakukan V')",
+                "explanation": "[Kata Kerja Bentuk-Nai] で、〜 ＜方法＞ — Kata kerja bentuk-Nai + で (contoh: 朝ごはんを食べないで出かけました).",
+                "examples": [
+                      {
+                            "ja": "エビはつゆにつけないで、塩をかけて食べてください。",
+                            "romaji": "",
+                            "id": "Saya bepergian keluar tanpa membawa payung."
+                      },
+                      {
+                            "ja": "傘を持たないで出かけました",
+                            "romaji": "",
+                            "id": "Saya bepergian keluar tanpa membawa payung."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-ちゃだめです",
+                "meaning": "Menyatakan larangan santai/akrab dalam kehidupan sehari-hari ('Tidak boleh / jangan...')",
+                "explanation": "[Kata Kerja Bentuk-Te buang て + ちゃ] だめです — Bentuk-Te diubah: て -> ちゃだめ, で -> じゃだめ. Larangan akrab.",
+                "examples": [
+                      {
+                            "ja": "一度に、そんなにたくさんお肉を入れちゃだめですよ。",
+                            "romaji": "",
+                            "id": "Tidak boleh membuang sampah di sini."
+                      },
+                      {
+                            "ja": "ここでゴミを捨てちゃだめです",
+                            "romaji": "",
+                            "id": "Tidak boleh membuang sampah di sini."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ V-てから、 ～",
+                "meaning": "Menyatakan urutan pasti: tindakan kedua baru dimulai setelah tindakan pertama selesai sempurna ('Setelah... barulah...')",
+                "explanation": "[Kata Kerja Bentuk-Te] から、〜 — Kata kerja bentuk-Te + から menekankan selesainya aksi pertama sebelum melangkah ke aksi kedua.",
+                "examples": [
+                      {
+                            "ja": "うどんは、お肉と野菜を食べてから、入れましょう。",
+                            "romaji": "",
+                            "id": "Setelah mencuci tangan, barulah makan nasi."
+                      },
+                      {
+                            "ja": "手を洗ってからご飯を食べます",
+                            "romaji": "",
+                            "id": "Setelah mencuci tangan, barulah makan nasi."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ S1が、S2",
+                "meaning": "Menghubungkan dua kalimat secara kontras atau sebagai pembuka tuturan yang halus ('Tetapi... / ...namun...')",
+                "explanation": "[Kalimat 1] が、[Kalimat 2] — Partikel が diletakkan di akhir klausa pertama dalam ragam bahasa sopan formal.",
+                "examples": [
+                      {
+                            "ja": "お店は新しくてきれいですが、お昼は混んでいます。",
+                            "romaji": "",
+                            "id": "Mohon maaf sebelumnya, nama Anda siapa?"
+                      },
+                      {
+                            "ja": "失礼ですがお名前は何ですか",
+                            "romaji": "",
+                            "id": "Mohon maaf sebelumnya, nama Anda siapa?"
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Ketepatan Waktu (5分前行動)",
-        content: "Di dunia kerja Jepang, tiba 5-10 menit sebelum jam kerja dimulai (5分前行動) adalah norma etika dasar."
+        title: "Tips Budaya & Kehidupan Bab 4",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   5: {
     chapter: 5,
-    titleJa: "第5課「安全第一」",
-    titleId: "Utamakan Keselamatan (Safety First)",
-    topic: "Aturan Pabrik, Keselamatan Kerja & Prosedur K3",
+    titleJa: "第5課「早く予約したほうがいいですよ」",
+    titleId: "Sebaiknya Cepat Lakukan Reservasi",
+    topic: "旅行に行こう・おすすめ観光地と予約の手続き",
     pdfUrl: "/modul/bab5.pdf",
     canDoList: [
-      "Can-do 17: Mampu memahami rambu keselamatan dan peringatan bahaya di pabrik/tempat kerja.",
-      "Can-do 18: Mampu memahami instruksi larangan keselamatan dan keharusan memakai APD.",
-      "Can-do 19: Mampu melaporkan kondisi darurat atau kerusakan alat kerja kepada pengawas.",
-      "Can-do 20: Mampu membaca checklist inspeksi keselamatan 5S (Seiri, Seiton, Seisou, Seiketsu, Shitsuke)."
+          "Can-do 17: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 5.",
+          "Can-do 18: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 19: Mampu membaca teks praktis dan instruksi otentik pada Bab 5.",
+          "Can-do 20: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "K3 & APD Pabrik",
-        items: [
-          { ja: "ヘルメット", id: "Helm keselamatan" },
-          { ja: "安全靴 (あんぜんぐつ)", id: "Sepatu keselamatan (safety shoes)" },
-          { ja: "危険 (きけん)", id: "Bahaya" },
-          { ja: "整理整頓 (せいりせいとん)", id: "Ringkas & Rapi (5S)" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Vない＋でください",
-        meaning: "Tolong jangan...",
-        explanation: "Digunakan untuk memberikan instruksi larangan demi keselamatan kerja.",
-        examples: [
-          { ja: "機械が動いている間は、触らないでください。", romaji: "Kikai ga ugoite iru aida wa, sawaranaide kudasai.", id: "Selama mesin beroperasi, tolong jangan disentuh." }
-        ]
-      }
+          {
+                "pattern": "❶ V-（られ）ます　＜可能形①＞",
+                "meaning": "Menyatakan kesanggupan fisik atau keahlian diri untuk melakukan perbuatan ('Bisa / mampu...')",
+                "explanation": "[Kata Kerja Bentuk Potensial (可能形)] ます ① — Gol 1: u -> eru (飲む -> 飲める). Gol 2: ru -> rareru (食べる -> 食べられる). Partikel objek を biasanya berubah menjadi が.",
+                "examples": [
+                      {
+                            "ja": "新鮮なカニとかウニとか食べられますよ。",
+                            "romaji": "",
+                            "id": "Saya bisa membaca surat kabar bahasa Jepang."
+                      },
+                      {
+                            "ja": "私は日本語の新聞が読めます",
+                            "romaji": "",
+                            "id": "Saya bisa membaca surat kabar bahasa Jepang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ ～ところ",
+                "meaning": "Menunjukkan tahapan momentum tindakan: tepat sebelum mulai (る), sedang berlangsung (ている), atau baru saja selesai (た)",
+                "explanation": "[Kata Kerja Bentuk Kamus/Te-iru/Ta] ところ — るところ (baru mau mulai), ているところ (sedang di tengah aksi), たところ (baru saja rampung).",
+                "examples": [
+                      {
+                            "ja": "遊べるところはありますか？",
+                            "romaji": "",
+                            "id": "Saya baru saja mau berangkat keluar sekarang."
+                      },
+                      {
+                            "ja": "今から出かけるところです",
+                            "romaji": "",
+                            "id": "Saya baru saja mau berangkat keluar sekarang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ S（普通形） って聞きました\r\nS（普通形） って言っていました",
+                "meaning": "Menyampaikan informasi kabar burung dalam percakapan akrab santai ('Katanya dengar-dengar...')",
+                "explanation": "[Kalimat Bentuk Biasa] って 聞きました ／ って 言っていました — Partikel って adalah bentuk santai lisan dari と.",
+                "examples": [
+                      {
+                            "ja": "うどんがおいしいって聞きました。\r\nバスが安くて便利だって先輩が言ってました。",
+                            "romaji": "",
+                            "id": "Dengar-dengar Yamada-san bulan depan akan menikah."
+                      },
+                      {
+                            "ja": "山田さんは来月結婚するって聞きました",
+                            "romaji": "",
+                            "id": "Dengar-dengar Yamada-san bulan depan akan menikah."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ 【疑問詞】V-たらいいですか？",
+                "meaning": "Meminta saran atau petunjuk solusi kepada orang lain saat bingung ('Sebaiknya apa/bagaimana yang harus saya lakukan?')",
+                "explanation": "[Kata Tanya] [Kata Kerja Bentuk-Tara] いいですか？ — Kata tanya (seperti どう, どこ, 何) + kata kerja bentuk-Tara + いいですか.",
+                "examples": [
+                      {
+                            "ja": "日光に行くんですけど、何で行ったらいいですか？",
+                            "romaji": "",
+                            "id": "Sebaiknya saya membeli tiket di mana ya?"
+                      },
+                      {
+                            "ja": "どこで切符を買ったらいいですか",
+                            "romaji": "",
+                            "id": "Sebaiknya saya membeli tiket di mana ya?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ V-たほうがいいです",
+                "meaning": "Memberikan nasihat atau rekomendasi positif yang tegas ('Lebih baik / sebaiknya kamu melakukan...')",
+                "explanation": "[Kata Kerja Bentuk-Ta] ほうが いいです — Kata kerja harus dalam bentuk lampau biasa (ta-kei) + ほうが いいです.",
+                "examples": [
+                      {
+                            "ja": "厚い上着を持って行ったほうがいいですよ。",
+                            "romaji": "",
+                            "id": "Sebaiknya kamu minum obat lalu tidur lebih awal."
+                      },
+                      {
+                            "ja": "薬を飲んで早く寝たほうがいいです",
+                            "romaji": "",
+                            "id": "Sebaiknya kamu minum obat lalu tidur lebih awal."
+                      }
+                ]
+          },
+          {
+                "pattern": "V-ないほうがいいです",
+                "meaning": "Memberikan peringatan atau nasihat agar tidak melakukan hal buruk ('Sebaiknya jangan melakukan...')",
+                "explanation": "[Kata Kerja Bentuk-Nai] ほうが いいです — Kata kerja dalam bentuk negatif-Nai + ほうが いいです.",
+                "examples": [
+                      {
+                            "ja": "できれば、日曜日は行かないほうがいいですよ。",
+                            "romaji": "",
+                            "id": "Sebaiknya jangan memaksakan diri."
+                      },
+                      {
+                            "ja": "無理をしないほうがいいです",
+                            "romaji": "",
+                            "id": "Sebaiknya jangan memaksakan diri."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Gerakan Shisa Kanko (指差呼称)",
-        content: "Pekerja di Jepang menunjuk sambil menyebut nama objek (Pointing and Calling) untuk memverifikasi saklar atau kondisi aman."
+        title: "Tips Budaya & Kehidupan Bab 5",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   6: {
     chapter: 6,
-    titleJa: "第6課「どうやって行きますか」",
-    titleId: "Bagaimana Cara Perginya?",
-    topic: "Transportasi, Tiket Kereta & Rute Perjalanan",
+    titleJa: "第6課「いろいろなところに行けて、よかったです」",
+    titleId: "Senang Sekali Bisa Pergi ke Berbagai Tempat",
+    topic: "旅行に行こう・旅の感想と体験の振り返り",
     pdfUrl: "/modul/bab6.pdf",
     canDoList: [
-      "Can-do 21: Mampu menanyakan rute dan transportasi tercepat/termurah menuju destinasi.",
-      "Can-do 22: Mampu memahami pengumuman transit dan pergantian kereta (乗り換え - norikae).",
-      "Can-do 23: Mampu membeli tiket kereta atau mengisi saldo kartu IC (Suica/Pasmo).",
-      "Can-do 24: Mampu membaca peta jaringan kereta dan papan petunjuk peron."
+          "Can-do 21: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 6.",
+          "Can-do 22: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 23: Mampu membaca teks praktis dan instruksi otentik pada Bab 6.",
+          "Can-do 24: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Kereta & Navigasi",
-        items: [
-          { ja: "乗り換え (のりかえ)", id: "Pindah / transit kereta" },
-          { ja: "各駅停車 (かくえきていしゃ)", id: "Kereta lokal (berhenti di tiap stasiun)" },
-          { ja: "特急 (とっきゅう)", id: "Kereta ekspres terbatas" },
-          { ja: "運賃 (うんちん)", id: "Tarif perjalanan" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Tempat＋に行くには、どうやって行けばいいですか",
-        meaning: "Untuk pergi ke..., sebaiknya bagaimana caranya?",
-        explanation: "Digunakan untuk meminta petunjuk rute terbaik dari stasiun atau lokasi awal.",
-        examples: [
-          { ja: "市役所に行くには、何番のバスに乗ればいいですか？", romaji: "Shiyakusho ni iku ni wa, nanban no basu ni noreba ii desu ka?", id: "Untuk ke kantor walikota, sebaiknya naik bus nomor berapa?" }
-        ]
-      }
+          {
+                "pattern": "❶ V-るつもりです",
+                "meaning": "Menyatakan niat atau rencana pasti yang sudah diputuskan dalam hati ('Berencana / berniat untuk...')",
+                "explanation": "[Kata Kerja Bentuk Kamus] つもりです — Kata kerja bentuk kamus + つもりです (tsumori desu).",
+                "examples": [
+                      {
+                            "ja": "明日は、中禅寺湖に行くつもりです。",
+                            "romaji": "",
+                            "id": "Saya berniat melakukan perjalanan ke Jepang tahun depan."
+                      },
+                      {
+                            "ja": "来年日本へ旅行するつもりです",
+                            "romaji": "",
+                            "id": "Saya berniat melakukan perjalanan ke Jepang tahun depan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-（られ）て、～",
+                "meaning": "Menyatakan perasaan lega atau senang karena sanggup melakukan sesuatu",
+                "explanation": "[Kata Kerja Potensial Bentuk-Te]、〜 — Kata kerja bentuk potensial diubah ke bentuk-Te (misal: 買えてよかったです).",
+                "examples": [
+                      {
+                            "ja": "いろいろなところに行けて、よかったです。",
+                            "romaji": "",
+                            "id": "Bisa membeli tiket, saya sangat gembira."
+                      },
+                      {
+                            "ja": "チケットが買えてとても嬉しいです",
+                            "romaji": "",
+                            "id": "Bisa membeli tiket, saya sangat gembira."
+                      }
+                ]
+          },
+          {
+                "pattern": "V-（られ）なくて、～",
+                "meaning": "Menyatakan kekecewaan atau kendala karena tidak mampu melakukan sesuatu ('Karena tidak bisa...')",
+                "explanation": "[Kata Kerja Potensial Bentuk-Nakute]、〜 — Bentuk negatif potensial (-nai) diubah ke bentuk-Te penyambung (-nakute).",
+                "examples": [
+                      {
+                            "ja": "ショーが見られなくて、残念でした。",
+                            "romaji": "",
+                            "id": "Karena tidak ada waktu, saya tidak bisa pergi."
+                      },
+                      {
+                            "ja": "時間がなくて行けませんでした",
+                            "romaji": "",
+                            "id": "Karena tidak ada waktu, saya tidak bisa pergi."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ S1し、S2し、～",
+                "meaning": "Menyebutkan dua atau lebih alasan atau keunggulan secara berurutan ('Sudah... ditambah lagi...')",
+                "explanation": "[Kalimat 1] し、[Kalimat 2] し、〜 — Menyambung beberapa klausul kalimat biasa dengan akhiran し.",
+                "examples": [
+                      {
+                            "ja": "海で泳げたし、船に乗れたし、楽しかったです。",
+                            "romaji": "",
+                            "id": "Kamarnya terang, tenang, dan praktis."
+                      },
+                      {
+                            "ja": "部屋は明るいし静かだし便利です",
+                            "romaji": "",
+                            "id": "Kamarnya terang, tenang, dan praktis."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ V-る／V-ている／V-た とき、～",
+                "meaning": "Membedakan ketepatan waktu sebelum aksi selesai (る), saat aksi berlangsung (ている), atau sesudah aksi selesai (た)",
+                "explanation": "[Kata Kerja Bentuk Kamus / Te-iru / Ta] とき、〜 — Contoh: 日本へ行くとき (sebelum sampai di Jepang), 日本へ行ったとき (setelah tiba di Jepang).",
+                "examples": [
+                      {
+                            "ja": "道を歩いているとき、リスを見ました。\r\nウミネコが近くに来たとき、ちょっとこわかったです。",
+                            "romaji": "",
+                            "id": "Saat hendak berangkat ke Jepang, saya membeli kamera."
+                      },
+                      {
+                            "ja": "日本へ行くときカメラを買いました",
+                            "romaji": "",
+                            "id": "Saat hendak berangkat ke Jepang, saya membeli kamera."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ 【人】と【人数】で",
+                "meaning": "Menyatakan jumlah total orang yang bersama-sama melakukan aktivitas ('Bersama [orang] ber-[jumlah]')",
+                "explanation": "[Orang] と [Jumlah Orang] で — Partikel と menandai teman, dan jumlah orang diakhiri partikel で (misal: 家族と三人で).",
+                "examples": [
+                      {
+                            "ja": "友だちと2人でハウステンボスに行って来ました。",
+                            "romaji": "",
+                            "id": "Saya berwisata ke Kyoto berdua bersama teman."
+                      },
+                      {
+                            "ja": "友達と二人で京都を旅行しました",
+                            "romaji": "",
+                            "id": "Saya berwisata ke Kyoto berdua bersama teman."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Etiket di Dalam Kereta Jepang",
-        content: "Di kereta Jepang, telepon genggam wajib diatur ke mode hening (マナーモード) dan berbicara di telepon dilarang demi kenyamanan bersama."
+        title: "Tips Budaya & Kehidupan Bab 6",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
@@ -289,41 +697,73 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
   7: {
     chapter: 7,
     titleJa: "第7課「雨が降ったら、ホールでやります」",
-    titleId: "Kalau Hujan Turun, Kita Adakan di Aula",
-    topic: "Festival Komunitas, Cuaca & Partisipasi Acara",
+    titleId: "Kalau Hujan, Acaranya Diadakan di Aula",
+    topic: "地域のイベント・天気と催し物の開催案内",
     pdfUrl: "/modul/bab7.pdf",
     canDoList: [
-      "Can-do 25: Mampu memahami pengumuman perubahan rencana acara akibat kondisi cuaca.",
-      "Can-do 26: Mampu menanyakan syarat keikutsertaan atau pendaftaran kegiatan warga setempat.",
-      "Can-do 27: Mampu meminta izin atau mengonfirmasi aturan membawa barang pada kegiatan.",
-      "Can-do 28: Mampu membaca selebaran pengumuman lomba atau festival lingkungan sekitar."
+          "Can-do 25: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 7.",
+          "Can-do 26: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 27: Mampu membaca teks praktis dan instruksi otentik pada Bab 7.",
+          "Can-do 28: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Acara Komunitas",
-        items: [
-          { ja: "催し物 (もよおしもの)", id: "Kegiatan / pertunjukan" },
-          { ja: "雨天決行 (うてんけっこう)", id: "Tetap berlangsung meski hujan" },
-          { ja: "雨天中止 (うてんちゅうし)", id: "Dibatalkan jika hujan" },
-          { ja: "参加費 (さんかひ)", id: "Biaya pendaftaran" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Vたら / A-i かったら / A-na・N だったら",
-        meaning: "Jika / Kalau...",
-        explanation: "Menyatakan pengandaian kondisional. Jika kondisi di depan terjadi, maka tindakan di kalimat belakang akan dilaksanakan.",
-        examples: [
-          { ja: "雨が降ったら、ホールでやります。", romaji: "Ame ga futtara, hooru de yarimasu.", id: "Kalau hujan turun, kita adakan di aula." },
-          { ja: "時間がなかったら、無理しなくてもいいですよ。", romaji: "Jikan ga nakattara, muri shinakutemo ii desu yo.", id: "Kalau tidak ada waktu, tidak usah dipaksakan ya." }
-        ]
-      }
+          {
+                "pattern": "❶ ～たら、～",
+                "meaning": "Menyatakan kondisi pengandaian atau urutan waktu di masa depan ('Kalau / setelah... terjadi')",
+                "explanation": "[Bentuk Lampau Biasa] ら、〜 — Kata kerja bentuk-Ta + ら (contoh: 終わったら, 雨が降ったら).",
+                "examples": [
+                      {
+                            "ja": "雨が降ったら、盆踊りは日曜日にやるよ。\r\n盆踊りが終わったら、いっしょに居酒屋に行きましょう。",
+                            "romaji": "",
+                            "id": "Kalau pekerjaan sudah selesai, saya akan menelepon."
+                      },
+                      {
+                            "ja": "仕事が終わったら電話します",
+                            "romaji": "",
+                            "id": "Kalau pekerjaan sudah selesai, saya akan menelepon."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-（ら）れます　＜受身①＞",
+                "meaning": "Menyatakan subjek dikenai tindakan langsung oleh orang lain ('Di... / terkena perbuatan...')",
+                "explanation": "[Kata Kerja Bentuk Pasif (受身形)] ます ① — Gol 1: u -> areru (褒める -> 褒められる, 叱る -> 叱られる). Pelaku ditandai partikel に.",
+                "examples": [
+                      {
+                            "ja": "7月14日、「ひかりホール」において、コンサートが開催されます。",
+                            "romaji": "",
+                            "id": "Saya dipuji oleh guru."
+                      },
+                      {
+                            "ja": "私は先生に褒められました",
+                            "romaji": "",
+                            "id": "Saya dipuji oleh guru."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-（られ）ます　＜可能形②＞",
+                "meaning": "Menyatakan ketersediaan situasi atau fasilitas yang memungkinkan suatu hal dapat dilakukan",
+                "explanation": "[Kata Kerja Potensial (可能形)] ます ② — Menyatakan bahwa kondisi tempat/situasi mengizinkan sesuatu untuk terwujud.",
+                "examples": [
+                      {
+                            "ja": "盆踊りは簡単だから、だれでも踊れますよ。",
+                            "romaji": "",
+                            "id": "Di depan stasiun bisa meminjam sepeda."
+                      },
+                      {
+                            "ja": "駅前で自転車が借りられます",
+                            "romaji": "",
+                            "id": "Di depan stasiun bisa meminjam sepeda."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Komunitas Lingkungan (町内会・自治会)",
-        content: "Kegiatan gotong royong dan festival warga sangat membantu pekerja migran berbaur dan mendapat relasi akrab dengan warga lokal Jepang."
+        title: "Tips Budaya & Kehidupan Bab 7",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
@@ -331,59 +771,90 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
   8: {
     chapter: 8,
     titleJa: "第8課「屋台はどこかわかりますか？」",
-    titleId: "Tahukah Anda di Mana Stan Makanan Berada?",
-    topic: "Festival Budaya, Lokasi Stan & Denah Acara",
+    titleId: "Tahukah Anda di Mana Stan Festival Berada?",
+    topic: "地域のイベント・お祭りの屋台と道案内",
     pdfUrl: "/modul/bab8.pdf",
     canDoList: [
-      "Can-do 32: Mampu membaca denah festival/bazar dan menemukan letak stan, panggung, dan fasilitas umum.",
-      "Can-do 33: Mampu menanyakan lokasi stan atau kegiatan tertentu kepada petugas informasi festival.",
-      "Can-do 34: Mampu memahami penjelasan arah dan lokasi yang menggunakan kata penunjuk ruang (突き当たり、右手、奥).",
-      "Can-do 35: Mampu memahami instruksi dan larangan tata tertib festival (dilarang merokok, membuang sampah pada tempatnya)."
+          "Can-do 29: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 8.",
+          "Can-do 30: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 31: Mampu membaca teks praktis dan instruksi otentik pada Bab 8.",
+          "Can-do 32: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Festival & Stan",
-        items: [
-          { ja: "屋台 (やたい)", id: "Stan / warung tenda festival" },
-          { ja: "ステージ", id: "Panggung pertunjukan" },
-          { ja: "観光案内 (かんこうあんない)", id: "Pusat informasi wisata" },
-          { ja: "本部 (ほんぶ)", id: "Kantor pusat panitia festival" }
-        ]
-      },
-      {
-        category: "Arah & Lokasi",
-        items: [
-          { ja: "突き当たり (つきあたり)", id: "Ujung jalan / mentok" },
-          { ja: "右手 (みぎて)", id: "Sisi sebelah kanan" },
-          { ja: "左手 (ひだりて)", id: "Sisi sebelah kiri" },
-          { ja: "奥 (おく)", id: "Bagian dalam / paling ujung" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "[Kalimat Tanya]＋かわかりますか (～ ka wakarimasu ka)",
-        meaning: "Tahukah Anda / Apakah Anda tahu di mana...?",
-        explanation: "Digunakan untuk menanyakan informasi secara santun dan ramah kepada orang lain atau petugas.",
-        examples: [
-          { ja: "すみません、屋台はどこかわかりますか？", romaji: "Sumimasen, yatai wa doko ka wakarimasu ka?", id: "Permisi, tahukah Anda di mana stan-stan makanan berada?" },
-          { ja: "次のイベントは何時からかわかりますか？", romaji: "Tsugi no ibento wa nanji kara ka wakarimasu ka?", id: "Apakah Anda tahu jam berapa acara berikutnya dimulai?" }
-        ]
-      },
-      {
-        pattern: "KB＋はご遠慮ください (～ wa go-enryo kudasai)",
-        meaning: "Dimohon untuk tidak / dilarang...",
-        explanation: "Ungkapan sopan formal yang sering tertera pada papan petunjuk atau pengumuman festival untuk melarang suatu hal.",
-        examples: [
-          { ja: "会場内での喫煙はご遠慮ください。", romaji: "Kaijounai de no kitsuen wa go-enryo kudasai.", id: "Dimohon untuk tidak merokok di dalam area festival." },
-          { ja: "フラッシュ撮影はご遠慮ください。", romaji: "Furasshu satsuei wa go-enryo kudasai.", id: "Dimohon tidak menggunakan lampu kilat (flash) saat memotret." }
-        ]
-      }
+          {
+                "pattern": "❶ もうV-ました",
+                "meaning": "Menyatakan konfirmasi bahwa suatu hal telah rampung dikerjakan ('Sudah...')",
+                "explanation": "もう [Kata Kerja Bentuk-Mashita] — Sering digunakan untuk menjawab pertanyaan 'もう〜ましたか？'.",
+                "examples": [
+                      {
+                            "ja": "A：スピーチコンテストは、もう始まりましたか？",
+                            "romaji": "",
+                            "id": "PR saya sudah selesai."
+                      },
+                      {
+                            "ja": "宿題はもう終わりました",
+                            "romaji": "",
+                            "id": "PR saya sudah selesai."
+                      }
+                ]
+          },
+          {
+                "pattern": "まだV-て（い）ません",
+                "meaning": "Menyatakan bahwa suatu aktivitas belum terlaksana sampai saat ini ('Masih belum...')",
+                "explanation": "まだ [Kata Kerja Bentuk-Te] いません — Kata keterangan まだ (mada) dipadukan dengan bentuk 〜ていません.",
+                "examples": [
+                      {
+                            "ja": "B:まだ始まってません。",
+                            "romaji": "",
+                            "id": "Saya masih belum makan siang."
+                      },
+                      {
+                            "ja": "私はまだ昼ご飯を食べていません",
+                            "romaji": "",
+                            "id": "Saya masih belum makan siang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ まだV-ます",
+                "meaning": "Menyatakan bahwa suatu perbuatan atau kondisi masih terus berlanjut hingga sekarang ('Masih...')",
+                "explanation": "まだ [Kata Kerja Bentuk Positif] — まだ diikuti kata kerja positif menyatakan kelangsungan aksi (misal: まだ働きます = Masih akan bekerja).",
+                "examples": [
+                      {
+                            "ja": "イベント、まだやってますか？",
+                            "romaji": "",
+                            "id": "Di luar masih turun hujan."
+                      },
+                      {
+                            "ja": "外はまだ雨が降っています",
+                            "romaji": "",
+                            "id": "Di luar masih turun hujan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ 【疑問詞】＋S（普通形）か、～",
+                "meaning": "Menyematkan kalimat tanya sebagai klausa di dalam kalimat utama ('Apakah/kapan... tidak tahu')",
+                "explanation": "[Kata Tanya] ＋ [Kalimat Bentuk Biasa] か、〜 — Kata tanya + klausa bentuk biasa + partikel か.",
+                "examples": [
+                      {
+                            "ja": "明日のフリーマーケットは、何時からか、わかりますか？",
+                            "romaji": "",
+                            "id": "Apakah Anda tahu jam berapa acaranya dimulai?"
+                      },
+                      {
+                            "ja": "何時に始まるか知っていますか",
+                            "romaji": "",
+                            "id": "Apakah Anda tahu jam berapa acaranya dimulai?"
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Budaya Matsuri (お祭り) & Pemilahan Sampah",
-        content: "Festival Jepang sangat terkenal dengan stan makanan (屋台) seperti takoyaki dan yakisoba. Pengunjung diwajibkan membawa pulang sampah atau membuangnya ke tempat sampah terpilah (分別ごみ箱)."
+        title: "Tips Budaya & Kehidupan Bab 8",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
@@ -392,49 +863,174 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
     chapter: 9,
     titleJa: "第9課「成人の日は、何をするんですか？」",
     titleId: "Pada Hari Kedewasaan, Apa yang Biasanya Dilakukan?",
-    topic: "Hari Libur Nasional, Perayaan Tradisional & Budaya Jepang",
+    topic: "年中行事とマナー・日本の伝統行事とお祝い",
     pdfUrl: "/modul/bab9.pdf",
     canDoList: [
-      "Can-do 36: Mampu menanyakan dan menjelaskan arti atau kegiatan pada hari libur nasional Jepang (成人の日, お正月, 七五三, こどもの日).",
-      "Can-do 37: Mampu menjelaskan hari raya penting di negara asal (Idul Fitri, Hari Kemerdekaan) dengan kalimat sederhana.",
-      "Can-do 38: Mampu mendengarkan dan memahami penjelasan singkat tentang tradisi tahun baru atau festival budaya Jepang.",
-      "Can-do 39: Mampu membaca jadwal kalender libur dan pengumuman kegiatan peringatan hari besar."
+          "Can-do 33: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 9.",
+          "Can-do 34: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 35: Mampu membaca teks praktis dan instruksi otentik pada Bab 9.",
+          "Can-do 36: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Hari Besar & Tradisi Jepang",
-        items: [
-          { ja: "成人の日 (せいじんのひ)", id: "Hari Kedewasaan (Senin kedua Januari)" },
-          { ja: "お正月 (おしょうがつ)", id: "Tahun Baru Jepang" },
-          { ja: "初詣 (はつもうで)", id: "Ziarah kuil pertama di awal tahun" },
-          { ja: "七五三 (しちごさん)", id: "Festival perayaan anak usia 3, 5, dan 7 tahun" },
-          { ja: "お盆 (おぼん)", id: "Festival mengenang leluhur (pertengahan Agustus)" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "[Bentuk Biasa / KB・KS-na な]＋んです（か）",
-        meaning: "Mengapa / Menjelaskan alasan atau latar belakang...",
-        explanation: "Digunakan ketika ingin meminta penjelasan rinci mengenai suatu kebiasaan atau perayaan yang membuat pembicara penasaran.",
-        examples: [
-          { ja: "成人の日は、何をするんですか？", romaji: "Seijin no hi wa, nani o surun desu ka?", id: "Pada Hari Kedewasaan, apa yang biasanya dilakukan?" },
-          { ja: "20歳になった若者がきれいな着物を着て式典に出るんです。", romaji: "Hatasuchi ni natta wakamono ga kirei na kimono o kite shikiten ni derun desu.", id: "Pemuda yang genap berusia 20 tahun mengenakan kimono indah dan menghadiri upacara kedewasaan." }
-        ]
-      },
-      {
-        pattern: "Vたり、Vたりします",
-        meaning: "Melakukan kegiatan A, kegiatan B, dan sebagainya...",
-        explanation: "Menyebutkan contoh beberapa kegiatan perayaan tanpa harus menyebutkan seluruhnya secara urut waktu.",
-        examples: [
-          { ja: "お正月は神社にお参りに行ったり、おせち料理を食べたりします。", romaji: "Oshougatsu wa jinja ni omairi ni ittari, osechi ryouri o tabetari shimasu.", id: "Saat tahun baru, kami pergi berdoa ke kuil, makan masakan Osechi, dan sebagainya." }
-        ]
-      }
+          {
+                "pattern": "❶ ～んですか？",
+                "meaning": "Menanyakan konfirmasi dengan rasa ingin tahu atau meminta penjelasan atas hal yang dilihat ('Apakah benar bahwa...?')",
+                "explanation": "[Kalimat Bentuk Biasa] んですか？ — Bentuk biasa + んですか. Memberi nuansa perhatian atau kepedulian terhadap lawan bicara.",
+                "examples": [
+                      {
+                            "ja": "成人の日は、何をするんですか？",
+                            "romaji": "",
+                            "id": "Mau bepergian ke mana gerangan?"
+                      },
+                      {
+                            "ja": "どこへ出かけるんですか",
+                            "romaji": "",
+                            "id": "Mau bepergian ke mana gerangan?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ Nしか+否定文",
+                "meaning": "Menyatakan keterbatasan bahwa hanya ada objek itu saja dan merasa kurang ('Hanya... saja')",
+                "explanation": "[Kata Benda] しか ＋ [Kata Kerja Bentuk Negatif] — Partikel しか selalu berpasangan dengan bentuk kata kerja negatif di belakangnya.",
+                "examples": [
+                      {
+                            "ja": "乗り物に3つしか乗れませんでした。",
+                            "romaji": "",
+                            "id": "Di dompet hanya ada seribu yen saja."
+                      },
+                      {
+                            "ja": "財布に千円しかありません",
+                            "romaji": "",
+                            "id": "Di dompet hanya ada seribu yen saja."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ Nだけ",
+                "meaning": "Menyatakan pembatasan secara netral tanpa nuansa keluhan ('Hanya / cuma...')",
+                "explanation": "[Kata Benda] だけ — Berbeda dengan しか, partikel だけ berpasangan dengan predikat positif.",
+                "examples": [
+                      {
+                            "ja": "今年は、1日だけ実家に帰りました。",
+                            "romaji": "",
+                            "id": "Tolong tunggu lima menit saja."
+                      },
+                      {
+                            "ja": "五分だけ待ってください",
+                            "romaji": "",
+                            "id": "Tolong tunggu lima menit saja."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ V-たりして、～",
+                "meaning": "Menyebutkan contoh kemungkinan perilaku atau kejadian santai ('Seperti misalnya...')",
+                "explanation": "[Kata Kerja Bentuk-Ta] りして、〜 — Bentuk 〜たりして memberi kesan fleksibel atau dugaan santai.",
+                "examples": [
+                      {
+                            "ja": "友だちといっしょに買い物をしたりして、楽しかったです。",
+                            "romaji": "",
+                            "id": "Saat libur saya kadang memasak makanan."
+                      },
+                      {
+                            "ja": "休日は料理を作ったりしています",
+                            "romaji": "",
+                            "id": "Saat libur saya kadang memasak makanan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ V-なくちゃならない",
+                "meaning": "Menyatakan keharusan atau kewajiban mendesak dalam percakapan akrab ('Harus / perlu...')",
+                "explanation": "[Kata Kerja Bentuk-Nai buang ない + なくちゃならない] — Bentuk percakapan lisan dari 〜なければならない.",
+                "examples": [
+                      {
+                            "ja": "甥や姪にお年玉をあげなくちゃならないし、大変でした。",
+                            "romaji": "",
+                            "id": "Besok saya harus bangun pagi-pagi."
+                      },
+                      {
+                            "ja": "明日は早く起きなくちゃならない",
+                            "romaji": "",
+                            "id": "Besok saya harus bangun pagi-pagi."
+                      }
+                ]
+          },
+          {
+                "pattern": "❻ V-れます　＜可能形③＞",
+                "meaning": "Bentuk potensial santai lisan modern pada Golongan 2 (menghilangkan ら: 食べれる)",
+                "explanation": "[Kata Kerja Bentuk Potensial Pendek (ら抜き)] ます ③ — Banyak digunakan dalam percakapan santai kawula muda dan kehidupan sehari-hari.",
+                "examples": [
+                      {
+                            "ja": "DVDもたくさん見れました。\r\n久しぶりに、実家の母の料理を食べれてよかったです。",
+                            "romaji": "",
+                            "id": "Saya bisa makan natto."
+                      },
+                      {
+                            "ja": "私は納豆が食べれます",
+                            "romaji": "",
+                            "id": "Saya bisa makan natto."
+                      }
+                ]
+          },
+          {
+                "pattern": "❼ S（普通形）+人が～\r\nS（普通形）+人も～",
+                "meaning": "Menyebutkan keberadaan kelompok orang yang melakukan perbuatan tertentu ('Ada orang yang...')",
+                "explanation": "[Klausa Bentuk Biasa] + 人が〜 ／ 人も〜 — Klausa bentuk biasa menerangkan subjek 人 (orang).",
+                "examples": [
+                      {
+                            "ja": "春節は、田舎に帰る人が多いです。\r\n最近では、海外に旅行する人もいます。",
+                            "romaji": "",
+                            "id": "Ada orang yang sedang tidur di dalam kereta."
+                      },
+                      {
+                            "ja": "電車で寝ている人がいます",
+                            "romaji": "",
+                            "id": "Ada orang yang sedang tidur di dalam kereta."
+                      }
+                ]
+          },
+          {
+                "pattern": "❽ V-ながら、～",
+                "meaning": "Melakukan dua kegiatan sekaligus secara simultan dalam satu kurun waktu yang sama ('Sambil...')",
+                "explanation": "[Kata Kerja Bentuk Masu buang ます] ながら、〜 — Stem Masu + ながら. Tindakan utama diletakkan di kalimat kedua setelah ながら.",
+                "examples": [
+                      {
+                            "ja": "ソンクラーンは、町を歩きながら、みんなで水をかけ合います。",
+                            "romaji": "",
+                            "id": "Saya belajar sambil mendengarkan musik."
+                      },
+                      {
+                            "ja": "音楽を聴きながら勉強します",
+                            "romaji": "",
+                            "id": "Saya belajar sambil mendengarkan musik."
+                      }
+                ]
+          },
+          {
+                "pattern": "❾ Nによって",
+                "meaning": "Menyatakan keberagaman, perbedaan, atau ketergantungan pada faktor tertentu ('Bergantung pada / berbeda sesuai...')",
+                "explanation": "[Kata Benda] によって — Kata benda langsung ditambah によって (ni yotte).",
+                "examples": [
+                      {
+                            "ja": "レバランは、年によって違います。",
+                            "romaji": "",
+                            "id": "Kebudayaan berbeda-beda tergantung pada negaranya."
+                      },
+                      {
+                            "ja": "文化は国によって違います",
+                            "romaji": "",
+                            "id": "Kebudayaan berbeda-beda tergantung pada negaranya."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Perayaan Hari Kedewasaan (成人の日)",
-        content: "Di Jepang, mereka yang telah berusia dewasa merayakannya dengan upacara resmi di balai kota. Wanita muda umumnya mengenakan furisode (振袖) dan pria mengenakan jas atau hakama."
+        title: "Tips Budaya & Kehidupan Bab 9",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
@@ -442,50 +1038,158 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
   10: {
     chapter: 10,
     titleJa: "第10課「どんな服を着て行けばいいですか？」",
-    titleId: "Pakaian Seperti Apa yang Sebaiknya Saya Kenakan?",
-    topic: "Tata Cara Berpakaian, Etiket Upacara & Kebiasaan Sosial",
+    titleId: "Pakaian Seperti Apa yang Sebaiknya Dikenakan?",
+    topic: "年中行事とマナー・冠婚葬祭とマナー",
     pdfUrl: "/modul/bab10.pdf",
     canDoList: [
-      "Can-do 40: Mampu menanyakan etiket berpakaian dan barang yang harus dibawa untuk menghadiri upacara pernikahan atau pemakaman.",
-      "Can-do 41: Mampu memberi dan menerima saran tentang tata krama sosial dan etiket bertamu di Jepang.",
-      "Can-do 42: Mampu memahami penjelasan tradisi sumbangan uang duka (香典) dan amplop sumbangan (ご祝儀).",
-      "Can-do 43: Mampu membaca petunjuk etiket dan aturan pakaian pada undangan acara resmi."
+          "Can-do 37: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 10.",
+          "Can-do 38: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 39: Mampu membaca teks praktis dan instruksi otentik pada Bab 10.",
+          "Can-do 40: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Upacara & Tata Krama",
-        items: [
-          { ja: "お葬式 (おそうしき)", id: "Upacara pemakaman" },
-          { ja: "結婚式 (けっこんしき)", id: "Upacara pernikahan" },
-          { ja: "香典 (こうでん)", id: "Uang duka cita" },
-          { ja: "ご祝儀 (ごしゅうぎ)", id: "Uang ucapan selamat (pernikahan)" },
-          { ja: "喪服 (もふく)", id: "Pakaian duka (hitam polos)" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Vば＋いいですか (Kata Kerja Bentuk Pengandaian -ba ii desu ka)",
-        meaning: "Sebaiknya bagaimana saya...?",
-        explanation: "Digunakan untuk meminta petunjuk atau nasihat kepada orang yang lebih berpengalaman saat merasa ragu.",
-        examples: [
-          { ja: "お葬式には、どんな服を着て行けばいいですか？", romaji: "Osoushiki ni wa, donna fuku o kite ikeba ii desu ka?", id: "Untuk menghadiri pemakaman, pakaian seperti apa yang sebaiknya saya kenakan?" },
-          { ja: "黒いスーツを着て行けばいいですよ。", romaji: "Kuroi suutsu o kite ikeba ii desu yo.", id: "Sebaiknya kamu mengenakan setelan jas hitam." }
-        ]
-      },
-      {
-        pattern: "Vたほうがいいです / Vないほうがいいです",
-        meaning: "Lebih baik melakukan... / Lebih baik tidak melakukan...",
-        explanation: "Memberikan rekomendasi atau saran yang kuat mengenai hal yang patut atau tidak patut dilakukan.",
-        examples: [
-          { ja: "香典袋には、新札は入れないほうがいいですよ。", romaji: "Koudenbukuro ni wa, shinsatsu wa irenai hou ga ii desu yo.", id: "Untuk amplop duka, lebih baik tidak memasukkan uang kertas yang baru dicetak." }
-        ]
-      }
+          {
+                "pattern": "❶ 【疑問詞】V-ばいいですか？",
+                "meaning": "Menanyakan petunjuk atau tata cara penyelesaian masalah yang paling tepat ('Sebaiknya apa/bagaimana yang saya lakukan?')",
+                "explanation": "[Kata Tanya] [Kata Kerja Bentuk-Ba] いいですか？ — Kata kerja bentuk pengandaian-ba (ば形) + いいですか.",
+                "examples": [
+                      {
+                            "ja": "お葬式には、何を持っていけばいいですか？",
+                            "romaji": "",
+                            "id": "Sebaiknya apa yang harus saya lakukan?"
+                      },
+                      {
+                            "ja": "どうすればいいですか",
+                            "romaji": "",
+                            "id": "Sebaiknya apa yang harus saya lakukan?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-てはいけません／だめです\r\nVちゃいけません／だめです",
+                "meaning": "Menyatakan larangan keras sesuai peraturan keselamatan kerja atau norma publik ('Dilarang keras / tidak boleh...')",
+                "explanation": "[Kata Kerja Bentuk-Te] は いけません ／ だめです — Bentuk-Te + はいけません (formal hukum/aturan) atau だめです (percakapan langsung).",
+                "examples": [
+                      {
+                            "ja": "信号が赤のときは、横断歩道を渡ってはいけませんよ。\r\nバスの中では、話しちゃだめだよね。",
+                            "romaji": "",
+                            "id": "Dilarang merokok di sini."
+                      },
+                      {
+                            "ja": "ここでタバコを吸ってはいけません",
+                            "romaji": "",
+                            "id": "Dilarang merokok di sini."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-なくちゃ",
+                "meaning": "Menyatakan keharusan mendesak yang disadari sendiri dalam tuturan akrab ('Harus...')",
+                "explanation": "[Kata Kerja Bentuk-Nai buang ない + なくちゃ] — Bentuk singkat akrab dari 〜なくてはならない.",
+                "examples": [
+                      {
+                            "ja": "食器は自分で片付けなくちゃ。",
+                            "romaji": "",
+                            "id": "Saya harus membersihkan kamar."
+                      },
+                      {
+                            "ja": "部屋を掃除しなくちゃ",
+                            "romaji": "",
+                            "id": "Saya harus membersihkan kamar."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ V-るように、～",
+                "meaning": "Menyatakan tujuan atau kondisi ideal yang diupayakan agar dapat terwujud ('Agar / supaya...')",
+                "explanation": "[Kata Kerja Bentuk Kamus] ように、〜 — Kata kerja bentuk kamus (biasanya potensial atau tanpa kehendak) + ように, diikuti usaha nyata.",
+                "examples": [
+                      {
+                            "ja": "次の人がすぐに席に座れるように、食器を片付けます。",
+                            "romaji": "",
+                            "id": "Saya berlatih setiap hari agar dapat berbicara bahasa Jepang dengan lancar."
+                      },
+                      {
+                            "ja": "日本語が上手に話せるように毎日練習します",
+                            "romaji": "",
+                            "id": "Saya berlatih setiap hari agar dapat berbicara bahasa Jepang dengan lancar."
+                      }
+                ]
+          },
+          {
+                "pattern": "V-ないように、～",
+                "meaning": "Menyatakan upaya kehati-hatian agar suatu hal buruk tidak terjadi ('Agar / supaya tidak...')",
+                "explanation": "[Kata Kerja Bentuk-Nai] ように、〜 — Kata kerja bentuk negatif-Nai + ように, diikuti tindakan preventif.",
+                "examples": [
+                      {
+                            "ja": "トイレがつまらないように、紙はごみ箱に捨てます。",
+                            "romaji": "",
+                            "id": "Saya memakai pakaian hangat agar tidak masuk angin."
+                      },
+                      {
+                            "ja": "風邪を引かないように暖かい服を着ます",
+                            "romaji": "",
+                            "id": "Saya memakai pakaian hangat agar tidak masuk angin."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ V-（ら）れます　＜受身②＞",
+                "meaning": "Menyatakan situasi di mana seseorang merasa terganggu atau dirugikan oleh perbuatan orang lain (Pasif Gangguan / 迷惑受身)",
+                "explanation": "[Kata Kerja Bentuk Pasif (受身形)] ます ② — Menyatakan penderitaan yang dialami akibat aksi orang lain (contoh: 雨に降られました = Kehujanan).",
+                "examples": [
+                      {
+                            "ja": "お店の店長さんに、「今度から気をつけて」と注意されました。",
+                            "romaji": "",
+                            "id": "Saat pulang saya kehujanan di jalan."
+                      },
+                      {
+                            "ja": "帰りに雨に降られました",
+                            "romaji": "",
+                            "id": "Saat pulang saya kehujanan di jalan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❻ S（普通形）の？",
+                "meaning": "Menanyakan alasan atau meminta konfirmasi santai dengan nada ramah kepada teman akrab",
+                "explanation": "[Kalimat Bentuk Biasa] の？ — Bentuk biasa diakhiri partikel の dengan intonasi naik. Bentuk santai dari んですか.",
+                "examples": [
+                      {
+                            "ja": "お金を払わないで、ジュース飲んだの？",
+                            "romaji": "",
+                            "id": "Apakah besok kamu juga pergi bekerja?"
+                      },
+                      {
+                            "ja": "明日も仕事に行くの",
+                            "romaji": "",
+                            "id": "Apakah besok kamu juga pergi bekerja?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❼ V-なきゃ",
+                "meaning": "Menyatakan keharusan mendesak secara kasual untuk mengingatkan diri sendiri ('Harus...')",
+                "explanation": "[Kata Kerja Bentuk-Nai buang ない + なきゃ] — Singkatan percakapan akrab dari 〜なければならない.",
+                "examples": [
+                      {
+                            "ja": "ちゃんとお金を払ってから飲まなきゃ。",
+                            "romaji": "",
+                            "id": "Saya harus segera pulang."
+                      },
+                      {
+                            "ja": "私は早く帰らなきゃ",
+                            "romaji": "",
+                            "id": "Saya harus segera pulang."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Perbedaan Uang Amplop Duka (香典) dan Pernikahan (ご祝儀)",
-        content: "Pada uang duka (香典), gunakan uang kertas yang sudah beredar (bukan uang cetak baru licin) untuk melambangkan bahwa duka cita terjadi secara tak terduga. Sebaliknya pada pernikahan (ご祝儀), wajib menggunakan uang kertas baru mulus."
+        title: "Tips Budaya & Kehidupan Bab 10",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
@@ -494,450 +1198,728 @@ export const CHAPTER_MODULES: Record<number, ChapterModuleData> = {
     chapter: 11,
     titleJa: "第11課「ポイントカードを忘れてしまいました」",
     titleId: "Saya Tidak Sengaja Ketinggalan Kartu Poin",
-    topic: "Belanja di Toko, Ukuran Pakaian & Kejadian Tak Terduga",
+    topic: "上手な買い物・買い物とトラブル・試着とサイズ",
     pdfUrl: "/modul/bab11.pdf",
     canDoList: [
-      "Can-do 44: Mampu menanyakan ketersediaan ukuran atau warna lain saat berbelanja pakaian dan sepatu.",
-      "Can-do 45: Mampu meminta izin mencoba pakaian di kamar pas (fitting room) secara sopan.",
-      "Can-do 46: Mampu menjelaskan kejadian tak terduga atau kekhilafan (lupa bawa kartu poin, tertinggal barang).",
-      "Can-do 47: Mampu memahami syarat penukaran atau pengembalian barang (返品・交換)."
+          "Can-do 41: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 11.",
+          "Can-do 42: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 43: Mampu membaca teks praktis dan instruksi otentik pada Bab 11.",
+          "Can-do 44: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Belanja & Ukuran",
-        items: [
-          { ja: "試着室 (しちゃくしつ)", id: "Kamar pas (fitting room)" },
-          { ja: "サイズ", id: "Ukuran (S, M, L, LL)" },
-          { ja: "返品 (へんぴん)", id: "Pengembalian barang / retur" },
-          { ja: "交換 (こうかん)", id: "Penukaran barang" },
-          { ja: "レシート", id: "Struk belanja" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "Vて＋みてもいいですか",
-        meaning: "Bolehkah saya mencoba...?",
-        explanation: "Digunakan saat meminta izin mencoba memakai pakaian atau mencicipi makanan sebelum memutuskan membeli.",
-        examples: [
-          { ja: "このシャツを着てみてもいいですか？", romaji: "Kono shatsu o kite mite mo ii desu ka?", id: "Bolehkah saya mencoba memakai kemeja ini?" }
-        ]
-      },
-      {
-        pattern: "Vて＋しまいました",
-        meaning: "Terlanjur / tidak sengaja melakukan... (dengan rasa penyesalan)",
-        explanation: "Menyatakan perbuatan yang terjadi di luar kendali atau kekhilafan yang disesali oleh pembicara.",
-        examples: [
-          { ja: "すみません、ポイントカードを家に忘れてしまいました。", romaji: "Sumimasen, pointo kaado o ie ni wasurete shimaimashita.", id: "Maaf, kartu poin saya tertinggal di rumah." },
-          { ja: "買った服のサイズを間違えてしまいました。", romaji: "Katta fuku no saizu o machigaete shimaimashita.", id: "Saya keliru memilih ukuran baju yang sudah saya beli." }
-        ]
-      }
+          {
+                "pattern": "❶ V-てみてもいいですか？",
+                "meaning": "Meminta izin secara sangat sopan untuk mencoba sesuatu terlebih dahulu ('Bolehkah saya mencoba untuk...?')",
+                "explanation": "[Kata Kerja Bentuk-Te] みても いいですか？ — Kombinasi bentuk coba (てみる) dan izin (てもいいですか).",
+                "examples": [
+                      {
+                            "ja": "このセーター、着てみてもいいですか？",
+                            "romaji": "",
+                            "id": "Bolehkah saya mencoba memakai baju ini?"
+                      },
+                      {
+                            "ja": "この服を着てみてもいいですか",
+                            "romaji": "",
+                            "id": "Bolehkah saya mencoba memakai baju ini?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ ナA-／イA- すぎます",
+                "meaning": "Menyatakan bahwa kualitas atau sifat tersebut berlebihan dan berdampak negatif ('Terlalu...')",
+                "explanation": "[Kata Sifat buang い/な] すぎます — Sifat-i buang 'い', sifat-na buang 'な' + すぎます.",
+                "examples": [
+                      {
+                            "ja": "この色はちょっと派手すぎます。",
+                            "romaji": "",
+                            "id": "Sepatu ini sedikit terlalu besar."
+                      },
+                      {
+                            "ja": "この靴は少し大きすぎます",
+                            "romaji": "",
+                            "id": "Sepatu ini sedikit terlalu besar."
+                      }
+                ]
+          },
+          {
+                "pattern": "イA-すぎます",
+                "meaning": "Menyatakan rasa pedas, manis, mahal, atau panas yang melampaui toleransi diri",
+                "explanation": "[Kata Sifat-i buang い] すぎます — Kata sifat-i buang 'い' + すぎます.",
+                "examples": [
+                      {
+                            "ja": "このジャケットは高すぎます。",
+                            "romaji": "",
+                            "id": "Sup ini terlalu panas."
+                      },
+                      {
+                            "ja": "このスープは熱すぎます",
+                            "romaji": "",
+                            "id": "Sup ini terlalu panas."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ ナA-な／イA-い の",
+                "meaning": "Menggantikan kata benda yang sudah dipahami bersama dengan pronomina 'の' ('Yang [sifat]')",
+                "explanation": "[Kata Sifat-na な / Kata Sifat-i] の — の berfungsi sebagai kata ganti orang/benda (pronoun) agar tidak mengulang nama benda berkali-kali.",
+                "examples": [
+                      {
+                            "ja": "もうちょっと大きいの、ありますか？",
+                            "romaji": "",
+                            "id": "Apakah ada yang ukurannya lebih kecil?"
+                      },
+                      {
+                            "ja": "もっと小さいのはありますか",
+                            "romaji": "",
+                            "id": "Apakah ada yang ukurannya lebih kecil?"
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ NをV-(ら)れます　＜受身③＞",
+                "meaning": "Menyatakan bahwa barang milik pembicara dirusak atau dikenai perbuatan yang merugikan oleh orang lain",
+                "explanation": "[Orang] に [Barang] を [Kata Kerja Pasif] ③ — Subjek utama (saya) merasa dirugikan karena barang kepemilikannya disentuh/diambil.",
+                "examples": [
+                      {
+                            "ja": "（私は）自転車を盗まれました。",
+                            "romaji": "",
+                            "id": "Kaki saya terinjak di dalam kereta."
+                      },
+                      {
+                            "ja": "電車で足を踏まれました",
+                            "romaji": "",
+                            "id": "Kaki saya terinjak di dalam kereta."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ S（普通形）かもしれません",
+                "meaning": "Menyatakan kemungkinan terjadinya sesuatu sekitar 50% ('Mungkin / bisa jadi...')",
+                "explanation": "[Kalimat Bentuk Biasa] かもしれません — Bentuk biasa + かもしれません. Kata sifat-na dan kata benda tanpa 'だ'.",
+                "examples": [
+                      {
+                            "ja": "もしかしたら、バッグをとられたかもしれません。",
+                            "romaji": "",
+                            "id": "Besok mungkin akan turun hujan."
+                      },
+                      {
+                            "ja": "明日は雨が降るかもしれません",
+                            "romaji": "",
+                            "id": "Besok mungkin akan turun hujan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❻ V-てしまいました",
+                "meaning": "Menyatakan penyesalan atas keteledoran atau hal yang terlanjur terjadi di luar kendali ('Terlanjur / tidak sengaja...')",
+                "explanation": "[Kata Kerja Bentuk-Te] しまいました — Kata kerja bentuk-Te + しまいました.",
+                "examples": [
+                      {
+                            "ja": "ポイントカード、忘れてしまいました。",
+                            "romaji": "",
+                            "id": "Saya terlanjur menjatuhkan dompet entah di mana."
+                      },
+                      {
+                            "ja": "財布をどこかに落としてしまいました",
+                            "romaji": "",
+                            "id": "Saya terlanjur menjatuhkan dompet entah di mana."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Etiket Mencoba Pakaian di Jepang",
-        content: "Saat mencoba pakaian di kamar pas Jepang, pengunjung diminta melepas alas kaki dan bagi wanita disarankan memakai penutup wajah (フェイスカバー) agar riasan tidak mengotori baju baru."
+        title: "Tips Budaya & Kehidupan Bab 11",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
 
   12: {
     chapter: 12,
-    titleJa: "第12課「このボタンを押すと、エコモードに変わります」",
-    titleId: "Kalau Tombol Ini Ditekan, Akan Berubah ke Mode Hemat",
-    topic: "Pengoperasian Alat Elektronik, Tombol Fungsi & Rumah Tangga",
+    titleJa: "第12課「こっちの店のほうが安いですね」",
+    titleId: "Toko yang Sebelah Sini Lebih Murah ya",
+    topic: "上手な買い物・商品の比較・使いやすさと配送",
     pdfUrl: "/modul/bab12.pdf",
     canDoList: [
-      "Can-do 48: Mampu membaca dan memahami label tombol pada alat elektronik rumah tangga (炊飯器、電子レンジ、洗濯機).",
-      "Can-do 49: Mampu bertanya dan memahami cara pengoperasian mesin atau peralatan kantor (mesin fotokopi).",
-      "Can-do 50: Mampu menjelaskan fungsi tombol atau akibat otomatis dari menekan tombol tertentu (～と、～).",
-      "Can-do 51: Mampu memahami petunjuk penanganan masalah dasar atau mode hemat energi (エコモード)."
+          "Can-do 48: Mampu membaca ulasan barang belanjaan dan batas waktu pengiriman (手元に届くまで).",
+          "Can-do 49: Mampu membandingkan dua barang elektronik/rumah tangga dan menyatakan mana yang lebih mudah/sulit digunakan (～やすい／～にくい).",
+          "Can-do 50: Mampu menanyakan perbandingan antara dua pilihan produk di toko (どちら／どっちが～か).",
+          "Can-do 51: Mampu menyatakan produk mana yang lebih unggul (（N1より）N2のほうが～)."
     ],
-    keyVocabCategories: [
-      {
-        category: "Peralatan Rumah Tangga",
-        items: [
-          { ja: "炊飯器 (すいはんき)", id: "Penanak nasi (rice cooker)" },
-          { ja: "電子レンジ (でんしレンジ)", id: "Oven microwave" },
-          { ja: "洗濯機 (せんたくき)", id: "Mesin cuci" },
-          { ja: "掃除機 (そうじき)", id: "Penyedot debu (vacuum cleaner)" }
-        ]
-      },
-      {
-        category: "Tombol Pengoperasian",
-        items: [
-          { ja: "電源 (でんげん)", id: "Tombol daya (Power ON/OFF)" },
-          { ja: "スタート", id: "Mulai" },
-          { ja: "取消 (とりけし)", id: "Batal / Reset" },
-          { ja: "エコモード", id: "Mode hemat energi" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(Kamus)＋と、[Akibat Pasti/Otomatis]",
-        meaning: "Jika / Kalau [Aksi Dilakukan], maka otomatis...",
-        explanation: "Digunakan untuk menjelaskan cara kerja mesin di mana satu tindakan selalu menghasilkan reaksi tertentu secara alami atau otomatis.",
-        examples: [
-          { ja: "このボタンを押すと、エコモードに変わります。", romaji: "Kono botan o osu to, eko moodo ni kawarimasu.", id: "Kalau tombol ini ditekan, mesin otomatis beralih ke mode hemat energi." },
-          { ja: "右に回すと、温度が上がります。", romaji: "Migi ni mawasu to, ondo ga agarimasu.", id: "Kalau diputar ke kanan, suhunya akan naik." }
-        ]
-      },
-      {
-        pattern: "V(Akar -masu)＋方 (～かた - kata)",
-        meaning: "Cara melakukan...",
-        explanation: "Menyatakan metode atau prosedur melakukan suatu aktivitas.",
-        examples: [
-          { ja: "すみません、この洗濯機の使い方を教えてください。", romaji: "Sumimasen, kono sentakuki no tsukaikata o oshiete kudasai.", id: "Permisi, tolong ajarkan cara menggunakan mesin cuci ini." }
-        ]
-      }
+          {
+                "pattern": "❶ V-るまで、～",
+                "meaning": "Menyatakan batas waktu berlangsungnya tindakan sampai kejadian berikutnya tiba ('Sampai...')",
+                "explanation": "[Kata Kerja Bentuk Kamus] まで、〜 — Kata kerja bentuk kamus + まで.",
+                "examples": [
+                      {
+                            "ja": "手元に届くまで、2日しかかかりませんでした。",
+                            "romaji": "",
+                            "id": "Saya menunggu di bangku sampai busnya tiba."
+                      },
+                      {
+                            "ja": "バスが来るまでベンチで待ちます",
+                            "romaji": "",
+                            "id": "Saya menunggu di bangku sampai busnya tiba."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-にくいです",
+                "meaning": "Menyatakan bahwa suatu aktivitas sulit dilakukan atau membawa rasa tidak nyaman ('Sulit / sukar...')",
+                "explanation": "[Kata Kerja Bentuk Masu buang ます] にくいです — Stem Masu + にくいです (nikui desu).",
+                "examples": [
+                      {
+                            "ja": "この掃除機は、重くて、使いにくいですね。",
+                            "romaji": "",
+                            "id": "Pulpen ini agak sulit dipakai menulis."
+                      },
+                      {
+                            "ja": "このペンは少し書きにくいです",
+                            "romaji": "",
+                            "id": "Pulpen ini agak sulit dipakai menulis."
+                      }
+                ]
+          },
+          {
+                "pattern": "V-やすいです",
+                "meaning": "Menyatakan bahwa suatu aktivitas mudah dikerjakan atau menyenangkan ('Mudah / gampang...')",
+                "explanation": "[Kata Kerja Bentuk Masu buang ます] やすいです — Stem Masu + やすいです (yasui desu).",
+                "examples": [
+                      {
+                            "ja": "トーシマの掃除機のほうが動かしやすいですよ。",
+                            "romaji": "",
+                            "id": "Obat ini kecil sehingga mudah diminum."
+                      },
+                      {
+                            "ja": "この薬は小さくて飲みやすいです",
+                            "romaji": "",
+                            "id": "Obat ini kecil sehingga mudah diminum."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ N1とN2（と）、どちら／どっちが～か？",
+                "meaning": "Menanyakan perbandingan kualitas antara dua opsi secara sopan ('Antara N1 dan N2, mana yang lebih...')",
+                "explanation": "[N1] と [N2] （と）、どちら／どっち が 〜か？ — どちら (formal) atau どっち (santai) dipadukan dengan partikel が.",
+                "examples": [
+                      {
+                            "ja": "どっちが使いやすいですか？",
+                            "romaji": "",
+                            "id": "Antara udon dan soba, mana yang lebih Anda sukai?"
+                      },
+                      {
+                            "ja": "うどんとそばとどちらが好きですか",
+                            "romaji": "",
+                            "id": "Antara udon dan soba, mana yang lebih Anda sukai?"
+                      }
+                ]
+          },
+          {
+                "pattern": "（N1より）N2のほうが～",
+                "meaning": "Menyatakan bahwa N2 lebih unggul daripada N1 dalam aspek tertentu ('N2 lebih ... daripada N1')",
+                "explanation": "（[Kata Benda 1] より） [Kata Benda 2] の ほうが 〜 — Pembanding ditandai より (daripada), dan pilihan utama ditandai の ほうが.",
+                "examples": [
+                      {
+                            "ja": "トーシマの方がミツバシより軽くて、動かしやすいですよ。",
+                            "romaji": "",
+                            "id": "Kereta lebih cepat daripada bus."
+                      },
+                      {
+                            "ja": "バスより電車のほうが速いです",
+                            "romaji": "",
+                            "id": "Kereta lebih cepat daripada bus."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Peralatan Elektronik Multifungsi di Jepang",
-        content: "Alat elektronik rumah tangga di Jepang memiliki banyak mode khusus (seperti mode hemat 'エコ', mode cuci cepat 'おいそぎ', atau mode nasi pulen '炊き分け'). Memahami tombol dasar sangat mempermudah kehidupan sehari-hari."
+        title: "Tips Budaya & Kehidupan Bab 12",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   13: {
     chapter: 13,
     titleJa: "第13課「いろいろな資料を展示してあります」",
-    titleId: "Fasilitas Publik & Pelayanan Kota",
-    topic: "公共施設と利用案内／利用ルールと設備",
+    titleId: "Berbagai Materi Dipamerkan di Sana",
+    topic: "さまざまなサービス・公共施設と利用案内",
     pdfUrl: "/modul/bab13.pdf",
     canDoList: [
-      "Can-do 52: Mampu memahami penjelasan mengenai fasilitas umum (perpustakaan, museum seni, balai kota) dan apa saja yang dapat dilakukan di sana.",
-      "Can-do 53: Mampu menanyakan informasi dan mengajukan permohonan penggunaan fasilitas atau kartu perpustakaan di loket pelayanan.",
-      "Can-do 54: Mampu membaca pengumuman panduan operasional, jam buka, hari libur (休館日), dan tata tertib fasilitas umum."
+          "Can-do 49: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 13.",
+          "Can-do 50: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 51: Mampu membaca teks praktis dan instruksi otentik pada Bab 13.",
+          "Can-do 52: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Fasilitas Umum & Ruangan",
-        items: [
-          { ja: "市役所 (しやくしょ)", id: "Balai kota / kantor pemerintah kota" },
-          { ja: "図書館 (としょかん)", id: "Perpustakaan" },
-          { ja: "美術館 (びじゅつかん)", id: "Museum seni" },
-          { ja: "展示室 (てんじしつ)", id: "Ruang pameran / display" }
-        ]
-      },
-      {
-        category: "Operasional & Aturan",
-        items: [
-          { ja: "休館日 (きゅうかんび)", id: "Hari libur tutup fasilitas" },
-          { ja: "入館料 (にゅうかんりょう)", id: "Biaya tiket masuk" },
-          { ja: "貸出 (かしだし)", id: "Peminjaman buku/barang" },
-          { ja: "禁煙 (きんえん)", id: "Dilarang merokok" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(て形)＋あります",
-        meaning: "Sengaja disiapkan / dalam keadaan terpasang...",
-        explanation: "Menyatakan kondisi atau hasil perbuatan yang sengaja disiapkan oleh seseorang untuk tujuan tertentu.",
-        examples: [
-          { ja: "壁に利用案内のポスターが貼ってあります。", romaji: "Kabe ni riyou annai no posutaa ga hatte arimasu.", id: "Di dinding telah tertempel poster petunjuk penggunaan." },
-          { ja: "いろいろな資料を展示してあります。", romaji: "Iroirona shiryou o tenji shite arimasu.", id: "Berbagai materi dan arsip sengaja dipamerkan." }
-        ]
-      },
-      {
-        pattern: "V(て形)＋みてください",
-        meaning: "Silakan coba lakukan...",
-        explanation: "Digunakan untuk merekomendasikan seseorang mencoba mengunjungi atau menikmati suatu tempat/fasilitas.",
-        examples: [
-          { ja: "とても綺麗な庭園ですから、ぜひ一度行ってみてください。", romaji: "Totemo kirei na teien desu kara, zehi ichido itte mite kudasai.", id: "Karena tamannya sangat indah, silakan coba berkunjung sekali ke sana." }
-        ]
-      }
+          {
+                "pattern": "❶ V-（ら）れます　＜受身④＞",
+                "meaning": "Menyatakan fakta sejarah, penciptaan karya, atau peristiwa umum tanpa menyebut orang secara spesifik",
+                "explanation": "[Kata Kerja Pasif (受身形)] ます ④ — Objek karya/gedung ditandai topik は atau partikel が (contoh: このビルは去年建てられました).",
+                "examples": [
+                      {
+                            "ja": "この建物は、2年前に建てられました。",
+                            "romaji": "",
+                            "id": "Kuil ini dibangun pada zaman dahulu."
+                      },
+                      {
+                            "ja": "このお寺は昔建てられました",
+                            "romaji": "",
+                            "id": "Kuil ini dibangun pada zaman dahulu."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-てあります",
+                "meaning": "Menyatakan kondisi benda yang sengaja dipersiapkan oleh seseorang demi tujuan tertentu ('Telah dipasang / disiapkan')",
+                "explanation": "[Kata Kerja Transitif Bentuk-Te] あります — Kata kerja transitif diubah ke bentuk-Te + あります. Objek ditandai partikel が.",
+                "examples": [
+                      {
+                            "ja": "昔、使われた道具とか、いろいろな資料を展示してあります。",
+                            "romaji": "",
+                            "id": "Di dinding telah digantungkan kalender."
+                      },
+                      {
+                            "ja": "壁にカレンダーが掛けてあります",
+                            "romaji": "",
+                            "id": "Di dinding telah digantungkan kalender."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ N1だけじゃなくて、N2も～",
+                "meaning": "Menyatakan cakupan tambahan ('Bukan hanya N1 saja, melainkan N2 juga...')",
+                "explanation": "[Kata Benda 1] だけじゃなくて、[Kata Benda 2] も〜 — だけじゃなくて menghubungkan dua hal kumulatif yang sama-sama berlaku.",
+                "examples": [
+                      {
+                            "ja": "本だけじゃなくて、CDとか、DVDもただで借りられます。",
+                            "romaji": "",
+                            "id": "Bukan hanya bahasa Inggris, saya juga bisa berbicara bahasa Jepang."
+                      },
+                      {
+                            "ja": "英語だけじゃなくて日本語も話せます",
+                            "romaji": "",
+                            "id": "Bukan hanya bahasa Inggris, saya juga bisa berbicara bahasa Jepang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ Nなら、～",
+                "meaning": "Menyarankan opsi paling ideal berdasarkan kondisi kriteria tertentu",
+                "explanation": "[Kata Benda] なら、〜 — Kata benda langsung ditambah なら.",
+                "examples": [
+                      {
+                            "ja": "返却は、市内の図書館なら、どこに返してもいいです。",
+                            "romaji": "",
+                            "id": "Kalau pemandian air panas onsen, Kusatsu adalah yang paling terkenal."
+                      },
+                      {
+                            "ja": "温泉なら草津が一番有名です",
+                            "romaji": "",
+                            "id": "Kalau pemandian air panas onsen, Kusatsu adalah yang paling terkenal."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ 【疑問詞】V-ても、～",
+                "meaning": "Menyatakan keteguhan hasil tanpa terpengaruh oleh kondisi apa pun ('Bagaimanapun / ke mana pun... tetap...')",
+                "explanation": "[Kata Tanya] [Kata Kerja Bentuk-Te] も、〜 — Kata tanya + bentuk-Te + も (misal: 何度聞いても, どこへ行っても).",
+                "examples": [
+                      {
+                            "ja": "返却は、市内の図書館なら、どこに返してもいいです。",
+                            "romaji": "",
+                            "id": "Berapa kali pun saya berlatih, tetap belum bisa mahir."
+                      },
+                      {
+                            "ja": "何度練習しても上手にできません",
+                            "romaji": "",
+                            "id": "Berapa kali pun saya berlatih, tetap belum bisa mahir."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Pusat Layanan Warga (Kominkan / Shimin Center)",
-        content: "Di setiap kota di Jepang terdapat Kominkan (balai warga) dan perpustakaan publik yang menyediakan ruang belajar gratis, kelas bahasa Jepang bagi warga asing, serta berbagai kegiatan komunitas ramah biaya."
+        title: "Tips Budaya & Kehidupan Bab 13",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   14: {
     chapter: 14,
-    titleJa: "第14課「髪をもう少し短くしてください」",
-    titleId: "Memanfaatkan Layanan Jasa",
-    topic: "店舗サービスの利用／美容院・クリーニング・宅配便",
+    titleJa: "第14課「前髪は、もう少し短く切ってもらえますか？」",
+    titleId: "Bisa Tolong Potong Poni Sedikit Lebih Pendek?",
+    topic: "さまざまなサービス・美容院と宅配サービス",
     pdfUrl: "/modul/bab14.pdf",
     canDoList: [
-      "Can-do 55: Mampu menyampaikan keinginan potongan dan gaya rambut kepada kapster salon (美容院).",
-      "Can-do 56: Mampu menitipkan pakaian di laundry (クリーニング) dan mengonfirmasi tanggal/jam siap diambil.",
-      "Can-do 57: Mampu mengirimkan paket melalui kurir kilat (宅配便) dan mengisi formulir pengiriman."
+          "Can-do 53: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 14.",
+          "Can-do 54: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 55: Mampu membaca teks praktis dan instruksi otentik pada Bab 14.",
+          "Can-do 56: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Salon & Perawatan",
-        items: [
-          { ja: "美容院 (びよういん)", id: "Salon kecantikan / pangkas rambut" },
-          { ja: "前髪 (まえがみ)", id: "Poni rambut" },
-          { ja: "短くする (みじかくする)", id: "Memendekkan" },
-          { ja: "染める (そめる)", id: "Mewarnai / mengecat rambut" }
-        ]
-      },
-      {
-        category: "Laundry & Ekspedisi",
-        items: [
-          { ja: "クリーニング", id: "Laundry / dry cleaning" },
-          { ja: "シミ", id: "Noda pada pakaian" },
-          { ja: "仕上がり (しあがり)", id: "Waktu selesai / siap diambil" },
-          { ja: "宅配便 (たくはいびん)", id: "Kurir pengiriman paket kilat" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "～を ［Kata Sifat-I: ～く］／［Kata Sifat-Na: ～に］ します",
-        meaning: "Membuat / mengubah kondisi menjadi...",
-        explanation: "Digunakan saat meminta orang lain mengubah suatu keadaan sesuai kehendak kita.",
-        examples: [
-          { ja: "髪をもう少し短くしてください。", romaji: "Kami o mou sukoshi mijikaku shite kudasai.", id: "Tolong potong rambut saya sedikit lebih pendek." },
-          { ja: "部屋をきれいにしました。", romaji: "Heya o kirei ni shimashita.", id: "Saya telah membersihkan kamar." }
-        ]
-      },
-      {
-        pattern: "V(て形)＋もらえますか／いただけますか",
-        meaning: "Bisakah Anda tolong lakukan...",
-        explanation: "Ungkapan permohonan sopan kepada staf layanan pelanggan.",
-        examples: [
-          { ja: "このシミを落としてもらえますか。", romaji: "Kono shimi o otoshite moraemasu ka.", id: "Bisakah tolong hilangkan noda ini?" }
-        ]
-      }
+          {
+                "pattern": "❶ ナA-に／イA-く V",
+                "meaning": "Mengubah kata sifat menjadi kata keterangan cara (adverbia) untuk menerangkan kata kerja ('Secara / dengan...')",
+                "explanation": "[Kata Sifat-na に] ／ [Kata Sifat-i buang い + く] [Kata Kerja] — Sifat-na + に, sifat-i buang 'い' + く lalu diikuti kata kerja (contoh: 早く起きる, きれいに書く).",
+                "examples": [
+                      {
+                            "ja": "全体的に短く切ってください。",
+                            "romaji": "",
+                            "id": "Tolong tulis nama dengan ukuran besar."
+                      },
+                      {
+                            "ja": "名前を大きく書いてください",
+                            "romaji": "",
+                            "id": "Tolong tulis nama dengan ukuran besar."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ Nのために、～",
+                "meaning": "Menyatakan tujuan utama atau demi kemaslahatan seseorang ('Demi / untuk tujuan...')",
+                "explanation": "[Kata Benda] の ために、〜 — Kata benda disambung partikel の sebelum ために.",
+                "examples": [
+                      {
+                            "ja": "外国の方のために、いろいろなサービスがあります。",
+                            "romaji": "",
+                            "id": "Demi kesehatan saya berolahraga setiap hari."
+                      },
+                      {
+                            "ja": "健康のために毎日運動します",
+                            "romaji": "",
+                            "id": "Demi kesehatan saya berolahraga setiap hari."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Pelayanan Prima (Omotenashi) Salon & Kurir Jepang",
-        content: "Salon di Jepang sangat detail dalam memastikan kenyamanan pelanggan (mulai dari suhu air keramas hingga pertanyaan titik yang gatal). Kurir kilat (Takkyubin) juga memiliki sistem penentuan slot jam pengantaran yang sangat tepat waktu."
+        title: "Tips Budaya & Kehidupan Bab 14",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   15: {
     chapter: 15,
-    titleJa: "第15課「ゴミを減らすために、マイバッグを持っています」",
-    titleId: "Lingkungan & Gaya Hidup Eco",
-    topic: "環境保護とごみの分別ルール／エコな暮らしの習慣",
+    titleJa: "第15課「会議室の電気がついたままでした」",
+    titleId: "Lampu Ruang Rapat Masih Dibiarkan Menyala",
+    topic: "自然と環境・省エネルギーと日常の注意",
     pdfUrl: "/modul/bab15.pdf",
     canDoList: [
-      "Can-do 58: Mampu memahami jadwal dan aturan ketat pemilahan sampah di lingkungan tempat tinggal Jepang.",
-      "Can-do 59: Mampu menceritakan kebiasaan ramah lingkungan sehari-hari (mengurangi plastik, hemat listrik/air).",
-      "Can-do 60: Mampu memahami pengumuman pasar loak (freemarket), daur ulang, atau penanganan barang bekas."
+          "Can-do 57: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 15.",
+          "Can-do 58: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 59: Mampu membaca teks praktis dan instruksi otentik pada Bab 15.",
+          "Can-do 60: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Kategori Sampah Jepang",
-        items: [
-          { ja: "燃えるゴミ (もえるごみ)", id: "Sampah yang bisa dibakar (organik/kertas)" },
-          { ja: "燃えないゴミ (もえないごみ)", id: "Sampah tidak bisa dibakar (logam/gelas)" },
-          { ja: "資源ゴミ (しげんごみ)", id: "Sampah daur ulang (botol PET, kaleng)" },
-          { ja: "粗大ゴミ (そだいごみ)", id: "Sampah besar (kasur, perabot, sepeda)" }
-        ]
-      },
-      {
-        category: "Aksi Ramah Lingkungan",
-        items: [
-          { ja: "分別 (ぶんべつ)", id: "Pemilahan sampah" },
-          { ja: "マイバッグ", id: "Tas belanja kain ramah lingkungan" },
-          { ja: "リサイクル", id: "Daur ulang" },
-          { ja: "節電 (せつでん)", id: "Penghematan daya listrik" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(Kamus)＋ために、～",
-        meaning: "Demi / Untuk tujuan [Aksi Sadar]...",
-        explanation: "Menyatakan tujuan utama dari tindakan yang dilakukan dengan sengaja.",
-        examples: [
-          { ja: "ゴミを減らすために、マイバッグを持っています。", romaji: "Gomi o herasu tame ni, mai baggu o motte imasu.", id: "Demi mengurangi sampah, saya selalu membawa tas belanja sendiri." }
-        ]
-      },
-      {
-        pattern: "V(ない形)＋ようにしています",
-        meaning: "Berusaha membiasakan diri untuk tidak...",
-        explanation: "Menyatakan kebiasaan atau upaya sadar yang rutin dipraktikkan.",
-        examples: [
-          { ja: "電気をつけっぱなしにしないようにしています。", romaji: "Denki o tsukeppanashi ni shinai you ni shite imasu.", id: "Saya berusaha agar tidak membiarkan lampu menyala terus-menerus." }
-        ]
-      }
+          {
+                "pattern": "❶ V-たままです",
+                "meaning": "Menyatakan membiarkan suatu kondisi tetap berlangsung tanpa mengembalikannya ke posisi semula ('Dalam keadaan terbiar...')",
+                "explanation": "[Kata Kerja Bentuk-Ta] まま です — Kata kerja bentuk lampau ta-kei + ままで (contoh: エアコンをつけたまま寝ました).",
+                "examples": [
+                      {
+                            "ja": "会議室の電気がついたままでしたよ。",
+                            "romaji": "",
+                            "id": "Saya terlanjur tidur dalam keadaan jendela tetap terbuka."
+                      },
+                      {
+                            "ja": "窓を開けたまま寝てしまいました",
+                            "romaji": "",
+                            "id": "Saya terlanjur tidur dalam keadaan jendela tetap terbuka."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-るのにいいです",
+                "meaning": "Menyatakan kegunaan, fungsi, atau efektivitas suatu benda untuk tujuan perbuatan tertentu ('Bagus / cocok untuk...')",
+                "explanation": "[Kata Kerja Bentuk Kamus] のに いいです — Kata kerja bentuk kamus dinominalkan dengan のに lalu diikuti kata evaluasi seperti いい, 便利.",
+                "examples": [
+                      {
+                            "ja": "マイストローは、ごみを減らすのにいいんですよ。",
+                            "romaji": "",
+                            "id": "Tas ini bagus untuk dipakai pergi bepergian wisata."
+                      },
+                      {
+                            "ja": "このカバンは旅行に行くのにいいです",
+                            "romaji": "",
+                            "id": "Tas ini bagus untuk dipakai pergi bepergian wisata."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Konsep Mottainai & Pemilahan Sampah Jepang",
-        content: "Masyarakat Jepang memegang teguh filosofi 'Mottainai' (menghargai sumber daya dan menghindari kemubaziran). Pemilahan sampah adalah kewajiban sosial yang sangat penting bagi warga asing yang tinggal di perumahan Jepang."
+        title: "Tips Budaya & Kehidupan Bab 15",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   16: {
     chapter: 16,
-    titleJa: "第16課「地震が起きたら、どうすればいいですか？」",
-    titleId: "Mitigasi Bencana & Keselamatan",
-    topic: "自然災害への備えと緊急行動／防災訓練と避難",
+    titleJa: "第16課「地震が来ても、あわてて動かないでください」",
+    titleId: "Meski Terjadi Gempa, Jangan Panik dan Bergerak Gegabah",
+    topic: "自然と環境・防災と緊急時の対応",
     pdfUrl: "/modul/bab16.pdf",
     canDoList: [
-      "Can-do 61: Mampu memahami alarm gempa dini (緊急地震速報) dan siaran radio darurat pemerintah.",
-      "Can-do 62: Mampu merespons dan menanyakan instruksi penyelamatan diri saat gempa bumi, topan, atau kebakaran.",
-      "Can-do 63: Mampu membaca peta jalur evakuasi (Hazard Map) dan menemukan lokasi posko pengungsian terdekat."
+          "Can-do 61: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 16.",
+          "Can-do 62: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 63: Mampu membaca teks praktis dan instruksi otentik pada Bab 16.",
+          "Can-do 64: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Bencana Alam & Peringatan",
-        items: [
-          { ja: "地震 (じしん)", id: "Gempa bumi" },
-          { ja: "震度 (しんど)", id: "Skala getaran gempa (Shindo)" },
-          { ja: "津波 (つなみ)", id: "Gelombang tsunami" },
-          { ja: "台風 (たいふう)", id: "Angin badai topan" }
-        ]
-      },
-      {
-        category: "Evakuasi & Logistik Darurat",
-        items: [
-          { ja: "避難所 (ひなんじょ)", id: "Tempat evakuasi darurat (sekolah, gedung serbaguna)" },
-          { ja: "非常口 (ひじょうぐち)", id: "Pintu keluar darurat" },
-          { ja: "懐中電灯 (かいちゅうでんとう)", id: "Lampu senter baterai" },
-          { ja: "停電 (ていでん)", id: "Mati aliran listrik" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(たら)／N(なら)、～てください",
-        meaning: "Jika / Kalau [Kondisi Darurat Terjadi], lakukanlah...",
-        explanation: "Digunakan untuk memberikan instruksi keselamatan segera saat kondisi tertentu terjadi.",
-        examples: [
-          { ja: "地震が起きたら、机の下に入って頭を守ってください。", romaji: "Jishin ga okitara, tsukue no shita ni haitte atama o mamotte kudasai.", id: "Kalau gempa terjadi, masuklah ke bawah meja dan lindungi kepala Anda." }
-        ]
-      },
-      {
-        pattern: "V(て形)＋はいけません",
-        meaning: "Dilarang keras melakukan...",
-        explanation: "Larangan tegas menyangkut bahaya keselamatan jiwa.",
-        examples: [
-          { ja: "火事のときはエレベーターを使ってはいけません。", romaji: "Kaji no toki wa erebeetaa o tsukatte wa ikemasen.", id: "Saat kebakaran dilarang keras menggunakan lift." }
-        ]
-      }
+          {
+                "pattern": "❶ V(命令形）　\r\nV-るな（禁止の命令形）",
+                "meaning": "Instruksi darurat, rambu pabrik, atau aba-aba keselamatan di lingkungan kerja pabrik / proyek ('Harus segera... / Jangan...!')",
+                "explanation": "Bentuk Perintah Tegas (命令形) & Bentuk Larangan (禁止形：V-るな) — Gol 1 e-dan (止まれ), Gol 2 ro (止めろ). Bentuk larangan: kamus + な (触るな).",
+                "examples": [
+                      {
+                            "ja": "急げ。こっちに集まれ。\r\n走るな。",
+                            "romaji": "",
+                            "id": "Karena berbahaya, berhenti di sini!"
+                      },
+                      {
+                            "ja": "危ないからここで止まれ",
+                            "romaji": "",
+                            "id": "Karena berbahaya, berhenti di sini!"
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-ないようにしてください",
+                "meaning": "Memberikan instruksi kebiasaan atau petunjuk disiplin preventif secara sopan ('Tolong usahakan untuk tidak...')",
+                "explanation": "[Kata Kerja Bentuk-Nai] ように して ください — Kata kerja bentuk-Nai + ように してください.",
+                "examples": [
+                      {
+                            "ja": "できるだけ煙を吸わないようにしてください。",
+                            "romaji": "",
+                            "id": "Tolong usahakan agar tidak terlambat."
+                      },
+                      {
+                            "ja": "遅刻しないようにしてください",
+                            "romaji": "",
+                            "id": "Tolong usahakan agar tidak terlambat."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-（られ）なくなります",
+                "meaning": "Menyatakan perubahan hilangnya kemampuan yang sebelumnya bisa dilakukan ('Menjadi tidak bisa lagi...')",
+                "explanation": "[Kata Kerja Potensial Negatif] なくなります — Potensial negatif (-nai) buang 'い' + くなります.",
+                "examples": [
+                      {
+                            "ja": "ドアが開かなくなると、外に逃げられなくなります。",
+                            "romaji": "",
+                            "id": "Karena sibuk, saya menjadi tidak bisa bermain lagi."
+                      },
+                      {
+                            "ja": "忙しくて遊べなくなりました",
+                            "romaji": "",
+                            "id": "Karena sibuk, saya menjadi tidak bisa bermain lagi."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ Sても、～",
+                "meaning": "Menyatakan kondisi pengandaian konsesif yang berlawanan dengan hasil lumrah ('Meskipun / walaupun... tetap...')",
+                "explanation": "[Kalimat Bentuk-Te] も、〜 — Bentuk-Te + も (kata sifat-i: 寒くても, kata benda/sifat-na: でも).",
+                "examples": [
+                      {
+                            "ja": "大きな地震が来ても、あわてて動かないでください。",
+                            "romaji": "",
+                            "id": "Meskipun hujan turun, pertandingan tetap diadakan."
+                      },
+                      {
+                            "ja": "雨が降っても試合はあります",
+                            "romaji": "",
+                            "id": "Meskipun hujan turun, pertandingan tetap diadakan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ V（普通形）かどうか、～",
+                "meaning": "Menyatakan kebimbangan atas kepastian benar atau tidaknya suatu hal ('Apakah ... atau tidak')",
+                "explanation": "[Kalimat Bentuk Biasa] かどうか、〜 — Bentuk biasa + かどうか, sering diikuti kata kerja periksa/konfirmasi (調べます, 聞きます).",
+                "examples": [
+                      {
+                            "ja": "店が開いているかどうか、わからないけど…。",
+                            "romaji": "",
+                            "id": "Saya tidak tahu apakah besok cerah atau tidak."
+                      },
+                      {
+                            "ja": "明日晴れるかどうか分かりません",
+                            "romaji": "",
+                            "id": "Saya tidak tahu apakah besok cerah atau tidak."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Bousai (Kesiapsiagaan Bencana) di Jepang",
-        content: "Setiap gedung dan asrama di Jepang rutin menggelar pelatihan mitigasi bencana (防災訓練 - Bousai Kunren). Pastikan selalu mengetahui letak tangga darurat dan menyimpan tas siaga bencana (非常持ち出し袋) di dekat pintu keluar."
+        title: "Tips Budaya & Kehidupan Bab 16",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   17: {
     chapter: 17,
     titleJa: "第17課「日本語が前より話せるようになりました」",
-    titleId: "Pertumbuhan & Perubahan Diri",
-    topic: "日本生活での自己成長／過去と現在の比較",
+    titleId: "Sekarang Saya Sudah Lebih Bisa Berbahasa Jepang",
+    topic: "私の人生・成長と変化・日本語の上達",
     pdfUrl: "/modul/bab17.pdf",
     canDoList: [
-      "Can-do 64: Mampu menceritakan perubahan kemampuan bahasa Jepang dan adaptasi kehidupan dibanding awal tiba.",
-      "Can-do 65: Mampu menyimak dan memahami cerita rekan mengenai perjuangan serta perkembangan dirinya.",
-      "Can-do 66: Mampu membaca esai refleksi atau pesan perpisahan rekan kerja yang menyelesaikan program magang."
+          "Can-do 65: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 17.",
+          "Can-do 66: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 67: Mampu membaca teks praktis dan instruksi otentik pada Bab 17.",
+          "Can-do 68: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Perkembangan & Kemampuan",
-        items: [
-          { ja: "成長 (せいちょう)", id: "Pertumbuhan / perkembangan" },
-          { ja: "上達する (じょうたつする)", id: "Meningkat kemampuannya" },
-          { ja: "慣れる (なれる)", id: "Menjadi terbiasa / adaptasi" },
-          { ja: "自信 (じしん)", id: "Rasa percaya diri" }
-        ]
-      },
-      {
-        category: "Refleksi Pengalaman",
-        items: [
-          { ja: "苦労 (くろう)", id: "Jerih payah / perjuangan" },
-          { ja: "思い出 (おもいで)", id: "Kenangan berkesan" },
-          { ja: "親切 (しんせつ)", id: "Kebaikan hati" },
-          { ja: "振り返る (ふりかえる)", id: "Merenungkan masa lalu" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(Kamus/Bentuk Bisa)＋ようになりました",
-        meaning: "Sudah menjadi bisa / terbiasa melakukan...",
-        explanation: "Menyatakan perubahan kemampuan atau kebiasaan dari yang sebelumnya tidak bisa menjadi bisa.",
-        examples: [
-          { ja: "日本語が前より話せるようになりました。", romaji: "Nihongo ga mae yori hanaseru you ni narimashita.", id: "Saya sudah menjadi lebih bisa berbicara bahasa Jepang dibanding dulu." },
-          { ja: "納豆が食べられるようになりました。", romaji: "Nattou ga taberareru you ni narimashita.", id: "Saya sekarang sudah bisa makan natto." }
-        ]
-      },
-      {
-        pattern: "V(て形)＋よかったです",
-        meaning: "Syukurlah / Beruntung sekali bahwa...",
-        explanation: "Menyatakan rasa syukur dan kepuasan atas pengalaman yang telah dijalani.",
-        examples: [
-          { ja: "日本に来て本当によかったです。", romaji: "Nihon ni kite hontou ni yokatta desu.", id: "Saya sangat bersyukur telah datang ke Jepang." }
-        ]
-      }
+          {
+                "pattern": "❶ V-（られ）るように なりました",
+                "meaning": "Menyatakan perkembangan keterampilan diri yang kini telah mampu dikuasai berkat latihan ('Kini telah menjadi bisa...')",
+                "explanation": "[Kata Kerja Potensial Bentuk Kamus] ように なりました — Kata kerja bentuk potensial (jisho-kei) + ように なりました.",
+                "examples": [
+                      {
+                            "ja": "最近は、ほかの人にお店の情報を教えられるようになりました。",
+                            "romaji": "",
+                            "id": "Kini saya sudah bisa berbicara di telepon dalam bahasa Jepang."
+                      },
+                      {
+                            "ja": "日本語で電話ができるようになりました",
+                            "romaji": "",
+                            "id": "Kini saya sudah bisa berbicara di telepon dalam bahasa Jepang."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Perkembangan Kemandirian Peserta di Jepang",
-        content: "Tinggal mandiri di Jepang tidak hanya meningkatkan kemahiran berbahasa, tetapi juga membentuk etos kerja profesional (5S, Hou-Ren-So), kedisiplinan waktu, serta kematangan mental peserta pelatihan."
+        title: "Tips Budaya & Kehidupan Bab 17",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
   },
+
   18: {
     chapter: 18,
-    titleJa: "第18課「将来、自分の会社を作ろうと思っています」",
-    titleId: "Impian & Rencana Masa Depan",
-    topic: "これからの目標と人生設計／修了と次へのステップ",
+    titleJa: "第18課「将来、自分の会社を作ろうと思います」",
+    titleId: "Di Masa Depan, Saya Berniat Mendirikan Perusahaan Sendiri",
+    topic: "私の人生・将来の夢と計画・キャリア形成",
     pdfUrl: "/modul/bab18.pdf",
     canDoList: [
-      "Can-do 67: Mampu menyampaikan rencana karir masa depan, mimpi wirausaha, atau ujian Tokutei Ginou beserta alasannya.",
-      "Can-do 68: Mampu mendengarkan rencana impian rekan, saling menyemangati, dan bertukar harapan.",
-      "Can-do 69: Mampu membaca artikel dan pesan kelulusan mengenai alumni yang sukses berkarir di Jepang atau tanah air."
+          "Can-do 69: Mampu memahami materi dan ungkapan percakapan praktis pada Bab 18.",
+          "Can-do 70: Mampu menggunakan pola kalimat inti dalam situasi kehidupan kerja sehari-hari di Jepang.",
+          "Can-do 71: Mampu membaca teks praktis dan instruksi otentik pada Bab 18.",
+          "Can-do 72: Mampu berkomunikasi aktif sesuai standar CEFR A2 / JFT-Basic."
     ],
-    keyVocabCategories: [
-      {
-        category: "Masa Depan & Karir",
-        items: [
-          { ja: "将来 (しょうらい)", id: "Masa depan" },
-          { ja: "夢 (ゆめ)", id: "Cita-cita / impian" },
-          { ja: "特定技能 (とくていぎのう)", id: "Specified Skilled Worker (SSW)" },
-          { ja: "起業する (きぎょうする)", id: "Membuka usaha / bisnis mandiri" }
-        ]
-      },
-      {
-        category: "Target & Kelulusan",
-        items: [
-          { ja: "合格する (ごうかくする)", id: "Lulus ujian" },
-          { ja: "目標 (もくひょう)", id: "Sasaran / target capaian" },
-          { ja: "応援する (おうえんする)", id: "Mendukung / memberi semangat" },
-          { ja: "修了 (しゅうりょう)", id: "Penyelesaian / tamat program" }
-        ]
-      }
-    ],
+    keyVocabCategories: [],
     grammarPoints: [
-      {
-        pattern: "V(意向形 - Ikoukei)＋と思っています",
-        meaning: "Berniat / Berencana untuk [Sudah Dipikirkan Sejak Lama]...",
-        explanation: "Menyatakan niat masa depan yang sudah dipikirkan dan direncanakan oleh pembicara.",
-        examples: [
-          { ja: "将来、自分の会社を作ろうと思っています。", romaji: "Shourai, jibun no kaisha o tsukurou to omotte imasu.", id: "Di masa depan, saya berniat mendirikan perusahaan sendiri." },
-          { ja: "国へ帰ったら、日本語を教えようと思っています。", romaji: "Kuni e kaettara, nihongo o oshieyou to omotte imasu.", id: "Kalau pulang ke tanah air, saya berniat mengajar bahasa Jepang." }
-        ]
-      },
-      {
-        pattern: "V(Kamus)＋つもりです",
-        meaning: "Berencana / Bermaksud pasti untuk...",
-        explanation: "Menyatakan kepastian rencana atau keputusan tegas yang hendak diambil.",
-        examples: [
-          { ja: "特定技能試験に合格して、あと5年間日本で働くつもりです。", romaji: "Tokutei ginou shiken ni goukaku shite, ato gonenkan Nihon de hataraku tsumori desu.", id: "Saya berencana lulus ujian Tokutei Ginou dan bekerja di Jepang 5 tahun lagi." }
-        ]
-      }
+          {
+                "pattern": "❶ V-（よ）うと思います／思っています",
+                "meaning": "Menyatakan rencana atau kehendak pribadi yang hendak diwujudkan ('Saya bermaksud / berencana...')",
+                "explanation": "[Kata Kerja Bentuk Ajakan (意志形)] と 思います ／ 思っています — Kata kerja bentuk kehendak/ishikei (Gol 1: o-dan + u, Gol 2: you) + と 思っています.",
+                "examples": [
+                      {
+                            "ja": "将来は、タイで、自分の会社を作ろうと思います。",
+                            "romaji": "",
+                            "id": "Saya berencana pulang ke tanah air tahun depan."
+                      },
+                      {
+                            "ja": "来年国へ帰ろうと思っています",
+                            "romaji": "",
+                            "id": "Saya berencana pulang ke tanah air tahun depan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❷ V-るために、～",
+                "meaning": "Menyatakan tekad kuat melakukan suatu perbuatan demi meraih cita-cita ('Demi / untuk tujuan melakukan...')",
+                "explanation": "[Kata Kerja Bentuk Kamus] ために、〜 — Kata kerja bentuk kamus + ために. Kedua klausa dikendalikan oleh subjek berkehendak sama.",
+                "examples": [
+                      {
+                            "ja": "日本に住むために、もっと日本語をがんばろうと思います。",
+                            "romaji": "",
+                            "id": "Saya belajar setiap hari demi bekerja di Jepang."
+                      },
+                      {
+                            "ja": "日本で働くために毎日勉強しています",
+                            "romaji": "",
+                            "id": "Saya belajar setiap hari demi bekerja di Jepang."
+                      }
+                ]
+          },
+          {
+                "pattern": "❸ V-てあげます",
+                "meaning": "Melakukan suatu kebaikan atau bantuan tindakan demi orang lain ('Melakukan kebaikan V untuk orang lain')",
+                "explanation": "[Kata Kerja Bentuk-Te] あげます — Kata kerja bentuk-Te + あげます. Pihak penerima jasa ditandai partikel に.",
+                "examples": [
+                      {
+                            "ja": "両親に、家を建ててあげるつもりです。",
+                            "romaji": "",
+                            "id": "Saya membawakan barang bawaan teman sebagai bantuan."
+                      },
+                      {
+                            "ja": "友達の荷物を持ってあげました",
+                            "romaji": "",
+                            "id": "Saya membawakan barang bawaan teman sebagai bantuan."
+                      }
+                ]
+          },
+          {
+                "pattern": "❹ V-てもらいます",
+                "meaning": "Menerima budi baik atau pertolongan tindakan dari orang lain ('Mendapat bantuan tindakan dari...')",
+                "explanation": "[Kata Kerja Bentuk-Te] もらいます — Pelaku yang memberi jasa ditandai dengan partikel に.",
+                "examples": [
+                      {
+                            "ja": "JF工業のみなさんには、とても親切にしてもらいました。",
+                            "romaji": "",
+                            "id": "Saya dibantu dikoreksi karangan karangannya oleh guru."
+                      },
+                      {
+                            "ja": "先生に作文を直してもらいました",
+                            "romaji": "",
+                            "id": "Saya dibantu dikoreksi karangan karangannya oleh guru."
+                      }
+                ]
+          },
+          {
+                "pattern": "❺ V-てくれます",
+                "meaning": "Orang lain dengan sukarela melakukan kebaikan atau bantuan tindakan kepada saya atau keluarga saya",
+                "explanation": "[Kata Kerja Bentuk-Te] くれます — Pelaku pertolongan ditandai partikel が. Kata kerja くれます khusus aksi yang mengarah ke pihak pembicara.",
+                "examples": [
+                      {
+                            "ja": "山内さんは、私にたくさん、日本語を教えてくれました。",
+                            "romaji": "",
+                            "id": "Senior dengan senang hati membantu pekerjaan saya."
+                      },
+                      {
+                            "ja": "先輩が仕事を手伝ってくれました",
+                            "romaji": "",
+                            "id": "Senior dengan senang hati membantu pekerjaan saya."
+                      }
+                ]
+          }
     ],
     cultureNotes: [
       {
-        title: "Kelulusan Level A2 & Peluang Karir Masa Depan",
-        content: "Menyelesaikan Irodori 初級2 (Bab 1–18) menandai kesiapan penuh peserta untuk menghadapi ujian JFT-Basic A2 atau JLPT N4, membuka jalan menuju status visa Pekerja Berketerampilan Spesifik (Tokutei Ginou / SSW) di Jepang."
+        title: "Tips Budaya & Kehidupan Bab 18",
+        content: "Materi otentik Irodori Nihongo de Seikatsu A2.2 (The Japan Foundation) yang menekankan pemahaman konteks sosial dan komunikasi praktis di Jepang."
       }
     ]
-  }
-};
+  },
 
+};

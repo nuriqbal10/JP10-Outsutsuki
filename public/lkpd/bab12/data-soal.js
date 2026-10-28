@@ -1,8 +1,8 @@
 window.LKPD_DATA = {
   "settings": {
     "babId": "bab12",
-    "babTitle": "第12課 このボタンを押すと、エコモードに変わります",
-    "subTitle": "Pengoperasian Alat Elektronik, Tombol Fungsi & Rumah Tangga",
+    "babTitle": "第12課 こっちの店のほうが安いですね",
+    "subTitle": "上手な買い物（商品の比較・使いやすさと配送）",
     "canDo": "Can-do 48, 49, 50, 51",
     "sessionKey": "lkpd_bab12_session_v4",
     "stateKey": "lkpd_bab12_state_v4",
@@ -15,7 +15,7 @@ window.LKPD_DATA = {
       "id": "panduan",
       "label": "Panduan",
       "type": "static",
-      "html": "\n        <h2>Panduan Penggunaan LKPD Bab 12</h2>\n        <div class=\"meta-box\">\n          <p><strong>Mata Pelajaran:</strong> Bahasa Jepang (Irodori 初級2 - Bab 12)</p>\n          <p><strong>Topik:</strong> このボタンを押すと、エコモードに変わります (Pengoperasian Alat Elektronik & Tombol Fungsi)</p>\n          <p><strong>Target Kelulusan:</strong> Nilai Akhir &ge; 85.0 (Tuntas KKM) | Mini JFT-like &ge; 85.0 | Indikasi Skala JFT-Basic &ge; 200/250</p>\n        </div>\n        <h3>Kompetensi Can-Do Irodori Bab 12:</h3>\n        <ul>\n          <li><strong>Can-do 48:</strong> Mampu memahami penjelasan cara menggunakan peralatan listrik rumah tangga (mesin cuci, rice cooker, microwave, AC, vacuum cleaner).</li>\n          <li><strong>Can-do 49:</strong> Mampu menanyakan dan menjelaskan fungsi tombol kontrol menggunakan pola syarat alami (V［辞書形］＋と、～).</li>\n          <li><strong>Can-do 50:</strong> Mampu menanyakan keunggulan produk elektronik di toko dan memilih mode hemat energi (エコモード).</li>\n          <li><strong>Can-do 51:</strong> Mampu membaca instruksi manual singkat dan label peringatan keselamatan pada alat elektronik Jepang.</li>\n        </ul>\n      "
+      "html": "\n        <h2>Panduan Penggunaan LKPD Bab 12</h2>\n        <div class=\"meta-box\">\n          <p><strong>Mata Pelajaran:</strong> Bahasa Jepang (Irodori 初級2 - Bab 12)</p>\n          <p><strong>Topik:</strong> こっちの店のほうが安いですね (上手な買い物・商品の比較と使いやすさ)</p>\n          <p><strong>Target Kelulusan:</strong> Nilai Akhir &ge; 85.0 (Tuntas KKM) | Mini JFT-like &ge; 85.0 | Indikasi Skala JFT-Basic &ge; 200/250</p>\n        </div>\n        <h3>Kompetensi Can-Do Irodori Bab 12:</h3>\n        <ul>\n          <li><strong>Can-do 48:</strong> Mampu membaca ulasan barang belanjaan dan batas waktu pengiriman (手元に届くまで).</li>\n          <li><strong>Can-do 49:</strong> Mampu membandingkan dua barang elektronik/rumah tangga dan menyatakan mana yang lebih mudah/sulit digunakan (～やすい／～にくい).</li>\n          <li><strong>Can-do 50:</strong> Mampu menanyakan perbandingan antara dua pilihan produk di toko (どちら／どっちが～か).</li>\n          <li><strong>Can-do 51:</strong> Mampu menyatakan produk mana yang lebih unggul (（N1より）N2のほうが～).</li>\n        </ul>\n      "
     },
     {
       "id": "materi",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「この炊飯器の使い方を教えてくれませんか。」<br>B：「お米と水を入れたら、このスタートボタンを（　　）いいですよ。」",
+          "prompt": "A：「この掃除機とあっちの掃除機、（　　）が使いやすいですか。」<br>B：「こっちのほうが軽くて動かしやすいですよ。」",
           "options": [
-            "押したら",
-            "押すと",
-            "押せば",
-            "押して"
+            "どちら",
+            "なに",
+            "だれ",
+            "いつ"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このつまみを右に（　　）、温度が上がりますよ。」<br>B：「わかりました、やってみます。」",
+          "prompt": "A：「新しいパソコンはどうですか。」<br>B：「キーボードが軽くて、とても打ち（　　）ですよ。」",
           "options": [
-            "押すと",
-            "引くと",
-            "切ると",
-            "回すと"
+            "やすい",
+            "にくい",
+            "たい",
+            "そう"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「冷凍のお肉を温めたいときは、どのボタンですか。」<br>B：「この『（　　）』ボタンを押してください。」",
+          "prompt": "A：「このリモコン、ボタンの文字が小さくて見（　　）ですね。」<br>B：「そうですね、少し不便ですね。」",
           "options": [
-            "解凍",
-            "保温",
-            "早炊き",
-            "脱水"
+            "にくい",
+            "やすい",
+            "たい",
+            "すぎる"
           ],
           "answer": 1
         },
@@ -208,51 +208,51 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「この掃除機、とても静かですね。」<br>B：「ええ、エコモードに（　　）、音も静かで電気代も安くなりますよ。」",
+          "prompt": "客：「ネットで注文したら、荷物が家に（　　）まで何日ぐらいかかりますか。」<br>店員：「だいたい2日しかかかりませんよ。」",
           "options": [
-            "したら",
-            "すると",
-            "すれば",
-            "しても"
+            "届く",
+            "届いた",
+            "届いて",
+            "届かない"
           ],
-          "answer": 2
+          "answer": 1
         },
         {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「洗濯機が途中で止まってしまいました。どうしてですか。」<br>B：「フタがちゃんと（　　）ないと、動かないようになっていますよ。」",
+          "prompt": "A：「小型の冷蔵庫と大型の冷蔵庫、どっちがいいですか。」<br>B：「一人暮らしなら、小型の（　　）が場所を取らなくていいですよ。」",
           "options": [
-            "開いて",
-            "壊れて",
-            "閉まって",
-            "汚れて"
+            "ほう",
+            "より",
+            "ほど",
+            "くらい"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "店員：「こちらの商品は最新型で、省エネ性能がとても（　　）ですよ。」<br>客：「そうですか、これにします。」",
+          "prompt": "A：「トーシマの掃除機は、ミツバシ（　　）動かしやすいですね。」<br>B：「ええ、とても軽いですね。」",
           "options": [
-            "安い",
-            "低い",
-            "重い",
-            "高い"
+            "より",
+            "から",
+            "まで",
+            "だけ"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「アイロンを使った後はどうすればいいですか。」<br>B：「必ずプラグをコンセントから（　　）おいてくださいね。」",
+          "prompt": "A：「この荷物は、車が（　　）までここに置いておきましょう。」<br>B：「はい、わかりました。」",
           "options": [
-            "抜いて",
-            "差して",
-            "切って",
-            "押して"
+            "来る",
+            "来た",
+            "来て",
+            "来ない"
           ],
           "answer": 1
         },
@@ -260,14 +260,14 @@ window.LKPD_DATA = {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「タイマーをセットしたいんですが。」<br>B：「この時計のマークを押してから、時間を（　　）ください。」",
+          "prompt": "A：「この薬は苦いですか。」<br>B：「いいえ、小さくてとても飲み（　　）ですよ。」",
           "options": [
-            "消して",
-            "選んで",
-            "壊して",
-            "捨てて"
+            "やすい",
+            "にくい",
+            "たい",
+            "そう"
           ],
-          "answer": 2
+          "answer": 1
         }
       ]
     },
@@ -680,36 +680,36 @@ window.LKPD_DATA = {
           "id": "t1",
           "type": "translation",
           "number": "Terjemahan 1.",
-          "prompt": "Jika Anda menekan tombol ini, mode akan berganti ke eco mode (hemat daya).",
-          "sample": "このボタンを押すと、エコモードに変わります。"
+          "prompt": "Antara vacuum cleaner ini dan yang itu, mana yang lebih mudah digunakan?",
+          "sample": "この掃除機とあっちの掃除機、どちら／どっちが使いやすいですか？"
         },
         {
           "id": "t2",
           "type": "translation",
           "number": "Terjemahan 2.",
-          "prompt": "Bisa tolong ajari saya cara memakai mesin cuci ini?",
-          "sample": "この洗濯機の使い方を教えてくれませんか？"
+          "prompt": "Vacuum cleaner Toshima lebih mudah digerakkan daripada Mitsubashi.",
+          "sample": "トーシマの掃除機のほうがミツバシより動かしやすいですよ。"
         },
         {
           "id": "t3",
           "type": "translation",
           "number": "Terjemahan 3.",
-          "prompt": "Jika memutar kenop ini ke kanan, suhu panasnya akan naik.",
-          "sample": "このつまみを右に回すと、温度が上がります。"
+          "prompt": "Pulpen ini agak sulit dipakai menulis.",
+          "sample": "このペンは少し書きにくいです。"
         },
         {
           "id": "t4",
           "type": "translation",
           "number": "Terjemahan 4.",
-          "prompt": "Usahakan jangan menyentuh colokan listrik dengan tangan yang basah.",
-          "sample": "濡れた手でプラグを触らないようにしてください。"
+          "prompt": "Saya menunggu di bangku ini sampai busnya tiba.",
+          "sample": "バスが来るまでベンチで待ちます。"
         },
         {
           "id": "t5",
           "type": "translation",
           "number": "Terjemahan 5.",
-          "prompt": "Jika memilih mode masak cepat (hayadaki), nasi akan matang dalam 20 menit.",
-          "sample": "「早炊き」を選ぶと、20分でご飯が炊けます。"
+          "prompt": "Sampai barangnya tiba di tangan, hanya butuh waktu 2 hari.",
+          "sample": "手元に届くまで、2日しかかかりませんでした。"
         }
       ]
     },
