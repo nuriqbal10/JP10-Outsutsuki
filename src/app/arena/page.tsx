@@ -9,6 +9,9 @@ import {
 import BunpouPuzzleBattleArena from "@/components/arena/BunpouPuzzleBattleArena";
 import GuessPictureGame from "@/components/arena/GuessPictureGame";
 import ShinobiAdventureGame from "@/components/arena/ShinobiAdventureGame";
+import ShinobiZepArena from "@/components/arena/ShinobiZepArena";
+import ShinobiQuizCreatorStudio, { VillageEnvironment, VILLAGE_ENVIRONMENTS } from "@/components/arena/ShinobiQuizCreatorStudio";
+import { ParsedQuestion } from "@/lib/quizParsers";
 import BattleRoyaleModal, { BattleMode } from "@/components/lms/BattleRoyaleModal";
 import {
   Swords,
@@ -54,6 +57,14 @@ export default function ShinobiArenaPage() {
   const [battleModalMode, setBattleModalMode] = useState<BattleMode>("1vs1");
   const [battleModalCategory, setBattleModalCategory] = useState<any>("all");
 
+  // Shinobi ZEP Quiz & Creator Studio State
+  const [showCreatorStudio, setShowCreatorStudio] = useState<boolean>(false);
+  const [customZepQuestions, setCustomZepQuestions] = useState<ParsedQuestion[]>([]);
+  const [customZepVillage, setCustomZepVillage] = useState<VillageEnvironment>(VILLAGE_ENVIRONMENTS[0]);
+  const [customZepRounds, setCustomZepRounds] = useState<number>(10);
+  const [customZepHpDamage, setCustomZepHpDamage] = useState<number>(10);
+  const [customZepTimeLimit, setCustomZepTimeLimit] = useState<number>(15);
+
   useEffect(() => {
     setGamerState(getGamificationState());
 
@@ -91,6 +102,23 @@ export default function ShinobiArenaPage() {
   // DEFINISI KATALOG GAME ARCADE (MODULAR & SANGAT MUDAH DIKEMBANGKAN)
   // ============================================================================
   const ARCADE_GAMES = [
+    {
+      id: "shinobi_zep_arena",
+      title: "Shinobi ZEP Arena: Ujian Desa Ninja",
+      jpTitle: "忍・ZEPアリーナ：六里の試練",
+      category: "multiplayer",
+      badge: "ZEP CLONE • 6 DESA NARUTO • AI STUDIO",
+      badgeColor: "bg-gradient-to-r from-amber-400 to-rose-500 text-stone-950 font-black",
+      icon: "⛩️",
+      cardBorder: "border-amber-400 hover:border-amber-300 shadow-[0_0_25px_rgba(245,158,11,0.3)]",
+      glowBg: "from-rose-950/60 via-amber-950/40 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500 text-stone-950 font-black shadow-lg",
+      desc: "Mekanisme ZEP Quiz bertema 6 Desa Ninja Naruto! Gerakkan avatar ninja secara fisik ke 4 Gerbang Desa (A/B/C/D) atau Gerbang O/X sebelum terkena serangan jutsu! Dilengkapi AI Generator & Impor Word / Blackboard ZIP.",
+      features: ["Avatar Gerak Virtual (WASD / Touch)", "6 Arena Desa Ninja Naruto", "AI Studio & Impor Word/ZIP"],
+      tags: ["ZEP Clone", "6 Desa Naruto", "AI Quiz Generator", "10 Ronde (10 HP/Hit)"],
+      onPlay: () => setShowCreatorStudio(true),
+      isComingSoon: false,
+    },
     {
       id: "bunpou_puzzle",
       title: "Bunpou Sentence Puzzle",
@@ -266,6 +294,18 @@ export default function ShinobiArenaPage() {
         </div>
       )}
 
+      {/* Mount Game Shinobi ZEP Arena (2D Avatar Canvas) */}
+      {selectedGame === "shinobi_zep_arena" && (
+        <ShinobiZepArena
+          questions={customZepQuestions}
+          village={customZepVillage}
+          roundsCount={customZepRounds}
+          hpDamage={customZepHpDamage}
+          timeLimit={customZepTimeLimit}
+          onExit={() => setSelectedGame(null)}
+        />
+      )}
+
       {/* ==================================================================== */}
       {/* 2. JIKA DI LOBI UTAMA (KATALOG NETFLIX/STEAM ARCADE HUB) */}
       {/* ==================================================================== */}
@@ -316,6 +356,16 @@ export default function ShinobiArenaPage() {
               </div>
 
               <div className="flex items-center gap-1.5 ml-2">
+                {/* Tombol Studio Kuis AI & Word/ZIP */}
+                <button
+                  onClick={() => setShowCreatorStudio(true)}
+                  className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 border border-amber-300 text-stone-950 transition text-xs font-black flex flex-col items-center shadow-lg"
+                  title="Buka Shinobi Quiz Studio (AI Generator & Impor Word/ZIP)"
+                >
+                  <Sparkles className="w-4 h-4 fill-stone-950 mb-0.5" />
+                  <span className="text-[10px] whitespace-nowrap">Studio AI</span>
+                </button>
+
                 {/* Tombol Profil & Winrate */}
                 <button
                   onClick={() => setShowProfileModal(true)}
@@ -733,6 +783,22 @@ export default function ShinobiArenaPage() {
         initialMode={battleModalMode}
         initialCategory={battleModalCategory}
       />
+
+      {/* SHINOBI QUIZ CREATOR STUDIO MODAL (AI GENERATOR & WORD/ZIP IMPORT) */}
+      {showCreatorStudio && (
+        <ShinobiQuizCreatorStudio
+          onStartGame={(questions, village, rounds, damage, time) => {
+            setCustomZepQuestions(questions);
+            setCustomZepVillage(village);
+            setCustomZepRounds(rounds);
+            setCustomZepHpDamage(damage);
+            setCustomZepTimeLimit(time);
+            setShowCreatorStudio(false);
+            setSelectedGame("shinobi_zep_arena");
+          }}
+          onClose={() => setShowCreatorStudio(false)}
+        />
+      )}
     </div>
   );
 }
