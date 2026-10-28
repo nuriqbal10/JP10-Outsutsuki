@@ -21,7 +21,7 @@ window.LKPD_DATA = {
       "id": "materi",
       "label": "Materi",
       "type": "static",
-      "html": "\n        <h2>Ringkasan Materi & Tata Bahasa Bab 14</h2>\n        <div class=\"vocab-grid\">\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px; margin-bottom:16px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Pola Tata Bahasa Utama</h4>\n            <ul>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">～を ［い形容詞・く］／［な形容詞・に］ します</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan perubahan suatu benda/keadaan sesuai dengan kehendak pembicara.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 髪をもう少し短くしてください。(Tolong potong rambut saya sedikit lebih pendek.) / 部屋をきれいにします。</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［て形］＋もらえますか／いただけますか</strong><br>\n                  <span style=\"color:#334155;\">Ungkapan meminta tolong secara sopan kepada staf layanan jasa.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: このシミを落としてもらえますか。(Bisakah Anda membersihkan noda ini?)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">いつまでに仕上がりますか／届きますか</strong><br>\n                  <span style=\"color:#334155;\">Konfirmasi tanggal selesai pengerjaan laundry atau kedatangan kurir paket.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 明日の夕方までに仕上がりますか。(Bisakah selesai besok sore?)</em>\n                </li>\n              \n            </ul>\n          </div>\n\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Kosakata Penting Bab 14</h4>\n            <table style=\"width:100%; border-collapse:collapse; margin-top:8px;\">\n              <thead>\n                <tr style=\"background:#e2e8f0; text-align:left;\">\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Bahasa Jepang</th>\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Arti Bahasa Indonesia</th>\n                </tr>\n              </thead>\n              <tbody>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">美容院 (びよういん)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Salon kecantikan / pangkas rambut</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">髪型 (かみがた)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Gaya rambut</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">前髪 (まえがみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Poni rambut</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">短くする (みじかくする)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Memendekkan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">クリーニング</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Dry cleaning / cuci pakaian profesional</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">シミ</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Noda pada pakaian</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">預かる (あずかる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Menerima titipan / pakaian</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">仕上がり (しあがり)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Penyelesaian / siap diambil</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">宅配便 (たくはいびん)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Kurir pengiriman barang kilat</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">壊れ物 (こわれもの)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Barang pecah belah / mudah rusak</td>\n                  </tr>\n                \n              </tbody>\n            </table>\n          </div>\n        </div>\n      "
+      "html": "<h2>Ringkasan Materi & Tata Bahasa Bab 14</h2>\n\n\n        <h3>2. Tata Bahasa Utama (IRODORI文法リスト準拠)</h3>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❶ ナA-に／イA-く V\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Sifat-na に] ／ [Kata Sifat-i buang い + く] [Kata Kerja]</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Mengubah kata sifat menjadi kata keterangan cara (adverbia) untuk menerangkan kata kerja ('Secara / dengan...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Sifat-na + に, sifat-i buang 'い' + く lalu diikuti kata kerja (contoh: 早く起きる, きれいに書く).</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 全体的に短く切ってください。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：名前を大きく書いてください (Tolong tulis nama dengan ukuran besar.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'ナA-に／イA-く V' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n              <div style=\"margin:2px 0;\"><strong>[Kata Sifat Populer (形容詞の接続)]</strong> Perhatikan perubahan akhiran い (untuk sifat-i) atau な/に (untuk sifat-na) <span style=\"color:#64748b;\">(高い (mahal/tinggi) / 安い (murah))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❷ Nのために、～\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Benda] の ために、〜</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan tujuan utama atau demi kemaslahatan seseorang ('Demi / untuk tujuan...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata benda disambung partikel の sebelum ために.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 外国の方のために、いろいろなサービスがあります。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：健康のために毎日運動します (Demi kesehatan saya berolahraga setiap hari.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Benda Praktis (名詞の接続)]</strong> Dapat dipadukan dengan kata benda topik, tempat, atau fasilitas sehari-hari <span style=\"color:#64748b;\">(会社 (kantor) / 部屋 (kamar))</span></div>\n            </div>\n          </div>\n        </details>\n\n      "
     },
     {
       "id": "moji",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「すみません、こちらの展示室に入ってもいいですか。」<br>B：「はい、どうぞ。（　　）自由にご覧ください。」",
+          "prompt": "客：「前髪は目にかからないように、（　　）切ってください。」<br>美容師：「かしこまりました。」",
           "options": [
-            "外に出て",
-            "入らないで",
-            "中に入って",
-            "帰って"
+            "短く",
+            "短い",
+            "短くて",
+            "短さ"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このパンフレット、もらってもいいですか。」<br>B：「ええ、そちらに並べて（　　）ので、ご自由にお持ち帰りください。」",
+          "prompt": "客：「このドレスのシミを（　　）きれいに洗ってもらえますか。」<br>店員：「はい、染み抜きもいたします。」",
           "options": [
-            "います",
-            "みます",
-            "おきます",
-            "あります"
+            "上手で",
+            "上手に",
+            "上手な",
+            "上手く"
           ],
-          "answer": 4
+          "answer": 2
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「週末、どこかおすすめの場所はありますか。」<br>B：「新しい市民ギャラリーがオープンしましたよ。ぜひ一度（　　）みてください。」",
+          "prompt": "A：「どうしてそんなに高いスーツをクリーニングに出すの？」<br>B：「来週の大切な（　　）に、きれいにしておきたいんだ。」",
           "options": [
-            "行って",
-            "行かないで",
-            "帰って",
-            "やめて"
+            "面接のために",
+            "面接のせいで",
+            "面接のあとに",
+            "面接のまえで"
           ],
           "answer": 1
         },
@@ -208,12 +208,12 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「こちらの施設は何時から何時まで利用できますか。」<br>B：「午前9時から午後5時（　　）となっております。」",
+          "prompt": "客：「このズボンの裾を、もう少し（　　）してください。」<br>店員：「3センチほど短くしましょうか。」",
           "options": [
-            "から",
-            "まで",
-            "より",
-            "ほど"
+            "長く",
+            "短く",
+            "広く",
+            "重く"
           ],
           "answer": 2
         },
@@ -221,53 +221,53 @@ window.LKPD_DATA = {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「利用カードを作りたいんですが、何が必要ですか。」<br>B：「身分証明書を見せて（　　）ますか。」",
+          "prompt": "客：「このワイシャツは、いつまでに（　　）ますか。」<br>店員：「明日の夕方5時以降にお渡しできます。」",
           "options": [
-            "あげ",
-            "くれ",
-            "いただけ",
-            "みせ"
+            "仕上がり",
+            "壊れ",
+            "忘れ",
+            "落ち"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "窓口：「何かお困りですか。」<br>客：「はい、この部屋の予約の仕方を（　　）んですが。」",
+          "prompt": "配達員：「お届けにあがりましたが、ご不在でしたので（　　）を入れておきました。」<br>客：「あ、ポストを確認します。」",
           "options": [
-            "忘れてほしい",
-            "言わないでほしい",
-            "怒ってほしい",
-            "教えてほしい"
+            "レシート",
+            "不在連絡票",
+            "領収証",
+            "クーポン券"
           ],
-          "answer": 4
+          "answer": 2
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「館内での写真撮影はできますか。」<br>B：「申し訳ございません。特別展示室での撮影は（　　）おります。」",
+          "prompt": "客：「今日の夜7時から9時の間に、荷物を（　　）してもらえますか。」<br>配達員：「承知いたしました。」",
           "options": [
-            "ご遠慮いただいて",
-            "おすすめして",
-            "大歓迎して",
-            "お願いして"
+            "返品",
+            "再配達",
+            "キャンセル",
+            "注文"
           ],
-          "answer": 1
+          "answer": 2
         },
         {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「今日は案内してくださって、ありがとうございました。」<br>B：「いいえ、またいつでもお気軽に（　　）ください。」",
+          "prompt": "A：「髪型を変えたんですね！（　　）似合っていますよ。」<br>B：「ありがとうございます。美容師さんに相談して切ってもらいました。」",
           "options": [
-            "お帰り",
-            "お越し",
-            "お休み",
-            "お怒り"
+            "とてもよく",
+            "ぜんぜん",
+            "すこしも",
+            "まったく"
           ],
-          "answer": 2
+          "answer": 1
         }
       ]
     },
@@ -369,93 +369,93 @@ window.LKPD_DATA = {
       ]
     },
     {
-    "id": "dokkai",
-    "label": "4. 読解",
-    "type": "questions",
-    "items": [
+      "id": "dokkai",
+      "label": "4. 読解",
+      "type": "questions",
+      "items": [
         {
-            "id": "q25",
-            "type": "mcq",
-            "number": "Soal 25.",
-            "image": "images/dokkai_visual_1.svg",
-            "passage": "【美容室 Hair Salon「Bloom」】<br>●カットメニュー：一般カット（ブロー込）¥3,500、カット＋シャンプー ¥4,000、ヘアカラー ¥5,500〜<br>●オーダーの会話例：「髪をもう少し短くしてください」「前髪は眉毛にかかるくらいにしてください」<br>【クリーニング ホワイト急便 預かり証】<br>●品名：ワイシャツ3点（¥220×3）、スーツ上下1点（¥1,200）<br>●仕上がり予定日：10月22日（木）17:00以降 ※受取時は預かり票必携",
-            "prompt": "美容室で「カット＋シャンプー」を頼むと、いくらになりますか。",
-            "options": [
-                "¥3,500",
-                "¥4,000",
-                "¥5,500",
-                "¥9,500"
-            ],
-            "answer": 2
+          "id": "q25",
+          "type": "mcq",
+          "number": "Soal 25.",
+          "image": "images/dokkai_visual_1.svg",
+          "passage": "【美容室 Hair Salon「Bloom」】<br>●カットメニュー：一般カット（ブロー込）¥3,500、カット＋シャンプー ¥4,000、ヘアカラー ¥5,500〜<br>●オーダーの会話例：「髪をもう少し短くしてください」「前髪は眉毛にかかるくらいにしてください」<br>【クリーニング ホワイト急便 預かり証】<br>●品名：ワイシャツ3点（¥220×3）、スーツ上下1点（¥1,200）<br>●仕上がり予定日：10月22日（木）17:00以降 ※受取時は預かり票必携",
+          "prompt": "美容室で「カット＋シャンプー」を頼むと、いくらになりますか。",
+          "options": [
+            "¥3,500",
+            "¥4,000",
+            "¥5,500",
+            "¥9,500"
+          ],
+          "answer": 2
         },
         {
-            "id": "q26",
-            "type": "mcq",
-            "number": "Soal 26.",
-            "prompt": "美容師に髪の長さを注文するとき、最も適切な表現はどれですか。",
-            "options": [
-                "髪をもう少し短くしてください",
-                "髪を食べてください",
-                "髪を着てください",
-                "髪を掃除してください"
-            ],
-            "answer": 1
+          "id": "q26",
+          "type": "mcq",
+          "number": "Soal 26.",
+          "prompt": "美容師に髪の長さを注文するとき、最も適切な表現はどれですか。",
+          "options": [
+            "髪をもう少し短くしてください",
+            "髪を食べてください",
+            "髪を着てください",
+            "髪を掃除してください"
+          ],
+          "answer": 1
         },
         {
-            "id": "q27",
-            "type": "mcq",
-            "number": "Soal 27.",
-            "prompt": "クリーニングに出した服を受け取ることができるのはいつからですか。",
-            "options": [
-                "10月20日の朝",
-                "10月21日（水）正午",
-                "10月22日（木）17:00以降",
-                "11月1日以降"
-            ],
-            "answer": 3
+          "id": "q27",
+          "type": "mcq",
+          "number": "Soal 27.",
+          "prompt": "クリーニングに出した服を受け取ることができるのはいつからですか。",
+          "options": [
+            "10月20日の朝",
+            "10月21日（水）正午",
+            "10月22日（木）17:00以降",
+            "11月1日以降"
+          ],
+          "answer": 3
         },
         {
-            "id": "q28",
-            "type": "mcq",
-            "number": "Soal 28.",
-            "passage": "【ヤマト運輸 ご不在連絡票 (Delivery Notice)】<br>●訪問日時：10月20日 15:40<br>●お荷物の種類：クール宅急便（冷蔵食品）<br>●伝票番号：4192-8831-5024<br>●保管期限：10月23日（金）まで<br>●再配達受付：スマホ二次元コード（24時間）、当日再配達受付は17:00まで",
-            "prompt": "届いた荷物の種類は何ですか。",
-            "options": [
-                "本・書類",
-                "クール宅急便（冷蔵食品）",
-                "家具・大型家電",
-                "衣料品"
-            ],
-            "answer": 2
+          "id": "q28",
+          "type": "mcq",
+          "number": "Soal 28.",
+          "passage": "【ヤマト運輸 ご不在連絡票 (Delivery Notice)】<br>●訪問日時：10月20日 15:40<br>●お荷物の種類：クール宅急便（冷蔵食品）<br>●伝票番号：4192-8831-5024<br>●保管期限：10月23日（金）まで<br>●再配達受付：スマホ二次元コード（24時間）、当日再配達受付は17:00まで",
+          "prompt": "届いた荷物の種類は何ですか。",
+          "options": [
+            "本・書類",
+            "クール宅急便（冷蔵食品）",
+            "家具・大型家電",
+            "衣料品"
+          ],
+          "answer": 2
         },
         {
-            "id": "q29",
-            "type": "mcq",
-            "number": "Soal 29.",
-            "prompt": "この荷物の保管期限はいつまでですか。",
-            "options": [
-                "10月20日まで",
-                "10月22日まで",
-                "10月23日（金）まで",
-                "無期限"
-            ],
-            "answer": 3
+          "id": "q29",
+          "type": "mcq",
+          "number": "Soal 29.",
+          "prompt": "この荷物の保管期限はいつまでですか。",
+          "options": [
+            "10月20日まで",
+            "10月22日まで",
+            "10月23日（金）まで",
+            "無期限"
+          ],
+          "answer": 3
         },
         {
-            "id": "q30",
-            "type": "mcq",
-            "number": "Soal 30.",
-            "prompt": "当日中に荷物をもう一度届けてほしい（再配達）場合、何時までに申し込む必要がありますか。",
-            "options": [
-                "15:40まで",
-                "17:00まで",
-                "20:00まで",
-                "深夜24:00まで"
-            ],
-            "answer": 2
+          "id": "q30",
+          "type": "mcq",
+          "number": "Soal 30.",
+          "prompt": "当日中に荷物をもう一度届けてほしい（再配達）場合、何時までに申し込む必要がありますか。",
+          "options": [
+            "15:40まで",
+            "17:00まで",
+            "20:00まで",
+            "深夜24:00まで"
+          ],
+          "answer": 2
         }
-    ]
-},
+      ]
+    },
     {
       "id": "kanji",
       "label": "Kanji",
@@ -658,37 +658,32 @@ window.LKPD_DATA = {
         {
           "id": "tr1",
           "type": "translation",
-          "number": "Soal T1.",
-          "prompt": "Berbagai materi dan foto dipamerkan di ruang pameran.",
-          "sample": "展示室にいろいろな資料や写真が展示してあります。"
+          "prompt": "Tolong potong rambut saya sedikit lebih pendek.",
+          "sample": "髪をもう少し短くしてください。"
         },
         {
           "id": "tr2",
           "type": "translation",
-          "number": "Soal T2.",
-          "prompt": "Silakan coba berkunjung ke perpustakaan kota sekali.",
-          "sample": "ぜひ一度、市立図書館へ行ってみてください。"
+          "prompt": "Tolong potong poninya agar rapi.",
+          "sample": "前髪をきれいに切ってください。"
         },
         {
           "id": "tr3",
           "type": "translation",
-          "number": "Soal T3.",
-          "prompt": "Dari jam berapa sampai jam berapa fasilitas ini dibuka?",
-          "sample": "この施設は何時から何時まで開いていますか。"
+          "prompt": "Saya mencuci jas ini ke laundry demi persiapan wawancara besok.",
+          "sample": "明日の面接のために、スーツをクリーニングに出しました。"
         },
         {
           "id": "tr4",
           "type": "translation",
-          "number": "Soal T4.",
-          "prompt": "Bisakah Anda mengajarkan cara meminjam buku di sini?",
-          "sample": "ここで本を借りる方法を教えていただけますか。"
+          "prompt": "Kapan pakaian yang dicuci ini akan selesai?",
+          "sample": "この服はいつまでに仕上がりますか。"
         },
         {
           "id": "tr5",
           "type": "translation",
-          "number": "Soal T5.",
-          "prompt": "Dilarang merokok dan buanglah sampah di rumah masing-masing.",
-          "sample": "全館禁煙ですので、ゴミは各自でお持ち帰りください。"
+          "prompt": "Bisakah Anda mengirim ulang paket ini besok pagi?",
+          "sample": "明日の午前中に荷物を再配達してもらえますか。"
         }
       ]
     },

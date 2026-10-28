@@ -21,7 +21,7 @@ window.LKPD_DATA = {
       "id": "materi",
       "label": "Materi",
       "type": "static",
-      "html": "\n        <h2>Ringkasan Materi & Tata Bahasa Bab 17</h2>\n        <div class=\"vocab-grid\">\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px; margin-bottom:16px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Pola Tata Bahasa Utama</h4>\n            <ul>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［辞書形／可能形］＋ようになりました（能力・状態の変化）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan perubahan dari kondisi sebelumnya tidak bisa/terbiasa menjadi bisa atau terbiasa dilakukan.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 日本語が前より話せるようになりました。(Saya sudah menjadi lebih bisa berbicara bahasa Jepang dibanding dulu.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［て形］＋よかったです（安堵・感謝）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan rasa syukur atau kelegaan atas apa yang telah dialami.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 日本に来て本当によかったです。(Saya sangat bersyukur/senang telah datang ke Jepang.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">～に比べて／前と違って（比較）</strong><br>\n                  <span style=\"color:#334155;\">Membandingkan situasi masa lalu saat baru tiba dengan kondisi saat ini.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 1年前に比べて、日本の習慣に慣れました。</em>\n                </li>\n              \n            </ul>\n          </div>\n\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Kosakata Penting Bab 17</h4>\n            <table style=\"width:100%; border-collapse:collapse; margin-top:8px;\">\n              <thead>\n                <tr style=\"background:#e2e8f0; text-align:left;\">\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Bahasa Jepang</th>\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Arti Bahasa Indonesia</th>\n                </tr>\n              </thead>\n              <tbody>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">成長 (せいちょう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Pertumbuhan / perkembangan diri</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">上達する (じょうたつする)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Meningkat kemampuannya / semakin mahir</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">慣れる (なれる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Menjadi terbiasa / adaptasi</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">会話 (かいわ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Percakapan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">一人暮らし (ひとりぐらし)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Tinggal mandiri sendirian</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">自信 (じしん)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Percaya diri</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">苦労 (くろう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Jerih payah / kesulitan / perjuangan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">思い出 (おもいで)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Kenangan berkesan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">親切 (しんせつ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Kebaikan hati / ramah</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">振り返る (ふりかえる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Merenungkan kembali / menoleh ke belakang</td>\n                  </tr>\n                \n              </tbody>\n            </table>\n          </div>\n        </div>\n      "
+      "html": "<h2>Ringkasan Materi & Tata Bahasa Bab 17</h2>\n\n\n        <h3>2. Tata Bahasa Utama (IRODORI文法リスト準拠)</h3>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❶ V-（られ）るように なりました\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Potensial Bentuk Kamus] ように なりました</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan perkembangan keterampilan diri yang kini telah mampu dikuasai berkat latihan ('Kini telah menjadi bisa...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk potensial (jisho-kei) + ように なりました.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 最近は、ほかの人にお店の情報を教えられるようになりました。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：日本語で電話ができるようになりました (Kini saya sudah bisa berbicara di telepon dalam bahasa Jepang.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-（られ）るように なりました' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n\n      "
     },
     {
       "id": "moji",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「すみません、こちらの展示室に入ってもいいですか。」<br>B：「はい、どうぞ。（　　）自由にご覧ください。」",
+          "prompt": "A：「日本に来て半年ですね。仕事はどうですか。」<br>B：「最初は難しかったですが、指示がよく（　　）なりました。」",
           "options": [
-            "外に出て",
-            "入らないで",
-            "中に入って",
-            "帰って"
+            "聞き取れるように",
+            "聞き取れなくて",
+            "聞き取れないまま",
+            "聞き取るために"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このパンフレット、もらってもいいですか。」<br>B：「ええ、そちらに並べて（　　）ので、ご自由にお持ち帰りください。」",
+          "prompt": "A：「漢字の勉強、順調ですか。」<br>B：「はい。工場の安全標語や日報が（　　）なりました。」",
           "options": [
-            "います",
-            "みます",
-            "おきます",
-            "あります"
+            "読めるように",
+            "読まないように",
+            "読んだまま",
+            "読むために"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「週末、どこかおすすめの場所はありますか。」<br>B：「新しい市民ギャラリーがオープンしましたよ。ぜひ一度（　　）みてください。」",
+          "prompt": "A：「日本の生活はどうですか。」<br>B：「同僚も先輩もとても親切で、日本へ（　　）よかったです。」",
           "options": [
-            "行って",
-            "行かないで",
-            "帰って",
-            "やめて"
+            "来て",
+            "来ないで",
+            "来たまま",
+            "来るために"
           ],
           "answer": 1
         },
@@ -208,51 +208,51 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「こちらの施設は何時から何時まで利用できますか。」<br>B：「午前9時から午後5時（　　）となっております。」",
+          "prompt": "A：「仕事で失敗したときはどうしていますか。」<br>B：「すぐに班長に（　　）ようにしています。アドバイスをもらえるからです。」",
           "options": [
-            "から",
-            "まで",
-            "より",
-            "ほど"
+            "相談する",
+            "隠す",
+            "怒る",
+            "忘れる"
           ],
-          "answer": 2
+          "answer": 1
         },
         {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「利用カードを作りたいんですが、何が必要ですか。」<br>B：「身分証明書を見せて（　　）ますか。」",
+          "prompt": "佐藤班長：「ナム君、最近は（　　）に仕事を任せられるようになったね。」<br>ナム：「ありがとうございます！」",
           "options": [
-            "あげ",
-            "くれ",
-            "いただけ",
-            "みせ"
+            "1人で安心",
+            "不安で危険",
+            "遅くて大変",
+            "間違いだらけ"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "窓口：「何かお困りですか。」<br>客：「はい、この部屋の予約の仕方を（　　）んですが。」",
+          "prompt": "A：「来日当初と（　　）、今の自分はどう変わりましたか。」<br>B：「自信を持って日本語で挨拶や返事ができるようになりました。」",
           "options": [
-            "忘れてほしい",
-            "言わないでほしい",
-            "怒ってほしい",
-            "教えてほしい"
+            "比べて",
+            "合わせて",
+            "捨てて",
+            "負けて"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「館内での写真撮影はできますか。」<br>B：「申し訳ございません。特別展示室での撮影は（　　）おります。」",
+          "prompt": "A：「次の1年間の目標は何ですか。」<br>B：「JFT-Basic A2試験に（　　）合格したいと思っています。」",
           "options": [
-            "ご遠慮いただいて",
-            "おすすめして",
-            "大歓迎して",
-            "お願いして"
+            "必ず",
+            "ぜんぜん",
+            "あまり",
+            "決して"
           ],
           "answer": 1
         },
@@ -260,14 +260,14 @@ window.LKPD_DATA = {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「今日は案内してくださって、ありがとうございました。」<br>B：「いいえ、またいつでもお気軽に（　　）ください。」",
+          "prompt": "A：「後輩の実習生が入ってきたら、どうしますか。」<br>B：「私が先輩にしてもらったように、優しく仕事を（　　）あげたいです。」",
           "options": [
-            "お帰り",
-            "お越し",
-            "お休み",
-            "お怒り"
+            "教えて",
+            "壊して",
+            "怒って",
+            "やめさせて"
           ],
-          "answer": 2
+          "answer": 1
         }
       ]
     },
@@ -369,93 +369,93 @@ window.LKPD_DATA = {
       ]
     },
     {
-    "id": "dokkai",
-    "label": "4. 読解",
-    "type": "questions",
-    "items": [
+      "id": "dokkai",
+      "label": "4. 読解",
+      "type": "questions",
+      "items": [
         {
-            "id": "q25",
-            "type": "mcq",
-            "number": "Soal 25.",
-            "image": "images/dokkai_visual_1.svg",
-            "passage": "【日本生活振り返りシート（自己評価表）】<br>氏名：グエン・ヴァン・ナム（自動車部品加工ライン・勤続8ヶ月）<br>●日常会話：来日当初は早口だと全く分からなかったが、現在は指示をほぼ聞き取れるようになった。<br>●漢字：当初はひらがな・カタカナだけだったが、工場の安全標語や日報の漢字が読めるようになった。<br>●作業：確認に時間がかかっていたが、現在はミスなく1人で任せられるようになった。<br>●感想：最初は不安だったが、先輩が優しく教えてくれたおかげで、日本に来て本当によかったと思っている。",
-            "prompt": "ナムさんの日本語の聞き取り（聴解）について、8ヶ月経ってどのように変化しましたか。",
-            "options": [
-                "全く聞き取れなくなった",
-                "日本語の指示がほぼ聞き取れるようになった",
-                "英語しか話さなくなった",
-                "半年前と全く変わらない"
-            ],
-            "answer": 2
+          "id": "q25",
+          "type": "mcq",
+          "number": "Soal 25.",
+          "image": "images/dokkai_visual_1.svg",
+          "passage": "【日本生活振り返りシート（自己評価表）】<br>氏名：グエン・ヴァン・ナム（自動車部品加工ライン・勤続8ヶ月）<br>●日常会話：来日当初は早口だと全く分からなかったが、現在は指示をほぼ聞き取れるようになった。<br>●漢字：当初はひらがな・カタカナだけだったが、工場の安全標語や日報の漢字が読めるようになった。<br>●作業：確認に時間がかかっていたが、現在はミスなく1人で任せられるようになった。<br>●感想：最初は不安だったが、先輩が優しく教えてくれたおかげで、日本に来て本当によかったと思っている。",
+          "prompt": "ナムさんの日本語の聞き取り（聴解）について、8ヶ月経ってどのように変化しましたか。",
+          "options": [
+            "全く聞き取れなくなった",
+            "日本語の指示がほぼ聞き取れるようになった",
+            "英語しか話さなくなった",
+            "半年前と全く変わらない"
+          ],
+          "answer": 2
         },
         {
-            "id": "q26",
-            "type": "mcq",
-            "number": "Soal 26.",
-            "prompt": "ナムさんの漢字能力の変化として正しいものはどれですか。",
-            "options": [
-                "漢字が難しくて書くのをやめた",
-                "工場の安全標語や日報の漢字が読めるようになった",
-                "新聞の小説をすべて読めるようになった",
-                "ひらがなも忘れそうになった"
-            ],
-            "answer": 2
+          "id": "q26",
+          "type": "mcq",
+          "number": "Soal 26.",
+          "prompt": "ナムさんの漢字能力の変化として正しいものはどれですか。",
+          "options": [
+            "漢字が難しくて書くのをやめた",
+            "工場の安全標語や日報の漢字が読めるようになった",
+            "新聞の小説をすべて読めるようになった",
+            "ひらがなも忘れそうになった"
+          ],
+          "answer": 2
         },
         {
-            "id": "q27",
-            "type": "mcq",
-            "number": "Soal 27.",
-            "prompt": "ナムさんが日本での生活について述べている感想として最も適切なものはどれですか。",
-            "options": [
-                "先輩が厳しすぎて帰国したい",
-                "先輩が優しく教えてくれて日本に来て本当によかった",
-                "日本にはもう慣れたくない",
-                "毎日仕事がなくて退屈だ"
-            ],
-            "answer": 2
+          "id": "q27",
+          "type": "mcq",
+          "number": "Soal 27.",
+          "prompt": "ナムさんが日本での生活について述べている感想として最も適切なものはどれですか。",
+          "options": [
+            "先輩が厳しすぎて帰国したい",
+            "先輩が優しく教えてくれて日本に来て本当によかった",
+            "日本にはもう慣れたくない",
+            "毎日仕事がなくて退屈だ"
+          ],
+          "answer": 2
         },
         {
-            "id": "q28",
-            "type": "mcq",
-            "number": "Soal 28.",
-            "passage": "【指導員（佐藤班長）の評価所見 ＆ 次の1年の目標】<br>●佐藤班長コメント：ナム君は毎日の「ほうれんそう（報告・連絡・相談）」が確実にできるようになりました。挨拶も元気で現場のムードメーカーです。特定技能への移行も十分推薦できるレベルです。<br>●ナム君の次の目標：①JFT-Basic A2またはJLPT N3に合格する ②後輩が入ってきたら分かりやすく指導する。",
-            "prompt": "佐藤班長がナムさんを高く評価している点（できるようになったこと）は何ですか。",
-            "options": [
-                "機械を壊すこと",
-                "毎日の「ほうれんそう（報告・連絡・相談）」と元気な挨拶",
-                "仕事中に居眠りをすること",
-                "会社に遅刻すること"
-            ],
-            "answer": 2
+          "id": "q28",
+          "type": "mcq",
+          "number": "Soal 28.",
+          "passage": "【指導員（佐藤班長）の評価所見 ＆ 次の1年の目標】<br>●佐藤班長コメント：ナム君は毎日の「ほうれんそう（報告・連絡・相談）」が確実にできるようになりました。挨拶も元気で現場のムードメーカーです。特定技能への移行も十分推薦できるレベルです。<br>●ナム君の次の目標：①JFT-Basic A2またはJLPT N3に合格する ②後輩が入ってきたら分かりやすく指導する。",
+          "prompt": "佐藤班長がナムさんを高く評価している点（できるようになったこと）は何ですか。",
+          "options": [
+            "機械を壊すこと",
+            "毎日の「ほうれんそう（報告・連絡・相談）」と元気な挨拶",
+            "仕事中に居眠りをすること",
+            "会社に遅刻すること"
+          ],
+          "answer": 2
         },
         {
-            "id": "q29",
-            "type": "mcq",
-            "number": "Soal 29.",
-            "prompt": "佐藤班長はナムさんの今後のキャリアについてどのように述べていますか。",
-            "options": [
-                "今すぐ国へ帰るべきだと言っている",
-                "特定技能への移行を推薦できるレベルだと評価している",
-                "別の部署に異動させると言っている",
-                "日本語の勉強をやめるよう指示している"
-            ],
-            "answer": 2
+          "id": "q29",
+          "type": "mcq",
+          "number": "Soal 29.",
+          "prompt": "佐藤班長はナムさんの今後のキャリアについてどのように述べていますか。",
+          "options": [
+            "今すぐ国へ帰るべきだと言っている",
+            "特定技能への移行を推薦できるレベルだと評価している",
+            "別の部署に異動させると言っている",
+            "日本語の勉強をやめるよう指示している"
+          ],
+          "answer": 2
         },
         {
-            "id": "q30",
-            "type": "mcq",
-            "number": "Soal 30.",
-            "prompt": "ナムさんが「次の1年の目標」として掲げていることはどれですか。",
-            "options": [
-                "日本語の試験を受けないこと",
-                "JFT-Basic A2やJLPT N3に合格し、後輩を指導すること",
-                "毎日残業を断ること",
-                "車を買って旅行ばかりすること"
-            ],
-            "answer": 2
+          "id": "q30",
+          "type": "mcq",
+          "number": "Soal 30.",
+          "prompt": "ナムさんが「次の1年の目標」として掲げていることはどれですか。",
+          "options": [
+            "日本語の試験を受けないこと",
+            "JFT-Basic A2やJLPT N3に合格し、後輩を指導すること",
+            "毎日残業を断ること",
+            "車を買って旅行ばかりすること"
+          ],
+          "answer": 2
         }
-    ]
-},
+      ]
+    },
     {
       "id": "kanji",
       "label": "Kanji",
@@ -658,37 +658,32 @@ window.LKPD_DATA = {
         {
           "id": "tr1",
           "type": "translation",
-          "number": "Soal T1.",
-          "prompt": "Berbagai materi dan foto dipamerkan di ruang pameran.",
-          "sample": "展示室にいろいろな資料や写真が展示してあります。"
+          "prompt": "Berkat belajar setiap hari, sekarang saya sudah bisa memahami percakapan bahasa Jepang.",
+          "sample": "毎日勉強したおかげで、日本語の会話が聞き取れるようになりました。"
         },
         {
           "id": "tr2",
           "type": "translation",
-          "number": "Soal T2.",
-          "prompt": "Silakan coba berkunjung ke perpustakaan kota sekali.",
-          "sample": "ぜひ一度、市立図書館へ行ってみてください。"
+          "prompt": "Saya sangat bersyukur dan senang bisa datang bekerja di Jepang.",
+          "sample": "日本へ働きに来て、本当によかったです。"
         },
         {
           "id": "tr3",
           "type": "translation",
-          "number": "Soal T3.",
-          "prompt": "Dari jam berapa sampai jam berapa fasilitas ini dibuka?",
-          "sample": "この施設は何時から何時まで開いていますか。"
+          "prompt": "Sekarang saya sudah bisa membaca kanji yang ada di papan keselamatan pabrik.",
+          "sample": "工場の安全標識に書いてある漢字が読めるようになりました。"
         },
         {
           "id": "tr4",
           "type": "translation",
-          "number": "Soal T4.",
-          "prompt": "Bisakah Anda mengajarkan cara meminjam buku di sini?",
-          "sample": "ここで本を借りる方法を教えていただけますか。"
+          "prompt": "Dulu saya tidak bisa memasak sendiri, tetapi sekarang sudah bisa membuat masakan Jepang.",
+          "sample": "昔は料理ができませんでしたが、今は日本料理が作れるようになりました。"
         },
         {
           "id": "tr5",
           "type": "translation",
-          "number": "Soal T5.",
-          "prompt": "Dilarang merokok dan buanglah sampah di rumah masing-masing.",
-          "sample": "全館禁煙ですので、ゴミは各自でお持ち帰りください。"
+          "prompt": "Saya senang sekali telah dibantu oleh rekan kerja yang ramah.",
+          "sample": "親切な同僚に手伝ってもらえて、本当によかったです。"
         }
       ]
     },

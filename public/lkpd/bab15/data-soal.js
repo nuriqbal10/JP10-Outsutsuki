@@ -21,7 +21,7 @@ window.LKPD_DATA = {
       "id": "materi",
       "label": "Materi",
       "type": "static",
-      "html": "\n        <h2>Ringkasan Materi & Tata Bahasa Bab 15</h2>\n        <div class=\"vocab-grid\">\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px; margin-bottom:16px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Pola Tata Bahasa Utama</h4>\n            <ul>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［辞書形］＋ために（目的）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan tujuan utama dari suatu aksi sadar yang dilakukan.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: ゴミを減らすために、マイバッグを持っています。(Saya membawa tas belanja sendiri demi mengurangi sampah plastik.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［ない形・ない］＋ようにしています（習慣・心がけ）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan usaha sadar yang terus diupayakan untuk tidak melakukan sesuatu.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 電気をつけっぱなしにしないようにしています。(Saya berusaha membiasakan diri agar tidak membiarkan lampu menyala terus.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">分別する (燃えるゴミ・燃えないゴミ・資源ゴミ)</strong><br>\n                  <span style=\"color:#334155;\">Aturan ketat pemilahan sampah di tempat tinggal Jepang.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: ペットボトルはラベルとキャップを外して捨ててください。</em>\n                </li>\n              \n            </ul>\n          </div>\n\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Kosakata Penting Bab 15</h4>\n            <table style=\"width:100%; border-collapse:collapse; margin-top:8px;\">\n              <thead>\n                <tr style=\"background:#e2e8f0; text-align:left;\">\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Bahasa Jepang</th>\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Arti Bahasa Indonesia</th>\n                </tr>\n              </thead>\n              <tbody>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">燃えるゴミ (もえるごみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Sampah yang bisa dibakar (organik/kertas)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">燃えないゴミ (もえないごみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Sampah tidak bisa dibakar (kaca/logam)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">資源ゴミ (しげんごみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Sampah daur ulang (botol PET, kaleng, kardus)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">粗大ゴミ (そだいごみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Sampah berukuran besar (meja, kasur, sepeda)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">分別 (ぶんべつ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Pemilahan sampah</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">減らす (へらす)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mengurangi</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">リサイクル</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Daur ulang</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">収集日 (しゅうしゅうび)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Hari pengangkutan sampah</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">マイバッグ</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Tas belanja ramah lingkungan sendiri</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">無駄 (むだ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Sia-sia / mubazir / pemborosan</td>\n                  </tr>\n                \n              </tbody>\n            </table>\n          </div>\n        </div>\n      "
+      "html": "<h2>Ringkasan Materi & Tata Bahasa Bab 15</h2>\n\n\n        <h3>2. Tata Bahasa Utama (IRODORI文法リスト準拠)</h3>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❶ V-たままです\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk-Ta] まま です</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan membiarkan suatu kondisi tetap berlangsung tanpa mengembalikannya ke posisi semula ('Dalam keadaan terbiar...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk lampau ta-kei + ままで (contoh: エアコンをつけたまま寝ました).</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 会議室の電気がついたままでしたよ。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：窓を開けたまま寝てしまいました (Saya terlanjur tidur dalam keadaan jendela tetap terbuka.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Bentuk-Ta (Telah Terjadi)]</strong> Kata Kerja Bentuk-Ta + まま <span style=\"color:#64748b;\">(開ける → 窓を開けたまま (dalam keadaan jendela tetap terbuka) / つける → テレビをつけたまま (TV tetap menyala terbiar))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❷ V-るのにいいです\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk Kamus] のに いいです</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan kegunaan, fungsi, atau efektivitas suatu benda untuk tujuan perbuatan tertentu ('Bagus / cocok untuk...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk kamus dinominalkan dengan のに lalu diikuti kata evaluasi seperti いい, 便利.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• マイストローは、ごみを減らすのにいいんですよ。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：このカバンは旅行に行くのにいいです (Tas ini bagus untuk dipakai pergi bepergian wisata.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-るのにいいです' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n\n      "
     },
     {
       "id": "moji",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「すみません、こちらの展示室に入ってもいいですか。」<br>B：「はい、どうぞ。（　　）自由にご覧ください。」",
+          "prompt": "A：「昨日、テレビを（　　）寝てしまいました。」<br>B：「電気の無駄遣いですよ。消してから寝てくださいね。」",
           "options": [
-            "外に出て",
-            "入らないで",
-            "中に入って",
-            "帰って"
+            "つけたまま",
+            "つけてから",
+            "つけないで",
+            "つけるために"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このパンフレット、もらってもいいですか。」<br>B：「ええ、そちらに並べて（　　）ので、ご自由にお持ち帰りください。」",
+          "prompt": "A：「このエコバッグ、軽くて丈夫ですね。」<br>B：「ええ、スーパーへ買い物に（　　）すごくいいですよ。」",
           "options": [
-            "います",
-            "みます",
-            "おきます",
-            "あります"
+            "行ったのに",
+            "行くのに",
+            "行かないのに",
+            "行くまま"
           ],
-          "answer": 4
+          "answer": 2
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「週末、どこかおすすめの場所はありますか。」<br>B：「新しい市民ギャラリーがオープンしましたよ。ぜひ一度（　　）みてください。」",
+          "prompt": "A：「冷蔵庫のドアを（　　）にしないでください。冷気が逃げてしまいます。」<br>B：「あ、すみません！すぐ閉めます。」",
           "options": [
-            "行って",
-            "行かないで",
-            "帰って",
-            "やめて"
+            "開けたまま",
+            "閉めたまま",
+            "壊したまま",
+            "忘れたまま"
           ],
           "answer": 1
         },
@@ -208,12 +208,12 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「こちらの施設は何時から何時まで利用できますか。」<br>B：「午前9時から午後5時（　　）となっております。」",
+          "prompt": "A：「環境のために、何か気をつけていることはありますか。」<br>B：「プラスチックごみを減らす（　　）、マイバッグを持つようにしています。」",
           "options": [
-            "から",
-            "まで",
-            "より",
-            "ほど"
+            "ように",
+            "ために",
+            "まま",
+            "のに"
           ],
           "answer": 2
         },
@@ -221,38 +221,38 @@ window.LKPD_DATA = {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「利用カードを作りたいんですが、何が必要ですか。」<br>B：「身分証明書を見せて（　　）ますか。」",
+          "prompt": "A：「ペットボトルのごみは、どうやって出せばいいですか。」<br>B：「水で中を洗って、キャップとラベルを（　　）出してください。」",
           "options": [
-            "あげ",
-            "くれ",
-            "いただけ",
-            "みせ"
+            "外したまま",
+            "外してから",
+            "外さないで",
+            "外すのに"
           ],
-          "answer": 3
+          "answer": 2
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "窓口：「何かお困りですか。」<br>客：「はい、この部屋の予約の仕方を（　　）んですが。」",
+          "prompt": "A：「スプレー缶を捨てたいんですが、そのままごみ袋に入れていいですか。」<br>B：「いいえ、中身を全部（　　）、穴を開けずに別袋で出してください。」",
           "options": [
-            "忘れてほしい",
-            "言わないでほしい",
-            "怒ってほしい",
-            "教えてほしい"
+            "残したまま",
+            "使い切ってから",
+            "買わないで",
+            "燃やしてから"
           ],
-          "answer": 4
+          "answer": 2
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「館内での写真撮影はできますか。」<br>B：「申し訳ございません。特別展示室での撮影は（　　）おります。」",
+          "prompt": "A：「この町では、燃えるごみは（　　）ですか。」<br>B：「毎週月曜日と木曜日ですよ。朝8時半までに出してください。」",
           "options": [
-            "ご遠慮いただいて",
-            "おすすめして",
-            "大歓迎して",
-            "お願いして"
+            "何曜日",
+            "何時",
+            "何日",
+            "どこ"
           ],
           "answer": 1
         },
@@ -260,12 +260,12 @@ window.LKPD_DATA = {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「今日は案内してくださって、ありがとうございました。」<br>B：「いいえ、またいつでもお気軽に（　　）ください。」",
+          "prompt": "A：「部屋を出るときは、電気やエアコンを（　　）ようにしています。」<br>B：「すばらしい省エネですね。」",
           "options": [
-            "お帰り",
-            "お越し",
-            "お休み",
-            "お怒り"
+            "つける",
+            "消す",
+            "壊す",
+            "買う"
           ],
           "answer": 2
         }
@@ -369,93 +369,93 @@ window.LKPD_DATA = {
       ]
     },
     {
-    "id": "dokkai",
-    "label": "4. 読解",
-    "type": "questions",
-    "items": [
+      "id": "dokkai",
+      "label": "4. 読解",
+      "type": "questions",
+      "items": [
         {
-            "id": "q25",
-            "type": "mcq",
-            "number": "Soal 25.",
-            "image": "images/dokkai_visual_1.svg",
-            "passage": "【さくら市 家庭ごみ収集曜日カレンダー】<br>●燃えるごみ（生ごみ・紙くず）：毎週 月・木曜日（市指定の黄色い袋）<br>●燃えないごみ（陶器・ガラス・電球）：第2・第4水曜日（市指定の青い袋）<br>●プラスチック・資源ごみ：毎週 火曜日（透明・半透明袋）<br>●缶・ビン・ペットボトル：毎週 金曜日（水洗いしキャップとラベルを外す）<br>※収集日当日の「朝08:30まで」にごみステーションへ出してください。前夜出し禁止。",
-            "prompt": "料理の生ごみや紙くず（燃えるごみ）を出す曜日はいつですか。",
-            "options": [
-                "毎週 火曜日",
-                "毎週 月曜日と木曜日",
-                "第2・第4水曜日",
-                "毎週 金曜日"
-            ],
-            "answer": 2
+          "id": "q25",
+          "type": "mcq",
+          "number": "Soal 25.",
+          "image": "images/dokkai_visual_1.svg",
+          "passage": "【さくら市 家庭ごみ収集曜日カレンダー】<br>●燃えるごみ（生ごみ・紙くず）：毎週 月・木曜日（市指定の黄色い袋）<br>●燃えないごみ（陶器・ガラス・電球）：第2・第4水曜日（市指定の青い袋）<br>●プラスチック・資源ごみ：毎週 火曜日（透明・半透明袋）<br>●缶・ビン・ペットボトル：毎週 金曜日（水洗いしキャップとラベルを外す）<br>※収集日当日の「朝08:30まで」にごみステーションへ出してください。前夜出し禁止。",
+          "prompt": "料理の生ごみや紙くず（燃えるごみ）を出す曜日はいつですか。",
+          "options": [
+            "毎週 火曜日",
+            "毎週 月曜日と木曜日",
+            "第2・第4水曜日",
+            "毎週 金曜日"
+          ],
+          "answer": 2
         },
         {
-            "id": "q26",
-            "type": "mcq",
-            "number": "Soal 26.",
-            "prompt": "割れた茶碗や電球（燃えないごみ）は、いつ・どの袋で出しますか。",
-            "options": [
-                "毎週火曜日に黄色い袋で出す",
-                "第2・第4水曜日に市指定の青い袋で出す",
-                "毎週金曜日に段ボール箱で出す",
-                "いつでも黒いビニール袋で出す"
-            ],
-            "answer": 2
+          "id": "q26",
+          "type": "mcq",
+          "number": "Soal 26.",
+          "prompt": "割れた茶碗や電球（燃えないごみ）は、いつ・どの袋で出しますか。",
+          "options": [
+            "毎週火曜日に黄色い袋で出す",
+            "第2・第4水曜日に市指定の青い袋で出す",
+            "毎週金曜日に段ボール箱で出す",
+            "いつでも黒いビニール袋で出す"
+          ],
+          "answer": 2
         },
         {
-            "id": "q27",
-            "type": "mcq",
-            "number": "Soal 27.",
-            "prompt": "ペットボトルをごみに出すとき、しなければならないことはどれですか。",
-            "options": [
-                "油を入れて出す",
-                "水洗いしてキャップとラベルを外す",
-                "黒いペンで名前を書く",
-                "燃えるごみの袋に一緒に入れる"
-            ],
-            "answer": 2
+          "id": "q27",
+          "type": "mcq",
+          "number": "Soal 27.",
+          "prompt": "ペットボトルをごみに出すとき、しなければならないことはどれですか。",
+          "options": [
+            "油を入れて出す",
+            "水洗いしてキャップとラベルを外す",
+            "黒いペンで名前を書く",
+            "燃えるごみの袋に一緒に入れる"
+          ],
+          "answer": 2
         },
         {
-            "id": "q28",
-            "type": "mcq",
-            "number": "Soal 28.",
-            "passage": "【マイバッグ持参キャンペーン ＆ ごみ出しの注意】<br>●スーパー・コンビニのレジ袋は1枚5円です。プラスチックごみを減らすためにマイバッグを持参しましょう。<br>●スプレー缶・カセットボンベは必ず中身を使い切り、穴を開けずに別袋で出してください。<br>●電気を無駄遣いしないように、使わない部屋の照明はこまめに消しましょう。",
-            "prompt": "スプレー缶をごみに出すときの正しい方法はどれですか。",
-            "options": [
-                "中身を残したまま燃えるごみに入れる",
-                "中身を使い切り、穴を開けずに別袋で出す",
-                "水に浸けて捨てる",
-                "庭に埋める"
-            ],
-            "answer": 2
+          "id": "q28",
+          "type": "mcq",
+          "number": "Soal 28.",
+          "passage": "【マイバッグ持参キャンペーン ＆ ごみ出しの注意】<br>●スーパー・コンビニのレジ袋は1枚5円です。プラスチックごみを減らすためにマイバッグを持参しましょう。<br>●スプレー缶・カセットボンベは必ず中身を使い切り、穴を開けずに別袋で出してください。<br>●電気を無駄遣いしないように、使わない部屋の照明はこまめに消しましょう。",
+          "prompt": "スプレー缶をごみに出すときの正しい方法はどれですか。",
+          "options": [
+            "中身を残したまま燃えるごみに入れる",
+            "中身を使い切り、穴を開けずに別袋で出す",
+            "水に浸けて捨てる",
+            "庭に埋める"
+          ],
+          "answer": 2
         },
         {
-            "id": "q29",
-            "type": "mcq",
-            "number": "Soal 29.",
-            "prompt": "レジ袋についての説明として正しいものはどれですか。",
-            "options": [
-                "何枚でも無料でもらえる",
-                "プラスチックごみ削減のため1枚5円で有料である",
-                "スーパーでは使ってはいけない",
-                "燃えないごみの袋として使える"
-            ],
-            "answer": 2
+          "id": "q29",
+          "type": "mcq",
+          "number": "Soal 29.",
+          "prompt": "レジ袋についての説明として正しいものはどれですか。",
+          "options": [
+            "何枚でも無料でもらえる",
+            "プラスチックごみ削減のため1枚5円で有料である",
+            "スーパーでは使ってはいけない",
+            "燃えないごみの袋として使える"
+          ],
+          "answer": 2
         },
         {
-            "id": "q30",
-            "type": "mcq",
-            "number": "Soal 30.",
-            "prompt": "環境や節電のために心がけている行動として適切な文はどれですか。",
-            "options": [
-                "部屋の電気を一晩中つけっぱなしにしている",
-                "電気をごみに捨てるようにしている",
-                "電気の無駄遣いをしないように、こまめに消している",
-                "毎日レジ袋をたくさん買うようにしている"
-            ],
-            "answer": 3
+          "id": "q30",
+          "type": "mcq",
+          "number": "Soal 30.",
+          "prompt": "環境や節電のために心がけている行動として適切な文はどれですか。",
+          "options": [
+            "部屋の電気を一晩中つけっぱなしにしている",
+            "電気をごみに捨てるようにしている",
+            "電気の無駄遣いをしないように、こまめに消している",
+            "毎日レジ袋をたくさん買うようにしている"
+          ],
+          "answer": 3
         }
-    ]
-},
+      ]
+    },
     {
       "id": "kanji",
       "label": "Kanji",
@@ -658,37 +658,32 @@ window.LKPD_DATA = {
         {
           "id": "tr1",
           "type": "translation",
-          "number": "Soal T1.",
-          "prompt": "Berbagai materi dan foto dipamerkan di ruang pameran.",
-          "sample": "展示室にいろいろな資料や写真が展示してあります。"
+          "prompt": "Saya tidak sengaja tidur dalam keadaan menyalakan AC.",
+          "sample": "エアコンをつけたまま寝てしまいました。"
         },
         {
           "id": "tr2",
           "type": "translation",
-          "number": "Soal T2.",
-          "prompt": "Silakan coba berkunjung ke perpustakaan kota sekali.",
-          "sample": "ぜひ一度、市立図書館へ行ってみてください。"
+          "prompt": "Tas belanja ini sangat bagus untuk membawa barang yang berat.",
+          "sample": "このマイバッグは重い物を運ぶのにいいです。"
         },
         {
           "id": "tr3",
           "type": "translation",
-          "number": "Soal T3.",
-          "prompt": "Dari jam berapa sampai jam berapa fasilitas ini dibuka?",
-          "sample": "この施設は何時から何時まで開いていますか。"
+          "prompt": "Demi mengurangi sampah, saya membawa kantong belanja sendiri.",
+          "sample": "ごみを減らすために、マイバッグを持っています。"
         },
         {
           "id": "tr4",
           "type": "translation",
-          "number": "Soal T4.",
-          "prompt": "Bisakah Anda mengajarkan cara meminjam buku di sini?",
-          "sample": "ここで本を借りる方法を教えていただけますか。"
+          "prompt": "Tolong jangan biarkan pintu kulkas terbuka.",
+          "sample": "冷蔵庫のドアを開けたままにしないでください。"
         },
         {
           "id": "tr5",
           "type": "translation",
-          "number": "Soal T5.",
-          "prompt": "Dilarang merokok dan buanglah sampah di rumah masing-masing.",
-          "sample": "全館禁煙ですので、ゴミは各自でお持ち帰りください。"
+          "prompt": "Saya selalu berusaha untuk mematikan lampu saat keluar ruangan.",
+          "sample": "部屋を出るとき、電気をこまめに消すようにしています。"
         }
       ]
     },

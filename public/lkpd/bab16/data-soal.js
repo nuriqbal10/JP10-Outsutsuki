@@ -21,7 +21,7 @@ window.LKPD_DATA = {
       "id": "materi",
       "label": "Materi",
       "type": "static",
-      "html": "\n        <h2>Ringkasan Materi & Tata Bahasa Bab 16</h2>\n        <div class=\"vocab-grid\">\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px; margin-bottom:16px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Pola Tata Bahasa Utama</h4>\n            <ul>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［たら］／N［なら］（仮定条件・緊急時の行動）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan instruksi atau tindakan wajib yang harus segera diambil jika suatu situasi darurat terjadi.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 地震が起きたら、机の下に入って頭を守ってください。(Jika gempa terjadi, masuklah ke bawah meja dan lindungi kepala Anda.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［てはいけません］／V［ないでください］（緊急時の禁止）</strong><br>\n                  <span style=\"color:#334155;\">Larangan tegas demi keselamatan jiwa dalam situasi bencana.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: エレベーターを使ってはいけません。(Jangan pernah memakai lift saat gempa/kebakaran!) / 慌てて外に飛び出さないでください。</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">非常持ち出し袋 (水・食料・懐中電灯・救急箱)</strong><br>\n                  <span style=\"color:#334155;\">Barang-barang esensial tanggap darurat yang wajib disiapkan di tempat tinggal Jepang.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 水と乾パンを3日分用意しておきましょう。</em>\n                </li>\n              \n            </ul>\n          </div>\n\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Kosakata Penting Bab 16</h4>\n            <table style=\"width:100%; border-collapse:collapse; margin-top:8px;\">\n              <thead>\n                <tr style=\"background:#e2e8f0; text-align:left;\">\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Bahasa Jepang</th>\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Arti Bahasa Indonesia</th>\n                </tr>\n              </thead>\n              <tbody>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">地震 (じしん)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Gempa bumi</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">震度 (しんど)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Skala intensitas gempa Jepang (Shindo)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">避難所 (ひなんじょ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Tempat evakuasi darurat (sekolah, aula)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">非常口 (ひじょうぐち)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Pintu keluar darurat</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">津波 (つなみ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Tsunami</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">台風 (たいふう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Angin topan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">懐中電灯 (かいちゅうでんとう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Senter baterai</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">停電 (ていでん)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mati listrik padam</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">頭を守る (あたまをまもる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Melindungi kepala</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">慌てる (あわてる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Panik / terburu-buru</td>\n                  </tr>\n                \n              </tbody>\n            </table>\n          </div>\n        </div>\n      "
+      "html": "<h2>Ringkasan Materi & Tata Bahasa Bab 16</h2>\n\n\n        <h3>2. Tata Bahasa Utama (IRODORI文法リスト準拠)</h3>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❶ V(命令形）　 / V-るな（禁止の命令形）\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">Bentuk Perintah Tegas (命令形) & Bentuk Larangan (禁止形：V-るな)</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Instruksi darurat, rambu pabrik, atau aba-aba keselamatan di lingkungan kerja pabrik / proyek ('Harus segera... / Jangan...!')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Gol 1 e-dan (止まれ), Gol 2 ro (止めろ). Bentuk larangan: kamus + な (触るな).</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 急げ。こっちに集まれ。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 走るな。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：危ないからここで止まれ (Karena berbahaya, berhenti di sini!)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Permintaan Formal / Sopan]</strong> Kata Kerja Bentuk-Te + もらえませんか？ <span style=\"color:#64748b;\">(チェックする → チェックしてもらえませんか (bisakah tolong periksa?) / 教える → 教えてもらえませんか (sudikah mengajari?))</span></div>\n              <div style=\"margin:2px 0;\"><strong>[Permintaan Standar Sehari-hari]</strong> Kata Kerja Bentuk-Te + ください <span style=\"color:#64748b;\">(書く → 書いてください (tolong tulis) / 待つ → 待ってください (tolong tunggu))</span></div>\n              <div style=\"margin:2px 0;\"><strong>[Permintaan Santai Antarteman]</strong> Kata Kerja Bentuk-Te (+ くれる？) <span style=\"color:#64748b;\">(持つ → これ持ってくれる？ (bisa bawakan ini?) / 手伝う → ちょっと手伝って (tolong bantu sebentar))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❷ V-ないようにしてください\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk-Nai] ように して ください</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Memberikan instruksi kebiasaan atau petunjuk disiplin preventif secara sopan ('Tolong usahakan untuk tidak...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk-Nai + ように してください.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• できるだけ煙を吸わないようにしてください。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：遅刻しないようにしてください (Tolong usahakan agar tidak terlambat.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-ないようにしてください' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❸ V-（られ）なくなります\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Potensial Negatif] なくなります</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan perubahan hilangnya kemampuan yang sebelumnya bisa dilakukan ('Menjadi tidak bisa lagi...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Potensial negatif (-nai) buang 'い' + くなります.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• ドアが開かなくなると、外に逃げられなくなります。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：忙しくて遊べなくなりました (Karena sibuk, saya menjadi tidak bisa bermain lagi.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-（られ）なくなります' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❹ Sても、～\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kalimat Bentuk-Te] も、〜</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan kondisi pengandaian konsesif yang berlawanan dengan hasil lumrah ('Meskipun / walaupun... tetap...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Bentuk-Te + も (kata sifat-i: 寒くても, kata benda/sifat-na: でも).</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 大きな地震が来ても、あわてて動かないでください。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：雨が降っても試合はあります (Meskipun hujan turun, pertandingan tetap diadakan.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kosakata Praktis Relevan]</strong> Dipakai dalam topik '自然と環境' (初級2 Bab 16) <span style=\"color:#64748b;\">(毎日の会話でよく使われる標準的な語彙と組み合わせて活用できます。)</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❺ V（普通形）かどうか、～\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kalimat Bentuk Biasa] かどうか、〜</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan kebimbangan atas kepastian benar atau tidaknya suatu hal ('Apakah ... atau tidak')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Bentuk biasa + かどうか, sering diikuti kata kerja periksa/konfirmasi (調べます, 聞きます).</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 店が開いているかどうか、わからないけど…。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：明日晴れるかどうか分かりません (Saya tidak tahu apakah besok cerah atau tidak.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kosakata Praktis Relevan]</strong> Dipakai dalam topik '自然と環境' (初級2 Bab 16) <span style=\"color:#64748b;\">(毎日の会話でよく使われる標準的な語彙と組み合わせて活用できます。)</span></div>\n            </div>\n          </div>\n        </details>\n\n      "
     },
     {
       "id": "moji",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「すみません、こちらの展示室に入ってもいいですか。」<br>B：「はい、どうぞ。（　　）自由にご覧ください。」",
+          "prompt": "先輩：「津波の警報が出たぞ！高い場所へ早く（　　）！」<br>後輩：「はい、すぐ高台へ避難します！」",
           "options": [
-            "外に出て",
-            "入らないで",
-            "中に入って",
-            "帰って"
+            "逃げろ",
+            "逃げるな",
+            "逃げます",
+            "逃げない"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このパンフレット、もらってもいいですか。」<br>B：「ええ、そちらに並べて（　　）ので、ご自由にお持ち帰りください。」",
+          "prompt": "放送：「地震です！火災発生のおそれがあります。エレベーターを（　　）！」",
           "options": [
-            "います",
-            "みます",
-            "おきます",
-            "あります"
+            "使え",
+            "使うな",
+            "使いなさい",
+            "使います"
           ],
-          "answer": 4
+          "answer": 2
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「週末、どこかおすすめの場所はありますか。」<br>B：「新しい市民ギャラリーがオープンしましたよ。ぜひ一度（　　）みてください。」",
+          "prompt": "先生：「大きな地震が起きたときは、慌てて外へ（　　）ようにしてください。」",
           "options": [
-            "行って",
-            "行かないで",
-            "帰って",
-            "やめて"
+            "飛び出さない",
+            "飛び出す",
+            "飛び出せ",
+            "飛び出した"
           ],
           "answer": 1
         },
@@ -208,12 +208,12 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「こちらの施設は何時から何時まで利用できますか。」<br>B：「午前9時から午後5時（　　）となっております。」",
+          "prompt": "A：「大きな地震のあと、携帯電話が（　　）しまいました。」<br>B：「回線が混み合っているからですね。171を使いましょう。」",
           "options": [
-            "から",
-            "まで",
-            "より",
-            "ほど"
+            "つながりやすくなくなって",
+            "使えなくなって",
+            "直らなくなって",
+            "聞こえなくなって"
           ],
           "answer": 2
         },
@@ -221,38 +221,38 @@ window.LKPD_DATA = {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「利用カードを作りたいんですが、何が必要ですか。」<br>B：「身分証明書を見せて（　　）ますか。」",
+          "prompt": "A：「地震の大きな揺れが（　　）、しばらく机の下から出ないでください。」<br>B：「はい、頭を守ります。」",
           "options": [
-            "あげ",
-            "くれ",
-            "いただけ",
-            "みせ"
+            "収まっても",
+            "収まるのに",
+            "収まったまま",
+            "収まるために"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "窓口：「何かお困りですか。」<br>客：「はい、この部屋の予約の仕方を（　　）んですが。」",
+          "prompt": "A：「家族が全員無事（　　）心配です。」<br>B：「災害用伝言ダイヤルの171で安否を確認してみましょう。」",
           "options": [
-            "忘れてほしい",
-            "言わないでほしい",
-            "怒ってほしい",
-            "教えてほしい"
+            "かどうか",
+            "のように",
+            "のために",
+            "のまま"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「館内での写真撮影はできますか。」<br>B：「申し訳ございません。特別展示室での撮影は（　　）おります。」",
+          "prompt": "指導員：「避難するときは、車の渋滞を防ぐために必ず（　　）避難してください。」",
           "options": [
-            "ご遠慮いただいて",
-            "おすすめして",
-            "大歓迎して",
-            "お願いして"
+            "徒歩で",
+            "車で",
+            "タクシーで",
+            "トラックで"
           ],
           "answer": 1
         },
@@ -260,14 +260,14 @@ window.LKPD_DATA = {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「今日は案内してくださって、ありがとうございました。」<br>B：「いいえ、またいつでもお気軽に（　　）ください。」",
+          "prompt": "A：「非常持ち出し袋には、飲料水を最低（　　）分用意したほうがいいですよ。」<br>B：「わかりました。すぐに準備します。」",
           "options": [
-            "お帰り",
-            "お越し",
-            "お休み",
-            "お怒り"
+            "3日",
+            "3時間",
+            "1ヶ月",
+            "半年"
           ],
-          "answer": 2
+          "answer": 1
         }
       ]
     },
@@ -369,93 +369,93 @@ window.LKPD_DATA = {
       ]
     },
     {
-    "id": "dokkai",
-    "label": "4. 読解",
-    "type": "questions",
-    "items": [
+      "id": "dokkai",
+      "label": "4. 読解",
+      "type": "questions",
+      "items": [
         {
-            "id": "q25",
-            "type": "mcq",
-            "number": "Soal 25.",
-            "image": "images/dokkai_visual_1.svg",
-            "passage": "【さくら南地区 防災避難マップ ＆ 地震発生時の初期行動】<br>●第1次指定避難所：さくら第一小学校 体育館（海抜18m・津波安全エリア・給水拠点）<br>●広域避難場所：市民中央公園（火災延焼時の緊急集合場所）<br>●地震発生時の行動：①まず頭を守る（机の下に潜る）②揺れが収まったら火を消す ③ドアを開けて出口を確保する。エレベーターは絶対に使用禁止。徒歩で避難すること。",
-            "prompt": "さくら南地区の「第1次指定避難所」はどこですか。",
-            "options": [
-                "市民中央公園",
-                "さくら第一小学校の体育館",
-                "さくら駅前交差点",
-                "近くのコンビニ"
-            ],
-            "answer": 2
+          "id": "q25",
+          "type": "mcq",
+          "number": "Soal 25.",
+          "image": "images/dokkai_visual_1.svg",
+          "passage": "【さくら南地区 防災避難マップ ＆ 地震発生時の初期行動】<br>●第1次指定避難所：さくら第一小学校 体育館（海抜18m・津波安全エリア・給水拠点）<br>●広域避難場所：市民中央公園（火災延焼時の緊急集合場所）<br>●地震発生時の行動：①まず頭を守る（机の下に潜る）②揺れが収まったら火を消す ③ドアを開けて出口を確保する。エレベーターは絶対に使用禁止。徒歩で避難すること。",
+          "prompt": "さくら南地区の「第1次指定避難所」はどこですか。",
+          "options": [
+            "市民中央公園",
+            "さくら第一小学校の体育館",
+            "さくら駅前交差点",
+            "近くのコンビニ"
+          ],
+          "answer": 2
         },
         {
-            "id": "q26",
-            "type": "mcq",
-            "number": "Soal 26.",
-            "prompt": "地震で激しい揺れを感じたとき、最初にすべき行動はどれですか。",
-            "options": [
-                "慌てて外へ走り出す",
-                "まず頑丈な机の下に潜り頭を守る",
-                "すぐにエレベーターに乗る",
-                "窓を開けて大声を出す"
-            ],
-            "answer": 2
+          "id": "q26",
+          "type": "mcq",
+          "number": "Soal 26.",
+          "prompt": "地震で激しい揺れを感じたとき、最初にすべき行動はどれですか。",
+          "options": [
+            "慌てて外へ走り出す",
+            "まず頑丈な机の下に潜り頭を守る",
+            "すぐにエレベーターに乗る",
+            "窓を開けて大声を出す"
+          ],
+          "answer": 2
         },
         {
-            "id": "q27",
-            "type": "mcq",
-            "number": "Soal 27.",
-            "prompt": "避難所へ移動するとき、守らなければならないルールはどれですか。",
-            "options": [
-                "自家用車を運転して移動する",
-                "道路渋滞を防ぐため徒歩で避難する",
-                "自転車で高速道路を走る",
-                "荷物を台車に山積みにして走る"
-            ],
-            "answer": 2
+          "id": "q27",
+          "type": "mcq",
+          "number": "Soal 27.",
+          "prompt": "避難所へ移動するとき、守らなければならないルールはどれですか。",
+          "options": [
+            "自家用車を運転して移動する",
+            "道路渋滞を防ぐため徒歩で避難する",
+            "自転車で高速道路を走る",
+            "荷物を台車に山積みにして走る"
+          ],
+          "answer": 2
         },
         {
-            "id": "q28",
-            "type": "mcq",
-            "number": "Soal 28.",
-            "passage": "【非常用持ち出し袋チェックリスト ＆ 災害用伝言ダイヤル】<br>●必携品：飲料水（1人1日3L×3日分）、非常食（乾パン・缶詰）、懐中電灯、携帯ラジオ、モバイルバッテリー、在留カード、現金（小銭）<br>●災害用伝言ダイヤル「171」：電話が繋がりにくい災害時に音声メッセージを録音・再生できるシステム（1：録音、2：再生）。",
-            "prompt": "非常持ち出し袋に入れておくべき飲料水の目安として適切なものはどれですか。",
-            "options": [
-                "家族全員でコップ1杯",
-                "1人1日3リットル×最低3日分",
-                "ジュース1本のみ",
-                "水は重いので持参不要"
-            ],
-            "answer": 2
+          "id": "q28",
+          "type": "mcq",
+          "number": "Soal 28.",
+          "passage": "【非常用持ち出し袋チェックリスト ＆ 災害用伝言ダイヤル】<br>●必携品：飲料水（1人1日3L×3日分）、非常食（乾パン・缶詰）、懐中電灯、携帯ラジオ、モバイルバッテリー、在留カード、現金（小銭）<br>●災害用伝言ダイヤル「171」：電話が繋がりにくい災害時に音声メッセージを録音・再生できるシステム（1：録音、2：再生）。",
+          "prompt": "非常持ち出し袋に入れておくべき飲料水の目安として適切なものはどれですか。",
+          "options": [
+            "家族全員でコップ1杯",
+            "1人1日3リットル×最低3日分",
+            "ジュース1本のみ",
+            "水は重いので持参不要"
+          ],
+          "answer": 2
         },
         {
-            "id": "q29",
-            "type": "mcq",
-            "number": "Soal 29.",
-            "prompt": "災害時に安否を確認するための「災害用伝言ダイヤル」の番号は何番ですか。",
-            "options": [
-                "110",
-                "119",
-                "171",
-                "104"
-            ],
-            "answer": 3
+          "id": "q29",
+          "type": "mcq",
+          "number": "Soal 29.",
+          "prompt": "災害時に安否を確認するための「災害用伝言ダイヤル」の番号は何番ですか。",
+          "options": [
+            "110",
+            "119",
+            "171",
+            "104"
+          ],
+          "answer": 3
         },
         {
-            "id": "q30",
-            "type": "mcq",
-            "number": "Soal 30.",
-            "prompt": "避難時の貴重品として必ず携帯すべき身分証明書はどれですか。",
-            "options": [
-                "ポイントカード",
-                "在留カードやパスポート",
-                "図書館の貸出カード",
-                "クリーニングの預かり証"
-            ],
-            "answer": 2
+          "id": "q30",
+          "type": "mcq",
+          "number": "Soal 30.",
+          "prompt": "避難時の貴重品として必ず携帯すべき身分証明書はどれですか。",
+          "options": [
+            "ポイントカード",
+            "在留カードやパスポート",
+            "図書館の貸出カード",
+            "クリーニングの預かり証"
+          ],
+          "answer": 2
         }
-    ]
-},
+      ]
+    },
     {
       "id": "kanji",
       "label": "Kanji",
@@ -658,37 +658,32 @@ window.LKPD_DATA = {
         {
           "id": "tr1",
           "type": "translation",
-          "number": "Soal T1.",
-          "prompt": "Berbagai materi dan foto dipamerkan di ruang pameran.",
-          "sample": "展示室にいろいろな資料や写真が展示してあります。"
+          "prompt": "Cepat lari ke tempat evakuasi yang aman!",
+          "sample": "安全な避難所へ早く逃げろ！"
         },
         {
           "id": "tr2",
           "type": "translation",
-          "number": "Soal T2.",
-          "prompt": "Silakan coba berkunjung ke perpustakaan kota sekali.",
-          "sample": "ぜひ一度、市立図書館へ行ってみてください。"
+          "prompt": "Jangan gunakan lift saat terjadi gempa bumi!",
+          "sample": "地震のとき、エレベーターを使うな！"
         },
         {
           "id": "tr3",
           "type": "translation",
-          "number": "Soal T3.",
-          "prompt": "Dari jam berapa sampai jam berapa fasilitas ini dibuka?",
-          "sample": "この施設は何時から何時まで開いていますか。"
+          "prompt": "Tolong usahakan untuk tidak panik dan berteriak.",
+          "sample": "慌てて大声を出さないようにしてください。"
         },
         {
           "id": "tr4",
           "type": "translation",
-          "number": "Soal T4.",
-          "prompt": "Bisakah Anda mengajarkan cara meminjam buku di sini?",
-          "sample": "ここで本を借りる方法を教えていただけますか。"
+          "prompt": "Akibat bencana, telepon seluler menjadi tidak bisa digunakan.",
+          "sample": "災害で携帯電話が使えなくなりました。"
         },
         {
           "id": "tr5",
           "type": "translation",
-          "number": "Soal T5.",
-          "prompt": "Dilarang merokok dan buanglah sampah di rumah masing-masing.",
-          "sample": "全館禁煙ですので、ゴミは各自でお持ち帰りください。"
+          "prompt": "Meskipun guncangan sudah reda, tolong jangan lengah.",
+          "sample": "揺れが収まっても、油断しないでください。"
         }
       ]
     },

@@ -21,7 +21,7 @@ window.LKPD_DATA = {
       "id": "materi",
       "label": "Materi",
       "type": "static",
-      "html": "\n        <h2>Ringkasan Materi & Tata Bahasa Bab 18</h2>\n        <div class=\"vocab-grid\">\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px; margin-bottom:16px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Pola Tata Bahasa Utama</h4>\n            <ul>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［意向形］＋と思っています（意志・中長期の計画）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan niat atau keputusan masa depan yang sudah dipikirkan matang sejak beberapa waktu lalu.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 将来、自分の会社を作ろうと思っています。(Di masa depan, saya berniat mendirikan perusahaan sendiri.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">V［辞書形］＋つもりです（意志・予定）</strong><br>\n                  <span style=\"color:#334155;\">Menyatakan rencana pasti atau kepastian tindakan yang hendak dilakukan.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 特定技能試験に合格して、あと5年間日本で働くつもりです。(Saya berencana lulus ujian Tokutei Ginou dan bekerja di Jepang 5 tahun lagi.)</em>\n                </li>\n              \n                <li style=\"margin-bottom:12px;\">\n                  <strong style=\"color:#0f172a; font-size:1.05rem;\">～ために／～の夢を叶えるために</strong><br>\n                  <span style=\"color:#334155;\">Menjelaskan tekad kuat demi menggapai impian masa depan.</span><br>\n                  <em style=\"color:#047857; font-weight:bold;\">Contoh: 家族を幸せにするために、これからも一生懸命頑張ります。</em>\n                </li>\n              \n            </ul>\n          </div>\n\n          <div class=\"vocab-card\" style=\"background:#f8fafc; border:1px solid #cbd5e1; padding:16px; border-radius:12px;\">\n            <h4 style=\"color:#1e3a8a; border-bottom:2px solid #3b82f6; padding-bottom:6px;\">Kosakata Penting Bab 18</h4>\n            <table style=\"width:100%; border-collapse:collapse; margin-top:8px;\">\n              <thead>\n                <tr style=\"background:#e2e8f0; text-align:left;\">\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Bahasa Jepang</th>\n                  <th style=\"padding:8px; border:1px solid #cbd5e1;\">Arti Bahasa Indonesia</th>\n                </tr>\n              </thead>\n              <tbody>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">将来 (しょうらい)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Masa depan</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">夢 (ゆめ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Impian / cita-cita</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">会社を作る (かいしゃをつくる)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mendirikan perusahaan / merintis bisnis</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">特定技能 (とくていぎのう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Specified Skilled Worker (SSW)</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">試験を受ける (しけんをうける)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mengikuti ujian</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">合格する (ごうかくする)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Lulus ujian</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">技術 (ぎじゅつ)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Keterampilan teknik / skill</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">独立する (どくりつする)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mandiri / membuka usaha sendiri</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">目標 (もくひょう)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Target / capaian sasaran</td>\n                  </tr>\n                \n                  <tr>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1; font-weight:bold;\" class=\"ja\">応援する (おうえんする)</td>\n                    <td style=\"padding:8px; border:1px solid #cbd5e1;\">Mendukung / memberi semangat</td>\n                  </tr>\n                \n              </tbody>\n            </table>\n          </div>\n        </div>\n      "
+      "html": "<h2>Ringkasan Materi & Tata Bahasa Bab 18</h2>\n\n\n        <h3>2. Tata Bahasa Utama (IRODORI文法リスト準拠)</h3>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❶ V-（よ）うと思います／思っています\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk Ajakan (意志形)] と 思います ／ 思っています</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan rencana atau kehendak pribadi yang hendak diwujudkan ('Saya bermaksud / berencana...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk kehendak/ishikei (Gol 1: o-dan + u, Gol 2: you) + と 思っています.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 将来は、タイで、自分の会社を作ろうと思います。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：来年国へ帰ろうと思っています (Saya berencana pulang ke tanah air tahun depan.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-（よ）うと思います／思っています' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❷ V-るために、～\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk Kamus] ために、〜</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menyatakan tekad kuat melakukan suatu perbuatan demi meraih cita-cita ('Demi / untuk tujuan melakukan...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk kamus + ために. Kedua klausa dikendalikan oleh subjek berkehendak sama.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 日本に住むために、もっと日本語をがんばろうと思います。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：日本で働くために毎日勉強しています (Saya belajar setiap hari demi bekerja di Jepang.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Bentuk Kamus (Kehendak Aktif)]</strong> Bentuk Kamus (辞書形) + ために、〜 <span style=\"color:#64748b;\">(働く (bekerja) → 日本で働くために / 買う (membeli) → 家を買うために)</span></div>\n              <div style=\"margin:2px 0;\"><strong>[Kata Benda (Tujuan / Orang)]</strong> [Kata Benda] + の + ために、〜 <span style=\"color:#64748b;\">(健康 (kesehatan) → 健康のために / 家族 (keluarga) → 家族のために)</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❸ V-てあげます\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk-Te] あげます</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Melakukan suatu kebaikan atau bantuan tindakan demi orang lain ('Melakukan kebaikan V untuk orang lain')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Kata kerja bentuk-Te + あげます. Pihak penerima jasa ditandai partikel に.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 両親に、家を建ててあげるつもりです。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：友達の荷物を持ってあげました (Saya membawakan barang bawaan teman sebagai bantuan.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-てあげます' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❹ V-てもらいます\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk-Te] もらいます</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Menerima budi baik atau pertolongan tindakan dari orang lain ('Mendapat bantuan tindakan dari...')</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Pelaku yang memberi jasa ditandai dengan partikel に.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• JF工業のみなさんには、とても親切にしてもらいました。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：先生に作文を直してもらいました (Saya dibantu dikoreksi karangan karangannya oleh guru.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-てもらいます' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n        <details open style=\"margin-bottom:12px; background:#ffffff; border:1.5px solid #cbd5e1; border-radius:10px; padding:12px 16px; box-shadow:0 2px 4px rgba(0,0,0,0.02);\">\n          <summary class=\"ja\" style=\"font-weight:bold; font-size:1.05rem; cursor:pointer; color:#1e3a8a;\">\n            ❺ V-てくれます\n          </summary>\n          <div style=\"margin-top:10px; line-height:1.7; font-size:0.95rem;\">\n            <p style=\"margin:4px 0;\"><strong>Pola / Rumus:</strong> <code style=\"background:#e0f2fe; color:#0369a1; padding:2px 8px; border-radius:4px; font-weight:bold; font-size:0.95rem;\">[Kata Kerja Bentuk-Te] くれます</code></p>\n            <p style=\"margin:4px 0;\"><strong>Arti:</strong> Orang lain dengan sukarela melakukan kebaikan atau bantuan tindakan kepada saya atau keluarga saya</p>\n            <p style=\"margin:4px 0; color:#475569;\"><strong>Penjelasan:</strong> Pelaku pertolongan ditandai partikel が. Kata kerja くれます khusus aksi yang mengarah ke pihak pembicara.</p>\n            <div style=\"margin-top:8px; background:#f8fafc; border-left:4px solid #3b82f6; padding:8px 12px; border-radius:0 6px 6px 0;\">\n              <strong style=\"color:#1e40af;\">Contoh Penggunaan:</strong>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0f172a;\">• 山内さんは、私にたくさん、日本語を教えてくれました。</p>\n              <p class=\"ja\" style=\"margin:2px 0; color:#0369a1; font-weight:600;\">• 例：先輩が仕事を手伝ってくれました (Senior dengan senang hati membantu pekerjaan saya.)</p>\n            </div>\n            <div style=\"margin-top:8px; background:#f1f5f9; padding:6px 10px; border-radius:6px; font-size:0.88rem;\">\n              <strong>Bentuk Sambungan:</strong>\n              <div style=\"margin:2px 0;\"><strong>[Kata Kerja Sehari-hari (動詞の接続)]</strong> Gunakan konjugasi bentuk yang sesuai dengan pola 'V-てくれます' <span style=\"color:#64748b;\">(行く (pergi) / 食べる (makan))</span></div>\n            </div>\n          </div>\n        </details>\n\n      "
     },
     {
       "id": "moji",
@@ -169,38 +169,38 @@ window.LKPD_DATA = {
           "id": "q11",
           "type": "mcq",
           "number": "Soal 11.",
-          "prompt": "A：「すみません、こちらの展示室に入ってもいいですか。」<br>B：「はい、どうぞ。（　　）自由にご覧ください。」",
+          "prompt": "A：「将来の夢は何ですか。」<br>B：「日本で学んだ技術を活かして、国で自分の会社を（　　）と思っています。」",
           "options": [
-            "外に出て",
-            "入らないで",
-            "中に入って",
-            "帰って"
+            "作ろう",
+            "作る",
+            "作った",
+            "作らない"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q12",
           "type": "mcq",
           "number": "Soal 12.",
-          "prompt": "A：「このパンフレット、もらってもいいですか。」<br>B：「ええ、そちらに並べて（　　）ので、ご自由にお持ち帰りください。」",
+          "prompt": "A：「特定技能1号の試験を受けるそうですね。」<br>B：「はい。試験に（　　）ために、毎晩日本語と専門用語を勉強しています。」",
           "options": [
-            "います",
-            "みます",
-            "おきます",
-            "あります"
+            "合格する",
+            "合格しない",
+            "合格した",
+            "合格しよう"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q13",
           "type": "mcq",
           "number": "Soal 13.",
-          "prompt": "A：「週末、どこかおすすめの場所はありますか。」<br>B：「新しい市民ギャラリーがオープンしましたよ。ぜひ一度（　　）みてください。」",
+          "prompt": "A：「この難しい書類の書き方、誰かに教えてもらったの？」<br>B：「はい、山田さんが丁寧に（　　）くれました。」",
           "options": [
-            "行って",
-            "行かないで",
-            "帰って",
-            "やめて"
+            "教えて",
+            "怒って",
+            "捨てて",
+            "隠して"
           ],
           "answer": 1
         },
@@ -208,51 +208,51 @@ window.LKPD_DATA = {
           "id": "q14",
           "type": "mcq",
           "number": "Soal 14.",
-          "prompt": "A：「こちらの施設は何時から何時まで利用できますか。」<br>B：「午前9時から午後5時（　　）となっております。」",
+          "prompt": "A：「新しい実習生が入ってきたよ。」<br>B：「じゃあ、私が工場のルールを（　　）あげますね。」",
           "options": [
-            "から",
-            "まで",
-            "より",
-            "ほど"
+            "説明して",
+            "忘れて",
+            "壊して",
+            "断って"
           ],
-          "answer": 2
+          "answer": 1
         },
         {
           "id": "q15",
           "type": "mcq",
           "number": "Soal 15.",
-          "prompt": "A：「利用カードを作りたいんですが、何が必要ですか。」<br>B：「身分証明書を見せて（　　）ますか。」",
+          "prompt": "A：「ビザの更新手続き、1人でできたの？」<br>B：「いいえ、会社の人事課の方に（　　）もらいました。」",
           "options": [
-            "あげ",
-            "くれ",
-            "いただけ",
-            "みせ"
+            "手伝って",
+            "怒って",
+            "逃げて",
+            "やめて"
           ],
-          "answer": 3
+          "answer": 1
         },
         {
           "id": "q16",
           "type": "mcq",
           "number": "Soal 16.",
-          "prompt": "窓口：「何かお困りですか。」<br>客：「はい、この部屋の予約の仕方を（　　）んですが。」",
+          "prompt": "A：「日本での修了後、どうするつもりですか。」<br>B：「特定技能2号を目指して、あと5年間日本で働く（　　）です。」",
           "options": [
-            "忘れてほしい",
-            "言わないでほしい",
-            "怒ってほしい",
-            "教えてほしい"
+            "つもり",
+            "まま",
+            "のに",
+            "よう"
           ],
-          "answer": 4
+          "answer": 1
         },
         {
           "id": "q17",
           "type": "mcq",
           "number": "Soal 17.",
-          "prompt": "A：「館内での写真撮影はできますか。」<br>B：「申し訳ございません。特別展示室での撮影は（　　）おります。」",
+          "prompt": "A：「会社を設立するために、どんな準備をしていますか。」<br>B：「毎月の給料から、将来の資金を（　　）ています。」",
           "options": [
-            "ご遠慮いただいて",
-            "おすすめして",
-            "大歓迎して",
-            "お願いして"
+            "貯金し",
+            "無駄遣いし",
+            "捨て",
+            "忘れ"
           ],
           "answer": 1
         },
@@ -260,14 +260,14 @@ window.LKPD_DATA = {
           "id": "q18",
           "type": "mcq",
           "number": "Soal 18.",
-          "prompt": "A：「今日は案内してくださって、ありがとうございました。」<br>B：「いいえ、またいつでもお気軽に（　　）ください。」",
+          "prompt": "A：「今まで親切にしてくださって、本当にありがとうございました。」<br>B：「こちらこそ。国へ帰っても、夢に向かって（　　）ね！」",
           "options": [
-            "お帰り",
-            "お越し",
-            "お休み",
-            "お怒り"
+            "頑張ってください",
+            "やめてください",
+            "怒ってください",
+            "帰らないでください"
           ],
-          "answer": 2
+          "answer": 1
         }
       ]
     },
@@ -369,93 +369,93 @@ window.LKPD_DATA = {
       ]
     },
     {
-    "id": "dokkai",
-    "label": "4. 読解",
-    "type": "questions",
-    "items": [
+      "id": "dokkai",
+      "label": "4. 読解",
+      "type": "questions",
+      "items": [
         {
-            "id": "q25",
-            "type": "mcq",
-            "number": "Soal 25.",
-            "image": "images/dokkai_visual_1.svg",
-            "passage": "【特定技能1号（SSW）制度のご案内】<br>●在留期間：1年、6か月または4か月ごとの更新（通算で上限5年まで）<br>●報酬：日本人と同等額以上の給与を支給<br>●要件：①日本語能力（JFT-Basic A2以上またはJLPT N4以上）②技能試験（分野別特定技能評価試験に合格）※技能実習2号を良好に修了した者は試験免除で移行可能。<br>●転職：同一業務区分内であれば転職可能。",
-            "prompt": "特定技能1号の在留資格で日本に滞在できる期間は、通算で最長何年ですか。",
-            "options": [
-                "最長 1年",
-                "最長 3年",
-                "最長 5年まで",
-                "10年以上無制限"
-            ],
-            "answer": 3
+          "id": "q25",
+          "type": "mcq",
+          "number": "Soal 25.",
+          "image": "images/dokkai_visual_1.svg",
+          "passage": "【特定技能1号（SSW）制度のご案内】<br>●在留期間：1年、6か月または4か月ごとの更新（通算で上限5年まで）<br>●報酬：日本人と同等額以上の給与を支給<br>●要件：①日本語能力（JFT-Basic A2以上またはJLPT N4以上）②技能試験（分野別特定技能評価試験に合格）※技能実習2号を良好に修了した者は試験免除で移行可能。<br>●転職：同一業務区分内であれば転職可能。",
+          "prompt": "特定技能1号の在留資格で日本に滞在できる期間は、通算で最長何年ですか。",
+          "options": [
+            "最長 1年",
+            "最長 3年",
+            "最長 5年まで",
+            "10年以上無制限"
+          ],
+          "answer": 3
         },
         {
-            "id": "q26",
-            "type": "mcq",
-            "number": "Soal 26.",
-            "prompt": "特定技能1号へ移行するために必要な「日本語能力の基準」はどれですか。",
-            "options": [
-                "JLPT N1の最高レベル",
-                "JFT-Basic（日本語基礎テスト）A2以上またはJLPT N4以上",
-                "日本語の試験は一切不要",
-                "大学卒業証明書のみ"
-            ],
-            "answer": 2
+          "id": "q26",
+          "type": "mcq",
+          "number": "Soal 26.",
+          "prompt": "特定技能1号へ移行するために必要な「日本語能力の基準」はどれですか。",
+          "options": [
+            "JLPT N1の最高レベル",
+            "JFT-Basic（日本語基礎テスト）A2以上またはJLPT N4以上",
+            "日本語の試験は一切不要",
+            "大学卒業証明書のみ"
+          ],
+          "answer": 2
         },
         {
-            "id": "q27",
-            "type": "mcq",
-            "number": "Soal 27.",
-            "prompt": "技能実習2号を良好に修了した実習生が、同じ職種で特定技能1号へ進む場合の優遇措置はどれですか。",
-            "options": [
-                "日本語試験および技能試験が免除される",
-                "給与が半額になる",
-                "在留期間が1ヶ月に短縮される",
-                "家族全員をすぐに呼べる"
-            ],
-            "answer": 1
+          "id": "q27",
+          "type": "mcq",
+          "number": "Soal 27.",
+          "prompt": "技能実習2号を良好に修了した実習生が、同じ職種で特定技能1号へ進む場合の優遇措置はどれですか。",
+          "options": [
+            "日本語試験および技能試験が免除される",
+            "給与が半額になる",
+            "在留期間が1ヶ月に短縮される",
+            "家族全員をすぐに呼べる"
+          ],
+          "answer": 1
         },
         {
-            "id": "q28",
-            "type": "mcq",
-            "number": "Soal 28.",
-            "passage": "【私の5年キャリアプランシート（将来の夢）】<br>●1〜2年目：特定技能1号を取得し、現場で技術と品質管理を徹底的に学ぶ。<br>●3〜4年目：主任資格に挑戦し、将来の会社設立のための資金を貯蓄する。<br>●5年目：母国（インドネシア）に帰国し、自動車整備・加工の会社を作ろうと思っています。<br>「日本で学んだ高い技術と安全意識を母国に持ち帰り、若者を雇用して社会に貢献したいと考えています。」",
-            "prompt": "この学習者は、5年目の将来の夢・目標として何を計画していますか。",
-            "options": [
-                "日本でずっとアルバイトを続ける",
-                "母国に帰国して自分の会社を作ろうと思っている",
-                "別の国へ観光旅行に行くだけ",
-                "仕事を辞めて何もしない"
-            ],
-            "answer": 2
+          "id": "q28",
+          "type": "mcq",
+          "number": "Soal 28.",
+          "passage": "【私の5年キャリアプランシート（将来の夢）】<br>●1〜2年目：特定技能1号を取得し、現場で技術と品質管理を徹底的に学ぶ。<br>●3〜4年目：主任資格に挑戦し、将来の会社設立のための資金を貯蓄する。<br>●5年目：母国（インドネシア）に帰国し、自動車整備・加工の会社を作ろうと思っています。<br>「日本で学んだ高い技術と安全意識を母国に持ち帰り、若者を雇用して社会に貢献したいと考えています。」",
+          "prompt": "この学習者は、5年目の将来の夢・目標として何を計画していますか。",
+          "options": [
+            "日本でずっとアルバイトを続ける",
+            "母国に帰国して自分の会社を作ろうと思っている",
+            "別の国へ観光旅行に行くだけ",
+            "仕事を辞めて何もしない"
+          ],
+          "answer": 2
         },
         {
-            "id": "q29",
-            "type": "mcq",
-            "number": "Soal 29.",
-            "prompt": "「会社を作ろうと思っています」という文法表現が表すニュアンスとして最も適切なものはどれですか。",
-            "options": [
-                "その場で突然思いついたこと",
-                "以前からずっと考えている強い意志や計画",
-                "他人から強制されていること",
-                "過去に諦めてしまったこと"
-            ],
-            "answer": 2
+          "id": "q29",
+          "type": "mcq",
+          "number": "Soal 29.",
+          "prompt": "「会社を作ろうと思っています」という文法表現が表すニュアンスとして最も適切なものはどれですか。",
+          "options": [
+            "その場で突然思いついたこと",
+            "以前からずっと考えている強い意志や計画",
+            "他人から強制されていること",
+            "過去に諦めてしまったこと"
+          ],
+          "answer": 2
         },
         {
-            "id": "q30",
-            "type": "mcq",
-            "number": "Soal 30.",
-            "prompt": "この学習者が3〜4年目に目標としている行動はどれですか。",
-            "options": [
-                "会社設立資金を貯蓄し、責任ある資格に挑戦すること",
-                "お金を全部使ってしまうこと",
-                "すぐに仕事を辞めること",
-                "日本語の勉強を諦めること"
-            ],
-            "answer": 1
+          "id": "q30",
+          "type": "mcq",
+          "number": "Soal 30.",
+          "prompt": "この学習者が3〜4年目に目標としている行動はどれですか。",
+          "options": [
+            "会社設立資金を貯蓄し、責任ある資格に挑戦すること",
+            "お金を全部使ってしまうこと",
+            "すぐに仕事を辞めること",
+            "日本語の勉強を諦めること"
+          ],
+          "answer": 1
         }
-    ]
-},
+      ]
+    },
     {
       "id": "kanji",
       "label": "Kanji",
@@ -658,37 +658,32 @@ window.LKPD_DATA = {
         {
           "id": "tr1",
           "type": "translation",
-          "number": "Soal T1.",
-          "prompt": "Berbagai materi dan foto dipamerkan di ruang pameran.",
-          "sample": "展示室にいろいろな資料や写真が展示してあります。"
+          "prompt": "Di masa depan, saya bermaksud mendirikan perusahaan sendiri di tanah air.",
+          "sample": "将来、国で自分の会社を作ろうと思っています。"
         },
         {
           "id": "tr2",
           "type": "translation",
-          "number": "Soal T2.",
-          "prompt": "Silakan coba berkunjung ke perpustakaan kota sekali.",
-          "sample": "ぜひ一度、市立図書館へ行ってみてください。"
+          "prompt": "Demi lulus ujian Tokutei Ginou, saya berencana belajar lebih giat lagi.",
+          "sample": "特定技能試験に合格するために、もっと一生懸命勉強するつもりです。"
         },
         {
           "id": "tr3",
           "type": "translation",
-          "number": "Soal T3.",
-          "prompt": "Dari jam berapa sampai jam berapa fasilitas ini dibuka?",
-          "sample": "この施設は何時から何時まで開いていますか。"
+          "prompt": "Saya mengajarkan cara menggunakan mesin ini kepada adik kelas (kouhai).",
+          "sample": "後輩にこの機械の使い方を教えてあげました。"
         },
         {
           "id": "tr4",
           "type": "translation",
-          "number": "Soal T4.",
-          "prompt": "Bisakah Anda mengajarkan cara meminjam buku di sini?",
-          "sample": "ここで本を借りる方法を教えていただけますか。"
+          "prompt": "Saya telah dibantu oleh pengawas pabrik mengenai prosedur perpanjangan visa.",
+          "sample": "工場長にビザの更新手続きを手伝ってもらいました。"
         },
         {
           "id": "tr5",
           "type": "translation",
-          "number": "Soal T5.",
-          "prompt": "Dilarang merokok dan buanglah sampah di rumah masing-masing.",
-          "sample": "全館禁煙ですので、ゴミは各自でお持ち帰りください。"
+          "prompt": "Senior di tempat kerja selalu dengan ramah menjelaskan pekerjaan kepada saya.",
+          "sample": "職場の先輩がいつも親切に仕事を説明してくれます。"
         }
       ]
     },
