@@ -206,6 +206,13 @@ function openTab(tabId, btn) {
 function renderItem(item) {
   const isTeacher = currentRole === "teacher";
   let html = '<div class="question-card">';
+  if (item.image) {
+    html += '<div class="dokkai-visual-container"><img src="' + item.image + '" alt="Dokkai Visual" class="dokkai-img" loading="lazy" /></div>';
+  }
+  if (item.visualDoc) {
+    html += '<div class="dokkai-visual-doc">' + item.visualDoc + '</div>';
+  }
+
   
   if (item.passage) html += '<div class="passage ja">' + item.passage + '</div>';
 

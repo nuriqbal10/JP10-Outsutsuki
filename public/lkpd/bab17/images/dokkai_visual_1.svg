@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#fdfbf7" stroke="#e2d9cc" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#0284c7"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【自己成長】日本生活振り返りシート ＆ 職場適応評価表</text>
+  <text x="760" y="48" fill="#e0f2fe" font-size="14" text-anchor="end">第17課：成長と変化</text>
+  <rect x="35" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="460" height="38" rx="10" fill="#f0f9ff"/>
+  <text x="50" y="115" fill="#0369a1" font-size="15" font-weight="bold">📈 半年間の日本語能力・業務適応 自己評価表</text>
+  <text x="50" y="145" fill="#64748b" font-size="12">氏名：グエン・ヴァン・ナム (Nguyen Van Nam)</text>
+  <text x="300" y="145" fill="#64748b" font-size="12">配属：自動車部品加工ライン (勤続8ヶ月)</text>
+  <!-- Comparison Table -->
+  <rect x="50" y="160" width="430" height="28" fill="#f1f5f9"/>
+  <text x="60" y="179" fill="#0f172a" font-size="12" font-weight="bold">項目 (Category)</text>
+  <text x="180" y="179" fill="#64748b" font-size="12" font-weight="bold">来日当初 (半年前)</text>
+  <text x="310" y="179" fill="#0369a1" font-size="12" font-weight="bold">現在 (8ヶ月経過)</text>
+  <!-- Row 1 -->
+  <text x="60" y="210" fill="#0f172a" font-size="12" font-weight="bold">日常会話・聞き取り</text>
+  <text x="180" y="210" fill="#64748b" font-size="11">早口だと全く分からなかった</text>
+  <text x="310" y="210" fill="#15803d" font-size="11" font-weight="bold">指示をほぼ聞き取れるようになった</text>
+  <line x1="50" y1="225" x2="480" y2="225" stroke="#f1f5f9"/>
+  <!-- Row 2 -->
+  <text x="60" y="245" fill="#0f172a" font-size="12" font-weight="bold">漢字の読み書き</text>
+  <text x="180" y="245" fill="#64748b" font-size="11">ひらがな・カタカナのみ</text>
+  <text x="310" y="245" fill="#15803d" font-size="11" font-weight="bold">工場の安全標語や日報が読める</text>
+  <line x1="50" y1="260" x2="480" y2="260" stroke="#f1f5f9"/>
+  <!-- Row 3 -->
+  <text x="60" y="280" fill="#0f172a" font-size="12" font-weight="bold">作業速度と品質</text>
+  <text x="180" y="280" fill="#64748b" font-size="11">確認に時間がかかり焦った</text>
+  <text x="310" y="280" fill="#15803d" font-size="11" font-weight="bold">ミスなく1人で任せられる</text>
+  <line x1="50" y1="295" x2="480" y2="295" stroke="#f1f5f9"/>
+  <!-- Reflections Comments -->
+  <rect x="50" y="310" width="430" height="85" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="60" y="332" fill="#0f172a" font-size="12" font-weight="bold">【本人の振り返りコメント】：</text>
+  <text x="60" y="352" fill="#334155" font-size="12">「最初は日本の習慣や言葉が難しくて不安でしたが、先輩が優しく</text>
+  <text x="60" y="372" fill="#334155" font-size="12">教えてくれたおかげで、<tspan fill="#0284c7" font-weight="bold">日本に来て本当によかった</tspan>と思っています。」</text>
+  <!-- Next Goals -->
+  <rect x="50" y="405" width="430" height="70" rx="6" fill="#fefce8" stroke="#fde047"/>
+  <text x="60" y="428" fill="#854d0e" font-size="12" font-weight="bold">【次の1年の目標】：</text>
+  <text x="60" y="450" fill="#1e293b" font-size="12">• JFT-Basic A2またはJLPT N3に合格する。</text>
+  <text x="60" y="468" fill="#1e293b" font-size="12">• 後輩の実習生が入ってきたら、分かりやすく指導できるようにする。</text>
+  <!-- Right: Mentor Feedback Card -->
+  <rect x="515" y="90" width="250" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="90" width="250" height="38" rx="10" fill="#f0fdf4"/>
+  <text x="530" y="115" fill="#166534" font-size="14" font-weight="bold">👨‍🏫 指導員（メンター）評価所見</text>
+  <text x="530" y="145" fill="#0f172a" font-size="12" font-weight="bold">指導員：佐藤 班長</text>
+  <text x="530" y="165" fill="#64748b" font-size="11">総合評価：【A（大変優れている）】</text>
+  <rect x="530" y="180" width="220" height="150" rx="6" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="540" y="205" fill="#166534" font-size="12" font-weight="bold">【佐藤班長からのコメント】：</text>
+  <text x="540" y="228" fill="#1e293b" font-size="11">ナム君は毎日の「ほうれんそう</text>
+  <text x="540" y="246" fill="#1e293b" font-size="11">（報告・連絡・相談）」が確実に</text>
+  <text x="540" y="264" fill="#1e293b" font-size="11">できるようになりました。</text>
+  <text x="540" y="286" fill="#1e293b" font-size="11">挨拶も元気で、現場のムードメーカー</text>
+  <text x="540" y="304" fill="#1e293b" font-size="11">です。特定技能への移行も十分</text>
+  <text x="540" y="322" fill="#1e293b" font-size="11">推薦できるレベルに達しています。</text>
+  <rect x="530" y="340" width="220" height="135" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="540" y="365" fill="#1e40af" font-size="12" font-weight="bold">【文法重要表現】</text>
+  <text x="540" y="390" fill="#1e293b" font-size="11">〜ようになりました (Perubahan):</text>
+  <text x="540" y="408" fill="#334155" font-size="11">「前より話せるようになりました。」</text>
+  <text x="540" y="432" fill="#1e293b" font-size="11">〜てよかったです (Bersyukur):</text>
+  <text x="540" y="450" fill="#334155" font-size="11">「日本に来てよかったです。」</text>
+</svg>

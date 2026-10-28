@@ -132,6 +132,13 @@ function openTab(tabId, btn) {
 
 function renderItem(item){
   let html='<div class="question-card">';
+  if (item.image) {
+    html += '<div class="dokkai-visual-container"><img src="' + item.image + '" alt="Dokkai Visual" class="dokkai-img" loading="lazy" /></div>';
+  }
+  if (item.visualDoc) {
+    html += '<div class="dokkai-visual-doc">' + item.visualDoc + '</div>';
+  }
+
   if(item.passage) html+='<div class="passage ja">'+item.passage+'</div>';
   if(item.type==="listening"){
     const times=Number(item.playCount||LISTENING_PLAY_COUNT||2), show=SHOW_LISTENING_CONTROLS;

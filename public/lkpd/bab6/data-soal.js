@@ -554,6 +554,7 @@ window.LKPD_DATA = {
               料金：合計 14,720円（運賃 8,910円 / 特急料金 5,810円）
             </div>
           `,
+          image: "images/dokkai_visual_1.svg",
           prompt: "この切符を買った乗客は、東京駅を何時に出発しますか。",
           options: ["8時10分", "10時00分", "12時30分", "14時70分"],
           answer: 2,

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#fff7ed" stroke="#fed7aa" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#ea580c"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【特定技能・未来計画】在留資格ガイド ＆ 5年キャリアプラン</text>
+  <text x="760" y="48" fill="#ffedd5" font-size="14" text-anchor="end">第18課：将来の夢と目標</text>
+  <!-- Left: SSW Guide -->
+  <rect x="35" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="460" height="38" rx="10" fill="#ffedd5"/>
+  <text x="50" y="115" fill="#c2410c" font-size="15" font-weight="bold">📘 特定技能1号（SSW）制度の概要 ＆ 移行条件</text>
+  <rect x="50" y="145" width="430" height="150" rx="8" fill="#fffbeb" stroke="#fcd34d"/>
+  <text x="65" y="170" fill="#92400e" font-size="13" font-weight="bold">【特定技能1号のポイント】</text>
+  <text x="65" y="195" fill="#1e293b" font-size="12">• 在留期間：1年、6か月または4か月ごとの更新（<tspan fill="#b91c1c" font-weight="bold">通算上限5年まで</tspan>）</text>
+  <text x="65" y="218" fill="#1e293b" font-size="12">• 報酬基準：日本人と同等額以上の給与水準</text>
+  <text x="65" y="240" fill="#1e293b" font-size="12">• 転職：同一業務区分内での転職が可能</text>
+  <text x="65" y="262" fill="#1e293b" font-size="12">• 家族帯同：特定技能1号は原則不可（2号は配偶者・子帯同可）</text>
+  <text x="65" y="285" fill="#64748b" font-size="11">※技能実習2号を良好に修了した者は、試験免除で1号へ移行可能。</text>
+  <rect x="50" y="310" width="430" height="160" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="65" y="335" fill="#166534" font-size="13" font-weight="bold">【移行に必要な2つの要件】</text>
+  <text x="65" y="360" fill="#0f172a" font-size="12" font-weight="bold">1. 日本語能力要件：</text>
+  <text x="180" y="360" fill="#334155" font-size="12">JFT-Basic（国際交流基金日本語基礎テスト）A2以上</text>
+  <text x="180" y="378" fill="#64748b" font-size="11">または JLPT（日本語能力試験）N4以上</text>
+  <text x="65" y="405" fill="#0f172a" font-size="12" font-weight="bold">2. 技能試験要件：</text>
+  <text x="180" y="405" fill="#334155" font-size="12">各分野の特定技能評価試験（実技・学科）に合格</text>
+  <text x="65" y="435" fill="#b91c1c" font-size="12" font-weight="bold">★ 修了後の進路：特定技能2号へのステップアップ、または母国での起業</text>
+  <text x="65" y="455" fill="#475569" font-size="11">日本で培った技術とマネジメント経験を将来の夢に活かしましょう！</text>
+  <!-- Right: 5-Year Career Plan Sheet -->
+  <rect x="515" y="90" width="250" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="90" width="250" height="38" rx="10" fill="#fef3c7"/>
+  <text x="530" y="115" fill="#b45309" font-size="14" font-weight="bold">🎯 私の5年キャリアプランシート</text>
+  <!-- Timeline Step 1 -->
+  <rect x="530" y="145" width="220" height="70" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="540" y="168" fill="#c2410c" font-size="12" font-weight="bold">【1〜2年目】：特定技能1号取得</text>
+  <text x="540" y="188" fill="#334155" font-size="11">現場でリーダーシップを発揮し、</text>
+  <text x="540" y="205" fill="#334155" font-size="11">技術と品質管理を徹底的に学ぶ。</text>
+  <!-- Timeline Step 2 -->
+  <rect x="530" y="225" width="220" height="70" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="540" y="248" fill="#c2410c" font-size="12" font-weight="bold">【3〜4年目】：主任資格＆貯蓄</text>
+  <text x="540" y="268" fill="#334155" font-size="11">特定技能2号試験に挑戦し、</text>
+  <text x="540" y="285" fill="#334155" font-size="11">将来の会社設立資金を貯蓄する。</text>
+  <!-- Timeline Step 3 (Dream) -->
+  <rect x="530" y="305" width="220" height="85" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="540" y="328" fill="#15803d" font-size="12" font-weight="bold">【5年目】：自分の会社を作る！</text>
+  <text x="540" y="348" fill="#14532d" font-size="11">母国（インドネシア）に帰国し、</text>
+  <text x="540" y="366" fill="#14532d" font-size="11"><tspan font-weight="bold">自動車整備・加工の会社を作ろう</tspan></text>
+  <text x="540" y="384" fill="#14532d" font-size="11"><tspan font-weight="bold">と思っています。</tspan></text>
+  <!-- Grammar Note -->
+  <rect x="530" y="400" width="220" height="80" rx="6" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="540" y="420" fill="#9a3412" font-size="11" font-weight="bold">V意向形＋と思っています：</text>
+  <text x="540" y="438" fill="#431407" font-size="10">「将来、自分の会社を作ろうと</text>
+  <text x="540" y="452" fill="#431407" font-size="10">思っています。」</text>
+  <text x="540" y="470" fill="#9a3412" font-size="10" font-weight="bold">（前から考えている強い意志を表現）</text>
+</svg>

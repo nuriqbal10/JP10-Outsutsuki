@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#fafaf9" stroke="#e7e5e4" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#4f46e5"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【冠婚葬祭ガイド】結婚式のご案内 ＆ 参列マナー</text>
+  <text x="760" y="48" fill="#c7d2fe" font-size="14" text-anchor="end">第10課：礼儀・服装</text>
+  <rect x="35" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#c7d2fe" stroke-width="2"/>
+  <rect x="35" y="90" width="460" height="40" rx="10" fill="#e0e7ff"/>
+  <text x="50" y="116" fill="#3730a3" font-size="15" font-weight="bold">💍 結婚披露宴 ご招待状 (Wedding Invitation)</text>
+  <text x="60" y="150" fill="#1e1b4b" font-size="13">謹啓　皆様にはますますご清栄のこととお慶び申し上げます</text>
+  <text x="60" y="172" fill="#1e1b4b" font-size="13">このたび　私たちは結婚式を挙げることとなりました</text>
+  <text x="60" y="194" fill="#1e1b4b" font-size="13">つきましては　日頃お世話になっております皆様をお招きし</text>
+  <text x="60" y="216" fill="#1e1b4b" font-size="13">小宴を催したく存じます</text>
+  <rect x="50" y="235" width="430" height="135" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="65" y="260" fill="#0f172a" font-size="13" font-weight="bold">日時：11月22日（日）12:30 開宴（受付 11:45～）</text>
+  <text x="65" y="285" fill="#0f172a" font-size="13" font-weight="bold">場所：ホテル グランドパレス 3階 鳳凰の間</text>
+  <text x="65" y="310" fill="#4338ca" font-size="13" font-weight="bold">返信期日：10月20日（火）までに同封のはがきにて</text>
+  <text x="65" y="335" fill="#b91c1c" font-size="12">※ご出席またはご欠席のご都合をお知らせくださいますよう</text>
+  <text x="65" y="353" fill="#b91c1c" font-size="12">お願い申し上げます。</text>
+  <rect x="50" y="385" width="430" height="85" rx="6" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="65" y="408" fill="#991b1b" font-size="12" font-weight="bold">【服装のルール（参列者）】</text>
+  <text x="65" y="428" fill="#334155" font-size="12">• 男性：ダークスーツ（黒・紺・濃グレー）、白のネクタイ着用。</text>
+  <text x="65" y="448" fill="#334155" font-size="12">• 女性：華やかなフォーマルドレス。※<tspan fill="#b91c1c" font-weight="bold">花嫁と同じ「白色」のドレスは厳禁！</tspan></text>
+  <rect x="515" y="90" width="250" height="205" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="90" width="250" height="35" rx="10" fill="#fef3c7"/>
+  <text x="530" y="114" fill="#92400e" font-size="13" font-weight="bold">🧧 ご祝儀（結婚祝い）マナー</text>
+  <text x="530" y="145" fill="#1e293b" font-size="12">• 水引：結び切り（紅白・金銀）</text>
+  <text x="530" y="168" fill="#1e293b" font-size="12">• 相場：友人・同僚は <tspan fill="#b91c1c" font-weight="bold">3万円</tspan></text>
+  <text x="530" y="190" fill="#64748b" font-size="11">（※割り切れない奇数の金額にする）</text>
+  <text x="530" y="212" fill="#1e293b" font-size="12">• お札：<tspan fill="#15803d" font-weight="bold">新札（ピン札）</tspan>を用意する</text>
+  <text x="530" y="235" fill="#1e293b" font-size="12">• 袱紗（ふくさ）に包んで持参する</text>
+  <text x="530" y="260" fill="#4338ca" font-size="12" font-weight="bold">受付で：「本日はおめでとうございます」</text>
+  <rect x="515" y="310" width="250" height="180" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="310" width="250" height="35" rx="10" fill="#f1f5f9"/>
+  <text x="530" y="334" fill="#0f172a" font-size="13" font-weight="bold">🕯️ お葬式・お悔やみマナー</text>
+  <text x="530" y="365" fill="#1e293b" font-size="12">• 服装：喪服（光沢のない黒スーツ）</text>
+  <text x="530" y="388" fill="#1e293b" font-size="12">• 水引：黒白または銀色の結び切り</text>
+  <text x="530" y="411" fill="#1e293b" font-size="12">• お札：新札ではなく旧札を入れる</text>
+  <text x="530" y="434" fill="#334155" font-size="11">受付で：「このたびはご愁傷様でございます」</text>
+  <rect x="525" y="450" width="230" height="28" rx="4" fill="#f8fafc"/>
+  <text x="535" y="468" fill="#64748b" font-size="11">お悔やみの言葉を静かに述べて渡す。</text>
+</svg>

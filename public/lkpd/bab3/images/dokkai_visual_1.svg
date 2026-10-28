@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#fffdfa" stroke="#e8dfd8" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#78350f"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">和食・定食処「いろどり亭」お品書き＆お得情報</text>
+  <text x="760" y="48" fill="#fed7aa" font-size="14" text-anchor="end">営業時間 11:00～21:30</text>
+  <rect x="30" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <rect x="30" y="90" width="460" height="38" rx="10" fill="#fef3c7"/>
+  <text x="45" y="115" fill="#92400e" font-size="16" font-weight="bold">🍱 お昼の定番定食・丼もの（平日ランチ）</text>
+  <rect x="45" y="140" width="430" height="28" fill="#f8fafc"/>
+  <text x="55" y="159" fill="#475569" font-size="12" font-weight="bold">お品名</text>
+  <text x="210" y="159" fill="#475569" font-size="12" font-weight="bold">価格 (税込)</text>
+  <text x="310" y="159" fill="#475569" font-size="12" font-weight="bold">アレルギー特定原材料</text>
+  <text x="55" y="190" fill="#0f172a" font-size="13" font-weight="600">親子丼（みそ汁・お新香付）</text>
+  <text x="210" y="190" fill="#b45309" font-size="14" font-weight="bold">¥580</text>
+  <text x="310" y="190" fill="#64748b" font-size="12">卵・小麦・鶏肉</text>
+  <line x1="45" y1="205" x2="475" y2="205" stroke="#f1f5f9"/>
+  <text x="55" y="230" fill="#0f172a" font-size="13" font-weight="600">かつ丼（ロースカツ）</text>
+  <text x="210" y="230" fill="#b45309" font-size="14" font-weight="bold">¥630</text>
+  <text x="310" y="230" fill="#64748b" font-size="12">卵・小麦・豚肉</text>
+  <line x1="45" y1="245" x2="475" y2="245" stroke="#f1f5f9"/>
+  <text x="55" y="270" fill="#0f172a" font-size="13" font-weight="600">カレーライス</text>
+  <text x="210" y="270" fill="#b45309" font-size="14" font-weight="bold">¥480</text>
+  <text x="310" y="270" fill="#64748b" font-size="12">小麦・牛肉・大豆</text>
+  <line x1="45" y1="285" x2="475" y2="285" stroke="#f1f5f9"/>
+  <text x="55" y="310" fill="#0f172a" font-size="13" font-weight="600">天ぷらうどん / そば</text>
+  <text x="210" y="310" fill="#b45309" font-size="14" font-weight="bold">¥520</text>
+  <text x="310" y="310" fill="#64748b" font-size="12">小麦・えび・そば(※そば)</text>
+  <line x1="45" y1="325" x2="475" y2="325" stroke="#f1f5f9"/>
+  <rect x="45" y="340" width="430" height="135" rx="6" fill="#fefce8" stroke="#fde047"/>
+  <text x="55" y="362" fill="#854d0e" font-size="13" font-weight="bold">【お得な追加オプション】</text>
+  <text x="55" y="385" fill="#1e293b" font-size="12">• ごはん大盛り：＋50円 ／ 特盛り：＋100円</text>
+  <text x="55" y="407" fill="#1e293b" font-size="12">• 食後のホットコーヒー：150円（単品300円）</text>
+  <text x="55" y="430" fill="#15803d" font-size="12" font-weight="bold">★ 平日ランチ限定サービス：みそ汁おかわり1杯無料！</text>
+  <text x="65" y="450" fill="#64748b" font-size="11">（土・日・祝日はみそ汁のおかわりは＋60円となります）</text>
+  <rect x="510" y="90" width="260" height="195" rx="10" fill="#ffffff" stroke="#e11d48" stroke-width="2" stroke-dasharray="6,4"/>
+  <rect x="510" y="90" width="260" height="35" rx="10" fill="#ffe4e6"/>
+  <text x="640" y="114" fill="#e11d48" font-size="14" font-weight="bold" text-anchor="middle">✂️ 10% 割引クーポン券</text>
+  <text x="525" y="150" fill="#0f172a" font-size="14" font-weight="bold">お会計総額より 10％ OFF</text>
+  <text x="525" y="174" fill="#475569" font-size="11">• お一人様1回限り有効</text>
+  <text x="525" y="194" fill="#475569" font-size="11">• 他の割引サービスとの併用不可</text>
+  <text x="525" y="214" fill="#475569" font-size="11">• ランチタイム（11:00-14:00）利用可</text>
+  <rect x="525" y="230" width="230" height="24" rx="4" fill="#fecdd3"/>
+  <text x="640" y="246" fill="#9f1239" font-size="11" font-weight="bold" text-anchor="middle">有効期限：2026年12月31日まで</text>
+  <rect x="510" y="300" width="260" height="190" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+  <rect x="510" y="300" width="260" height="35" rx="10" fill="#f1f5f9"/>
+  <text x="525" y="324" fill="#334155" font-size="13" font-weight="bold">📝 席のご予約確認メモ</text>
+  <text x="525" y="360" fill="#64748b" font-size="11">予約者名：ナット様 (Nhat)</text>
+  <text x="525" y="382" fill="#64748b" font-size="11">日時：金曜日 18:30〜 (4名)</text>
+  <text x="525" y="404" fill="#64748b" font-size="11">席希望：禁煙席・テーブル</text>
+  <text x="525" y="426" fill="#b91c1c" font-size="11" font-weight="bold">アレルギー：海老（えび）NG 1名</text>
+  <rect x="525" y="445" width="230" height="30" rx="6" fill="#dcfce7"/>
+  <text x="640" y="465" fill="#166534" font-size="12" font-weight="bold" text-anchor="middle">✓ 厨房へアレルギー共有済み</text>
+</svg>

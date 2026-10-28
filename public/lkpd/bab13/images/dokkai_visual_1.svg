@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#f0f9ff" stroke="#bae6fd" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#0284c7"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【公共施設案内】市民センター ＆ 市立図書館ガイド</text>
+  <text x="760" y="48" fill="#e0f2fe" font-size="14" text-anchor="end">第13課：公共サービス</text>
+  <rect x="35" y="90" width="370" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="370" height="38" rx="10" fill="#e0f2fe"/>
+  <text x="50" y="115" fill="#0369a1" font-size="15" font-weight="bold">🏢 市民センター利用案内</text>
+  <text x="50" y="148" fill="#0f172a" font-size="13" font-weight="bold">● 開館時間：</text>
+  <text x="145" y="148" fill="#334155" font-size="13">午前 09:00 ～ 午後 21:00</text>
+  <text x="50" y="175" fill="#b91c1c" font-size="13" font-weight="bold">● 休館日：</text>
+  <text x="120" y="175" fill="#b91c1c" font-size="13" font-weight="bold">毎週月曜日</text>
+  <text x="50" y="195" fill="#64748b" font-size="11">（月曜が祝日の場合は翌平日振替）</text>
+  <text x="50" y="215" fill="#64748b" font-size="11">年末年始（12月29日～1月3日）は全館休館</text>
+  <line x1="50" y1="230" x2="385" y2="230" stroke="#f1f5f9" stroke-width="2"/>
+  <text x="50" y="255" fill="#0f172a" font-size="13" font-weight="bold">● 会議室・和室・調理室の予約：</text>
+  <text x="50" y="278" fill="#334155" font-size="12">• 利用日の<tspan fill="#0284c7" font-weight="bold">1か月前</tspan>から受付窓口またはネット予約可</text>
+  <text x="50" y="300" fill="#334155" font-size="12">• 市民優先枠：市内在住・在勤者</text>
+  <text x="50" y="325" fill="#1e293b" font-size="12" font-weight="bold">● 施設利用ルール：</text>
+  <text x="50" y="348" fill="#475569" font-size="11">• ゴミは各自必ず持ち帰ること</text>
+  <text x="50" y="368" fill="#475569" font-size="11">• 使用後は机・椅子を元の位置に戻し清掃すること</text>
+  <text x="50" y="388" fill="#475569" font-size="11">• 館内Wi-Fiは無料（パスワードは受付掲示）</text>
+  <rect x="50" y="415" width="340" height="55" rx="6" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="60" y="435" fill="#991b1b" font-size="11" font-weight="bold">※営利目的の販売会・宗教活動には利用できません。</text>
+  <text x="60" y="455" fill="#991b1b" font-size="11">駐車場は台数制限があるため公共交通機関をご利用ください。</text>
+  <!-- Right: Library Guide -->
+  <rect x="425" y="90" width="340" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="425" y="90" width="340" height="38" rx="10" fill="#fef3c7"/>
+  <text x="440" y="115" fill="#92400e" font-size="15" font-weight="bold">📚 市立図書館 貸出ルール＆学習室</text>
+  <rect x="440" y="145" width="310" height="135" rx="8" fill="#fffbeb" stroke="#fcd34d"/>
+  <text x="455" y="170" fill="#92400e" font-size="13" font-weight="bold">【本の貸出カード（利用登録）】</text>
+  <text x="455" y="195" fill="#1e293b" font-size="12">• 貸出点数：1人 <tspan fill="#b91c1c" font-weight="bold">10冊まで</tspan></text>
+  <text x="455" y="218" fill="#1e293b" font-size="12">• 貸出期間：<tspan fill="#b91c1c" font-weight="bold">2週間以内</tspan></text>
+  <text x="455" y="240" fill="#1e293b" font-size="12">• 登録に必要なもの：在留カード等の身分証明書</text>
+  <text x="455" y="262" fill="#64748b" font-size="11">（市内在住または市内の学校・会社に通う方）</text>
+  <rect x="440" y="295" width="310" height="175" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="455" y="320" fill="#0f172a" font-size="13" font-weight="bold">【パソコン利用＆学習コーナー】</text>
+  <text x="455" y="345" fill="#334155" font-size="12">• 自習席は2階に50席（予約不要）</text>
+  <text x="455" y="368" fill="#334155" font-size="12">• 電源付きPC席：利用時間1回<tspan fill="#0284c7" font-weight="bold">120分まで</tspan></text>
+  <text x="455" y="390" fill="#b91c1c" font-size="12" font-weight="bold">⚠️ 図書館内での禁止事項：</text>
+  <text x="455" y="412" fill="#475569" font-size="11">1. 通話・大きな声での会話（マナーモード必須）</text>
+  <text x="455" y="432" fill="#475569" font-size="11">2. 飲食禁止（フタ付きの飲み物のみ持込可）</text>
+  <text x="455" y="455" fill="#b91c1c" font-size="11" font-weight="bold">※返却期限を過ぎると新規の貸出が停止されます！</text>
+</svg>

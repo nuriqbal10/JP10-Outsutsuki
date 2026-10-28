@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#faf5ff" stroke="#e9d5ff" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#7e22ce"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【生活サービス】美容室・クリーニング ＆ 宅配便伝票</text>
+  <text x="760" y="48" fill="#f3e8ff" font-size="14" text-anchor="end">第14課：サービスの利用</text>
+  <!-- Salon Card -->
+  <rect x="35" y="90" width="355" height="395" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="355" height="38" rx="10" fill="#f3e8ff"/>
+  <text x="50" y="115" fill="#6b21a8" font-size="15" font-weight="bold">💇 美容室 Hair Salon「Bloom」</text>
+  <text x="50" y="150" fill="#1e293b" font-size="13" font-weight="bold">【カット＆施術メニュー】</text>
+  <text x="50" y="175" fill="#334155" font-size="12">• 一般カット（ブロー込）：<tspan fill="#6b21a8" font-weight="bold">¥3,500</tspan></text>
+  <text x="50" y="198" fill="#334155" font-size="12">• カット＋シャンプー：<tspan fill="#6b21a8" font-weight="bold">¥4,000</tspan></text>
+  <text x="50" y="220" fill="#334155" font-size="12">• ヘアカラー（全体染め）：<tspan fill="#6b21a8" font-weight="bold">¥5,500～</tspan></text>
+  <text x="50" y="242" fill="#334155" font-size="12">• パーマ（カット別）：<tspan fill="#6b21a8" font-weight="bold">¥6,000～</tspan></text>
+  <rect x="50" y="260" width="325" height="105" rx="6" fill="#faf5ff" stroke="#d8b4fe"/>
+  <text x="60" y="282" fill="#581c87" font-size="12" font-weight="bold">【オーダー時の会話フレーズ】</text>
+  <text x="60" y="302" fill="#334155" font-size="11">・「髪をもう少し短くしてください。」</text>
+  <text x="60" y="322" fill="#334155" font-size="11">・「前髪は眉毛にかかるくらいにしてください。」</text>
+  <text x="60" y="342" fill="#334155" font-size="11">・「耳が出るくらいにすいて軽くしてください。」</text>
+  <rect x="50" y="380" width="325" height="90" rx="6" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="60" y="405" fill="#0f172a" font-size="12" font-weight="bold">🧺 クリーニング ホワイト急便 預かり証</text>
+  <text x="60" y="425" fill="#334155" font-size="11">• ワイシャツ 3点 (¥220×3) / スーツ上下 1点 (¥1,200)</text>
+  <text x="60" y="445" fill="#b91c1c" font-size="11" font-weight="bold">仕上がり予定日：10月22日（木）17:00以降</text>
+  <text x="60" y="460" fill="#64748b" font-size="10">※受取時は必ずこの預かり票をお持ちください。</text>
+  <!-- Takkyubin Delivery Slip -->
+  <rect x="410" y="90" width="355" height="395" rx="10" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="410" y="90" width="355" height="38" rx="10" fill="#fef3c7"/>
+  <text x="425" y="115" fill="#92400e" font-size="15" font-weight="bold">📦 ヤマト運輸 ご不在連絡票 (Delivery Notice)</text>
+  <text x="425" y="150" fill="#1e293b" font-size="13" font-weight="bold">お届けにお伺いしましたが、ご不在でした。</text>
+  <rect x="425" y="165" width="325" height="110" rx="6" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="435" y="190" fill="#334155" font-size="12">訪問日時：10月20日 15:40</text>
+  <text x="435" y="212" fill="#334155" font-size="12">伝票番号：<tspan font-family="monospace" font-weight="bold" fill="#0f172a">4192-8831-5024</tspan></text>
+  <text x="435" y="234" fill="#334155" font-size="12">お荷物の種類：クール宅急便（冷蔵食品）</text>
+  <text x="435" y="258" fill="#b91c1c" font-size="12" font-weight="bold">保管期限：10月23日（金）まで</text>
+  <text x="425" y="300" fill="#0f172a" font-size="13" font-weight="bold">【再配達のお申し込み方法】</text>
+  <text x="425" y="325" fill="#334155" font-size="12">1. スマートフォン：右の二次元バーコードから24時間受付</text>
+  <text x="425" y="348" fill="#334155" font-size="12">2. 自動受付電話：0120-24-9625（固定電話無料）</text>
+  <text x="425" y="370" fill="#334155" font-size="12">3. ドライバー直通電話：090-1234-5678 (担当：木村)</text>
+  <rect x="425" y="390" width="325" height="80" rx="6" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="435" y="412" fill="#1e40af" font-size="12" font-weight="bold">【再配達希望時間帯】</text>
+  <text x="435" y="432" fill="#1e293b" font-size="11">• 午前中 (～12時)　• 14～16時　• 16～18時</text>
+  <text x="435" y="452" fill="#1e293b" font-size="11">• 18～20時　• 19～21時（※当日再配達は17:00受付終了）</text>
+</svg>

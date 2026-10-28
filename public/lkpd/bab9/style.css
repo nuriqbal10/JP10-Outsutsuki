@@ -1173,3 +1173,103 @@ body.dark .result-item div {
     padding: 0 !important;
   }
 }
+
+/* ================= DOKKAI VISUAL ARTIFACTS & IMAGES ================= */
+.dokkai-visual-container {
+  margin: 14px 0 18px 0;
+  padding: 12px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.dokkai-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.06));
+}
+
+.dokkai-visual-doc {
+  background: #ffffff;
+  border: 2px solid #94a3b8;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 14px 0 18px 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  color: #1e293b;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.dokkai-doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.dokkai-doc-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.dokkai-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.dokkai-tag.red {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.dokkai-tag.green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.dokkai-tag.amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.dokkai-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.92rem;
+}
+
+.dokkai-table th, .dokkai-table td {
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.dokkai-table th {
+  background: #f1f5f9;
+  font-weight: 700;
+  color: #334155;
+}
+
+.dokkai-notice-box {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  padding: 10px 14px;
+  margin: 10px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+}

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#15803d"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【環境・エコ】家庭ごみの正しい分別カレンダー ＆ マイバッグ</text>
+  <text x="760" y="48" fill="#dcfce7" font-size="14" text-anchor="end">第15課：ゴミ分別と環境</text>
+  <rect x="35" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="460" height="38" rx="10" fill="#dcfce7"/>
+  <text x="50" y="115" fill="#166534" font-size="15" font-weight="bold">🗑️ さくら市 家庭ごみ収集曜日カレンダー</text>
+  <rect x="50" y="140" width="430" height="28" fill="#f1f5f9"/>
+  <text x="60" y="159" fill="#0f172a" font-size="12" font-weight="bold">ごみの種類</text>
+  <text x="220" y="159" fill="#0f172a" font-size="12" font-weight="bold">収集曜日</text>
+  <text x="320" y="159" fill="#0f172a" font-size="12" font-weight="bold">指定袋・出し方のルール</text>
+  <!-- Burnable -->
+  <text x="60" y="190" fill="#dc2626" font-size="13" font-weight="bold">燃えるごみ (可燃)</text>
+  <text x="220" y="190" fill="#0f172a" font-size="13" font-weight="bold">毎週 月・木曜日</text>
+  <text x="320" y="190" fill="#475569" font-size="11">市指定の黄色い袋（生ごみ水切り）</text>
+  <line x1="50" y1="205" x2="480" y2="205" stroke="#f1f5f9"/>
+  <!-- Non-burnable -->
+  <text x="60" y="230" fill="#0284c7" font-size="13" font-weight="bold">燃えないごみ (不燃)</text>
+  <text x="220" y="230" fill="#0f172a" font-size="13" font-weight="bold">第2・第4水曜日</text>
+  <text x="320" y="230" fill="#475569" font-size="11">市指定の青い袋（陶器・ガラス・電球）</text>
+  <line x1="50" y1="245" x2="480" y2="245" stroke="#f1f5f9"/>
+  <!-- Plastic & PET -->
+  <text x="60" y="270" fill="#d97706" font-size="13" font-weight="bold">プラスチック・資源</text>
+  <text x="220" y="270" fill="#0f172a" font-size="13" font-weight="bold">毎週 火曜日</text>
+  <text x="320" y="270" fill="#475569" font-size="11">透明・半透明袋（容器包装プラマーク）</text>
+  <line x1="50" y1="285" x2="480" y2="285" stroke="#f1f5f9"/>
+  <!-- Cans, Bottles, PET -->
+  <text x="60" y="310" fill="#16a34a" font-size="13" font-weight="bold">缶・ビン・ペットボトル</text>
+  <text x="220" y="310" fill="#0f172a" font-size="13" font-weight="bold">毎週 金曜日</text>
+  <text x="320" y="310" fill="#475569" font-size="11">中を水洗い、キャップとラベルを外す</text>
+  <rect x="50" y="335" width="430" height="140" rx="8" fill="#fef2f2" stroke="#fca5a5"/>
+  <text x="65" y="360" fill="#991b1b" font-size="13" font-weight="bold">⚠️ 【厳守】ごみ出しの5大ルール</text>
+  <text x="65" y="382" fill="#1e293b" font-size="12">1. 収集日当日の<tspan fill="#b91c1c" font-weight="bold">「朝 08:30 まで」</tspan>にごみステーションへ出すこと。</text>
+  <text x="65" y="402" fill="#1e293b" font-size="12">（※前日の夜に出すとカラスや野良猫が生ごみを荒らします）</text>
+  <text x="65" y="424" fill="#1e293b" font-size="12">2. スプレー缶・カセットボンベ：<tspan fill="#b91c1c" font-weight="bold">「必ず中身を使い切り穴を開けずに別袋」</tspan>。</text>
+  <text x="65" y="445" fill="#1e293b" font-size="12">3. 粗大ごみ（家具・自転車など）：電話事前予約（有料券購入）。</text>
+  <text x="65" y="465" fill="#b91c1c" font-size="11" font-weight="bold">※違反したごみには「警告シール」が貼られ回収されません！</text>
+  <!-- Right: Eco Bag Campaign -->
+  <rect x="515" y="90" width="250" height="400" rx="10" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <rect x="515" y="90" width="250" height="38" rx="10" fill="#f0fdf4"/>
+  <text x="530" y="115" fill="#166534" font-size="14" font-weight="bold">🌱 マイバッグ持参キャンペーン</text>
+  <rect x="530" y="145" width="220" height="150" rx="8" fill="#fefce8" stroke="#fde047"/>
+  <text x="640" y="180" font-size="44" text-anchor="middle">🛍️</text>
+  <text x="640" y="215" fill="#854d0e" font-size="14" font-weight="bold" text-anchor="middle">レジ袋削減にご協力を！</text>
+  <text x="640" y="235" fill="#a16207" font-size="11" text-anchor="middle">プラスチックごみを減らすため、</text>
+  <text x="640" y="252" fill="#a16207" font-size="11" text-anchor="middle">お買い物にはマイバッグを持参しましょう。</text>
+  <text x="640" y="278" fill="#b91c1c" font-size="12" font-weight="bold" text-anchor="middle">レジ袋：1枚 5円（有料化）</text>
+  <rect x="530" y="310" width="220" height="165" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="540" y="335" fill="#0f172a" font-size="12" font-weight="bold">【環境を守る文法ポイント】</text>
+  <text x="540" y="360" fill="#15803d" font-size="11" font-weight="bold">〜ために (Tujuan):</text>
+  <text x="540" y="378" fill="#334155" font-size="11">「ゴミを減らすために、マイバッグを</text>
+  <text x="540" y="395" fill="#334155" font-size="11">持っています。」</text>
+  <text x="540" y="420" fill="#15803d" font-size="11" font-weight="bold">〜ようにしています (Kebiasaan):</text>
+  <text x="540" y="438" fill="#334155" font-size="11">「電気を無駄遣いしないように</text>
+  <text x="540" y="455" fill="#334155" font-size="11">こまめに消しています。」</text>
+</svg>

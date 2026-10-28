@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#2563eb"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">【市民参加イベント】海岸清掃ボランティア ＆ 夏祭り</text>
+  <text x="760" y="48" fill="#bfdbfe" font-size="14" text-anchor="end">第7課：地域の行事</text>
+  <rect x="35" y="90" width="450" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="450" height="40" rx="10" fill="#dbeafe"/>
+  <text x="50" y="116" fill="#1e40af" font-size="16" font-weight="bold">🌊 第15回 やしが浜 海岸清掃ボランティア募集</text>
+  <rect x="50" y="145" width="420" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="65" y="170" fill="#0f172a" font-size="13" font-weight="bold">📅 日時：6月8日（土）午前 09:00 集合 (作業約2時間)</text>
+  <text x="65" y="195" fill="#0f172a" font-size="13" font-weight="bold">📍 集合場所：やしが浜 海岸第1駐車場（青い旗が目印）</text>
+  <text x="65" y="215" fill="#64748b" font-size="12">※参加無料・事前申込み不要・軍手とゴミ袋は現地で支給します。</text>
+  <rect x="50" y="235" width="420" height="110" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="65" y="260" fill="#b91c1c" font-size="14" font-weight="bold">☔ 【雨天時の対応について】（重要ルール）</text>
+  <text x="65" y="285" fill="#1e293b" font-size="13">• <tspan fill="#b91c1c" font-weight="bold">小雨の場合：</tspan> 予定通り実施します（カッパをご持参ください）。</text>
+  <text x="65" y="310" fill="#1e293b" font-size="13">• <tspan fill="#b91c1c" font-weight="bold">大雨・台風の場合：</tspan> 中止となり、<tspan fill="#b91c1c" font-weight="bold">翌日 6月9日（日）に順延</tspan>します。</text>
+  <text x="65" y="333" fill="#64748b" font-size="11">※当日朝7:00に市役所ホームページおよび防災無線で通知します。</text>
+  <rect x="50" y="355" width="420" height="115" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="65" y="380" fill="#166534" font-size="13" font-weight="bold">🎁 参加特典（ボランティア終了後）</text>
+  <text x="65" y="405" fill="#1e293b" font-size="12">• 清掃活動の後、冷たいお茶とお弁当を配布します。</text>
+  <text x="65" y="428" fill="#1e293b" font-size="12">• 夕方17:00からの「市民夏祭り屋台」で使える<tspan fill="#b45309" font-weight="bold">300円クーポン</tspan>を進呈！</text>
+  <text x="65" y="450" fill="#166534" font-size="12" font-weight="bold">留学生・技能実習生の皆様のご参加を心より歓迎いたします！</text>
+  <rect x="505" y="90" width="260" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="505" y="90" width="260" height="40" rx="10" fill="#ffedd5"/>
+  <text x="520" y="116" fill="#c2410c" font-size="15" font-weight="bold">🏮 夕方：やしが浜 市民夏祭り</text>
+  <text x="520" y="150" fill="#0f172a" font-size="13" font-weight="bold">【開催日時】</text>
+  <text x="520" y="172" fill="#334155" font-size="12">6月8日（土）17:00～20:30</text>
+  <text x="520" y="192" fill="#b91c1c" font-size="11">（※雨天時は市民ホール大講堂にて開催）</text>
+  <line x1="520" y1="208" x2="745" y2="208" stroke="#f1f5f9" stroke-width="2"/>
+  <text x="520" y="230" fill="#0f172a" font-size="13" font-weight="bold">【タイムスケジュール】</text>
+  <text x="520" y="255" fill="#334155" font-size="12">17:00　屋台エリア オープン</text>
+  <text x="520" y="280" fill="#334155" font-size="12">18:00　和太鼓演奏（地元中学生）</text>
+  <text x="520" y="305" fill="#334155" font-size="12">19:00　盆踊り大会（飛び入り歓迎）</text>
+  <text x="520" y="330" fill="#334155" font-size="12">20:15　フィナーレ打ち上げ花火</text>
+  <rect x="520" y="355" width="230" height="115" rx="6" fill="#fef3c7" stroke="#fcd34d"/>
+  <text x="530" y="378" fill="#92400e" font-size="12" font-weight="bold">⚠️ お願いとご注意</text>
+  <text x="530" y="400" fill="#78350f" font-size="11">• 会場内は完全禁煙です。</text>
+  <text x="530" y="420" fill="#78350f" font-size="11">• ごみは各自お持ち帰りいただくか、</text>
+  <text x="530" y="438" fill="#78350f" font-size="11">分別ごみ箱をご利用ください。</text>
+  <text x="530" y="458" fill="#b91c1c" font-size="11" font-weight="bold">• 車でのご来場はご遠慮ください。</text>
+</svg>

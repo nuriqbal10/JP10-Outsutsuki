@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#15803d"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">JR東日本・東海 新幹線乗車券 ＆ のりば案内</text>
+  <text x="760" y="48" fill="#dcfce7" font-size="14" text-anchor="end">第6課：交通・切符</text>
+  <rect x="40" y="95" width="460" height="260" rx="12" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+  <text x="60" y="125" fill="#2e7d32" font-size="13" font-weight="bold">JR東海道・山陽新幹線　指定席特急券・乗車券</text>
+  <text x="470" y="125" fill="#66bb6a" font-size="11" text-anchor="end">[トク特] 幹指定</text>
+  <text x="80" y="175" fill="#1b5e20" font-size="26" font-weight="bold">東 京</text>
+  <text x="175" y="170" fill="#2e7d32" font-size="18">▶▶▶</text>
+  <text x="245" y="175" fill="#1b5e20" font-size="26" font-weight="bold">新大阪</text>
+  <text x="75" y="195" fill="#558b2f" font-size="11">(東京都区内)</text>
+  <text x="245" y="195" fill="#558b2f" font-size="11">(大阪市内)</text>
+  <rect x="60" y="215" width="420" height="70" rx="6" fill="#ffffff" stroke="#c8e6c9"/>
+  <text x="75" y="240" fill="#1b5e20" font-size="15" font-weight="bold">ひかり 643号 (Hikari 643)</text>
+  <text x="75" y="265" fill="#33691e" font-size="13">10月24日　<tspan font-weight="bold" font-size="16" fill="#d32f2f">10:33 発</tspan>　➔　13:28 着</text>
+  <text x="320" y="240" fill="#b71c1c" font-size="18" font-weight="bold">7号車 12番 A席</text>
+  <text x="330" y="262" fill="#757575" font-size="11">(普通車・禁煙・窓側)</text>
+  <text x="60" y="315" fill="#2e7d32" font-size="14" font-weight="bold">￥14,400 (運賃 8,910円 / 特急料金 5,490円)</text>
+  <text x="60" y="338" fill="#757575" font-size="10">2026.10.15 東京駅MV発行　幹入調4311　変更は1回に限り有効</text>
+  <rect x="520" y="95" width="240" height="260" rx="10" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+  <rect x="520" y="95" width="240" height="35" rx="10" fill="#0f172a"/>
+  <text x="640" y="118" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">東京駅 新幹線発車案内板</text>
+  <rect x="530" y="140" width="220" height="40" rx="4" fill="#334155"/>
+  <text x="540" y="158" fill="#facc15" font-size="12" font-weight="bold">10:30 のぞみ 25号</text>
+  <text x="540" y="173" fill="#cbd5e1" font-size="10">博多行　14番線</text>
+  <text x="710" y="165" fill="#22c55e" font-size="11" font-weight="bold">定刻</text>
+  <rect x="530" y="190" width="220" height="45" rx="4" fill="#0f766e" stroke="#2dd4bf" stroke-width="1.5"/>
+  <text x="540" y="208" fill="#ffffff" font-size="13" font-weight="bold">10:33 ひかり 643号</text>
+  <text x="540" y="225" fill="#e0f2fe" font-size="11">新大阪行　<tspan fill="#facc15" font-weight="bold" font-size="13">15番線</tspan></text>
+  <text x="705" y="215" fill="#fde047" font-size="11" font-weight="bold">乗車中</text>
+  <text x="530" y="260" fill="#94a3b8" font-size="11">• 自由席：1〜5号車</text>
+  <text x="530" y="280" fill="#94a3b8" font-size="11">• 指定席：6〜16号車 (7号車は指定)</text>
+  <text x="530" y="305" fill="#ef4444" font-size="11" font-weight="bold">※発車2分前に扉が閉まります。</text>
+  <rect x="40" y="375" width="720" height="115" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="60" y="402" fill="#0f172a" font-size="14" font-weight="bold">🗺️ 乗り換え・乗車マナーのご案内</text>
+  <text x="60" y="428" fill="#334155" font-size="12">① 東京駅では「新幹線南のりかえ口」の自動改札機に、乗車券と特急券を重ねて2枚一緒に入れてください。</text>
+  <text x="60" y="452" fill="#334155" font-size="12">② 15番線ホームへ上がり、足元の「7号車・乗車位置」の青色ラインに並んでお待ちください。</text>
+  <text x="60" y="476" fill="#b91c1c" font-size="12" font-weight="bold">③ 車内では携帯電話を通話モードにせずマナーモードに設定し、通話はデッキにてお願いいたします。</text>
+</svg>

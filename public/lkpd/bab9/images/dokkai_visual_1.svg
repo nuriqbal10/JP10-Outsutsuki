@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" height="auto" font-family="'Segoe UI', 'Hiragino Sans', 'Meiryo', sans-serif">
+  <rect x="10" y="10" width="780" height="500" rx="14" fill="#fafaf9" stroke="#e7e5e4" stroke-width="2"/>
+  <rect x="10" y="10" width="780" height="65" rx="14" fill="#be123c"/>
+  <text x="30" y="48" fill="#ffffff" font-size="22" font-weight="bold">日本の年中行事・祝日 ＆ 成人の日のつどい案内</text>
+  <text x="760" y="48" fill="#fecdd3" font-size="14" text-anchor="end">第9課：祝日と伝統文化</text>
+  <rect x="35" y="90" width="460" height="400" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="35" y="90" width="460" height="38" rx="10" fill="#fff1f2"/>
+  <text x="50" y="115" fill="#be123c" font-size="15" font-weight="bold">🌸 令和8年度 成人の日のつどい（成人式のご案内）</text>
+  <rect x="50" y="145" width="430" height="150" rx="8" fill="#fdf2f8" stroke="#fbcfe8"/>
+  <text x="65" y="172" fill="#831843" font-size="13" font-weight="bold">【日時】：1月第2月曜日（成人の日・祝日）</text>
+  <text x="80" y="195" fill="#9d174d" font-size="12">午前 10:30～12:00（受付開始 09:45〜）</text>
+  <text x="65" y="222" fill="#831843" font-size="13" font-weight="bold">【会場】：市民文化会館 大ホール</text>
+  <text x="80" y="242" fill="#9d174d" font-size="12">（JRさくら駅西口より徒歩7分／無料シャトルバス運行）</text>
+  <text x="65" y="270" fill="#831843" font-size="13" font-weight="bold">【対象】：平成17年4月2日〜平成18年4月1日生まれの市民</text>
+  <text x="80" y="288" fill="#64748b" font-size="11">※市内に住民票がある外国籍の方も対象です。</text>
+  <rect x="50" y="310" width="430" height="160" rx="8" fill="#fffbeb" stroke="#fde68a"/>
+  <text x="65" y="335" fill="#92400e" font-size="13" font-weight="bold">⚠️ 当日の持ち物と注意事項</text>
+  <text x="65" y="360" fill="#78350f" font-size="12">1. <tspan fill="#b91c1c" font-weight="bold">入場整理券（はがき）：</tspan> 12月中旬に郵送された案内状を必ず持参してください。</text>
+  <text x="65" y="385" fill="#78350f" font-size="12">2. <tspan fill="#b91c1c" font-weight="bold">本人確認書類：</tspan> 在留カードまたはマイナンバーカード。</text>
+  <text x="65" y="410" fill="#78350f" font-size="12">3. 服装：振袖（ふりそで）、スーツ、または自国の伝統正装。</text>
+  <text x="65" y="435" fill="#b91c1c" font-size="12" font-weight="bold">※入場整理券をお忘れの場合、受付で再発行手続きに時間がかかります。</text>
+  <text x="65" y="455" fill="#78350f" font-size="11">酒気帯びでの入場、クラッカー等の鳴り物の持ち込みは固くお断りします。</text>
+  <rect x="515" y="90" width="250" height="195" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="90" width="250" height="35" rx="10" fill="#f8fafc"/>
+  <text x="530" y="114" fill="#0f172a" font-size="13" font-weight="bold">🎍 年賀状（お正月のご挨拶）</text>
+  <text x="530" y="145" fill="#be123c" font-size="14" font-weight="bold">あけましておめでとうございます</text>
+  <text x="530" y="168" fill="#334155" font-size="12">昨年は大変お世話になりました。</text>
+  <text x="530" y="190" fill="#334155" font-size="12">本年もどうぞよろしく</text>
+  <text x="530" y="210" fill="#334155" font-size="12">お願い申し上げます。</text>
+  <text x="530" y="235" fill="#64748b" font-size="11">元旦　田中マデより</text>
+  <rect x="515" y="300" width="250" height="190" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="515" y="300" width="250" height="35" rx="10" fill="#f1f5f9"/>
+  <text x="530" y="324" fill="#0f172a" font-size="13" font-weight="bold">🗓️ 日本の主な祝日カレンダー</text>
+  <text x="530" y="355" fill="#334155" font-size="12">• 1月1日：元日（お正月）</text>
+  <text x="530" y="378" fill="#be123c" font-size="12" font-weight="bold">• 1月第2月曜：成人の日</text>
+  <text x="530" y="401" fill="#334155" font-size="12">• 5月3日〜5日：GW連休</text>
+  <text x="530" y="424" fill="#334155" font-size="12">• 7月第3月曜：海の日</text>
+  <text x="530" y="447" fill="#334155" font-size="12">• 9月第3月曜：敬老の日</text>
+  <text x="530" y="470" fill="#334155" font-size="12">• 11月23日：勤労感謝の日</text>
+</svg>

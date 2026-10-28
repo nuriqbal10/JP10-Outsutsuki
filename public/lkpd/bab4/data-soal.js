@@ -474,6 +474,7 @@ window.LKPD_DATA = {
               <p><strong>⑤ Yuta Kawashima ★★★★★</strong><br>定食は600～700円で食べられます。とってもリーズナブル。大好きな店の一つです。</p>
             </div>
           `,
+          image: "images/dokkai_visual_1.svg",
           prompt: "【問1】「いろどり食堂」について、全体的な評判として最も適切なものはどれですか。",
           options: [
             "味がおいしく、値段も手頃で量が多いと評判が良い",
