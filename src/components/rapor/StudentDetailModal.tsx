@@ -14,6 +14,21 @@ interface StudentDetailModalProps {
     dokkai: number;
     kanji: number;
   };
+  classFinalExamAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    total: number;
+    kanji: number;
+    pctMoji: number;
+    pctKaiwa: number;
+    pctChoukai: number;
+    pctDokkai: number;
+    passCount: number;
+    totalStudents: number;
+    passRate: number;
+  };
   levelTitle: string;
   onClose: () => void;
 }
@@ -21,6 +36,7 @@ interface StudentDetailModalProps {
 export default function StudentDetailModal({
   student,
   classPilarAvg,
+  classFinalExamAvg,
   levelTitle,
   onClose,
 }: StudentDetailModalProps) {
@@ -432,76 +448,248 @@ export default function StudentDetailModal({
           )}
 
           {activeTab === "exams" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Checkpoint 1 */}
-              <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
-                <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Checkpoint 1 (Bab 1–6)
-                </span>
-                <h4 className="font-bold text-sm">復習テスト 1</h4>
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu1?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu1?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu1?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu1?.test.dokkai || 0}</span></div>
-                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu1?.test.total || 0} / 250</span></div>
-                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu1?.kanji || 0}</span></div>
-                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu1?.kotoba || 0}</span></div>
-                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu1?.honyaku || 0}</span></div>
-                </div>
-              </div>
+            <div className="space-y-6">
+              {/* SPOTLIGHT KHUSUS: SHIKEN 1 BUKU (総括終了試験 - UJIAN AKHIR KOMPREHENSIF) */}
+              {(() => {
+                const fn = student.finalExam;
+                const fnTest = fn?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                const isPassedJft = (fnTest.total || 0) >= 200;
+                const isWarningJft = (fnTest.total || 0) >= 170 && !isPassedJft;
+                const cAvg = classFinalExamAvg || {
+                  mojiGoi: 30.4,
+                  kaiwa: 29.8,
+                  choukai: 42.1,
+                  dokkai: 51.5,
+                  total: 153.8,
+                  pctMoji: 63,
+                  pctKaiwa: 62,
+                  pctChoukai: 64,
+                  pctDokkai: 59,
+                };
 
-              {/* Checkpoint 2 */}
-              <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
-                <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Checkpoint 2 (Bab 7–12)
-                </span>
-                <h4 className="font-bold text-sm">復習テスト 2</h4>
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu2?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu2?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu2?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu2?.test.dokkai || 0}</span></div>
-                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu2?.test.total || 0} / 250</span></div>
-                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu2?.kanji || 0}</span></div>
-                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu2?.kotoba || 0}</span></div>
-                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu2?.honyaku || 0}</span></div>
-                </div>
-              </div>
+                const sectionsBreakdown = [
+                  {
+                    id: "mojiGoi",
+                    name: "Seksi 1: 文字・語彙",
+                    sub: "Huruf & Kosakata",
+                    score: fnTest.mojiGoi || 0,
+                    max: 48,
+                    avg: cAvg.mojiGoi,
+                    pct: Math.round(((fnTest.mojiGoi || 0) / 48) * 100),
+                    avgPct: cAvg.pctMoji,
+                  },
+                  {
+                    id: "kaiwa",
+                    name: "Seksi 2: 会話・表現",
+                    sub: "Percakapan & Tata Bahasa",
+                    score: fnTest.kaiwa || 0,
+                    max: 48,
+                    avg: cAvg.kaiwa,
+                    pct: Math.round(((fnTest.kaiwa || 0) / 48) * 100),
+                    avgPct: cAvg.pctKaiwa,
+                  },
+                  {
+                    id: "choukai",
+                    name: "Seksi 3: 聴解",
+                    sub: "Menyimak Audio Percakapan",
+                    score: fnTest.choukai || 0,
+                    max: 66,
+                    avg: cAvg.choukai,
+                    pct: Math.round(((fnTest.choukai || 0) / 66) * 100),
+                    avgPct: cAvg.pctChoukai,
+                  },
+                  {
+                    id: "dokkai",
+                    name: "Seksi 4: 読解",
+                    sub: "Pemahaman Membaca Wacana",
+                    score: fnTest.dokkai || 0,
+                    max: 88,
+                    avg: cAvg.dokkai,
+                    pct: Math.round(((fnTest.dokkai || 0) / 88) * 100),
+                    avgPct: cAvg.pctDokkai,
+                  },
+                ];
 
-              {/* Checkpoint 3 */}
-              <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
-                <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
-                  Checkpoint 3 (Bab 13–18)
-                </span>
-                <h4 className="font-bold text-sm">復習テスト 3</h4>
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu3?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu3?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu3?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu3?.test.dokkai || 0}</span></div>
-                  <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu3?.test.total || 0} / 250</span></div>
-                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu3?.kanji || 0}</span></div>
-                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu3?.kotoba || 0}</span></div>
-                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu3?.honyaku || 0}</span></div>
-                </div>
-              </div>
+                return (
+                  <div className="clay-card p-6 sm:p-7 rounded-3xl border-2 border-purple-500/50 bg-gradient-to-br from-purple-950/20 via-black/10 to-amber-950/20 shadow-2xl space-y-5">
+                    {/* Header Pembedahan Shiken Akhir */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-purple-500/30 pb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500 text-white shadow-md">
+                            👑 SHIKEN 1 BUKU (総括終了試験)
+                          </span>
+                          <span className="text-[11px] font-bold text-amber-500 uppercase px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30">
+                            Wajib Dibedah • Shiken Akhir
+                          </span>
+                        </div>
+                        <h3 className="text-base sm:text-xl font-black mt-1 text-purple-600 dark:text-purple-300">
+                          Audit Komprehensif 4 Seksi Ujian Akhir JFT-Basic A2 (Skala 250 Poin)
+                        </h3>
+                        <p className="text-xs opacity-75 mt-0.5">
+                          Standar kelulusan Prometric / The Japan Foundation: <strong>≥ 200 / 250 pt (80%)</strong>.
+                        </p>
+                      </div>
 
-              {/* Shiken 1 Buku */}
-              <div className="clay-card p-5 rounded-2xl border border-purple-500/30 bg-purple-500/5 space-y-3">
-                <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-300 bg-purple-500/20 px-2.5 py-0.5 rounded-full border border-purple-500/30">
-                  Shiken 1 Buku (Full)
-                </span>
-                <h4 className="font-bold text-sm text-purple-600 dark:text-purple-300">総括終了試験</h4>
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.finalExam?.test.mojiGoi || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.finalExam?.test.kaiwa || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.finalExam?.test.choukai || 0}</span></div>
-                  <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.finalExam?.test.dokkai || 0}</span></div>
-                  <div className="flex justify-between font-black text-purple-600 dark:text-purple-300"><span>Total Shiken:</span> <span>{student.finalExam?.test.total || 0} / 250</span></div>
-                  <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.finalExam?.kanji || 0}</span></div>
-                  <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.finalExam?.kotoba || 0}</span></div>
-                  <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.finalExam?.honyaku || 0}</span></div>
+                      {/* Total Score Badge */}
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <span className="text-[10px] uppercase font-bold opacity-70 block">Total Skor Akhir</span>
+                          <div className="text-2xl sm:text-3xl font-black font-mono text-purple-600 dark:text-purple-300">
+                            {fnTest.total || 0} <span className="text-xs text-current/60">/ 250 pt</span>
+                          </div>
+                          <span className="text-[10px] opacity-75">
+                            Rata-Rata Kelas: <strong>{cAvg.total} pt</strong>
+                          </span>
+                        </div>
+                        <div className={`px-3 py-2 rounded-2xl text-xs font-black flex items-center gap-1 border shadow ${
+                          isPassedJft
+                            ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/40"
+                            : isWarningJft
+                            ? "bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/40"
+                            : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-500/40"
+                        }`}>
+                          {isPassedJft ? "✓ LULUS JFT" : isWarningJft ? "⚠️ WASPADA" : "✕ REMEDIAL"}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 4 Seksi Breakdown Prometric (Bedah Mendalam) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      {sectionsBreakdown.map((sec) => {
+                        const diff = sec.score - sec.avg;
+                        const isUnderAvg = diff < 0;
+                        return (
+                          <div
+                            key={sec.id}
+                            className={`clay-card p-4 rounded-2xl border transition space-y-2.5 ${
+                              isUnderAvg ? "border-rose-500/40 bg-rose-500/5" : "border-purple-500/30"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="font-black text-xs text-purple-600 dark:text-purple-300 truncate">
+                                {sec.name}
+                              </span>
+                              <span className="text-[10px] font-bold font-mono px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                                Max {sec.max}
+                              </span>
+                            </div>
+                            <span className="text-[11px] opacity-70 block truncate">{sec.sub}</span>
+
+                            <div className="flex items-baseline justify-between pt-1">
+                              <div>
+                                <span className="text-xl font-black font-mono text-amber-500">
+                                  {sec.score}
+                                </span>
+                                <span className="text-xs opacity-60 font-mono"> / {sec.max} pt</span>
+                              </div>
+                              <span className="text-xs font-bold font-mono">
+                                {sec.pct}%
+                              </span>
+                            </div>
+
+                            {/* Bar Progres Siswa vs Rata-Rata Kelas */}
+                            <div className="space-y-1">
+                              <div className="w-full bg-black/10 dark:bg-white/10 rounded-full h-2 overflow-hidden flex relative">
+                                <div
+                                  className={`h-full rounded-full transition-all duration-500 ${
+                                    sec.pct >= 80 ? "bg-emerald-500" : sec.pct >= 60 ? "bg-amber-500" : "bg-rose-500"
+                                  }`}
+                                  style={{ width: `${Math.min(100, sec.pct)}%` }}
+                                />
+                              </div>
+                              <div className="flex justify-between text-[10px] font-mono opacity-75">
+                                <span>Rata-Rata Kelas:</span>
+                                <strong className="text-purple-500">{sec.avg} pt ({sec.avgPct}%)</strong>
+                              </div>
+                            </div>
+
+                            <div className={`text-[10px] font-bold ${diff >= 0 ? "text-emerald-500" : "text-rose-500"}`}>
+                              {diff >= 0 ? `▲ +${diff.toFixed(1)} di atas kelas` : `▼ ${Math.abs(diff).toFixed(1)} di bawah kelas (WAJIB DIBEDAH)`}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Evaluasi Tambahan: Kanji, Kotoba, Honyaku di Shiken Akhir */}
+                    <div className="grid grid-cols-3 gap-3 p-3.5 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="opacity-70 font-medium">Kanji Shiken Akhir:</span>
+                        <strong className="font-mono text-amber-500">{fn?.kanji || 0} / 100 pt</strong>
+                      </div>
+                      <div className="flex justify-between items-center border-x border-current/10 px-3">
+                        <span className="opacity-70 font-medium">Kotoba Shiken Akhir:</span>
+                        <strong className="font-mono text-amber-500">{fn?.kotoba || 0} / 100 pt</strong>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="opacity-70 font-medium">Honyaku Shiken Akhir:</span>
+                        <strong className="font-mono text-amber-500">{fn?.honyaku || 0} / 100 pt</strong>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* 3 CHECKPOINT EVALUASI BERKALA (BAB 1-6, BAB 7-12, BAB 13-18) */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-black uppercase tracking-wider opacity-80">
+                  Ujian Evaluasi Berkala Per 6 Bab (復習テスト 1, 2, 3)
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Checkpoint 1 */}
+                  <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
+                    <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                      Checkpoint 1 (Bab 1–6)
+                    </span>
+                    <h4 className="font-bold text-sm">復習テスト 1</h4>
+                    <div className="space-y-1 text-xs font-mono">
+                      <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu1?.test.mojiGoi || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu1?.test.kaiwa || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu1?.test.choukai || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu1?.test.dokkai || 0}</span></div>
+                      <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu1?.test.total || 0} / 250</span></div>
+                      <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu1?.kanji || 0}</span></div>
+                      <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu1?.kotoba || 0}</span></div>
+                      <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu1?.honyaku || 0}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Checkpoint 2 */}
+                  <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
+                    <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                      Checkpoint 2 (Bab 7–12)
+                    </span>
+                    <h4 className="font-bold text-sm">復習テスト 2</h4>
+                    <div className="space-y-1 text-xs font-mono">
+                      <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu2?.test.mojiGoi || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu2?.test.kaiwa || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu2?.test.choukai || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu2?.test.dokkai || 0}</span></div>
+                      <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu2?.test.total || 0} / 250</span></div>
+                      <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu2?.kanji || 0}</span></div>
+                      <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu2?.kotoba || 0}</span></div>
+                      <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu2?.honyaku || 0}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Checkpoint 3 */}
+                  <div className="clay-card p-5 rounded-2xl border border-current/10 space-y-3">
+                    <span className="text-[10px] font-black uppercase text-amber-500 bg-amber-500/15 px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                      Checkpoint 3 (Bab 13–18)
+                    </span>
+                    <h4 className="font-bold text-sm">復習テスト 3</h4>
+                    <div className="space-y-1 text-xs font-mono">
+                      <div className="flex justify-between"><span>1. Moji-Goi (48):</span> <span>{student.fukushuu3?.test.mojiGoi || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Kaiwa (48):</span> <span>{student.fukushuu3?.test.kaiwa || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Choukai (66):</span> <span>{student.fukushuu3?.test.choukai || 0}</span></div>
+                      <div className="flex justify-between"><span>1. Dokkai (88):</span> <span>{student.fukushuu3?.test.dokkai || 0}</span></div>
+                      <div className="flex justify-between font-bold text-amber-500"><span>Total Shiken:</span> <span>{student.fukushuu3?.test.total || 0} / 250</span></div>
+                      <div className="pt-1.5 border-t border-current/10 flex justify-between"><span>2. Kanji:</span> <span>{student.fukushuu3?.kanji || 0}</span></div>
+                      <div className="flex justify-between"><span>3. Kotoba:</span> <span>{student.fukushuu3?.kotoba || 0}</span></div>
+                      <div className="flex justify-between"><span>4. Honyaku:</span> <span>{student.fukushuu3?.honyaku || 0}</span></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

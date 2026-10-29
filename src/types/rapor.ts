@@ -109,6 +109,32 @@ export interface LevelRaporData {
     dokkai: number;
     kanji: number;
   };
+  classRawSectionAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    kanji: number;
+    kotoba: number;
+    honyaku: number;
+  };
+  classFinalExamAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    total: number;
+    kanji: number;
+    pctMoji: number;
+    pctKaiwa: number;
+    pctChoukai: number;
+    pctDokkai: number;
+    passCount: number;
+    totalStudents: number;
+    passRate: number;
+    weakestSection?: { id: string; name: string; pct: number; avg: number; max: number };
+    strongestSection?: { id: string; name: string; pct: number; avg: number; max: number };
+  };
 }
 
 export interface MasterRaporData {

@@ -88,14 +88,68 @@ export async function GET(request: Request) {
     // Urutkan ranking berdasarkan compositeScore descending
     const rankedStudents = [...enrichedStudents].sort((a, b) => (b.compositeScore || 0) - (a.compositeScore || 0));
 
-    // Hitung rata-rata pilar kelas
-    const totalCount = rankedStudents.length;
+    // Hitung rata-rata pilar kelas (%)
+    const totalCount = rankedStudents.length || 1;
     const classPilarAvg = {
-      mojiGoi: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.mojiGoi, 0) / (totalCount || 1)),
-      kaiwa: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.kaiwa, 0) / (totalCount || 1)),
-      choukai: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.choukai, 0) / (totalCount || 1)),
-      dokkai: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.dokkai, 0) / (totalCount || 1)),
-      kanji: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.kanji, 0) / (totalCount || 1)),
+      mojiGoi: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.mojiGoi, 0) / totalCount),
+      kaiwa: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.kaiwa, 0) / totalCount),
+      choukai: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.choukai, 0) / totalCount),
+      dokkai: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.dokkai, 0) / totalCount),
+      kanji: Math.round(rankedStudents.reduce((acc, s) => acc + s.pilar.kanji, 0) / totalCount),
+    };
+
+    // Hitung rata-rata skor mentah per seksi (skala harian)
+    const classRawSectionAvg = {
+      mojiGoi: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.mojiGoi || 0), 0) / totalCount) * 10) / 10,
+      kaiwa: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.kaiwa || 0), 0) / totalCount) * 10) / 10,
+      choukai: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.choukai || 0), 0) / totalCount) * 10) / 10,
+      dokkai: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.dokkai || 0), 0) / totalCount) * 10) / 10,
+      kanji: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.kanji || 0), 0) / totalCount) * 10) / 10,
+      kotoba: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.kotoba || 0), 0) / totalCount) * 10) / 10,
+      honyaku: Math.round((rankedStudents.reduce((acc, s) => acc + (s.averages?.honyaku || 0), 0) / totalCount) * 10) / 10,
+    };
+
+    // Hitung rata-rata khusus Shiken 1 Buku (Final Exam / 総括終了試験 - 250 pt)
+    const validFinal = rankedStudents.filter((s) => s.finalExam && (s.finalExam.test.total || 0) > 0);
+    const finalCount = validFinal.length || 1;
+    const finalAvgMoji = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.test.mojiGoi || 0), 0) / finalCount) * 10) / 10;
+    const finalAvgKaiwa = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.test.kaiwa || 0), 0) / finalCount) * 10) / 10;
+    const finalAvgChoukai = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.test.choukai || 0), 0) / finalCount) * 10) / 10;
+    const finalAvgDokkai = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.test.dokkai || 0), 0) / finalCount) * 10) / 10;
+    const finalAvgTotal = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.test.total || 0), 0) / finalCount) * 10) / 10;
+    const finalAvgKanji = Math.round((validFinal.reduce((acc, s) => acc + (s.finalExam?.kanji || 0), 0) / finalCount) * 10) / 10;
+
+    // Evaluasi persentase ketercapaian per seksi di Shiken Buku
+    const pctMoji = Math.round((finalAvgMoji / 48) * 100);
+    const pctKaiwa = Math.round((finalAvgKaiwa / 48) * 100);
+    const pctChoukai = Math.round((finalAvgChoukai / 66) * 100);
+    const pctDokkai = Math.round((finalAvgDokkai / 88) * 100);
+
+    const sectionsRanked = [
+      { id: "mojiGoi", name: "文字・語彙 (Moji-Goi)", pct: pctMoji, avg: finalAvgMoji, max: 48 },
+      { id: "kaiwa", name: "会話・表現 (Kaiwa)", pct: pctKaiwa, avg: finalAvgKaiwa, max: 48 },
+      { id: "choukai", name: "聴解 (Choukai)", pct: pctChoukai, avg: finalAvgChoukai, max: 66 },
+      { id: "dokkai", name: "読解 (Dokkai)", pct: pctDokkai, avg: finalAvgDokkai, max: 88 },
+    ].sort((a, b) => a.pct - b.pct);
+
+    const passedFinalCount = validFinal.filter((s) => (s.finalExam?.test.total || 0) >= 200).length;
+
+    const classFinalExamAvg = {
+      mojiGoi: finalAvgMoji,
+      kaiwa: finalAvgKaiwa,
+      choukai: finalAvgChoukai,
+      dokkai: finalAvgDokkai,
+      total: finalAvgTotal,
+      kanji: finalAvgKanji,
+      pctMoji,
+      pctKaiwa,
+      pctChoukai,
+      pctDokkai,
+      passCount: passedFinalCount,
+      totalStudents: validFinal.length,
+      passRate: Math.round((passedFinalCount / finalCount) * 100),
+      weakestSection: sectionsRanked[0],
+      strongestSection: sectionsRanked[sectionsRanked.length - 1],
     };
 
     return NextResponse.json(
@@ -108,6 +162,8 @@ export async function GET(request: Request) {
           classSummary: levelData.classSummary,
           chapterClassAverages: levelData.chapterClassAverages,
           classPilarAvg,
+          classRawSectionAvg,
+          classFinalExamAvg,
           students: enrichedStudents,
           rankedStudents,
         },

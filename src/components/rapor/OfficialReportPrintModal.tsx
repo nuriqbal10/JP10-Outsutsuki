@@ -9,6 +9,37 @@ interface OfficialReportPrintModalProps {
   onClose: () => void;
   student: StudentRaporItem | null;
   levelData: LevelRaporData | null;
+  classPilarAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    kanji: number;
+  };
+  classRawSectionAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    kanji: number;
+    kotoba: number;
+    honyaku: number;
+  };
+  classFinalExamAvg?: {
+    mojiGoi: number;
+    kaiwa: number;
+    choukai: number;
+    dokkai: number;
+    total: number;
+    kanji: number;
+    pctMoji: number;
+    pctKaiwa: number;
+    pctChoukai: number;
+    pctDokkai: number;
+    passCount: number;
+    totalStudents: number;
+    passRate: number;
+  };
 }
 
 export default function OfficialReportPrintModal({
@@ -16,6 +47,9 @@ export default function OfficialReportPrintModal({
   onClose,
   student,
   levelData,
+  classPilarAvg,
+  classRawSectionAvg,
+  classFinalExamAvg,
 }: OfficialReportPrintModalProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -284,78 +318,108 @@ export default function OfficialReportPrintModal({
                 <tbody>
                   <tr>
                     <td className="border border-slate-300 p-1 text-left pl-2 font-bold bg-slate-50/50">
-                      1. Rata-Rata Nilai Harian (18 Bab)
+                      1. Rata-Rata Nilai Harian Siswa (18 Bab)
                     </td>
-                    <td className="border border-slate-300 p-1">{avg.mojiGoi}</td>
-                    <td className="border border-slate-300 p-1">{avg.kaiwa}</td>
-                    <td className="border border-slate-300 p-1">{avg.choukai}</td>
-                    <td className="border border-slate-300 p-1">{avg.dokkai}</td>
-                    <td className="border border-slate-300 p-1 font-bold text-blue-700 bg-blue-50/30">
+                    <td className="border border-slate-300 p-1 font-mono">{avg.mojiGoi}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.kaiwa}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.choukai}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.dokkai}</td>
+                    <td className="border border-slate-300 p-1 font-bold text-blue-700 bg-blue-50/30 font-mono">
                       {avg.daiTest} / 100
                     </td>
-                    <td className="border border-slate-300 p-1">{avg.kanji}</td>
-                    <td className="border border-slate-300 p-1">{avg.kotoba}</td>
-                    <td className="border border-slate-300 p-1">{avg.honyaku}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.kanji}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.kotoba}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{avg.honyaku}</td>
+                  </tr>
+                  <tr className="bg-slate-100/90 text-slate-800 font-bold border-b border-slate-300">
+                    <td className="border border-slate-300 p-1 text-left pl-2 text-slate-900">
+                      🏛️ Rata-Rata Kelas Harian (Pembanding)
+                    </td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.mojiGoi ?? 12.5}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.kaiwa ?? 12.2}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.choukai ?? 14.0}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.dokkai ?? 13.6}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-700 bg-slate-200/50 font-bold">
+                      {levelData?.classSummary?.average?.toFixed(1) ?? "73.8"}
+                    </td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.kanji ?? 54.2}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.kotoba ?? 52.8}</td>
+                    <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.honyaku ?? 49.0}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-1 text-left pl-2 font-bold bg-slate-50/50">
                       2. Evaluasi Berkala I (Bab 1–6)
                     </td>
-                    <td className="border border-slate-300 p-1">{f1.test.mojiGoi}</td>
-                    <td className="border border-slate-300 p-1">{f1.test.kaiwa}</td>
-                    <td className="border border-slate-300 p-1">{f1.test.choukai}</td>
-                    <td className="border border-slate-300 p-1">{f1.test.dokkai}</td>
-                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30">
+                    <td className="border border-slate-300 p-1 font-mono">{f1.test.mojiGoi}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.test.kaiwa}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.test.choukai}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.test.dokkai}</td>
+                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30 font-mono">
                       {f1.test.total} / 250
                     </td>
-                    <td className="border border-slate-300 p-1">{f1.kanji}</td>
-                    <td className="border border-slate-300 p-1">{f1.kotoba}</td>
-                    <td className="border border-slate-300 p-1">{f1.honyaku}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.kanji}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.kotoba}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f1.honyaku}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-1 text-left pl-2 font-bold bg-slate-50/50">
                       3. Evaluasi Berkala II (Bab 7–12)
                     </td>
-                    <td className="border border-slate-300 p-1">{f2.test.mojiGoi}</td>
-                    <td className="border border-slate-300 p-1">{f2.test.kaiwa}</td>
-                    <td className="border border-slate-300 p-1">{f2.test.choukai}</td>
-                    <td className="border border-slate-300 p-1">{f2.test.dokkai}</td>
-                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30">
+                    <td className="border border-slate-300 p-1 font-mono">{f2.test.mojiGoi}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.test.kaiwa}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.test.choukai}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.test.dokkai}</td>
+                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30 font-mono">
                       {f2.test.total} / 250
                     </td>
-                    <td className="border border-slate-300 p-1">{f2.kanji}</td>
-                    <td className="border border-slate-300 p-1">{f2.kotoba}</td>
-                    <td className="border border-slate-300 p-1">{f2.honyaku}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.kanji}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.kotoba}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f2.honyaku}</td>
                   </tr>
                   <tr>
                     <td className="border border-slate-300 p-1 text-left pl-2 font-bold bg-slate-50/50">
                       4. Evaluasi Berkala III (Bab 13–18)
                     </td>
-                    <td className="border border-slate-300 p-1">{f3.test.mojiGoi}</td>
-                    <td className="border border-slate-300 p-1">{f3.test.kaiwa}</td>
-                    <td className="border border-slate-300 p-1">{f3.test.choukai}</td>
-                    <td className="border border-slate-300 p-1">{f3.test.dokkai}</td>
-                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30">
+                    <td className="border border-slate-300 p-1 font-mono">{f3.test.mojiGoi}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.test.kaiwa}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.test.choukai}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.test.dokkai}</td>
+                    <td className="border border-slate-300 p-1 font-bold text-emerald-700 bg-emerald-50/30 font-mono">
                       {f3.test.total} / 250
                     </td>
-                    <td className="border border-slate-300 p-1">{f3.kanji}</td>
-                    <td className="border border-slate-300 p-1">{f3.kotoba}</td>
-                    <td className="border border-slate-300 p-1">{f3.honyaku}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.kanji}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.kotoba}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{f3.honyaku}</td>
                   </tr>
-                  <tr className="bg-amber-50/40 font-semibold">
-                    <td className="border border-slate-300 p-1 text-left pl-2 font-bold text-slate-900">
-                      5. Ujian Akhir Komprehensif (Course Final)
+                  <tr className="bg-purple-50/60 font-semibold border-t-2 border-purple-400">
+                    <td className="border border-slate-300 p-1.5 text-left pl-2 font-black text-purple-900">
+                      👑 5. Shiken 1 Buku (総括終了試験・Shiken Akhir)
                     </td>
-                    <td className="border border-slate-300 p-1">{fn.test.mojiGoi}</td>
-                    <td className="border border-slate-300 p-1">{fn.test.kaiwa}</td>
-                    <td className="border border-slate-300 p-1">{fn.test.choukai}</td>
-                    <td className="border border-slate-300 p-1">{fn.test.dokkai}</td>
-                    <td className="border border-slate-300 p-1 font-bold text-purple-800 bg-purple-50/40">
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.mojiGoi}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.kaiwa}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.choukai}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.dokkai}</td>
+                    <td className="border border-slate-300 p-1 font-black text-purple-900 bg-purple-100/80 font-mono">
                       {fn.test.total} / 250
                     </td>
-                    <td className="border border-slate-300 p-1">{fn.kanji}</td>
-                    <td className="border border-slate-300 p-1">{fn.kotoba}</td>
-                    <td className="border border-slate-300 p-1">{fn.honyaku}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.kanji}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.kotoba}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-bold">{fn.honyaku}</td>
+                  </tr>
+                  <tr className="bg-purple-100/40 text-[10px] text-purple-800 font-bold border-b-2 border-purple-300">
+                    <td className="border border-slate-300 p-1 text-left pl-2">
+                      ↳ Rata-Rata Kelas Shiken 1 Buku (Standar Lulus: ≥200)
+                    </td>
+                    <td className="border border-slate-300 p-1 font-mono">{classFinalExamAvg?.mojiGoi ?? 30.4}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{classFinalExamAvg?.kaiwa ?? 29.8}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{classFinalExamAvg?.choukai ?? 42.1}</td>
+                    <td className="border border-slate-300 p-1 font-mono">{classFinalExamAvg?.dokkai ?? 51.5}</td>
+                    <td className="border border-slate-300 p-1 font-mono font-black text-purple-900">
+                      {classFinalExamAvg?.total ?? 153.8} / 250
+                    </td>
+                    <td className="border border-slate-300 p-1 font-mono">{classFinalExamAvg?.kanji ?? 62.4}</td>
+                    <td className="border border-slate-300 p-1 font-mono">-</td>
+                    <td className="border border-slate-300 p-1 font-mono">-</td>
                   </tr>
                 </tbody>
               </table>
@@ -375,7 +439,10 @@ export default function OfficialReportPrintModal({
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-slate-700">Moji-Goi (Huruf &amp; Kosakata):</span>
-                      <span className="font-bold">{pctMoji}%</span>
+                      <div className="flex items-center gap-1.5 font-mono">
+                        <span className="font-bold text-slate-900">{pctMoji}%</span>
+                        <span className="text-[9px] text-slate-500">(Kelas: {classPilarAvg?.mojiGoi ?? 52}%)</span>
+                      </div>
                     </div>
                     <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-slate-800 rounded-full" style={{ width: `${pctMoji}%` }}></div>
@@ -385,7 +452,10 @@ export default function OfficialReportPrintModal({
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-slate-700">Kaiwa-Hyougen (Percakapan):</span>
-                      <span className="font-bold">{pctKaiwa}%</span>
+                      <div className="flex items-center gap-1.5 font-mono">
+                        <span className="font-bold text-slate-900">{pctKaiwa}%</span>
+                        <span className="text-[9px] text-slate-500">(Kelas: {classPilarAvg?.kaiwa ?? 51}%)</span>
+                      </div>
                     </div>
                     <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-slate-800 rounded-full" style={{ width: `${pctKaiwa}%` }}></div>
@@ -395,7 +465,10 @@ export default function OfficialReportPrintModal({
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-slate-700">Choukai (Menyimak Audio):</span>
-                      <span className="font-bold">{pctChoukai}%</span>
+                      <div className="flex items-center gap-1.5 font-mono">
+                        <span className="font-bold text-slate-900">{pctChoukai}%</span>
+                        <span className="text-[9px] text-slate-500">(Kelas: {classPilarAvg?.choukai ?? 58}%)</span>
+                      </div>
                     </div>
                     <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-slate-800 rounded-full" style={{ width: `${pctChoukai}%` }}></div>
@@ -405,7 +478,10 @@ export default function OfficialReportPrintModal({
                   <div>
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-slate-700">Dokkai (Membaca Wacana):</span>
-                      <span className="font-bold">{pctDokkai}%</span>
+                      <div className="flex items-center gap-1.5 font-mono">
+                        <span className="font-bold text-slate-900">{pctDokkai}%</span>
+                        <span className="text-[9px] text-slate-500">(Kelas: {classPilarAvg?.dokkai ?? 49}%)</span>
+                      </div>
                     </div>
                     <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
                       <div className="h-full bg-slate-800 rounded-full" style={{ width: `${pctDokkai}%` }}></div>

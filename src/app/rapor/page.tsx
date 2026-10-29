@@ -24,6 +24,9 @@ import {
   TrendingUp,
   AlertCircle,
   AlertTriangle,
+  Target,
+  Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
@@ -60,7 +63,7 @@ function getStudentScore(s: any): number {
 
 export default function RaporDashboardPage() {
   const [selectedLevel, setSelectedLevel] = useState<"A1" | "A21" | "A22">("A22");
-  const [activeTab, setActiveTab] = useState<"overview" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "final_exam" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Instant State
@@ -177,8 +180,47 @@ export default function RaporDashboardPage() {
 
   const highestScore = top3[0] ? getStudentScore(top3[0]) : (raporData?.classSummary?.highest ?? 94.0);
 
+  // Perhitungan Rata-Rata Kelas per Seksi Harian (5 Pilar)
+  const classPilarAvg = raporData?.classPilarAvg || {
+    mojiGoi: Math.round(allStudents.reduce((acc, s) => acc + (s.pilar?.mojiGoi || ((s.averages?.mojiGoi || 0) / 24) * 100), 0) / (totalStudentsCount || 1)),
+    kaiwa: Math.round(allStudents.reduce((acc, s) => acc + (s.pilar?.kaiwa || ((s.averages?.kaiwa || 0) / 24) * 100), 0) / (totalStudentsCount || 1)),
+    choukai: Math.round(allStudents.reduce((acc, s) => acc + (s.pilar?.choukai || ((s.averages?.choukai || 0) / 24) * 100), 0) / (totalStudentsCount || 1)),
+    dokkai: Math.round(allStudents.reduce((acc, s) => acc + (s.pilar?.dokkai || ((s.averages?.dokkai || 0) / 28) * 100), 0) / (totalStudentsCount || 1)),
+    kanji: Math.round(allStudents.reduce((acc, s) => acc + (s.pilar?.kanji || s.averages?.kanji || 0), 0) / (totalStudentsCount || 1)),
+  };
+
+  const classRawSectionAvg = raporData?.classRawSectionAvg || {
+    mojiGoi: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.mojiGoi || 0), 0) / totalStudentsCount) * 10) / 10,
+    kaiwa: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.kaiwa || 0), 0) / totalStudentsCount) * 10) / 10,
+    choukai: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.choukai || 0), 0) / totalStudentsCount) * 10) / 10,
+    dokkai: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.dokkai || 0), 0) / totalStudentsCount) * 10) / 10,
+    kanji: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.kanji || 0), 0) / totalStudentsCount) * 10) / 10,
+    kotoba: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.kotoba || 0), 0) / totalStudentsCount) * 10) / 10,
+    honyaku: Math.round((allStudents.reduce((acc, s) => acc + (s.averages?.honyaku || 0), 0) / totalStudentsCount) * 10) / 10,
+  };
+
+  // Perhitungan Khusus Shiken 1 Buku (Final Exam / 250 pt)
+  const finalExamStudents = allStudents.filter((s) => s.finalExam && (s.finalExam.test.total || 0) > 0);
+  const finalTotalCount = finalExamStudents.length || 1;
+  const classFinalExamAvg = raporData?.classFinalExamAvg || {
+    mojiGoi: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.mojiGoi || 0), 0) / finalTotalCount) * 10) / 10,
+    kaiwa: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.kaiwa || 0), 0) / finalTotalCount) * 10) / 10,
+    choukai: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.choukai || 0), 0) / finalTotalCount) * 10) / 10,
+    dokkai: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.dokkai || 0), 0) / finalTotalCount) * 10) / 10,
+    total: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.total || 0), 0) / finalTotalCount) * 10) / 10,
+    kanji: Math.round((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.kanji || 0), 0) / finalTotalCount) * 10) / 10,
+    pctMoji: Math.round(((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.mojiGoi || 0), 0) / finalTotalCount) / 48) * 100),
+    pctKaiwa: Math.round(((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.kaiwa || 0), 0) / finalTotalCount) / 48) * 100),
+    pctChoukai: Math.round(((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.choukai || 0), 0) / finalTotalCount) / 66) * 100),
+    pctDokkai: Math.round(((finalExamStudents.reduce((acc, s) => acc + (s.finalExam?.test.dokkai || 0), 0) / finalTotalCount) / 88) * 100),
+    passCount: finalExamStudents.filter((s) => (s.finalExam?.test.total || 0) >= 200).length,
+    totalStudents: finalExamStudents.length,
+    passRate: Math.round((finalExamStudents.filter((s) => (s.finalExam?.test.total || 0) >= 200).length / finalTotalCount) * 100),
+  };
+
   const viewTitles = {
     overview: "Ikhtisar & Ringkasan Eksekutif (統括概要)",
+    final_exam: "Bedah Shiken 1 Buku (総括終了試験・4セクション徹底解剖)",
     students: "Buku Nilai Akademik (成績一覧表 - 28 Siswa)",
     grandprix: "Dinamika Progres Nilai (進捗推移 - 18 Bab)",
     heatmap: "Matriks Diagnostik 18 Bab (達成度マトリックス)",
@@ -194,6 +236,7 @@ export default function RaporDashboardPage() {
 
   const navItems = [
     { id: "overview", label: "Ringkasan Eksekutif", sub: "Statistik & Podium Juara", icon: BarChart2 },
+    { id: "final_exam", label: "Bedah Shiken 1 Buku", sub: "Audit 4 Seksi Ujian Akhir (250 pt)", icon: Target },
     { id: "students", label: "Buku Nilai (28 Siswa)", sub: "Rekap Nilai Komulatif", icon: Users },
     { id: "grandprix", label: "Dinamika Progres Nilai", sub: "Kemajuan Bab 1 s.d. 18", icon: TrendingUp },
     { id: "heatmap", label: "Matriks Diagnostik Bab", sub: "Evaluasi Ketuntasan Bab", icon: SlidersHorizontal },
@@ -795,6 +838,617 @@ export default function RaporDashboardPage() {
                 )}
               </div>
             </section>
+
+            {/* ========================================================
+                RATA-RATA KELAS PER SEKSI (5 PILAR KOMPETENSI KELAS)
+                ======================================================== */}
+            <section className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold tracking-tight font-serif flex items-center gap-2">
+                    <BarChart2 className="w-5 h-5 text-amber-500" />
+                    Performa Rata-Rata Kelas Per Seksi (Class Section Performance)
+                  </h3>
+                  <p className="text-xs opacity-70 mt-0.5">
+                    Breakdown capaian 28 siswa pada 4 aspek utama Irodori + Kanji praktis dibandingkan target KKM ({kkm} pt)
+                  </p>
+                </div>
+                <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 self-start sm:self-auto">
+                  Agregat Harian 18 Bab
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+                {/* 1. Moji-Goi */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold opacity-70">文字・語彙 (Moji-Goi)</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">
+                      Maks 24
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-amber-600 dark:text-amber-400">
+                        {classRawSectionAvg.mojiGoi}
+                      </span>
+                      <span className="text-[11px] opacity-60 ml-1">/ 24</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classPilarAvg.mojiGoi}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        classPilarAvg.mojiGoi >= kkm ? "bg-emerald-500" : classPilarAvg.mojiGoi >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classPilarAvg.mojiGoi)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] opacity-70 pt-1 border-t border-current/5">
+                    <span>Target KKM: {kkm}%</span>
+                    <span className={classPilarAvg.mojiGoi >= kkm ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                      {classPilarAvg.mojiGoi >= kkm ? "✓ Tuntas" : `Gap: ${classPilarAvg.mojiGoi - kkm}%`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. Kaiwa / Hyougen */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold opacity-70">会話・表現 (Kaiwa)</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">
+                      Maks 24
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                        {classRawSectionAvg.kaiwa}
+                      </span>
+                      <span className="text-[11px] opacity-60 ml-1">/ 24</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classPilarAvg.kaiwa}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        classPilarAvg.kaiwa >= kkm ? "bg-emerald-500" : classPilarAvg.kaiwa >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classPilarAvg.kaiwa)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] opacity-70 pt-1 border-t border-current/5">
+                    <span>Target KKM: {kkm}%</span>
+                    <span className={classPilarAvg.kaiwa >= kkm ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                      {classPilarAvg.kaiwa >= kkm ? "✓ Tuntas" : `Gap: ${classPilarAvg.kaiwa - kkm}%`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Choukai */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold opacity-70">聴解 (Choukai)</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 font-bold">
+                      Maks 24
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-purple-600 dark:text-purple-400">
+                        {classRawSectionAvg.choukai}
+                      </span>
+                      <span className="text-[11px] opacity-60 ml-1">/ 24</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classPilarAvg.choukai}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        classPilarAvg.choukai >= kkm ? "bg-emerald-500" : classPilarAvg.choukai >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classPilarAvg.choukai)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] opacity-70 pt-1 border-t border-current/5">
+                    <span>Target KKM: {kkm}%</span>
+                    <span className={classPilarAvg.choukai >= kkm ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                      {classPilarAvg.choukai >= kkm ? "✓ Tuntas" : `Gap: ${classPilarAvg.choukai - kkm}%`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4. Dokkai */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold opacity-70">読解 (Dokkai)</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold">
+                      Maks 28
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                        {classRawSectionAvg.dokkai}
+                      </span>
+                      <span className="text-[11px] opacity-60 ml-1">/ 28</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classPilarAvg.dokkai}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        classPilarAvg.dokkai >= kkm ? "bg-emerald-500" : classPilarAvg.dokkai >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classPilarAvg.dokkai)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] opacity-70 pt-1 border-t border-current/5">
+                    <span>Target KKM: {kkm}%</span>
+                    <span className={classPilarAvg.dokkai >= kkm ? "text-emerald-500 font-bold" : "text-rose-500 font-bold"}>
+                      {classPilarAvg.dokkai >= kkm ? "✓ Tuntas" : `Gap: ${classPilarAvg.dokkai - kkm}%`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 5. Kanji */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold opacity-70">漢字 (Kanji Praktis)</span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">
+                      Maks 100
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
+                        {classRawSectionAvg.kanji}
+                      </span>
+                      <span className="text-[11px] opacity-60 ml-1">/ 100</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classPilarAvg.kanji}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        classPilarAvg.kanji >= kkm ? "bg-emerald-500" : classPilarAvg.kanji >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classPilarAvg.kanji)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] opacity-70 pt-1 border-t border-current/5">
+                    <span>Target KKM: {kkm}%</span>
+                    <span className={classPilarAvg.kanji >= kkm ? "text-emerald-500 font-bold" : "text-amber-500 font-bold"}>
+                      {classPilarAvg.kanji >= kkm ? "✓ Tuntas" : `Gap: ${classPilarAvg.kanji - kkm}%`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* ========================================================
+                SPOTLIGHT BANNER: BEDAH SHIKEN 1 BUKU (CALL TO ACTION)
+                ======================================================== */}
+            <section className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-purple-500/15 border-2 border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 shadow-lg">
+              <div className="space-y-1.5 max-w-2xl">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-amber-500 text-stone-950">
+                    WAJIB DIBEDAH • INSTRUMEN AKHIR
+                  </span>
+                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                    Ujian Komprehensif 1 Buku (総括終了試験)
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-extrabold font-serif">
+                  Audit 4 Seksi Standar Prometric JFT-Basic A2 (Skala 250 Poin)
+                </h3>
+                <p className="text-xs opacity-80 leading-relaxed">
+                  Rata-rata kelas: <strong className="text-amber-600 dark:text-amber-400">{classFinalExamAvg.total} / 250 pt</strong> • Tingkat kelulusan resmi (≥200 pt): <strong className="text-emerald-600 dark:text-emerald-400">{classFinalExamAvg.passRate}% ({classFinalExamAvg.passCount}/{classFinalExamAvg.totalStudents} siswa)</strong>. Bedah mendalam kelemahan seksi Dokkai &amp; Choukai untuk menjamin 100% kelulusan ujian nyata.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setActiveTab("final_exam")}
+                className="clay-btn-gold px-5 py-3 rounded-2xl text-xs font-extrabold flex items-center gap-2 shadow-md cursor-pointer shrink-0"
+              >
+                <Target className="w-4 h-4" />
+                <span>Buka Panel Bedah Shiken 1 Buku</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </section>
+          </div>
+        )}
+
+        {/* ========================================================
+            PANEL BARU: BEDAH SHIKEN 1 BUKU (総括終了試験・4セクション徹底解剖)
+            ======================================================== */}
+        {activeTab === "final_exam" && (
+          <div className="space-y-6">
+            {/* Header Eksekutif Shiken 1 Buku */}
+            <div className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 space-y-4 shadow-xl">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-current/10 pb-5">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-amber-500 text-stone-950">
+                      JFT-BASIC A2 OFFICIAL BENCHMARK
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-black/5 dark:bg-white/10 opacity-70">
+                      Format Prometric Standard: 250 Poin Maksimum
+                    </span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold font-serif">
+                    Bedah Shiken 1 Buku (総括終了試験・4セクション徹底解剖)
+                  </h2>
+                  <p className="text-xs opacity-75 max-w-3xl leading-relaxed">
+                    Ujian penutup 1 buku ini mengukur kesiapan sejati 28 siswa menghadapi ujian sertifikasi JFT-Basic A2 resmi. Garis batas kelulusan resmi Japan Foundation adalah <strong className="text-amber-600 dark:text-amber-400">≥200 dari 250 poin (80%)</strong>.
+                  </p>
+                </div>
+
+                {/* Status Kelulusan Prometric Kelas */}
+                <div className="clay-card-compact p-4 rounded-2xl border border-current/10 text-center shrink-0 min-w-[200px]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider opacity-70 block">
+                    Tingkat Kelulusan Kelas
+                  </span>
+                  <div className="my-1">
+                    <span className={`text-3xl font-black ${
+                      classFinalExamAvg.passRate >= 75 ? "text-emerald-500" : classFinalExamAvg.passRate >= 50 ? "text-amber-500" : "text-rose-500"
+                    }`}>
+                      {classFinalExamAvg.passRate}%
+                    </span>
+                  </div>
+                  <span className="text-[11px] opacity-75 font-semibold">
+                    {classFinalExamAvg.passCount} dari {classFinalExamAvg.totalStudents} Siswa Lulus ≥200 pt
+                  </span>
+                </div>
+              </div>
+
+              {/* 4 Pilar Seksi Prometric Deep-Dive Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                {/* 1. Moji-Goi */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                        Seksi I • 19.2% Bobot
+                      </span>
+                      <h4 className="font-extrabold text-sm">文字・語彙 (Moji-Goi)</h4>
+                    </div>
+                    <span className="text-xs font-mono font-black px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                      / 48 pt
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-amber-600 dark:text-amber-400">
+                        {classFinalExamAvg.mojiGoi}
+                      </span>
+                      <span className="text-xs opacity-60 ml-1">/ 48 pt</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classFinalExamAvg.pctMoji}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        classFinalExamAvg.pctMoji >= 80 ? "bg-emerald-500" : classFinalExamAvg.pctMoji >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classFinalExamAvg.pctMoji)}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] opacity-70 leading-relaxed">
+                    Penguasaan kosakata kerja &amp; kehidupan harian (12 pertanyaan, bobot 4 pt/soal).
+                  </p>
+                </div>
+
+                {/* 2. Kaiwa / Hyougen */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 block">
+                        Seksi II • 19.2% Bobot
+                      </span>
+                      <h4 className="font-extrabold text-sm">会話・表現 (Kaiwa)</h4>
+                    </div>
+                    <span className="text-xs font-mono font-black px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                      / 48 pt
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                        {classFinalExamAvg.kaiwa}
+                      </span>
+                      <span className="text-xs opacity-60 ml-1">/ 48 pt</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classFinalExamAvg.pctKaiwa}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        classFinalExamAvg.pctKaiwa >= 80 ? "bg-emerald-500" : classFinalExamAvg.pctKaiwa >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classFinalExamAvg.pctKaiwa)}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] opacity-70 leading-relaxed">
+                    Tata bahasa praktis &amp; respons situasional di tempat kerja (12 soal, bobot 4 pt/soal).
+                  </p>
+                </div>
+
+                {/* 3. Choukai */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 block">
+                        Seksi III • 26.4% Bobot
+                      </span>
+                      <h4 className="font-extrabold text-sm">聴解 (Choukai)</h4>
+                    </div>
+                    <span className="text-xs font-mono font-black px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                      / 66 pt
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-purple-600 dark:text-purple-400">
+                        {classFinalExamAvg.choukai}
+                      </span>
+                      <span className="text-xs opacity-60 ml-1">/ 66 pt</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classFinalExamAvg.pctChoukai}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        classFinalExamAvg.pctChoukai >= 80 ? "bg-emerald-500" : classFinalExamAvg.pctChoukai >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classFinalExamAvg.pctChoukai)}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] opacity-70 leading-relaxed">
+                    Audio percakapan alami, instruksi kerja, dan pengumuman (11 soal, bobot 6 pt/soal).
+                  </p>
+                </div>
+
+                {/* 4. Dokkai */}
+                <div className="clay-card-compact p-5 rounded-2xl border border-current/10 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 block">
+                        Seksi IV • 35.2% Bobot
+                      </span>
+                      <h4 className="font-extrabold text-sm">読解 (Dokkai)</h4>
+                    </div>
+                    <span className="text-xs font-mono font-black px-2 py-0.5 rounded bg-black/5 dark:bg-white/10">
+                      / 88 pt
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <span className="text-2xl font-black text-rose-600 dark:text-rose-400">
+                        {classFinalExamAvg.dokkai}
+                      </span>
+                      <span className="text-xs opacity-60 ml-1">/ 88 pt</span>
+                    </div>
+                    <span className="text-sm font-bold font-mono">
+                      {classFinalExamAvg.pctDokkai}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-black/10 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full rounded-full ${
+                        classFinalExamAvg.pctDokkai >= 80 ? "bg-emerald-500" : classFinalExamAvg.pctDokkai >= 65 ? "bg-amber-500" : "bg-rose-500"
+                      }`}
+                      style={{ width: `${Math.min(100, classFinalExamAvg.pctDokkai)}%` }}
+                    />
+                  </div>
+                  <p className="text-[10px] opacity-70 leading-relaxed">
+                    Seksi penentu kelulusan tertinggi: formulir, poster, instruksi SOP (11 soal, bobot 8 pt/soal).
+                  </p>
+                </div>
+              </div>
+
+              {/* Alert Peringatan Pedagogis Shihan */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1 text-xs leading-relaxed">
+                  <span className="font-extrabold text-amber-700 dark:text-amber-300 block">
+                    Peringatan Audit Instruktur Shihan:
+                  </span>
+                  <p className="opacity-80">
+                    Seksi <strong>読解 (Dokkai - 88 pt)</strong> dan <strong>聴解 (Choukai - 66 pt)</strong> mencakup <strong className="text-amber-600 dark:text-amber-400">61.6% (154 dari 250 pt)</strong> dari total nilai ujian JFT-Basic A2. Siswa dengan nilai Dokkai di bawah 65 pt atau Choukai di bawah 50 pt berada dalam zona risiko tinggi tidak lulus ujian CBT Prometric. Wajib dibedah dan dilakukan tryout drilling ulang per bab sebelum pendaftaran voucher ujian.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Tabel Diagnostik 28 Siswa Khusus Shiken 1 Buku */}
+            <div className="clay-card p-4 rounded-3xl overflow-hidden shadow-xl space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2">
+                <div>
+                  <h3 className="font-extrabold text-sm sm:text-base font-serif flex items-center gap-2">
+                    <Target className="w-4 h-4 text-amber-500" />
+                    Tabel Diagnostik 28 Siswa — Ujian Akhir (250 Poin)
+                  </h3>
+                  <p className="text-[11px] opacity-70">
+                    Rincian perolehan 4 seksi standar Prometric untuk tiap siswa beserta status kelulusan resmi (≥200 pt)
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30">
+                    Lulus: ≥200 pt
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/30">
+                    Waspada: 170-199 pt
+                  </span>
+                  <span className="px-2.5 py-1 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 font-bold border border-rose-500/30">
+                    Remedial: &lt;170 pt
+                  </span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-current/10 bg-black/5 dark:bg-white/5 opacity-80 font-bold uppercase text-[10px] tracking-wider">
+                      <th className="p-3 text-center w-12">No</th>
+                      <th className="p-3">Nama Siswa</th>
+                      <th className="p-3 text-center w-28">NIM</th>
+                      <th className="p-3 text-center w-24">Moji-Goi (/48)</th>
+                      <th className="p-3 text-center w-24">Kaiwa (/48)</th>
+                      <th className="p-3 text-center w-24">Choukai (/66)</th>
+                      <th className="p-3 text-center w-24">Dokkai (/88)</th>
+                      <th className="p-3 text-center w-28">Total (/250)</th>
+                      <th className="p-3 text-center w-36">Status Kelulusan JFT</th>
+                      <th className="p-3 text-center w-36">Aksi Audit</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-current/10 font-medium">
+                    {/* Baris Rata-Rata Kelas */}
+                    <tr className="bg-amber-500/10 font-extrabold border-y-2 border-amber-500/30">
+                      <td className="p-3 text-center text-amber-600 dark:text-amber-400">AVG</td>
+                      <td className="p-3 text-amber-700 dark:text-amber-300">
+                        🏛️ Rata-Rata Kelas Shiken 1 Buku
+                      </td>
+                      <td className="p-3 text-center font-mono text-[10px] opacity-75">28 SISWA</td>
+                      <td className="p-3 text-center text-amber-600 dark:text-amber-400 font-mono">
+                        {classFinalExamAvg.mojiGoi} <span className="text-[10px] opacity-60">({classFinalExamAvg.pctMoji}%)</span>
+                      </td>
+                      <td className="p-3 text-center text-blue-600 dark:text-blue-400 font-mono">
+                        {classFinalExamAvg.kaiwa} <span className="text-[10px] opacity-60">({classFinalExamAvg.pctKaiwa}%)</span>
+                      </td>
+                      <td className="p-3 text-center text-purple-600 dark:text-purple-400 font-mono">
+                        {classFinalExamAvg.choukai} <span className="text-[10px] opacity-60">({classFinalExamAvg.pctChoukai}%)</span>
+                      </td>
+                      <td className="p-3 text-center text-rose-600 dark:text-rose-400 font-mono">
+                        {classFinalExamAvg.dokkai} <span className="text-[10px] opacity-60">({classFinalExamAvg.pctDokkai}%)</span>
+                      </td>
+                      <td className="p-3 text-center text-stone-950 dark:text-amber-300 font-black text-sm font-mono">
+                        {classFinalExamAvg.total}
+                      </td>
+                      <td className="p-3 text-center">
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                          Pass Rate: {classFinalExamAvg.passRate}%
+                        </span>
+                      </td>
+                      <td className="p-3 text-center text-[10px] opacity-60">
+                        Benchmark Prometric
+                      </td>
+                    </tr>
+
+                    {/* Baris Siswa Individual */}
+                    {allStudents.map((st, idx) => {
+                      const fe = st.finalExam?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+                      const tot = fe.total || 0;
+                      const isPass = tot >= 200;
+                      const isCaution = tot >= 170 && tot < 200;
+
+                      // Identifikasi kelemahan spesifik
+                      const pctM = Math.round((fe.mojiGoi / 48) * 100);
+                      const pctK = Math.round((fe.kaiwa / 48) * 100);
+                      const pctC = Math.round((fe.choukai / 66) * 100);
+                      const pctD = Math.round((fe.dokkai / 88) * 100);
+                      const lowest = Math.min(pctM, pctK, pctC, pctD);
+                      let weakTag = "";
+                      if (lowest === pctD) weakTag = "Lemah: Dokkai";
+                      else if (lowest === pctC) weakTag = "Lemah: Choukai";
+                      else if (lowest === pctK) weakTag = "Lemah: Kaiwa";
+                      else weakTag = "Lemah: Moji-Goi";
+
+                      return (
+                        <tr key={st.no} className="hover:bg-amber-500/5 transition">
+                          <td className="p-3 text-center font-bold opacity-70">
+                            #{idx + 1}
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-xs">{st.name}</span>
+                              <span className="text-[9px] font-mono opacity-50 px-1 py-0.5 rounded bg-black/5 dark:bg-white/5">
+                                #{st.no}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center font-mono font-bold text-xs text-amber-600 dark:text-amber-400">
+                            {st.nim || `#${st.no}`}
+                          </td>
+                          <td className="p-3 text-center font-mono">
+                            <span className={pctM < 70 ? "text-rose-500 font-bold" : ""}>{fe.mojiGoi}</span>
+                            <span className="text-[10px] opacity-50 ml-1">({pctM}%)</span>
+                          </td>
+                          <td className="p-3 text-center font-mono">
+                            <span className={pctK < 70 ? "text-rose-500 font-bold" : ""}>{fe.kaiwa}</span>
+                            <span className="text-[10px] opacity-50 ml-1">({pctK}%)</span>
+                          </td>
+                          <td className="p-3 text-center font-mono">
+                            <span className={pctC < 70 ? "text-rose-500 font-bold" : ""}>{fe.choukai}</span>
+                            <span className="text-[10px] opacity-50 ml-1">({pctC}%)</span>
+                          </td>
+                          <td className="p-3 text-center font-mono">
+                            <span className={pctD < 70 ? "text-rose-500 font-bold" : ""}>{fe.dokkai}</span>
+                            <span className="text-[10px] opacity-50 ml-1">({pctD}%)</span>
+                          </td>
+                          <td className="p-3 text-center font-mono font-black text-sm">
+                            <span className={isPass ? "text-emerald-500" : isCaution ? "text-amber-500" : "text-rose-500"}>
+                              {tot}
+                            </span>
+                            <span className="text-[10px] opacity-50 font-normal"> /250</span>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="flex flex-col items-center gap-0.5">
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                isPass
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                                  : isCaution
+                                  ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+                                  : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30"
+                              }`}>
+                                {isPass ? "✓ LULUS JFT" : isCaution ? "⚠️ WASPADA" : "✕ REMEDIAL"}
+                              </span>
+                              <span className="text-[9px] font-medium opacity-60">
+                                {weakTag}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-center">
+                            <div className="inline-flex items-center gap-1.5">
+                              <button
+                                onClick={() => setSelectedStudentForPrint(st)}
+                                className="px-2 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 font-bold text-[10px] border border-amber-500/30 flex items-center gap-1 cursor-pointer"
+                                title="Cetak Rapor A4 Siswa Ini"
+                              >
+                                <Printer className="w-3 h-3" /> Cetak
+                              </button>
+                              <button
+                                onClick={() => setSelectedStudentForDetail(st)}
+                                className="px-2 py-1 rounded-lg bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 font-bold text-[10px] cursor-pointer"
+                                title="Buka Detail Shiken & Bab Siswa Ini"
+                              >
+                                Detail
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
 
@@ -852,6 +1506,67 @@ export default function RaporDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-current/10 font-medium">
+                    {/* Baris Rata-Rata Kelas Pembanding */}
+                    <tr className="bg-amber-500/10 font-extrabold border-y-2 border-amber-500/30">
+                      <td className="p-3 text-center">
+                        <span className="w-7 h-7 rounded-lg inline-flex items-center justify-center font-black text-xs bg-amber-500 text-stone-950 shadow-xs">
+                          AVG
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs flex items-center justify-center shrink-0 border border-amber-500/30">
+                            🏛️
+                          </div>
+                          <div>
+                            <span className="font-extrabold text-sm text-amber-700 dark:text-amber-300">
+                              Rata-Rata Kelas (28 Siswa)
+                            </span>
+                            <span className="block text-[10px] opacity-60 font-normal">
+                              Standar Benchmark Akademik
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-3 text-center font-mono font-bold text-xs opacity-75">
+                        SELURUH KELAS
+                      </td>
+                      <td className="p-3 text-center font-black text-sm text-amber-600 dark:text-amber-400 font-mono">
+                        {calculatedClassAvg}
+                      </td>
+                      <td className="p-3 text-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <span className="px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                            Grade B+
+                          </span>
+                          <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                            Ketuntasan {kkmPercentage}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-3 text-center">
+                        <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                          <span title="Rata-rata Moji-Goi (maks 24)">M:{classRawSectionAvg.mojiGoi}</span>
+                          <span>•</span>
+                          <span title="Rata-rata Kaiwa (maks 24)">K:{classRawSectionAvg.kaiwa}</span>
+                          <span>•</span>
+                          <span title="Rata-rata Choukai (maks 24)">C:{classRawSectionAvg.choukai}</span>
+                          <span>•</span>
+                          <span title="Rata-rata Dokkai (maks 28)">D:{classRawSectionAvg.dokkai}</span>
+                        </div>
+                      </td>
+                      <td className="p-3 text-center">
+                        <button
+                          onClick={() => setActiveTab("final_exam")}
+                          className="px-2.5 py-1.5 rounded-lg bg-amber-500 text-stone-950 font-extrabold text-[11px] shadow-xs inline-flex items-center gap-1 cursor-pointer hover:bg-amber-400 transition"
+                          title="Buka Bedah Shiken 1 Buku"
+                        >
+                          <Target className="w-3.5 h-3.5" />
+                          <span>Bedah Shiken</span>
+                        </button>
+                      </td>
+                    </tr>
+
                     {filteredStudents.map((st) => (
                       <tr key={st.no} className="hover:bg-amber-500/5 transition">
                         <td className="p-3 text-center">
@@ -1174,6 +1889,9 @@ export default function RaporDashboardPage() {
         onClose={() => setSelectedStudentForPrint(null)}
         student={selectedStudentForPrint}
         levelData={raporData}
+        classPilarAvg={classPilarAvg}
+        classRawSectionAvg={classRawSectionAvg}
+        classFinalExamAvg={classFinalExamAvg}
       />
 
       {/* ========================================================
@@ -1181,15 +1899,8 @@ export default function RaporDashboardPage() {
           ======================================================== */}
       <StudentDetailModal
         student={selectedStudentForDetail}
-        classPilarAvg={
-          raporData?.classPilarAvg || {
-            mojiGoi: 70,
-            kaiwa: 70,
-            choukai: 75,
-            dokkai: 65,
-            kanji: 60,
-          }
-        }
+        classPilarAvg={classPilarAvg}
+        classFinalExamAvg={classFinalExamAvg}
         levelTitle={`${raporData?.title || ""} ${raporData?.sub || ""}`}
         onClose={() => setSelectedStudentForDetail(null)}
       />
