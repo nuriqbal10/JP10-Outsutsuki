@@ -25,6 +25,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { StudentRaporItem, LevelRaporData } from "@/types/rapor";
+import ChapterProgressChartAndRecommendations from "./ChapterProgressChartAndRecommendations";
 
 interface DiagnosticMatrixViewProps {
   levelData: LevelRaporData | null;
@@ -544,6 +545,35 @@ export default function DiagnosticMatrixView({
     honyaku: { label: "4. Honyaku / Terjemahan (翻訳)", icon: Languages, color: "text-teal-500" },
   };
 
+  // Perhitungan Rata-Rata Kelas & Status Ketercapaian Per Kolom Matriks
+  const classColumnStats = useMemo(() => {
+    const getColStat = (type: "bab" | "cp1" | "cp2" | "cp3" | "final", idx?: number) => {
+      let sum = 0, filledCount = 0, passCount = 0;
+      students.forEach((s) => {
+        const { val, max, isFilled } = getAspectValue(s, type, idx);
+        if (isFilled) {
+          sum += val;
+          filledCount++;
+          const pct = max > 0 ? (val / max) * 100 : 0;
+          if (pct >= kkm) passCount++;
+        }
+      });
+      const avg = filledCount > 0 ? Math.round((sum / filledCount) * 10) / 10 : 0;
+      const passRate = filledCount > 0 ? Math.round((passCount / filledCount) * 100) : 0;
+      const status: "passed" | "warning" | "danger" =
+        passRate >= 70 ? "passed" : passRate >= 40 ? "warning" : "danger";
+      return { avg, passRate, status };
+    };
+
+    const babStats = Array.from({ length: 18 }, (_, i) => getColStat("bab", i));
+    const cp1 = getColStat("cp1");
+    const cp2 = getColStat("cp2");
+    const cp3 = getColStat("cp3");
+    const finalExam = getColStat("final");
+
+    return { babStats, cp1, cp2, cp3, finalExam };
+  }, [students, kkm, aspectFilter]);
+
   return (
     <div className="space-y-6">
       {/* HEADER CARD */}
@@ -1056,6 +1086,162 @@ export default function DiagnosticMatrixView({
                     </tr>
                   ))}
                 </tbody>
+
+                <tfoot className="border-t-2 border-amber-500/30 font-bold bg-amber-500/5 divide-y divide-current/10">
+                  {/* Row 1: Rata-Rata Kelas */}
+                  <tr className="bg-amber-500/10 font-extrabold text-amber-700 dark:text-amber-300">
+                    <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-black text-xs shadow-md">
+                      🏛️ Rata-Rata Kelas
+                    </td>
+                    {/* Bab 1-6 */}
+                    {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
+                      <td key={idx} className="p-1 text-center font-mono text-[10px] font-black text-amber-600 dark:text-amber-400">
+                        {st.avg}
+                      </td>
+                    ))}
+                    {/* CP1 */}
+                    <td className="p-1 text-center font-mono text-[10px] font-black bg-amber-500/20 text-stone-950 dark:text-amber-300 border-x border-amber-500/30">
+                      {classColumnStats.cp1.avg}
+                    </td>
+                    {/* Bab 7-12 */}
+                    {classColumnStats.babStats.slice(6, 12).map((st, idx) => (
+                      <td key={idx + 6} className="p-1 text-center font-mono text-[10px] font-black text-amber-600 dark:text-amber-400">
+                        {st.avg}
+                      </td>
+                    ))}
+                    {/* CP2 */}
+                    <td className="p-1 text-center font-mono text-[10px] font-black bg-amber-500/20 text-stone-950 dark:text-amber-300 border-x border-amber-500/30">
+                      {classColumnStats.cp2.avg}
+                    </td>
+                    {/* Bab 13-18 */}
+                    {classColumnStats.babStats.slice(12, 18).map((st, idx) => (
+                      <td key={idx + 12} className="p-1 text-center font-mono text-[10px] font-black text-amber-600 dark:text-amber-400">
+                        {st.avg}
+                      </td>
+                    ))}
+                    {/* CP3 */}
+                    <td className="p-1 text-center font-mono text-[10px] font-black bg-amber-500/20 text-stone-950 dark:text-amber-300 border-x border-amber-500/30">
+                      {classColumnStats.cp3.avg}
+                    </td>
+                    {/* Final */}
+                    <td className="p-1 text-center font-mono text-[10.5px] font-black bg-purple-500/20 text-purple-700 dark:text-purple-300 border-l border-purple-500/30">
+                      {classColumnStats.finalExam.avg}
+                    </td>
+                    <td className="p-1 text-center text-[9px] opacity-60">AVG</td>
+                  </tr>
+
+                  {/* Row 2: % Ketuntasan KKM */}
+                  <tr className="text-[10px]">
+                    <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-bold shadow-md">
+                      🎯 % Tuntas (≥{kkm}%)
+                    </td>
+                    {/* Bab 1-6 */}
+                    {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
+                      <td key={idx} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.passRate}%
+                      </td>
+                    ))}
+                    {/* CP1 */}
+                    <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
+                      {classColumnStats.cp1.passRate}%
+                    </td>
+                    {/* Bab 7-12 */}
+                    {classColumnStats.babStats.slice(6, 12).map((st, idx) => (
+                      <td key={idx + 6} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.passRate}%
+                      </td>
+                    ))}
+                    {/* CP2 */}
+                    <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
+                      {classColumnStats.cp2.passRate}%
+                    </td>
+                    {/* Bab 13-18 */}
+                    {classColumnStats.babStats.slice(12, 18).map((st, idx) => (
+                      <td key={idx + 12} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.passRate}%
+                      </td>
+                    ))}
+                    {/* CP3 */}
+                    <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
+                      {classColumnStats.cp3.passRate}%
+                    </td>
+                    {/* Final */}
+                    <td className="p-1 text-center font-mono font-bold bg-purple-500/15 border-l border-purple-500/30">
+                      {classColumnStats.finalExam.passRate}%
+                    </td>
+                    <td className="p-1 text-center text-[9px] opacity-60">%</td>
+                  </tr>
+
+                  {/* Row 3: Status Ketercapaian */}
+                  <tr className="text-[9px]">
+                    <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-bold shadow-md">
+                      Status Ketercapaian
+                    </td>
+                    {/* Bab 1-6 */}
+                    {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
+                      <td key={idx} className="p-1 text-center">
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`} title={`Bab ${idx + 1}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                        </span>
+                      </td>
+                    ))}
+                    {/* CP1 */}
+                    <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
+                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                        classColumnStats.cp1.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp1.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                      }`}>
+                        {classColumnStats.cp1.status === "passed" ? "✓" : "!"}
+                      </span>
+                    </td>
+                    {/* Bab 7-12 */}
+                    {classColumnStats.babStats.slice(6, 12).map((st, idx) => (
+                      <td key={idx + 6} className="p-1 text-center">
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`} title={`Bab ${idx + 7}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                        </span>
+                      </td>
+                    ))}
+                    {/* CP2 */}
+                    <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
+                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                        classColumnStats.cp2.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp2.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                      }`}>
+                        {classColumnStats.cp2.status === "passed" ? "✓" : "!"}
+                      </span>
+                    </td>
+                    {/* Bab 13-18 */}
+                    {classColumnStats.babStats.slice(12, 18).map((st, idx) => (
+                      <td key={idx + 12} className="p-1 text-center">
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`} title={`Bab ${idx + 13}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                        </span>
+                      </td>
+                    ))}
+                    {/* CP3 */}
+                    <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
+                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                        classColumnStats.cp3.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp3.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                      }`}>
+                        {classColumnStats.cp3.status === "passed" ? "✓" : "!"}
+                      </span>
+                    </td>
+                    {/* Final */}
+                    <td className="p-1 text-center bg-purple-500/15 border-l border-purple-500/30">
+                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                        classColumnStats.finalExam.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.finalExam.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                      }`}>
+                        {classColumnStats.finalExam.status === "passed" ? "✓" : "!"}
+                      </span>
+                    </td>
+                    <td className="p-1 text-center text-[9px] opacity-60">Status</td>
+                  </tr>
+                </tfoot>
               </table>
             </div>
           </div>
@@ -1441,6 +1627,17 @@ export default function DiagnosticMatrixView({
           </div>
         </div>
       )}
+
+      {/* ========================================================
+          GRAFIK KEMAJUAN BAB & REKOMENDASI PERBAIKAN PEDAGOGIS
+          ======================================================== */}
+      <ChapterProgressChartAndRecommendations
+        students={students}
+        kkm={kkm}
+        selectedStudentNo={selectedStudentNo}
+        onSelectStudent={(no) => setSelectedStudentNo(no)}
+        onOpenStudentDetail={onOpenStudentDetail}
+      />
     </div>
   );
 }
