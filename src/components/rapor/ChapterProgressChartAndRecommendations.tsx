@@ -57,38 +57,43 @@ export default function ChapterProgressChartAndRecommendations({
         return h && h.daiTesuto && h.daiTesuto.total > 0;
       });
 
-      const count = validStudents.length || totalStudents;
+      const hasData = validStudents.length > 0;
+      const count = validStudents.length;
       let sumTot = 0, sumM = 0, sumK = 0, sumC = 0, sumD = 0, sumKanji = 0;
       let passCount = 0;
 
-      students.forEach((s) => {
-        const h = s.harian?.[idx];
-        const dt = h?.daiTesuto || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
-        const kj = typeof h?.kanji === "number" ? h.kanji : 0;
-        sumTot += dt.total;
-        sumM += dt.mojiGoi;
-        sumK += dt.kaiwa;
-        sumC += dt.choukai;
-        sumD += dt.dokkai;
-        sumKanji += kj;
+      if (hasData) {
+        validStudents.forEach((s) => {
+          const h = s.harian?.[idx];
+          const dt = h?.daiTesuto || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+          const kj = typeof h?.kanji === "number" ? h.kanji : 0;
+          sumTot += dt.total;
+          sumM += dt.mojiGoi;
+          sumK += dt.kaiwa;
+          sumC += dt.choukai;
+          sumD += dt.dokkai;
+          sumKanji += kj;
 
-        if (dt.total >= kkm) {
-          passCount++;
-        }
-      });
+          if (dt.total >= kkm) {
+            passCount++;
+          }
+        });
+      }
 
-      const avgTotal = Math.round((sumTot / count) * 10) / 10;
-      const avgMoji = Math.round((sumM / count) * 10) / 10;
-      const avgKaiwa = Math.round((sumK / count) * 10) / 10;
-      const avgChoukai = Math.round((sumC / count) * 10) / 10;
-      const avgDokkai = Math.round((sumD / count) * 10) / 10;
-      const avgKanji = Math.round((sumKanji / count) * 10) / 10;
+      const avgTotal = hasData ? Math.round((sumTot / count) * 10) / 10 : 0;
+      const avgMoji = hasData ? Math.round((sumM / count) * 10) / 10 : 0;
+      const avgKaiwa = hasData ? Math.round((sumK / count) * 10) / 10 : 0;
+      const avgChoukai = hasData ? Math.round((sumC / count) * 10) / 10 : 0;
+      const avgDokkai = hasData ? Math.round((sumD / count) * 10) / 10 : 0;
+      const avgKanji = hasData ? Math.round((sumKanji / count) * 10) / 10 : 0;
 
-      const passRate = Math.round((passCount / count) * 100);
+      const passRate = hasData ? Math.round((passCount / count) * 100) : 0;
 
       // Status Ketercapaian
-      let status: "passed" | "warning" | "danger" = "passed";
-      if (passRate >= 70 || avgTotal >= kkm) {
+      let status: "passed" | "warning" | "danger" | "empty" = "empty";
+      if (!hasData) {
+        status = "empty";
+      } else if (passRate >= 70 || avgTotal >= kkm) {
         status = "passed";
       } else if (passRate >= 40 || avgTotal >= Math.max(50, kkm - 15)) {
         status = "warning";
@@ -97,36 +102,45 @@ export default function ChapterProgressChartAndRecommendations({
       }
 
       // Deteksi titik paling lemah (persentase terendah)
-      const pM = (avgMoji / 24) * 100;
-      const pK = (avgKaiwa / 24) * 100;
-      const pC = (avgChoukai / 24) * 100;
-      const pD = (avgDokkai / 28) * 100;
+      const pM = hasData ? (avgMoji / 24) * 100 : 0;
+      const pK = hasData ? (avgKaiwa / 24) * 100 : 0;
+      const pC = hasData ? (avgChoukai / 24) * 100 : 0;
+      const pD = hasData ? (avgDokkai / 28) * 100 : 0;
       const lowestPct = Math.min(pM, pK, pC, pD);
 
-      let weakestAspect = "読解 (Dokkai)";
-      let rootCause = "Siswa kesulitan memahami konteks bacaan instruksi praktis dan kosa kata kontekstual.";
-      let teacherAction = "Berikan bimbingan terfokus pada teknik scanning/skimming teks dan bedah pola kalimat kunci.";
-      let studentAction = "Kerjakan ulang lembar latihan Dokkai pada LKPD Bab ini dan hafalkan kosakata tematik terkait.";
+      let weakestAspect = hasData ? "読解 (Dokkai)" : "-";
+      let rootCause = hasData
+        ? "Siswa kesulitan memahami konteks bacaan instruksi praktis dan kosa kata kontekstual."
+        : "Materi bab ini belum ditempuh / ujian harian belum diselenggarakan di kelas.";
+      let teacherAction = hasData
+        ? "Berikan bimbingan terfokus pada teknik scanning/skimming teks dan bedah pola kalimat kunci."
+        : "Siapkan modul ajar dan lembar LKPD untuk persiapan sesi pembelajaran bab ini.";
+      let studentAction = hasData
+        ? "Kerjakan ulang lembar latihan Dokkai pada LKPD Bab ini dan hafalkan kosakata tematik terkait."
+        : "Pelajari materi Can-do dan perbendaharaan kosakata awal pada buku Irodori Bab ini.";
 
-      if (lowestPct === pC) {
-        weakestAspect = "聴解 (Choukai)";
-        rootCause = "Kecepatan ujaran audio alami dan partikel cepat membingungkan pendengaran siswa.";
-        teacherAction = "Lakukan sesi audio shadowing bersama Sensei, perdengarkan audio 2-3 kali dengan bedah transkrip percakapan.";
-        studentAction = "Dengarkan kembali rekaman audio LKPD Bab ini secara mandiri minimal 3 putaran sambil menyimak naskah.";
-      } else if (lowestPct === pK) {
-        weakestAspect = "会話・表現 (Kaiwa)";
-        rootCause = "Ragu-ragu dalam pemilihan respons situasional dan perubahan bentuk kata kerja/sopan.";
-        teacherAction = "Adakan roleplay simulasi berpasangan di kelas untuk mempraktikkan ungkapan langsung.";
-        studentAction = "Latihan berbicara mandiri (shadowing) menggunakan materi dialog Can-do Bab ini.";
-      } else if (lowestPct === pM) {
-        weakestAspect = "文字・語彙 (Moji-Goi)";
-        rootCause = "Penguasaan perbendaharaan kata kunci bab ini belum tuntas dihafalkan.";
-        teacherAction = "Berikan kuis kilat kosakata 5 menit sebelum kelas dimulai dan buat mind-map kosakata tematik.";
-        studentAction = "Gunakan flashcard digital dan catat minimal 10 kosakata baru dari modul ini ke buku saku.";
+      if (hasData) {
+        if (lowestPct === pC) {
+          weakestAspect = "聴解 (Choukai)";
+          rootCause = "Kecepatan ujaran audio alami dan partikel cepat membingungkan pendengaran siswa.";
+          teacherAction = "Lakukan sesi audio shadowing bersama Sensei, perdengarkan audio 2-3 kali dengan bedah transkrip percakapan.";
+          studentAction = "Dengarkan kembali rekaman audio LKPD Bab ini secara mandiri minimal 3 putaran sambil menyimak naskah.";
+        } else if (lowestPct === pK) {
+          weakestAspect = "会話・表現 (Kaiwa)";
+          rootCause = "Ragu-ragu dalam pemilihan respons situasional dan perubahan bentuk kata kerja/sopan.";
+          teacherAction = "Adakan roleplay simulasi berpasangan di kelas untuk mempraktikkan ungkapan langsung.";
+          studentAction = "Latihan berbicara mandiri (shadowing) menggunakan materi dialog Can-do Bab ini.";
+        } else if (lowestPct === pM) {
+          weakestAspect = "文字・語彙 (Moji-Goi)";
+          rootCause = "Penguasaan perbendaharaan kata kunci bab ini belum tuntas dihafalkan.";
+          teacherAction = "Berikan kuis kilat kosakata 5 menit sebelum kelas dimulai dan buat mind-map kosakata tematik.";
+          studentAction = "Gunakan flashcard digital dan catat minimal 10 kosakata baru dari modul ini ke buku saku.";
+        }
       }
 
       return {
         chapterNum: chNum,
+        hasData,
         titleJa: mod?.titleJa || `第${chNum}課`,
         titleId: mod?.titleId || `Materi Bab ${chNum}`,
         topic: mod?.topic || "Kurikulum Irodori A2.2",
@@ -169,32 +183,39 @@ export default function ChapterProgressChartAndRecommendations({
   const getX = (idx: number) => paddingLeft + (idx / (pointsCount - 1)) * usableWidth;
   const getY = (val: number) => paddingTop + usableHeight - (Math.max(0, Math.min(100, val)) / 100) * usableHeight;
 
-  // Class Line Points & Area Fill
+  // Class Line Points & Area Fill (Hanya bab yang sudah ada data)
   const classCoords = chapterStats.map((ch, idx) => ({
     x: getX(idx),
-    y: getY(ch.avgTotal),
+    y: ch.hasData ? getY(ch.avgTotal) : getY(50),
     val: ch.avgTotal,
     chNum: ch.chapterNum,
+    hasData: ch.hasData,
   }));
 
-  const classPolyline = classCoords.map((pt) => `${pt.x},${pt.y}`).join(" ");
-  const classArea = `${paddingLeft},${paddingTop + usableHeight} ${classPolyline} ${getX(17)},${paddingTop + usableHeight}`;
+  const activeClassCoords = classCoords.filter((c) => c.hasData);
+  const classPolyline = activeClassCoords.map((pt) => `${pt.x},${pt.y}`).join(" ");
+  const lastActivePt = activeClassCoords[activeClassCoords.length - 1];
+  const classArea = activeClassCoords.length > 0 && lastActivePt
+    ? `${paddingLeft},${paddingTop + usableHeight} ${classPolyline} ${lastActivePt.x},${paddingTop + usableHeight}`
+    : "";
 
-  // Selected Student Line Points
-  const studentCoords = selectedStudent
-    ? Array.from({ length: 18 }, (_, idx) => {
-        const h = selectedStudent.harian?.[idx];
-        const val = h?.daiTesuto?.total || 0;
-        return {
-          x: getX(idx),
-          y: getY(val),
-          val,
-          chNum: idx + 1,
-        };
-      })
+  // Selected Student Line Points (Hanya bab yang sudah ada data)
+  const activeStudentCoords = selectedStudent
+    ? chapterStats
+        .filter((ch) => ch.hasData)
+        .map((ch) => {
+          const h = selectedStudent.harian?.[ch.chapterNum - 1];
+          const val = h?.daiTesuto?.total || 0;
+          return {
+            x: getX(ch.chapterNum - 1),
+            y: getY(val),
+            val,
+            chNum: ch.chapterNum,
+          };
+        })
     : [];
 
-  const studentPolyline = studentCoords.map((pt) => `${pt.x},${pt.y}`).join(" ");
+  const studentPolyline = activeStudentCoords.map((pt) => `${pt.x},${pt.y}`).join(" ");
 
   // KKM line
   const kkmY = getY(kkm);
@@ -366,6 +387,26 @@ export default function ChapterProgressChartAndRecommendations({
                 {/* Class Data Points */}
                 {classCoords.map((pt, idx) => {
                   const isSelected = selectedChapter === pt.chNum;
+                  if (!pt.hasData) {
+                    return (
+                      <g
+                        key={idx}
+                        className="cursor-pointer group"
+                        onClick={() => setSelectedChapter(pt.chNum)}
+                      >
+                        <circle
+                          cx={pt.x}
+                          cy={paddingTop + usableHeight - 8}
+                          r={isSelected ? 6 : 4}
+                          fill="none"
+                          stroke="currentColor"
+                          strokeOpacity={0.25}
+                          strokeWidth={1.5}
+                          strokeDasharray="2,2"
+                        />
+                      </g>
+                    );
+                  }
                   return (
                     <g
                       key={idx}
@@ -398,7 +439,7 @@ export default function ChapterProgressChartAndRecommendations({
                 })}
 
                 {/* Student Data Points */}
-                {studentCoords.map((pt, idx) => (
+                {activeStudentCoords.map((pt, idx) => (
                   <circle
                     key={idx}
                     cx={pt.x}
@@ -425,7 +466,7 @@ export default function ChapterProgressChartAndRecommendations({
                         y={paddingTop + usableHeight + 16}
                         textAnchor="middle"
                         className={`text-[9.5px] font-mono font-bold transition-all ${
-                          isSelected ? "fill-amber-500 font-black text-[11px]" : "fill-current opacity-70"
+                          !pt.hasData ? "opacity-35" : isSelected ? "fill-amber-500 font-black text-[11px]" : "fill-current opacity-70"
                         }`}
                       >
                         B{pt.chNum}
@@ -435,10 +476,10 @@ export default function ChapterProgressChartAndRecommendations({
                         y={paddingTop + usableHeight + 28}
                         textAnchor="middle"
                         className={`text-[8px] font-mono ${
-                          isSelected ? "fill-amber-500 font-bold" : "fill-current opacity-40"
+                          !pt.hasData ? "opacity-30" : isSelected ? "fill-amber-500 font-bold" : "fill-current opacity-40"
                         }`}
                       >
-                        {pt.val}
+                        {pt.hasData ? pt.val : "-"}
                       </text>
                     </g>
                   );

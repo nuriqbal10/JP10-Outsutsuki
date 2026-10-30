@@ -551,16 +551,19 @@ export default function DiagnosticMatrixView({
       let sum = 0, filledCount = 0, passCount = 0;
       students.forEach((s) => {
         const { val, max, isFilled } = getAspectValue(s, type, idx);
-        if (isFilled) {
+        if (isFilled && val > 0) {
           sum += val;
           filledCount++;
           const pct = max > 0 ? (val / max) * 100 : 0;
           if (pct >= kkm) passCount++;
         }
       });
-      const avg = filledCount > 0 ? Math.round((sum / filledCount) * 10) / 10 : 0;
-      const passRate = filledCount > 0 ? Math.round((passCount / filledCount) * 100) : 0;
-      const status: "passed" | "warning" | "danger" =
+      if (filledCount === 0) {
+        return { avg: "-", passRate: "-", status: "empty" as const };
+      }
+      const avg = Math.round((sum / filledCount) * 10) / 10;
+      const passRate = Math.round((passCount / filledCount) * 100);
+      const status: "passed" | "warning" | "danger" | "empty" =
         passRate >= 70 ? "passed" : passRate >= 40 ? "warning" : "danger";
       return { avg, passRate, status };
     };
@@ -1137,37 +1140,37 @@ export default function DiagnosticMatrixView({
                     </td>
                     {/* Bab 1-6 */}
                     {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
-                      <td key={idx} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
-                        {st.passRate}%
+                      <td key={idx} className={`p-1 text-center font-mono font-bold ${st.status === "empty" ? "opacity-30" : st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.status === "empty" ? "-" : `${st.passRate}%`}
                       </td>
                     ))}
                     {/* CP1 */}
                     <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
-                      {classColumnStats.cp1.passRate}%
+                      {classColumnStats.cp1.status === "empty" ? "-" : `${classColumnStats.cp1.passRate}%`}
                     </td>
                     {/* Bab 7-12 */}
                     {classColumnStats.babStats.slice(6, 12).map((st, idx) => (
-                      <td key={idx + 6} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
-                        {st.passRate}%
+                      <td key={idx + 6} className={`p-1 text-center font-mono font-bold ${st.status === "empty" ? "opacity-30" : st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.status === "empty" ? "-" : `${st.passRate}%`}
                       </td>
                     ))}
                     {/* CP2 */}
                     <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
-                      {classColumnStats.cp2.passRate}%
+                      {classColumnStats.cp2.status === "empty" ? "-" : `${classColumnStats.cp2.passRate}%`}
                     </td>
                     {/* Bab 13-18 */}
                     {classColumnStats.babStats.slice(12, 18).map((st, idx) => (
-                      <td key={idx + 12} className={`p-1 text-center font-mono font-bold ${st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
-                        {st.passRate}%
+                      <td key={idx + 12} className={`p-1 text-center font-mono font-bold ${st.status === "empty" ? "opacity-30" : st.passRate >= 70 ? "text-emerald-500" : st.passRate >= 40 ? "text-amber-500" : "text-rose-500"}`}>
+                        {st.status === "empty" ? "-" : `${st.passRate}%`}
                       </td>
                     ))}
                     {/* CP3 */}
                     <td className="p-1 text-center font-mono font-bold bg-amber-500/15 border-x border-amber-500/30">
-                      {classColumnStats.cp3.passRate}%
+                      {classColumnStats.cp3.status === "empty" ? "-" : `${classColumnStats.cp3.passRate}%`}
                     </td>
                     {/* Final */}
                     <td className="p-1 text-center font-mono font-bold bg-purple-500/15 border-l border-purple-500/30">
-                      {classColumnStats.finalExam.passRate}%
+                      {classColumnStats.finalExam.status === "empty" ? "-" : `${classColumnStats.finalExam.passRate}%`}
                     </td>
                     <td className="p-1 text-center text-[9px] opacity-60">%</td>
                   </tr>
@@ -1180,64 +1183,92 @@ export default function DiagnosticMatrixView({
                     {/* Bab 1-6 */}
                     {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
                       <td key={idx} className="p-1 text-center">
-                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                        }`} title={`Bab ${idx + 1}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
-                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
-                        </span>
+                        {st.status === "empty" ? (
+                          <span className="opacity-30 font-mono text-[9px]">-</span>
+                        ) : (
+                          <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                            st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                          }`} title={`Bab ${idx + 1}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                            {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                          </span>
+                        )}
                       </td>
                     ))}
                     {/* CP1 */}
                     <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
-                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                        classColumnStats.cp1.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp1.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                      }`}>
-                        {classColumnStats.cp1.status === "passed" ? "✓" : "!"}
-                      </span>
+                      {classColumnStats.cp1.status === "empty" ? (
+                        <span className="opacity-30 font-mono text-[9px]">-</span>
+                      ) : (
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          classColumnStats.cp1.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp1.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`}>
+                          {classColumnStats.cp1.status === "passed" ? "✓" : "!"}
+                        </span>
+                      )}
                     </td>
                     {/* Bab 7-12 */}
                     {classColumnStats.babStats.slice(6, 12).map((st, idx) => (
                       <td key={idx + 6} className="p-1 text-center">
-                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                        }`} title={`Bab ${idx + 7}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
-                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
-                        </span>
+                        {st.status === "empty" ? (
+                          <span className="opacity-30 font-mono text-[9px]">-</span>
+                        ) : (
+                          <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                            st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                          }`} title={`Bab ${idx + 7}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                            {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                          </span>
+                        )}
                       </td>
                     ))}
                     {/* CP2 */}
                     <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
-                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                        classColumnStats.cp2.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp2.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                      }`}>
-                        {classColumnStats.cp2.status === "passed" ? "✓" : "!"}
-                      </span>
+                      {classColumnStats.cp2.status === "empty" ? (
+                        <span className="opacity-30 font-mono text-[9px]">-</span>
+                      ) : (
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          classColumnStats.cp2.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp2.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`}>
+                          {classColumnStats.cp2.status === "passed" ? "✓" : "!"}
+                        </span>
+                      )}
                     </td>
                     {/* Bab 13-18 */}
                     {classColumnStats.babStats.slice(12, 18).map((st, idx) => (
                       <td key={idx + 12} className="p-1 text-center">
-                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                          st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                        }`} title={`Bab ${idx + 13}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
-                          {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
-                        </span>
+                        {st.status === "empty" ? (
+                          <span className="opacity-30 font-mono text-[9px]">-</span>
+                        ) : (
+                          <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                            st.status === "passed" ? "bg-emerald-500 text-white" : st.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                          }`} title={`Bab ${idx + 13}: ${st.status === "passed" ? "Tuntas KKM" : st.status === "warning" ? "Waspada" : "Kritis"}`}>
+                            {st.status === "passed" ? "✓" : st.status === "warning" ? "!" : "✕"}
+                          </span>
+                        )}
                       </td>
                     ))}
                     {/* CP3 */}
                     <td className="p-1 text-center bg-amber-500/15 border-x border-amber-500/30">
-                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                        classColumnStats.cp3.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp3.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                      }`}>
-                        {classColumnStats.cp3.status === "passed" ? "✓" : "!"}
-                      </span>
+                      {classColumnStats.cp3.status === "empty" ? (
+                        <span className="opacity-30 font-mono text-[9px]">-</span>
+                      ) : (
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          classColumnStats.cp3.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.cp3.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`}>
+                          {classColumnStats.cp3.status === "passed" ? "✓" : "!"}
+                        </span>
+                      )}
                     </td>
                     {/* Final */}
                     <td className="p-1 text-center bg-purple-500/15 border-l border-purple-500/30">
-                      <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
-                        classColumnStats.finalExam.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.finalExam.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
-                      }`}>
-                        {classColumnStats.finalExam.status === "passed" ? "✓" : "!"}
-                      </span>
+                      {classColumnStats.finalExam.status === "empty" ? (
+                        <span className="opacity-30 font-mono text-[9px]">-</span>
+                      ) : (
+                        <span className={`inline-block w-4 h-4 rounded-full text-[8px] font-black leading-4 text-center ${
+                          classColumnStats.finalExam.status === "passed" ? "bg-emerald-500 text-white" : classColumnStats.finalExam.status === "warning" ? "bg-amber-500 text-stone-950" : "bg-rose-500 text-white"
+                        }`}>
+                          {classColumnStats.finalExam.status === "passed" ? "✓" : "!"}
+                        </span>
+                      )}
                     </td>
                     <td className="p-1 text-center text-[9px] opacity-60">Status</td>
                   </tr>
