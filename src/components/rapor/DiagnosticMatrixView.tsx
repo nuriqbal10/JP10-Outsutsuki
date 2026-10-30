@@ -30,6 +30,7 @@ import ChapterProgressChartAndRecommendations from "./ChapterProgressChartAndRec
 interface DiagnosticMatrixViewProps {
   levelData: LevelRaporData | null;
   onOpenStudentDetail?: (student: StudentRaporItem) => void;
+  onNavigateToProjection?: () => void;
 }
 
 type AspectFilter =
@@ -79,6 +80,7 @@ interface ChapterDiagnosticRow {
 export default function DiagnosticMatrixView({
   levelData,
   onOpenStudentDetail,
+  onNavigateToProjection,
 }: DiagnosticMatrixViewProps) {
   const [viewMode, setViewMode] = useState<"class" | "individual">("class");
   const [aspectFilter, setAspectFilter] = useState<AspectFilter>("all");
@@ -627,6 +629,16 @@ export default function DiagnosticMatrixView({
               <User className="w-4 h-4" />
               Detail Diagnostik Siswa
             </button>
+            {onNavigateToProjection && (
+              <button
+                onClick={onNavigateToProjection}
+                className="ml-2 px-3.5 py-2 rounded-xl text-xs font-black transition flex items-center gap-1.5 bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500 hover:text-white cursor-pointer shadow-xs"
+                title="Buka Laboratorium Proyeksi Stitch (Simulasi 250 pt per 6 Bab)"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Simulasi Proyeksi Stitch →</span>
+              </button>
+            )}
           </div>
         </div>
 

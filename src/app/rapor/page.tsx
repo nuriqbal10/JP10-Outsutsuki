@@ -36,6 +36,7 @@ import BarRaceView from "@/components/rapor/BarRaceView";
 import DiagnosticMatrixView from "@/components/rapor/DiagnosticMatrixView";
 import ClassOverviewVisuals from "@/components/rapor/ClassOverviewVisuals";
 import ShikenBreakdownVisuals from "@/components/rapor/ShikenBreakdownVisuals";
+import StitchProjectionLab from "@/components/rapor/StitchProjectionLab";
 import RadarChartSVG from "@/components/rapor/RadarChartSVG";
 import masterRaporData from "@/data/raporMasterData.json";
 
@@ -66,7 +67,7 @@ function getStudentScore(s: any): number {
 
 export default function RaporDashboardPage() {
   const [selectedLevel, setSelectedLevel] = useState<"A1" | "A21" | "A22">("A22");
-  const [activeTab, setActiveTab] = useState<"overview" | "final_exam" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "final_exam" | "projection" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
 
   // Instant State
@@ -224,6 +225,7 @@ export default function RaporDashboardPage() {
   const viewTitles = {
     overview: "Ikhtisar & Ringkasan Eksekutif (統括概要)",
     final_exam: "Bedah Shiken 1 Buku (総括終了試験・4セクション徹底解剖)",
+    projection: "Laboratorium Proyeksi Stitch (学術予測シミュレーション - 250 pt)",
     students: "Buku Nilai Akademik (成績一覧表 - 28 Siswa)",
     grandprix: "Dinamika Progres Nilai (進捗推移 - 18 Bab)",
     heatmap: "Matriks Diagnostik 18 Bab (達成度マトリックス)",
@@ -240,6 +242,7 @@ export default function RaporDashboardPage() {
   const navItems = [
     { id: "overview", label: "Ringkasan Eksekutif", sub: "Statistik & Podium Juara", icon: BarChart2 },
     { id: "final_exam", label: "Bedah Shiken 1 Buku", sub: "Audit 4 Seksi Ujian Akhir (250 pt)", icon: Target },
+    { id: "projection", label: "Proyeksi Akademik Stitch", sub: "Forecasting Review & Shiken (250 pt)", icon: Sparkles },
     { id: "students", label: "Buku Nilai (28 Siswa)", sub: "Rekap Nilai Komulatif", icon: Users },
     { id: "grandprix", label: "Dinamika Progres Nilai", sub: "Kemajuan Bab 1 s.d. 18", icon: TrendingUp },
     { id: "heatmap", label: "Matriks Diagnostik Bab", sub: "Evaluasi Ketuntasan Bab", icon: SlidersHorizontal },
@@ -1477,6 +1480,18 @@ export default function RaporDashboardPage() {
         )}
 
         {/* ========================================================
+            PANEL PROYEKSI & SIMULASI STITCH (FORECASTING LAB)
+            ======================================================== */}
+        {activeTab === "projection" && (
+          <StitchProjectionLab
+            students={allStudents}
+            kkm={kkm}
+            onSelectStudentPrint={(st) => setSelectedStudentForPrint(st)}
+            onSelectStudentDetail={(st) => setSelectedStudentForDetail(st)}
+          />
+        )}
+
+        {/* ========================================================
             PANEL 2: BUKU NILAI LENGKAP (TABEL 28 SISWA)
             ======================================================== */}
         {activeTab === "students" && (
@@ -1716,6 +1731,7 @@ export default function RaporDashboardPage() {
           <DiagnosticMatrixView
             levelData={raporData}
             onOpenStudentDetail={(student) => setSelectedStudentForDetail(student)}
+            onNavigateToProjection={() => setActiveTab("projection")}
           />
         )}
 
