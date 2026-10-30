@@ -34,6 +34,9 @@ import OfficialReportPrintModal from "@/components/rapor/OfficialReportPrintModa
 import StudentDetailModal from "@/components/rapor/StudentDetailModal";
 import BarRaceView from "@/components/rapor/BarRaceView";
 import DiagnosticMatrixView from "@/components/rapor/DiagnosticMatrixView";
+import ClassOverviewVisuals from "@/components/rapor/ClassOverviewVisuals";
+import ShikenBreakdownVisuals from "@/components/rapor/ShikenBreakdownVisuals";
+import RadarChartSVG from "@/components/rapor/RadarChartSVG";
 import masterRaporData from "@/data/raporMasterData.json";
 
 function getStudentScore(s: any): number {
@@ -840,6 +843,17 @@ export default function RaporDashboardPage() {
             </section>
 
             {/* ========================================================
+                DASBOR VISUAL KOMPARASI AKADEMIK (RADAR, BARS, DISTRIBUSI)
+                ======================================================== */}
+            <ClassOverviewVisuals
+              allStudents={allStudents}
+              kkm={kkm}
+              classPilarAvg={classPilarAvg}
+              classRawSectionAvg={classRawSectionAvg}
+              calculatedClassAvg={calculatedClassAvg}
+            />
+
+            {/* ========================================================
                 RATA-RATA KELAS PER SEKSI (5 PILAR KOMPETENSI KELAS)
                 ======================================================== */}
             <section className="space-y-4">
@@ -1276,6 +1290,16 @@ export default function RaporDashboardPage() {
                 </div>
               </div>
             </div>
+
+            {/* ========================================================
+                DASBOR VISUAL PROMETRIC (4 SEKSI, ZONA SISWA, BOBOT)
+                ======================================================== */}
+            <ShikenBreakdownVisuals
+              allStudents={allStudents}
+              classFinalExamAvg={classFinalExamAvg}
+              onSelectStudentPrint={(st) => setSelectedStudentForPrint(st)}
+              onSelectStudentDetail={(st) => setSelectedStudentForDetail(st)}
+            />
 
             {/* Tabel Diagnostik 28 Siswa Khusus Shiken 1 Buku */}
             <div className="clay-card p-4 rounded-3xl overflow-hidden shadow-xl space-y-3">
@@ -1875,6 +1899,120 @@ export default function RaporDashboardPage() {
                   <p className="text-[11px] opacity-75 text-[var(--text-body)] leading-relaxed">{statusSubtitle}</p>
                 </div>
               </div>
+
+              {/* ========================================================
+                  VISUAL KOMPARASI INDIVIDUAL: RADAR & PERBANDINGAN SEKSI
+                  ======================================================== */}
+              {(() => {
+                const validDai = portalStudent.harian?.filter((h: any) => h.daiTesuto && h.daiTesuto.total > 0) || [];
+                let sumM = 0, sumK = 0, sumC = 0, sumD = 0;
+                validDai.forEach((h: any) => {
+                  sumM += (h.daiTesuto.mojiGoi / 24) * 100;
+                  sumK += (h.daiTesuto.kaiwa / 24) * 100;
+                  sumC += (h.daiTesuto.choukai / 24) * 100;
+                  sumD += (h.daiTesuto.dokkai / 28) * 100;
+                });
+                const validKanji = portalStudent.harian?.filter((h: any) => h.kanji > 0) || [];
+                const avgKanji = validKanji.length > 0 ? validKanji.reduce((acc: number, cur: any) => acc + cur.kanji, 0) / validKanji.length : 0;
+                const studentPilarData = {
+                  mojiGoi: portalStudent.pilar?.mojiGoi || (validDai.length > 0 ? Math.min(100, Math.round(sumM / validDai.length)) : 0),
+                  kaiwa: portalStudent.pilar?.kaiwa || (validDai.length > 0 ? Math.min(100, Math.round(sumK / validDai.length)) : 0),
+                  choukai: portalStudent.pilar?.choukai || (validDai.length > 0 ? Math.min(100, Math.round(sumC / validDai.length)) : 0),
+                  dokkai: portalStudent.pilar?.dokkai || (validDai.length > 0 ? Math.min(100, Math.round(sumD / validDai.length)) : 0),
+                  kanji: portalStudent.pilar?.kanji || Math.min(100, Math.round(avgKanji)),
+                };
+
+                const studentSections = [
+                  { name: "文字・語彙 (Moji-Goi)", sVal: studentPilarData.mojiGoi, cVal: classPilarAvg.mojiGoi },
+                  { name: "会話・表現 (Kaiwa)", sVal: studentPilarData.kaiwa, cVal: classPilarAvg.kaiwa },
+                  { name: "聴解 (Choukai)", sVal: studentPilarData.choukai, cVal: classPilarAvg.choukai },
+                  { name: "読解 (Dokkai)", sVal: studentPilarData.dokkai, cVal: classPilarAvg.dokkai },
+                  { name: "漢字 (Kanji)", sVal: studentPilarData.kanji, cVal: classPilarAvg.kanji },
+                ];
+
+                const fe = portalStudent.finalExam?.test || { mojiGoi: 0, kaiwa: 0, choukai: 0, dokkai: 0, total: 0 };
+
+                return (
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4 border-t border-current/10 items-center">
+                    {/* Radar Chart Siswa vs Kelas */}
+                    <div className="lg:col-span-5 flex flex-col items-center justify-center p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10">
+                      <span className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-2">
+                        Radar Komparasi: Siswa vs Rata-Rata Kelas
+                      </span>
+                      <RadarChartSVG
+                        data={studentPilarData}
+                        compareData={classPilarAvg}
+                        label={portalStudent.name.split(" ")[0]}
+                        compareLabel="Rata-rata Kelas"
+                        size={280}
+                      />
+                    </div>
+
+                    {/* Bar Komparasi 5 Pilar & Status Shiken */}
+                    <div className="lg:col-span-7 space-y-4">
+                      <div>
+                        <h4 className="text-sm font-extrabold uppercase tracking-wider text-[var(--text-heading)]">
+                          Komparasi 5 Pilar terhadap Rata-Rata Kelas
+                        </h4>
+                        <p className="text-xs opacity-70">
+                          Bilah emas = Skor {portalStudent.name.split(" ")[0]} • Garis pembanding = Rata-Rata Kelas
+                        </p>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        {studentSections.map((sec, idx) => {
+                          const delta = sec.sVal - sec.cVal;
+                          const isAbove = delta >= 0;
+                          return (
+                            <div key={idx} className="space-y-1">
+                              <div className="flex items-center justify-between text-xs font-medium">
+                                <span>{sec.name}</span>
+                                <div className="flex items-center gap-2 font-mono">
+                                  <span className="font-bold">{sec.sVal}%</span>
+                                  <span className={`text-[10px] font-bold ${isAbove ? "text-emerald-500" : "text-rose-500"}`}>
+                                    {isAbove ? `+${delta}%` : `${delta}%`} vs kelas ({sec.cVal}%)
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="relative h-3 w-full bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${isAbove ? "bg-amber-500" : "bg-amber-600"}`}
+                                  style={{ width: `${Math.min(100, Math.max(5, sec.sVal))}%` }}
+                                />
+                                <div
+                                  className="absolute top-0 bottom-0 w-0.5 bg-blue-500 z-10"
+                                  style={{ left: `${sec.cVal}%` }}
+                                  title={`Rata-rata Kelas: ${sec.cVal}%`}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Mini Spotlight Shiken 1 Buku Siswa */}
+                      <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs">
+                        <div>
+                          <span className="font-extrabold text-amber-700 dark:text-amber-300 block">
+                            Hasil Shiken 1 Buku (Format Prometric 250 pt)
+                          </span>
+                          <span className="opacity-75 text-[11px]">
+                            M:{fe.mojiGoi}/48 • K:{fe.kaiwa}/48 • C:{fe.choukai}/66 • D:{fe.dokkai}/88
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-lg font-black font-mono text-amber-600 dark:text-amber-400">
+                            {fe.total} <span className="text-xs opacity-60">/ 250 pt</span>
+                          </span>
+                          <span className={`block text-[10px] font-bold ${fe.total >= 200 ? "text-emerald-500" : "text-rose-500"}`}>
+                            {fe.total >= 200 ? "✓ Lulus Target Prometric" : "✕ Belum Mencapai 200 pt"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           );
         })()}
