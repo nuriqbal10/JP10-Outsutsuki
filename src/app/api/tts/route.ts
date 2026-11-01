@@ -1,41 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenAI } from "@google/genai";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
-// Helper to convert raw PCM (24kHz, 16-bit, mono) into valid RIFF WAV audio
+// Helper to convert base64 string to Uint8Array (100% Edge runtime compatible)
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
+
+// Helper to convert raw PCM (24kHz, 16-bit, mono) into valid RIFF WAV audio (Edge compliant)
 function pcmToWav(
-  pcmBuffer: Buffer,
+  pcmData: Uint8Array,
   sampleRate = 24000,
   channels = 1,
   bitsPerSample = 16
-): Buffer {
+): Uint8Array {
   const byteRate = (sampleRate * channels * bitsPerSample) / 8;
   const blockAlign = (channels * bitsPerSample) / 8;
-  const header = Buffer.alloc(44);
+  const wav = new Uint8Array(44 + pcmData.length);
+  const view = new DataView(wav.buffer);
 
-  header.write("RIFF", 0);
-  header.writeUInt32LE(36 + pcmBuffer.length, 4);
-  header.write("WAVE", 8);
-  header.write("fmt ", 12);
-  header.writeUInt32LE(16, 16); // subchunk1 size (16 for PCM)
-  header.writeUInt16LE(1, 20); // audio format (1 = PCM)
-  header.writeUInt16LE(channels, 22);
-  header.writeUInt32LE(sampleRate, 24);
-  header.writeUInt32LE(byteRate, 28);
-  header.writeUInt16LE(blockAlign, 32);
-  header.writeUInt16LE(bitsPerSample, 34);
-  header.write("data", 36);
-  header.writeUInt32LE(pcmBuffer.length, 40);
+  // "RIFF"
+  wav[0] = 0x52; wav[1] = 0x49; wav[2] = 0x46; wav[3] = 0x46;
+  view.setUint32(4, 36 + pcmData.length, true);
+  // "WAVE"
+  wav[8] = 0x57; wav[9] = 0x41; wav[10] = 0x56; wav[11] = 0x45;
+  // "fmt "
+  wav[12] = 0x66; wav[13] = 0x6d; wav[14] = 0x74; wav[15] = 0x20;
+  view.setUint32(16, 16, true); // subchunk1 size (16 for PCM)
+  view.setUint16(20, 1, true);  // audio format (1 = PCM)
+  view.setUint16(22, channels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+  // "data"
+  wav[36] = 0x64; wav[37] = 0x61; wav[38] = 0x74; wav[39] = 0x61;
+  view.setUint32(40, pcmData.length, true);
 
-  return Buffer.concat([header, pcmBuffer]);
+  wav.set(pcmData, 44);
+  return wav;
 }
 
 async function synthesizeJapaneseWithGemini(
   text: string,
   voiceName: string = "Kore",
   apiKey: string
-): Promise<{ buffer: Buffer; contentType: string }> {
+): Promise<{ buffer: Uint8Array; contentType: string }> {
   // Pedagogical Tokyo accent prompt instruction
   const systemInstruction =
     "You are an expert native Tokyo Japanese voice announcer for the official Irodori Japanese language curriculum. " +
@@ -44,102 +60,64 @@ async function synthesizeJapaneseWithGemini(
     "Speak ONLY the exact Japanese text provided. Do not speak explanations, greetings, or English translations.";
 
   const modelsToTry = [
-    "gemini-3.8-flash-tts",
     "gemini-2.0-flash",
     "gemini-2.5-flash",
   ];
 
-  const ai = new GoogleGenAI({ apiKey });
-
   let lastError: any = null;
 
+  // Direct Edge-compatible REST API fetch
   for (const model of modelsToTry) {
     try {
-      const response = await ai.models.generateContent({
-        model,
-        contents: text,
-        config: {
-          responseModalities: ["AUDIO"],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: {
-                voiceName: voiceName || "Kore",
+      const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const restRes = await fetch(restUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text }] }],
+          systemInstruction: {
+            role: "system",
+            parts: [{ text: systemInstruction }],
+          },
+          generationConfig: {
+            responseModalities: ["AUDIO"],
+            speechConfig: {
+              voiceConfig: {
+                prebuiltVoiceConfig: {
+                  voiceName: voiceName || "Kore",
+                },
               },
             },
           },
-          systemInstruction,
-        },
+        }),
       });
 
-      const parts = response.candidates?.[0]?.content?.parts;
-      if (parts && parts.length > 0) {
-        for (const part of parts) {
-          // Check for inlineData
-          if (part.inlineData && part.inlineData.data) {
-            const rawBuffer = Buffer.from(part.inlineData.data, "base64");
-            const mime = part.inlineData.mimeType || "audio/pcm";
+      if (restRes.ok) {
+        const data = await restRes.json();
+        const parts = data.candidates?.[0]?.content?.parts;
+        if (parts && parts.length > 0) {
+          for (const part of parts) {
+            if (part.inlineData?.data) {
+              const rawBytes = base64ToUint8Array(part.inlineData.data);
+              const mime = part.inlineData.mimeType || "audio/pcm";
 
-            if (mime.includes("wav") || mime.includes("mp3")) {
-              return { buffer: rawBuffer, contentType: mime };
+              if (mime.includes("wav") || mime.includes("mp3")) {
+                return { buffer: rawBytes, contentType: mime };
+              }
+
+              const wavBytes = pcmToWav(rawBytes, 24000, 1, 16);
+              return { buffer: wavBytes, contentType: "audio/wav" };
             }
-
-            // Raw PCM -> Wrap with 44-byte WAV header (24kHz 16-bit mono)
-            const wavBuffer = pcmToWav(rawBuffer, 24000, 1, 16);
-            return { buffer: wavBuffer, contentType: "audio/wav" };
           }
         }
+      } else {
+        const errJson = await restRes.json().catch(() => null);
+        lastError = new Error(errJson?.error?.message || `HTTP ${restRes.status}`);
       }
     } catch (err: any) {
       lastError = err;
-      // Try next model if model not found
       continue;
     }
-  }
-
-  // If SDK attempts failed, fallback to direct REST call if applicable
-  try {
-    const restUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    const restRes = await fetch(restUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text }] }],
-        systemInstruction: {
-          role: "system",
-          parts: [{ text: systemInstruction }],
-        },
-        generationConfig: {
-          responseModalities: ["AUDIO"],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: {
-                voiceName: voiceName || "Kore",
-              },
-            },
-          },
-        },
-      }),
-    });
-
-    if (restRes.ok) {
-      const data = await restRes.json();
-      const parts = data.candidates?.[0]?.content?.parts;
-      if (parts && parts.length > 0) {
-        for (const part of parts) {
-          if (part.inlineData?.data) {
-            const rawBuffer = Buffer.from(part.inlineData.data, "base64");
-            const mime = part.inlineData.mimeType || "audio/pcm";
-            if (mime.includes("wav") || mime.includes("mp3")) {
-              return { buffer: rawBuffer, contentType: mime };
-            }
-            const wavBuffer = pcmToWav(rawBuffer, 24000, 1, 16);
-            return { buffer: wavBuffer, contentType: "audio/wav" };
-          }
-        }
-      }
-    }
-  } catch (restErr: any) {
-    lastError = restErr;
   }
 
   throw lastError || new Error("Failed to synthesize audio with Gemini models");
