@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle, Swords } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import GamificationBanner from "@/components/lms/GamificationBanner";
-import DailyQuestsLeaderboardSection from "@/components/lms/DailyQuestsLeaderboardSection";
 
 export default function LmsPortalPage() {
   const courses = [
@@ -122,12 +120,6 @@ export default function LmsPortalPage() {
             </Link>
           </div>
         </div>
-
-        {/* GAMIFICATION BASE (LEVEL, XP, STREAK & KOTOBA MINIGAME & BATTLE ROYALE) */}
-        <GamificationBanner />
-
-        {/* DAILY QUESTS & CLASS LEADERBOARD SECTION */}
-        <DailyQuestsLeaderboardSection />
 
         {/* DAFTAR KURSUS (COURSE LIST) */}
         <div>
