@@ -27,6 +27,7 @@ import LkpdWorksheet from "@/components/lms/LkpdWorksheet";
 import ChapterModuleViewer from "@/components/lms/ChapterModuleViewer";
 import LmsSidebar from "@/components/lms/LmsSidebar";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 interface VocabItem {
   id: number;
@@ -148,14 +149,9 @@ export default function LmsBabLearningPage() {
   const [questions, setQuestions] = useState<QuestionItem[]>([]);
   const [questionsLoading, setQuestionsLoading] = useState(true);
 
-  // Audio Speech synthesis fallback for vocab pronunciation
+  // High-fidelity Native Japanese pronunciation for vocab
   const speakWord = (text: string) => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ja-JP";
-      utterance.rate = 0.9;
-      window.speechSynthesis.speak(utterance);
-    }
+    playNativeJapaneseAudio(text, { rate: 0.92 });
   };
 
   useEffect(() => {

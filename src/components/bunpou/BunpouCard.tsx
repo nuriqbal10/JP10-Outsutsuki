@@ -20,6 +20,7 @@ import {
   GitCompare,
 } from "lucide-react";
 import { BunpouItem } from "@/types/bunpou";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 interface BunpouCardProps {
   bunpou: BunpouItem;
@@ -39,18 +40,21 @@ export default function BunpouCard({
   const [showRelatedDetail, setShowRelatedDetail] = useState(true);
 
   const speak = (text: string, index?: number) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ja-JP";
-      utterance.rate = 0.85;
-      if (typeof index === "number") {
-        setIsPlaying(index);
-        utterance.onend = () => setIsPlaying(null);
-        utterance.onerror = () => setIsPlaying(null);
-      }
-      window.speechSynthesis.speak(utterance);
+    if (typeof index === "number") {
+      setIsPlaying(index);
     }
+    playNativeJapaneseAudio(text, {
+      rate: 0.92,
+      onStart: () => {
+        if (typeof index === "number") setIsPlaying(index);
+      },
+      onEnd: () => {
+        if (typeof index === "number") setIsPlaying(null);
+      },
+      onError: () => {
+        if (typeof index === "number") setIsPlaying(null);
+      },
+    });
   };
 
   const handleCopy = () => {

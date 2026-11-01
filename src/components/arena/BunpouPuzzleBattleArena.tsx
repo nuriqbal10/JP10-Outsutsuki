@@ -33,6 +33,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import rawBunpouData from "@/data/bunpouData.json";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 import { BunpouItem } from "@/types/bunpou";
 import { sfx } from "@/lib/soundEffects";
 import { addXp, getGamificationState, recordBattleOutcome, unlockBadge } from "@/lib/gamification";
@@ -161,15 +162,9 @@ export default function BunpouPuzzleBattleArena({
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
   const roundStartTimeRef = useRef<number>(Date.now());
 
-  // Pronounce Japanese Sentence via Web Speech Synthesis
+  // Pronounce Japanese Sentence via Studio TTS / Native Voice Engine
   const speakJapanese = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "ja-JP";
-      u.rate = 0.85;
-      window.speechSynthesis.speak(u);
-    }
+    playNativeJapaneseAudio(text, { rate: 0.92 });
   };
 
   // Trigger Anime Action FX

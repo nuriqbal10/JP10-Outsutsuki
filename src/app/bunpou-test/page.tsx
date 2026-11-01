@@ -24,6 +24,7 @@ import {
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import rawBunpouData from "@/data/bunpouData.json";
 import { BunpouItem, BunpouLevelFilter } from "@/types/bunpou";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 const allBunpou: BunpouItem[] = rawBunpouData as BunpouItem[];
 
@@ -102,13 +103,7 @@ export default function BunpouTestPage() {
   }, [currentItem?.id]);
 
   const speak = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ja-JP";
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
+    playNativeJapaneseAudio(text, { rate: 0.92 });
   };
 
   const handleSelectToken = (token: string, index: number) => {

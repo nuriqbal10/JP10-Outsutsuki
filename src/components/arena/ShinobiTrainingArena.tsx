@@ -31,6 +31,7 @@ import {
 import { addXp, unlockBadge } from "@/lib/gamification";
 import soundFX from "@/lib/soundEffects";
 import RubyText from "@/components/common/RubyText";
+import { playNativeJapaneseAudio, stopNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 export type TrainingCategory =
   | "choukai"
@@ -587,20 +588,15 @@ export default function ShinobiTrainingArena({
     }
   };
 
-  // Fitur Audio Synthesizer Text-to-Speech untuk Choukai
+  // Fitur Studio Native Audio / Choukai Voice Engine
   const playJapaneseSpeech = (text: string) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ja-JP";
-    utterance.rate = 0.88; // Kecepatan alami JFT-Basic A2
-
-    utterance.onstart = () => setIsPlayingAudio(true);
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
-
-    window.speechSynthesis.speak(utterance);
+    setIsPlayingAudio(true);
+    playNativeJapaneseAudio(text, {
+      rate: 0.92,
+      onStart: () => setIsPlayingAudio(true),
+      onEnd: () => setIsPlayingAudio(false),
+      onError: () => setIsPlayingAudio(false),
+    });
   };
 
   // Otomatis putar audio jika kategori Choukai
@@ -609,9 +605,7 @@ export default function ShinobiTrainingArena({
       playJapaneseSpeech(activeQuestion.audioTranscript);
     }
     return () => {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
+      stopNativeJapaneseAudio();
     };
   }, [selectedCat, currentIndex]);
 

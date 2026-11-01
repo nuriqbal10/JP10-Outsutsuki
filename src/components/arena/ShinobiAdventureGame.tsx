@@ -25,6 +25,7 @@ import {
 import { sfx } from "@/lib/soundEffects";
 import { addXp, recordBattleOutcome, unlockBadge } from "@/lib/gamification";
 import { advanceDailyQuest } from "@/lib/dailyQuests";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 export interface AdventureStage {
   id: number;
@@ -190,12 +191,8 @@ export default function ShinobiAdventureGame({ onBack }: { onBack: () => void })
   const currentStage = ADVENTURE_STAGES[currentStageIndex];
 
   const speakJapanese = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "ja-JP";
-      u.rate = 0.85;
-      window.speechSynthesis.speak(u);
+    if (!isMuted) {
+      playNativeJapaneseAudio(text, { rate: 0.92 });
     }
   };
 

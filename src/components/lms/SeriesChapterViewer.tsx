@@ -23,6 +23,7 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { getChapterInfo, getCourseById } from "@/data/coursesCatalog";
 import rawBunpouData from "@/data/bunpouData.json";
 import { BunpouItem } from "@/types/bunpou";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 interface SeriesChapterViewerProps {
   courseId: "irodori-a1" | "irodori-a2-1";
@@ -49,18 +50,21 @@ export default function SeriesChapterViewer({
   }, [levelCode, chapterNum]);
 
   const speak = (text: string, index?: number) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ja-JP";
-      utterance.rate = 0.85;
-      if (typeof index === "number") {
-        setPlayingIndex(index);
-        utterance.onend = () => setPlayingIndex(null);
-        utterance.onerror = () => setPlayingIndex(null);
-      }
-      window.speechSynthesis.speak(utterance);
+    if (typeof index === "number") {
+      setPlayingIndex(index);
     }
+    playNativeJapaneseAudio(text, {
+      rate: 0.92,
+      onStart: () => {
+        if (typeof index === "number") setPlayingIndex(index);
+      },
+      onEnd: () => {
+        if (typeof index === "number") setPlayingIndex(null);
+      },
+      onError: () => {
+        if (typeof index === "number") setPlayingIndex(null);
+      },
+    });
   };
 
   const handleCopy = (item: BunpouItem) => {

@@ -21,6 +21,7 @@ import {
 import { CHAPTER_MODULES, ChapterModuleData } from "@/data/chapterModules";
 import rawBunpouData from "@/data/bunpouData.json";
 import { BunpouItem } from "@/types/bunpou";
+import { playNativeJapaneseAudio } from "@/lib/nativeVoiceEngine";
 
 interface ChapterModuleViewerProps {
   chapter: number;
@@ -57,16 +58,13 @@ export default function ChapterModuleViewer({
   );
 
   const speak = (text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "ja-JP";
-      u.rate = 0.85;
-      setPlayingAudio(text);
-      u.onend = () => setPlayingAudio(null);
-      u.onerror = () => setPlayingAudio(null);
-      window.speechSynthesis.speak(u);
-    }
+    setPlayingAudio(text);
+    playNativeJapaneseAudio(text, {
+      rate: 0.92,
+      onStart: () => setPlayingAudio(text),
+      onEnd: () => setPlayingAudio(null),
+      onError: () => setPlayingAudio(null),
+    });
   };
 
   return (
