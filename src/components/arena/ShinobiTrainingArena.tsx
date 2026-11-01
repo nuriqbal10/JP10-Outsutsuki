@@ -25,8 +25,12 @@ import {
   Clock,
   Layers,
   Info,
+  Type,
+  Check,
 } from "lucide-react";
 import { addXp, unlockBadge } from "@/lib/gamification";
+import soundFX from "@/lib/soundEffects";
+import RubyText from "@/components/common/RubyText";
 
 export type TrainingCategory =
   | "choukai"
@@ -512,11 +516,27 @@ export default function ShinobiTrainingArena({
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [xpEarned, setXpEarned] = useState(0);
   const [showTranscript, setShowTranscript] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(30);
   const [isTimerActive, setIsTimerActive] = useState(true);
+
+  // UX & Accessibility toggles
+  const [showFurigana, setShowFurigana] = useState(true);
+  const [isShaking, setIsShaking] = useState(false);
+  const [showVictoryModal, setShowVictoryModal] = useState(false);
+
+  const CATEGORY_ORDER: TrainingCategory[] = [
+    "choukai",
+    "kotoba",
+    "kanji_kana",
+    "bunpou",
+    "partikel",
+    "dokkai",
+  ];
 
   // Filter daftar soal berdasarkan kategori aktif
   const currentCategoryQuestions = useMemo(() => {
@@ -534,6 +554,8 @@ export default function ShinobiTrainingArena({
     setShowTranscript(false);
     setTimeRemaining(30);
     setIsTimerActive(true);
+    setCorrectAnswersCount(0);
+    setShowVictoryModal(false);
   };
 
   // Timer Countdown (30 detik per soal)
@@ -559,6 +581,9 @@ export default function ShinobiTrainingArena({
     if (!isAnswerSubmitted) {
       setIsAnswerSubmitted(true);
       setStreak(0);
+      soundFX.playWrong();
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 450);
     }
   };
 
@@ -600,20 +625,32 @@ export default function ShinobiTrainingArena({
 
     const isCorrect = idx === activeQuestion.correctIndex;
     if (isCorrect) {
+      const nextStreak = streak + 1;
       const bonusStreak = streak >= 2 ? 15 : 0;
       const gained = 25 + bonusStreak;
       setScore((prev) => prev + 100);
-      setStreak((prev) => prev + 1);
+      setStreak(nextStreak);
+      if (nextStreak > maxStreak) setMaxStreak(nextStreak);
+      setCorrectAnswersCount((prev) => prev + 1);
       setXpEarned((prev) => prev + gained);
+
+      // Play SFX
+      soundFX.playCorrect();
+      if (nextStreak >= 3) {
+        setTimeout(() => soundFX.playTaiko(), 120);
+      }
 
       // Sinkronkan ke Gamification State
       addXp(gained, "Latihan Sektor Dojo N4/JFT-A2");
 
-      if (streak + 1 >= 5) {
+      if (nextStreak >= 5) {
         unlockBadge("streak_5_dojo");
       }
     } else {
       setStreak(0);
+      soundFX.playWrong();
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 450);
     }
   };
 
@@ -627,15 +664,22 @@ export default function ShinobiTrainingArena({
       setTimeRemaining(30);
       setIsTimerActive(true);
     } else {
-      // Selesai satu putaran kategori
-      alert(`Selamat! Anda telah menyelesaikan seluruh latihan di sektor ${selectedCat.toUpperCase()}. Total XP diperoleh: +${xpEarned} XP!`);
-      setCurrentIndex(0);
-      setSelectedOption(null);
-      setIsAnswerSubmitted(false);
-      setShowTranscript(false);
-      setTimeRemaining(30);
-      setIsTimerActive(true);
+      // Selesai satu putaran kategori -> Tampilkan Custom Victory Modal!
+      soundFX.playTaiko();
+      setShowVictoryModal(true);
     }
+  };
+
+  // Handler Lanjut ke Sektor Berikutnya dari Victory Modal
+  const handleProceedNextSector = () => {
+    const currentIdx = CATEGORY_ORDER.indexOf(selectedCat);
+    const nextCat = CATEGORY_ORDER[(currentIdx + 1) % CATEGORY_ORDER.length];
+    handleSelectCategory(nextCat);
+  };
+
+  // Handler Ulangi Sektor Ini
+  const handleRepeatCurrentSector = () => {
+    handleSelectCategory(selectedCat);
   };
 
   const isCorrectAnswer = selectedOption === activeQuestion?.correctIndex;
@@ -667,8 +711,22 @@ export default function ShinobiTrainingArena({
           </div>
         </div>
 
-        {/* Status Dashboard Mini (XP, Streak, Timer) */}
-        <div className="flex items-center gap-3">
+        {/* Status Dashboard Mini (XP, Streak, Timer, Furigana Toggle) */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Furigana ON/OFF Toggle */}
+          <button
+            onClick={() => setShowFurigana((prev) => !prev)}
+            className={`px-3 py-1.5 rounded-2xl border text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm ${
+              showFurigana
+                ? "bg-amber-400 text-stone-950 border-amber-300"
+                : "bg-black/50 text-stone-400 border-white/10 hover:text-white"
+            }`}
+            title="Nyalakan/matikan furigana (kana di atas kanji)"
+          >
+            <Type className="w-3.5 h-3.5" />
+            <span>Furigana: {showFurigana ? "ON" : "OFF"}</span>
+          </button>
+
           <div className="px-3.5 py-1.5 rounded-2xl bg-black/40 border border-white/10 text-center">
             <span className="text-[9px] opacity-60 block uppercase font-bold">Chakra XP</span>
             <span className="font-mono font-black text-amber-400 text-sm">+{xpEarned}</span>
@@ -720,7 +778,9 @@ export default function ShinobiTrainingArena({
 
       {/* 3. WORKSPACE SOAL LATIHAN N4 / JFT-BASIC A2 */}
       {activeQuestion && (
-        <div className="clay-card p-6 sm:p-8 rounded-3xl border border-white/10 bg-slate-900/90 shadow-2xl space-y-6">
+        <div className={`clay-card p-6 sm:p-8 rounded-3xl border border-white/10 bg-slate-900/90 shadow-2xl space-y-6 transition-all duration-200 ${
+          isShaking ? "animate-shake ring-2 ring-rose-500 shadow-[0_0_25px_rgba(244,63,94,0.4)]" : ""
+        }`}>
           {/* Header Soal & Indikator Nomor */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
             <div className="flex items-center gap-2.5">
@@ -748,9 +808,9 @@ export default function ShinobiTrainingArena({
               <div className="flex items-center gap-2 text-xs font-bold text-cyan-400">
                 <FileText className="w-4 h-4" /> Naskah Dokumen / Rambu Informasi Resmi Jepang:
               </div>
-              <pre className="font-serif text-sm sm:text-base leading-relaxed text-stone-200 whitespace-pre-wrap bg-transparent border-0 p-0">
-                {activeQuestion.contextJa}
-              </pre>
+              <div className="font-serif text-sm sm:text-base leading-relaxed text-stone-200 whitespace-pre-wrap bg-transparent border-0 p-0">
+                <RubyText text={activeQuestion.contextJa} showFurigana={showFurigana} />
+              </div>
             </div>
           )}
 
@@ -783,7 +843,7 @@ export default function ShinobiTrainingArena({
               {showTranscript && (
                 <div className="p-3.5 rounded-xl bg-black/40 border border-blue-500/20 text-xs sm:text-sm text-stone-300 font-serif leading-relaxed animate-in fade-in duration-150">
                   <p className="font-bold text-[10px] text-blue-400 uppercase mb-1">Naskah Dialog Percakapan (スクリプト):</p>
-                  {activeQuestion.audioTranscript}
+                  <RubyText text={activeQuestion.audioTranscript} showFurigana={showFurigana} />
                 </div>
               )}
             </div>
@@ -792,7 +852,7 @@ export default function ShinobiTrainingArena({
           {/* PERTANYAAN (Jepang & Indonesia) */}
           <div className="space-y-1.5 pt-1">
             <h2 className="text-base sm:text-lg font-black font-serif text-white leading-snug">
-              {activeQuestion.questionJa}
+              <RubyText text={activeQuestion.questionJa} showFurigana={showFurigana} />
             </h2>
             <p className="text-xs sm:text-sm text-amber-200/80 font-medium">
               💡 {activeQuestion.questionId}
@@ -903,6 +963,79 @@ export default function ShinobiTrainingArena({
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ========================================================
+          CUSTOM ANIMATED VICTORY MODAL (SELESAI 1 SEKTOR DOJO)
+          ======================================================== */}
+      {showVictoryModal && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="clay-card max-w-lg w-full p-6 sm:p-8 rounded-3xl border-2 border-amber-400/80 bg-gradient-to-b from-amber-950/70 via-stone-900 to-black text-center shadow-[0_0_50px_rgba(245,158,11,0.35)] relative overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Background Glow */}
+            <div className="absolute top-0 right-1/2 translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-5">
+              {/* Animated Crown / Trophy Icon */}
+              <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 flex items-center justify-center text-4xl shadow-2xl ring-4 ring-amber-400/40 animate-bounce">
+                🥋
+              </div>
+
+              <div>
+                <span className="px-3 py-1 rounded-full bg-amber-400 text-stone-950 text-xs font-black tracking-widest uppercase shadow-md">
+                  SEKTOR TUNTAS • 修練完了
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black text-white mt-2">
+                  Latihan Sektor Selesai!
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-300 mt-1">
+                  Anda telah menuntaskan seluruh latihan di sektor <strong className="text-amber-400">{selectedCat.toUpperCase()}</strong> berstandar N4 &amp; JFT-Basic A2!
+                </p>
+              </div>
+
+              {/* Rincian Hasil & Statistik Sesi */}
+              <div className="grid grid-cols-3 gap-2.5 p-4 rounded-2xl bg-black/50 border border-white/10 text-center">
+                <div className="p-2">
+                  <div className="text-[10px] text-stone-400 uppercase font-bold">Chakra XP</div>
+                  <div className="text-lg font-black text-amber-400">+{xpEarned}</div>
+                </div>
+                <div className="p-2 border-x border-white/10">
+                  <div className="text-[10px] text-stone-400 uppercase font-bold">Akurasi</div>
+                  <div className="text-lg font-black text-emerald-400">
+                    {Math.round((correctAnswersCount / Math.max(1, currentCategoryQuestions.length)) * 100)}%
+                  </div>
+                </div>
+                <div className="p-2">
+                  <div className="text-[10px] text-stone-400 uppercase font-bold">Max Streak</div>
+                  <div className="text-lg font-black text-orange-400">🔥 {maxStreak}x</div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                <button
+                  onClick={handleProceedNextSector}
+                  className="w-full sm:flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-stone-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl hover:brightness-110 transition cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Lanjut Sektor Berikutnya</span>
+                </button>
+                <button
+                  onClick={handleRepeatCurrentSector}
+                  className="w-full sm:w-auto py-3 px-4 rounded-2xl bg-stone-800 hover:bg-stone-700 border border-white/10 text-stone-200 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Ulangi</span>
+                </button>
+                <button
+                  onClick={onBackToHub}
+                  className="w-full sm:w-auto py-3 px-4 rounded-2xl bg-black/40 hover:bg-black/60 border border-white/10 text-stone-400 hover:text-white font-bold text-xs transition cursor-pointer"
+                >
+                  Lobi Arena
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

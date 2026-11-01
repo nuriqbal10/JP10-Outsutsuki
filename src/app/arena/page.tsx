@@ -5,7 +5,11 @@ import {
   getGamificationState,
   AVAILABLE_BADGES,
   UserGamificationState,
+  addXp,
 } from "@/lib/gamification";
+import soundFX from "@/lib/soundEffects";
+import { getDailyQuests, DailyQuest, advanceDailyQuest } from "@/lib/dailyQuests";
+import ShinobiGameLeaderboard from "@/components/arena/ShinobiGameLeaderboard";
 import BunpouPuzzleBattleArena from "@/components/arena/BunpouPuzzleBattleArena";
 import GuessPictureGame from "@/components/arena/GuessPictureGame";
 import ShinobiAdventureGame from "@/components/arena/ShinobiAdventureGame";
@@ -42,10 +46,16 @@ import {
   Eye,
   Target,
   Compass,
+  Volume2,
+  VolumeX,
+  X,
+  Scroll,
 } from "lucide-react";
 
 export default function ShinobiArenaPage() {
   const [gamerState, setGamerState] = useState<UserGamificationState | null>(null);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [dailyQuests, setDailyQuests] = useState<DailyQuest[]>([]);
 
   // Active game router: null = Game Selection Catalog Hub, 'training_arena' = In-place training
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -53,6 +63,7 @@ export default function ShinobiArenaPage() {
   const [categoryFilter, setCategoryFilter] = useState<"all" | "training" | "bunpou" | "kotoba" | "multiplayer">("all");
   const [showBadgesModal, setShowBadgesModal] = useState<boolean>(false);
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState<boolean>(false);
 
   // Multiplayer Modal State
   const [isBattleModalOpen, setIsBattleModalOpen] = useState<boolean>(false);
@@ -69,6 +80,8 @@ export default function ShinobiArenaPage() {
 
   useEffect(() => {
     setGamerState(getGamificationState());
+    setIsMuted(soundFX.getMuted());
+    setDailyQuests(getDailyQuests());
 
     const handleUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<UserGamificationState>;
@@ -77,11 +90,43 @@ export default function ShinobiArenaPage() {
       }
     };
 
+    const handleAudioToggled = (e: Event) => {
+      const customEvent = e as CustomEvent<{ isMuted: boolean }>;
+      if (customEvent.detail) {
+        setIsMuted(customEvent.detail.isMuted);
+      }
+    };
+
+    const handleQuestsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<DailyQuest[]>;
+      if (customEvent.detail) {
+        setDailyQuests(customEvent.detail);
+      }
+    };
+
     window.addEventListener("gamification-updated", handleUpdate as EventListener);
+    window.addEventListener("shinobi-audio-toggled", handleAudioToggled as EventListener);
+    window.addEventListener("daily-quests-updated", handleQuestsUpdated as EventListener);
+
     return () => {
       window.removeEventListener("gamification-updated", handleUpdate as EventListener);
+      window.removeEventListener("shinobi-audio-toggled", handleAudioToggled as EventListener);
+      window.removeEventListener("daily-quests-updated", handleQuestsUpdated as EventListener);
     };
   }, []);
+
+  const handleToggleMute = () => {
+    const next = soundFX.toggleMute();
+    setIsMuted(next);
+  };
+
+  const handleClaimQuest = (questId: string, xp: number) => {
+    soundFX.playTaiko();
+    addXp(xp, `Klaim Misi Harian: ${questId}`);
+    setDailyQuests((prev) =>
+      prev.map((q) => (q.id === questId ? { ...q, current: q.target, isCompleted: true } : q))
+    );
+  };
 
   if (!gamerState) {
     return (
@@ -101,244 +146,123 @@ export default function ShinobiArenaPage() {
   };
 
   // ============================================================================
-  // DEFINISI KATALOG GAME ARCADE (MODULAR & SANGAT MUDAH DIKEMBANGKAN)
+  // DEFINISI 4 GERBANG GAME UTAMA (KONSOLIDASI HERO PORTALS)
   // ============================================================================
   const ARCADE_GAMES = [
     {
       id: "shinobi_training_ground",
-      title: "Shinobi Training Ground: 6 Sektor N4 / JFT A2",
-      jpTitle: "忍の修練場：6大部門特訓",
+      title: "Shinobi Training Ground: Dojo 6 Pilar N4 / JFT-A2",
+      jpTitle: "忍の修練場：六大部門総合道場",
       category: "training",
       badge: "6 SEKTOR • CHOUKAI S/D DOKKAI",
       badgeColor: "bg-gradient-to-r from-emerald-400 to-teal-400 text-stone-950 font-black",
       icon: "🥋",
-      cardBorder: "border-teal-400 hover:border-teal-300 shadow-[0_0_25px_rgba(20,184,166,0.35)]",
-      glowBg: "from-teal-950/70 via-emerald-950/40 to-slate-900",
+      cardBorder: "border-teal-400/80 hover:border-teal-300 shadow-[0_0_30px_rgba(20,184,166,0.35)]",
+      glowBg: "from-teal-950/80 via-emerald-950/40 to-slate-900",
       buttonColor: "bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 text-stone-950 font-black shadow-lg",
-      desc: "Dojo latihan mandiri terintegrasi mengasah 6 sektor kompetensi resmi: Choukai (Audio Jepang), Kosakata Kerja, Kanji & Kana, Pola Bunpou, Partikel Drill, dan Dokkai Rambu/Email kantor setara N4 & JFT-Basic A2.",
-      features: ["Audio Percakapan Penutur Asli", "Partikel Drill & Analisis 5S", "Pembahasan Trik JFT Prometric"],
+      desc: "Dojo latihan mandiri terintegrasi mengasah 6 sektor kompetensi resmi: Choukai (Audio Jepang), Kosakata Kerja 5S, Kanji & Rambu K3, Pola Bunpou, Partikel Drill, dan Dokkai Dokumen Kantor setara N4 & JFT-Basic A2.",
+      features: [
+        "Audio Percakapan Penutur Asli Berstandar Prometric",
+        "Partikel Drill Sniper (に/で/を/が/へ/と)",
+        "Dokkai Rambu Darurat & Email Etika Kerja Hou-Ren-So",
+      ],
+      subChips: [
+        { id: "choukai", label: "🎧 Choukai", icon: "🎧" },
+        { id: "kotoba", label: "📖 Kotoba 5S", icon: "📖" },
+        { id: "kanji_kana", label: "🈳 Kanji & Kana", icon: "🈳" },
+        { id: "bunpou", label: "🎋 Bunpou", icon: "🎋" },
+        { id: "partikel", label: "⚡ Partikel Drill", icon: "⚡" },
+        { id: "dokkai", label: "📜 Dokkai", icon: "📜" },
+      ],
       tags: ["Choukai", "Partikel Drill", "Kanji & Dokkai", "N4 / JFT-A2"],
-      onPlay: () => {
-        setTrainingCategory("choukai");
+      onPlay: (cat?: TrainingCategory) => {
+        setTrainingCategory(cat || "choukai");
         setSelectedGame("training_arena");
       },
       isComingSoon: false,
     },
     {
-      id: "training_choukai_dojo",
-      title: "Choukai Listening Dojo (Audio Percakapan)",
-      jpTitle: "聴解道場・現場音声訓練",
-      category: "training",
-      badge: "AUDIO OTENTIK JFT A2",
-      badgeColor: "bg-blue-400 text-stone-950 font-bold",
-      icon: "🎧",
-      cardBorder: "border-blue-500/40 hover:border-blue-400",
-      glowBg: "from-blue-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold",
-      desc: "Latihan pemahaman mendengarkan instruksi kerja pabrik, pengumuman stasiun Shinkansen, dan dialog kerja Jepang dengan audio penutur asli berkecepatan standar JFT.",
-      features: ["Audio Player Interaktif", "Kecepatan Alami JFT A2", "Naskah Skrip Terbuka"],
-      tags: ["Listening", "Instruksi Kerja", "JR Station Announcements"],
-      onPlay: () => {
-        setTrainingCategory("choukai");
-        setSelectedGame("training_arena");
-      },
-      isComingSoon: false,
-    },
-    {
-      id: "training_partikel_drill",
-      title: "Partikel Sniper Drill (に・で・を・が・へ)",
-      jpTitle: "助詞特訓・精密スナイパー",
-      category: "training",
-      badge: "DRILL PARTIKEL TEPAT",
-      badgeColor: "bg-rose-500 text-white font-bold",
-      icon: "⚡",
-      cardBorder: "border-rose-500/40 hover:border-rose-400",
-      glowBg: "from-rose-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-rose-500 to-red-600 text-white font-bold",
-      desc: "Kuasai perbedaan partikel lokasi aksi (で) vs keberadaan (に), objek (を) vs kemampuan (が), serta arah tujuan (へ/に) melalui kalimat rumpang berwaktu.",
-      features: ["Soal Rumpang Berwaktu", "Penjelasan Pola Tata Bahasa", "Analisis Jebakan Soal"],
-      tags: ["Partikel", "Akurasi Kalimat", "N4/JFT-A2"],
-      onPlay: () => {
-        setTrainingCategory("partikel");
-        setSelectedGame("training_arena");
-      },
-      isComingSoon: false,
-    },
-    {
-      id: "training_dokkai_dojo",
-      title: "Dokkai Dojo: Rambu K3 & Email Kantor",
-      jpTitle: "読解道場・文書理解",
-      category: "training",
-      badge: "BACAAN OTENTIK JEPANG",
-      badgeColor: "bg-cyan-400 text-stone-950 font-bold",
-      icon: "📜",
-      cardBorder: "border-cyan-500/40 hover:border-cyan-400",
-      glowBg: "from-cyan-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold",
-      desc: "Simulasi membaca dokumen resmi: email izin sakit/cuti, pengumuman perbaikan lift gedung, dan tata tertib pembuangan sampah asrama Jepang.",
-      features: ["Teks Format Asli Jepang", "Pertanyaan Pemahaman Kritis", "Tips Budaya Kerja Hou-Ren-So"],
-      tags: ["Dokkai", "Email Kantor", "Aturan Asrama"],
-      onPlay: () => {
-        setTrainingCategory("dokkai");
-        setSelectedGame("training_arena");
-      },
-      isComingSoon: false,
-    },
-    {
-      id: "training_kanji_kana",
-      title: "Kanji & Kana Dojo (Rambu & Katakana)",
-      jpTitle: "漢字・仮名道場",
-      category: "training",
-      badge: "RAMBU & KATA SERAPAN",
-      badgeColor: "bg-purple-400 text-stone-950 font-bold",
-      icon: "🈳",
-      cardBorder: "border-purple-500/40 hover:border-purple-400",
-      glowBg: "from-purple-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold",
-      desc: "Uji kemampuan membaca kanji rambu darurat (立入禁止, 非常口), istilah etika kerja (連絡, 報告, 相談), dan katakana teknis (マニュアル, ドライバー).",
-      features: ["Kanji Esensial N4 / A2", "Furigana & Arti Indonesia", "Katakana Dunia Kerja"],
-      tags: ["Kanji Rambu", "Katakana", "Moji-Goi"],
-      onPlay: () => {
-        setTrainingCategory("kanji_kana");
-        setSelectedGame("training_arena");
-      },
+      id: "bunpou_puzzle",
+      title: "Bunpou Sentence Puzzle Battle Arena",
+      jpTitle: "文法パズル・修羅の道",
+      category: "bunpou",
+      badge: "264 POLA KALIMAT • 10 HP / HIT",
+      badgeColor: "bg-amber-400 text-stone-950 font-black",
+      icon: "🧩",
+      cardBorder: "border-amber-500/70 hover:border-amber-400 shadow-[0_0_30px_rgba(245,158,11,0.3)]",
+      glowBg: "from-amber-950/60 via-purple-950/40 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-stone-950 font-black shadow-lg",
+      desc: "Susun serpihan kata dan partikel pola tata bahasa Irodori (A1, A2.1, A2.2) dengan lobi cek kesiapan (Ready), 10 ronde resmi, timer berdetak, combo multiplier, dan 10 HP jutsu damage.",
+      features: [
+        "264 Pola Kalimat Otentik & 1.056 Varian Alami",
+        "Lobi Ready Check & Refleksi Pembahasan Shihan",
+        "Mode Solo vs AI Sensei Bot atau 1v1 Realtime",
+      ],
+      tags: ["Solo vs Rival", "Lobi Ready Check", "Refleksi Review", "10 Ronde"],
+      onPlay: () => setSelectedGame("bunpou_puzzle"),
       isComingSoon: false,
     },
     {
       id: "shinobi_zep_arena",
-      title: "Shinobi ZEP Arena: Ujian Desa Ninja",
+      title: "Shinobi ZEP Virtual 2D: Ujian 6 Desa Ninja",
       jpTitle: "忍・ZEPアリーナ：六里の試練",
       category: "multiplayer",
       badge: "ZEP CLONE • 6 DESA NARUTO • AI STUDIO",
       badgeColor: "bg-gradient-to-r from-amber-400 to-rose-500 text-stone-950 font-black",
       icon: "⛩️",
-      cardBorder: "border-amber-400 hover:border-amber-300 shadow-[0_0_25px_rgba(245,158,11,0.3)]",
+      cardBorder: "border-amber-400 hover:border-amber-300 shadow-[0_0_30px_rgba(245,158,11,0.35)]",
       glowBg: "from-rose-950/60 via-amber-950/40 to-slate-900",
       buttonColor: "bg-gradient-to-r from-amber-400 via-rose-500 to-amber-500 text-stone-950 font-black shadow-lg",
-      desc: "Mekanisme ZEP Quiz bertema 6 Desa Ninja Naruto! Gerakkan avatar ninja secara fisik ke 4 Gerbang Desa (A/B/C/D) atau Gerbang O/X sebelum terkena serangan jutsu! Dilengkapi AI Generator & Impor Word / Blackboard ZIP.",
-      features: ["Avatar Gerak Virtual (WASD / Touch)", "6 Arena Desa Ninja Naruto", "AI Studio & Impor Word/ZIP"],
-      tags: ["ZEP Clone", "6 Desa Naruto", "AI Quiz Generator", "10 Ronde (10 HP/Hit)"],
+      desc: "Mekanisme ZEP Quiz bertema 6 Desa Ninja Naruto! Gerakkan avatar ninja fisik ke Gerbang Desa (A/B/C/D) atau Gerbang O/X sebelum serangan jutsu jatuh. Dilengkapi AI Generator & Impor Word / ZIP.",
+      features: [
+        "Avatar Gerak Virtual (WASD / D-Pad Cross Mobile)",
+        "6 Arena Desa Ninja Naruto (Konoha, Kiri, Kumo, Iwa, Suna, Ame)",
+        "AI Quiz Generator & Impor Bank Soal Word / ZIP",
+      ],
+      tags: ["ZEP Clone", "6 Desa Naruto", "AI Quiz Generator", "D-Pad Cross"],
       onPlay: () => setShowCreatorStudio(true),
       isComingSoon: false,
     },
     {
-      id: "bunpou_puzzle",
-      title: "Bunpou Sentence Puzzle",
-      jpTitle: "文法パズル・修羅の道",
-      category: "bunpou",
-      badge: "10 RONDE • 10 HP / HIT",
-      badgeColor: "bg-amber-400 text-stone-950",
-      icon: "🧩",
-      cardBorder: "border-amber-500/40 hover:border-amber-400",
-      glowBg: "from-amber-950/40 via-purple-950/30 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.4)]",
-      desc: "Susun potongan kosakata dan partikel pola kalimat Irodori (A1, A2.1, A2.2) dengan lobi cek kesiapan (Ready), 10 ronde resmi, dan 10 HP damage.",
-      features: ["264 Pola Kalimat Otentik", "Lobi Konfirmasi Ready", "10 Ronde Resmi (10 HP/Hit)"],
-      tags: ["Solo vs Rival", "Lobi Ready Check", "Refleksi Review"],
-      onPlay: () => setSelectedGame("bunpou_puzzle"),
+      id: "multiplayer_colosseum",
+      title: "Multiplayer Colosseum: PvP & Knockout Cup",
+      jpTitle: "大筒木コロシアム・天下一武道会",
+      category: "multiplayer",
+      badge: "1V1 • 2V2 SQUAD • ROYALE 2-6",
+      badgeColor: "bg-gradient-to-r from-rose-500 to-yellow-400 text-stone-950 font-black",
+      icon: "⚔️",
+      cardBorder: "border-rose-500/80 hover:border-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.35)]",
+      glowBg: "from-rose-950/70 via-purple-950/40 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-rose-500 via-amber-500 to-rose-600 text-stone-950 font-black shadow-lg",
+      desc: "Panggung pertempuran realtime klan Otsutsuki! Bertanding cepat 1v1 (Kotoba Blitz), Perang Skuad 2v2 (Shinobi vs Samurai), Turnamen Knockout Cup 8 peserta berhadiah podium, hingga Survival Royale fleksibel 2-6 pemain.",
+      features: [
+        "Room Code & Matchmaking Siswa Kelas Otsutsuki",
+        "Podium Juara 1, 2, 3 Resmi & Trofi Profil",
+        "Sistem Skor Kecepatan Jawab ala Kahoot",
+      ],
+      tags: ["1v1 Kotoba Blitz", "Knockout Cup", "2v2 Squad", "Survival 2-6"],
+      onPlay: () => openMultiplayer("1vs1"),
       isComingSoon: false,
     },
+  ];
+
+  // Minigame Klasik Tambahan
+  const CLASSIC_MINIGAMES = [
     {
       id: "guess_picture",
-      title: "Tebak Gambar & Rambu K3",
+      title: "Tebak Gambar & Rambu K3 Jepang",
       jpTitle: "写真・標識クイズ",
-      category: "kotoba",
-      badge: "BARU • K3 & DOKKAI",
-      badgeColor: "bg-emerald-400 text-stone-950",
       icon: "🔍",
-      cardBorder: "border-emerald-500/40 hover:border-emerald-400",
-      glowBg: "from-emerald-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-400 text-stone-950 shadow-[0_0_20px_rgba(52,211,153,0.4)]",
-      desc: "Uji ketajaman membaca rambu keselamatan kerja pabrik (安全第一, 火気厳禁), fasilitas umum darurat (非常口), dan kuliner otentik Irodori A2.2.",
-      features: ["Rambu Pabrik & K3 Nyata", "Audio Pelafalan Otentik", "Penjelasan Situasi Kerja"],
-      tags: ["Tebak Gambar", "Dokkai & Kanji", "K3 Jepang"],
+      desc: "Uji ketajaman membaca rambu keselamatan kerja pabrik (安全第一, 火気厳禁, 非常口) dan foto otentik Jepang.",
       onPlay: () => setSelectedGame("guess_picture"),
-      isComingSoon: false,
     },
     {
       id: "shinobi_adventure",
       title: "Shinobi Adventure: Irodori Quest",
       jpTitle: "忍の道・総合冒険録",
-      category: "bunpou",
-      badge: "BARU • STORY MODE",
-      badgeColor: "bg-indigo-400 text-stone-950",
       icon: "🗺️",
-      cardBorder: "border-indigo-500/40 hover:border-indigo-400",
-      glowBg: "from-indigo-950/40 via-purple-950/30 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]",
-      desc: "Mode petualangan eksplorasi komprehensif mengintegrasikan seluruh elemen Irodori A2.2: Tokyo Dojo, Lini Pabrik Aichi, Izakaya, Stasiun Shinkansen, dan Rumah Sakit.",
-      features: ["5 Wilayah Skenario Nyata", "Dialog Interaktif Sensei", "Integrasi Komprehensif A2.2"],
-      tags: ["Story Mode", "Kompilasi Seluruh Materi", "HP & Quest Rewards"],
+      desc: "Petualangan RPG cerita eksplorasi komprehensif mengintegrasikan seluruh elemen situasi nyata Irodori A2.2.",
       onPlay: () => setSelectedGame("shinobi_adventure"),
-      isComingSoon: false,
-    },
-    {
-      id: "kotoba_blitz",
-      title: "Kotoba Blitz 1 vs 1",
-      jpTitle: "言葉速撃・真剣勝負",
-      category: "kotoba",
-      badge: "15 SOAL / MATCH",
-      badgeColor: "bg-rose-500 text-white",
-      icon: "⚔️",
-      cardBorder: "border-rose-500/40 hover:border-rose-400",
-      glowBg: "from-rose-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-rose-600 to-red-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.4)]",
-      desc: "Duel adu kecepatan menjawab 15 soal kosakata, kanji, dan arti bahasa Indonesia ala sistem Kahoot. Jawaban tercepat mendapat bonus poin!",
-      features: ["15 Soal Per Pertandingan", "Matchmaking Teman Sekelas", "Sistem Skor Kahoot"],
-      tags: ["1 vs 1 Realtime", "15 Soal Cepat", "Kanji & Kotoba"],
-      onPlay: () => openMultiplayer("1vs1"),
-      isComingSoon: false,
-    },
-    {
-      id: "tournament_cup",
-      title: "Otsutsuki Knockout Cup",
-      jpTitle: "大筒木杯・天下一武道会",
-      category: "multiplayer",
-      badge: "PODIUM JUARA 1, 2, 3",
-      badgeColor: "bg-yellow-400 text-stone-950",
-      icon: "🏆",
-      cardBorder: "border-yellow-500/50 hover:border-yellow-400",
-      glowBg: "from-yellow-950/40 via-purple-950/30 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-stone-950 shadow-[0_0_20px_rgba(250,204,21,0.5)]",
-      desc: "Turnamen sistem gugur 8 peserta! Melaju dari 8 Besar, Semifinal, hingga Grand Final dengan hadiah podium Juara 1 (500 XP), Juara 2 (300 XP), dan Juara 3 (150 XP).",
-      features: ["Podium Juara 1, 2, 3 Resmi", "Layar Tunggu & Ready Babak", "Badge Juara di Profil User"],
-      tags: ["8 Pemain", "Sistem Gugur", "Trofi 1, 2, 3"],
-      onPlay: () => openMultiplayer("tournament"),
-      isComingSoon: false,
-    },
-    {
-      id: "team_battle",
-      title: "Team Squad Battle (2v2)",
-      jpTitle: "忍連合・チーム対抗戦",
-      category: "multiplayer",
-      badge: "CUSTOM NAMA SQUAD",
-      badgeColor: "bg-indigo-500 text-white",
-      icon: "🛡️",
-      cardBorder: "border-indigo-500/40 hover:border-indigo-400",
-      glowBg: "from-indigo-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]",
-      desc: "Pilih kubu Tim Shinobi atau Tim Samurai dan kustomisasi nama skuad Anda. Pilih kategori soal kuis spesifik (Bunpou, Kotoba, Kanji, Choukai) untuk duel 2v2.",
-      features: ["Kustomisasi Nama Skuad", "Pilihan Kategori Soal", "Team Combo Multiplier"],
-      tags: ["2 vs 2 Tim", "Kustom Nama Tim", "Filter Kategori"],
-      onPlay: () => openMultiplayer("group"),
-      isComingSoon: false,
-    },
-    {
-      id: "survival_royale",
-      title: "Survival Battle Royale",
-      jpTitle: "大筒木サバイバル戦",
-      category: "multiplayer",
-      badge: "FLEKSIBEL 2-6 PEMAIN",
-      badgeColor: "bg-orange-500 text-stone-950",
-      icon: "👑",
-      cardBorder: "border-orange-500/40 hover:border-orange-400",
-      glowBg: "from-orange-950/40 via-slate-900 to-slate-900",
-      buttonColor: "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 shadow-[0_0_20px_rgba(245,158,11,0.4)]",
-      desc: "Pertarungan fleksibel 2 hingga 6 pemain dengan 3 stage kesulitan bertingkat: Stage 1 Kosakata, Stage 2 Kanji & Makna, Stage 3 Bunpou & Sudden Death!",
-      features: ["Fleksibel 2 - 6 Pemain", "Multi-Stage Bertahap (Kotoba-Kanji-Bunpou)", "Sudden Death & Timer Cepat"],
-      tags: ["2-6 Pemain", "Multi-Stage", "Gelar Penyintas"],
-      onPlay: () => openMultiplayer("all_members"),
-      isComingSoon: false,
     },
   ];
 
@@ -468,21 +392,45 @@ export default function ShinobiArenaPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-1.5 ml-2">
+              <div className="flex flex-wrap items-center gap-1.5 ml-2">
+                {/* Tombol Global Sound Mute/Unmute */}
+                <button
+                  onClick={handleToggleMute}
+                  className={`p-2.5 rounded-xl border transition text-xs font-bold flex flex-col items-center cursor-pointer shadow-md ${
+                    isMuted
+                      ? "bg-rose-950/80 border-rose-500/50 text-rose-300 hover:bg-rose-900"
+                      : "bg-emerald-950/80 border-emerald-500/50 text-emerald-300 hover:bg-emerald-900"
+                  }`}
+                  title={isMuted ? "Suara Game Dinonaktifkan (Klik untuk Unmute)" : "Suara Game Aktif (Klik untuk Mute)"}
+                >
+                  {isMuted ? <VolumeX className="w-4 h-4 mb-0.5" /> : <Volume2 className="w-4 h-4 mb-0.5" />}
+                  <span className="text-[10px] font-black">{isMuted ? "Muted" : "Sound"}</span>
+                </button>
+
+                {/* Tombol Papan Peringkat Game Standalone */}
+                <button
+                  onClick={() => setShowLeaderboardModal(true)}
+                  className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:brightness-110 text-stone-950 transition text-xs font-black flex flex-col items-center shadow-lg border border-amber-300 cursor-pointer"
+                  title="Buka Papan Peringkat Khusus Game 28 Siswa Klan Otsutsuki"
+                >
+                  <Crown className="w-4 h-4 fill-stone-950 mb-0.5" />
+                  <span className="text-[10px]">Rank Game</span>
+                </button>
+
                 {/* Tombol Studio Kuis AI & Word/ZIP */}
                 <button
                   onClick={() => setShowCreatorStudio(true)}
-                  className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-400 hover:to-rose-500 border border-amber-300 text-stone-950 transition text-xs font-black flex flex-col items-center shadow-lg"
+                  className="p-2.5 rounded-xl bg-purple-900/60 hover:bg-purple-800 border border-purple-400/50 text-purple-200 transition text-xs font-black flex flex-col items-center shadow-md cursor-pointer"
                   title="Buka Shinobi Quiz Studio (AI Generator & Impor Word/ZIP)"
                 >
-                  <Sparkles className="w-4 h-4 fill-stone-950 mb-0.5" />
+                  <Sparkles className="w-4 h-4 mb-0.5" />
                   <span className="text-[10px] whitespace-nowrap">Studio AI</span>
                 </button>
 
                 {/* Tombol Profil & Winrate */}
                 <button
                   onClick={() => setShowProfileModal(true)}
-                  className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 transition text-xs font-bold flex flex-col items-center"
+                  className="p-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 transition text-xs font-bold flex flex-col items-center cursor-pointer"
                   title="Buka Profil & Statistik Winrate"
                 >
                   <UserCheck className="w-4 h-4 text-amber-400 mb-0.5" />
@@ -492,13 +440,105 @@ export default function ShinobiArenaPage() {
                 {/* Tombol Cek Badge */}
                 <button
                   onClick={() => setShowBadgesModal(true)}
-                  className="p-2.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 border border-purple-500/40 text-amber-300 transition text-xs font-bold flex flex-col items-center"
+                  className="p-2.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 border border-purple-500/40 text-amber-300 transition text-xs font-bold flex flex-col items-center cursor-pointer"
                   title="Buka Koleksi Lencana"
                 >
                   <Trophy className="w-4 h-4 text-amber-400 mb-0.5" />
                   <span className="text-[10px]">{gamerState.badges.length} Badge</span>
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* ========================================================
+              WIDGET DAILY QUESTS SHINOBI (MISI HARIAN BERHADIAH)
+              ======================================================== */}
+          <div className="bg-gradient-to-r from-stone-900/90 via-slate-900/90 to-black rounded-3xl p-5 md:p-6 border border-white/10 shadow-xl backdrop-blur space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 shadow-inner">
+                  <Scroll className="w-5 h-5" />
+                </span>
+                <div>
+                  <h3 className="text-base font-black text-white flex items-center gap-2">
+                    Misi Shinobi Harian • 毎日の任務
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 font-bold">
+                      Reset Setiap Hari
+                    </span>
+                  </h3>
+                  <p className="text-xs text-stone-400">
+                    Selesaikan misi harian untuk menambah Chakra XP dan mengumpulkan Gulungan Ninja.
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-xs font-mono font-bold text-amber-400 self-start sm:self-auto">
+                Tuntas: {dailyQuests.filter((q) => q.isCompleted).length} / {dailyQuests.length} Misi
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {dailyQuests.map((quest) => (
+                <div
+                  key={quest.id}
+                  className={`p-3.5 rounded-2xl border transition flex flex-col justify-between ${
+                    quest.isCompleted
+                      ? "bg-emerald-950/20 border-emerald-500/40 text-emerald-200"
+                      : "bg-black/40 border-white/10 text-stone-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xl">{quest.icon}</span>
+                      <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                        +{quest.rewardXp} XP • 📜 {quest.rewardScrolls}
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-bold text-white leading-tight">
+                      {quest.title}
+                    </h4>
+                    <p className="text-[11px] text-stone-400 mt-1 line-clamp-2 leading-relaxed">
+                      {quest.desc}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 mt-2 border-t border-white/5">
+                    <div className="flex items-center justify-between text-[10px] mb-1 font-mono">
+                      <span className="text-stone-400">Progres</span>
+                      <span className={quest.isCompleted ? "text-emerald-400 font-bold" : "text-stone-300"}>
+                        {quest.current}/{quest.target}
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-white/10">
+                      <div
+                        className={`h-full transition-all duration-300 ${
+                          quest.isCompleted
+                            ? "bg-emerald-400"
+                            : "bg-gradient-to-r from-amber-400 to-orange-400"
+                        }`}
+                        style={{ width: `${Math.min(100, (quest.current / quest.target) * 100)}%` }}
+                      />
+                    </div>
+
+                    {quest.isCompleted ? (
+                      <div className="mt-2 text-center py-1 text-[10px] font-black text-emerald-400 uppercase tracking-wider bg-emerald-500/10 rounded-lg border border-emerald-500/30 flex items-center justify-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" /> Misi Tuntas
+                      </div>
+                    ) : quest.current >= quest.target ? (
+                      <button
+                        onClick={() => handleClaimQuest(quest.id, quest.rewardXp)}
+                        className="mt-2 w-full py-1 text-[10px] font-black text-stone-950 uppercase tracking-wider bg-gradient-to-r from-amber-400 to-amber-500 hover:brightness-110 rounded-lg shadow-md cursor-pointer transition"
+                      >
+                        Klaim Hadiah (+{quest.rewardXp} XP)
+                      </button>
+                    ) : (
+                      <div className="mt-2 text-center py-1 text-[10px] font-semibold text-stone-500">
+                        Sedang Berjalan...
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -534,15 +574,21 @@ export default function ShinobiArenaPage() {
             </div>
           </div>
 
-          {/* FILTER KATEGORI GAME ARCADE */}
+          {/* SECTION HEADER: 4 GERBANG GAME UTAMA */}
           <div className="flex items-center justify-between flex-wrap gap-4 pt-2">
             <div>
-              <h3 className="text-xl font-black text-white flex items-center gap-2">
-                <Gamepad2 className="w-5 h-5 text-amber-400" />
-                Pilih Mode Game Pertandingan
+              <div className="flex items-center gap-2 mb-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 text-[10px] font-black uppercase tracking-wider">
+                  4 GERBANG UTAMA
+                </span>
+                <span className="text-xs text-stone-400 font-mono">四代門</span>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-white flex items-center gap-2">
+                <Gamepad2 className="w-6 h-6 text-amber-400" />
+                Pusat Arena Pertandingan &amp; Latihan Terpadu
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Pilih format battle yang ingin Anda mainkan bersama shinobi kelas.
+              <p className="text-xs text-slate-300 mt-0.5">
+                Pilih gerbang spesifik: Dojo Latihan 6 Pilar, Bunpou Puzzle, ZEP Virtual 2D, atau Colosseum Realtime.
               </p>
             </div>
 
@@ -551,11 +597,11 @@ export default function ShinobiArenaPage() {
                 onClick={() => setCategoryFilter("all")}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === "all"
-                    ? "bg-purple-600 text-white shadow font-black"
+                    ? "bg-amber-400 text-stone-950 shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
                 }`}
               >
-                Semua ({ARCADE_GAMES.length})
+                Semua Gerbang
               </button>
               <button
                 onClick={() => setCategoryFilter("training")}
@@ -565,77 +611,90 @@ export default function ShinobiArenaPage() {
                     : "bg-teal-950/40 text-teal-300 hover:text-white border border-teal-500/30"
                 }`}
               >
-                🥋 Training Arena (N4/JFT-A2)
-              </button>
-              <button
-                onClick={() => setCategoryFilter("multiplayer")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  categoryFilter === "multiplayer"
-                    ? "bg-amber-500 text-stone-950 shadow font-black"
-                    : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
-                }`}
-              >
-                ⛩️ Live &amp; ZEP Arena
+                🥋 Dojo Training (N4/JFT-A2)
               </button>
               <button
                 onClick={() => setCategoryFilter("bunpou")}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === "bunpou"
-                    ? "bg-purple-600 text-white shadow font-black"
+                    ? "bg-amber-500 text-stone-950 shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
                 }`}
               >
-                Pola Kalimat (Bunpou)
+                🧩 Bunpou Puzzle
               </button>
               <button
-                onClick={() => setCategoryFilter("kotoba")}
+                onClick={() => setCategoryFilter("multiplayer")}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  categoryFilter === "kotoba"
-                    ? "bg-purple-600 text-white shadow font-black"
+                  categoryFilter === "multiplayer"
+                    ? "bg-rose-500 text-white shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
                 }`}
               >
-                Kosakata &amp; Rambu K3
+                ⚔️ ZEP &amp; Colosseum
               </button>
             </div>
           </div>
 
-          {/* GRID KATALOG GAME ARCADE */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* GRID 4 GERBANG GAME UTAMA */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredGames.map((game) => (
               <div
                 key={game.id}
-                className={`bg-gradient-to-b ${game.glowBg} border-2 ${game.cardBorder} rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 shadow-xl hover:-translate-y-1 relative group overflow-hidden`}
+                className={`bg-gradient-to-b ${game.glowBg} border-2 ${game.cardBorder} rounded-3xl p-6 md:p-7 flex flex-col justify-between transition-all duration-300 shadow-2xl hover:-translate-y-1 relative group overflow-hidden`}
               >
                 <div>
                   {/* Top Badge & Icon */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-4xl p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-inner group-hover:scale-110 transition-transform">
+                    <span className="text-4xl p-3 rounded-2xl bg-slate-950/80 border border-slate-800 shadow-inner group-hover:scale-110 transition-transform">
                       {game.icon}
                     </span>
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm ${game.badgeColor}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md ${game.badgeColor}`}>
                       {game.badge}
                     </span>
                   </div>
 
                   {/* Title & JP Title */}
-                  <h4 className="text-lg md:text-xl font-black text-white group-hover:text-amber-300 transition-colors">
+                  <h4 className="text-xl md:text-2xl font-black text-white group-hover:text-amber-300 transition-colors">
                     {game.title}
                   </h4>
-                  <p className="text-[11px] font-japanese font-bold text-slate-400 mt-0.5">
+                  <p className="text-xs font-japanese font-bold text-slate-400 mt-1">
                     {game.jpTitle}
                   </p>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-300 font-medium mt-3 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-200 font-medium mt-3 leading-relaxed">
                     {game.desc}
                   </p>
 
+                  {/* Sub-Chips Sektor Cepat Khusus Training Ground */}
+                  {game.subChips && (
+                    <div className="mt-4 pt-3 border-t border-teal-500/20">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-teal-300 block mb-2">
+                        Pilih Cepat Sektor Latihan:
+                      </span>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        {game.subChips.map((chip) => (
+                          <button
+                            key={chip.id}
+                            onClick={() => {
+                              setTrainingCategory(chip.id as TrainingCategory);
+                              setSelectedGame("training_arena");
+                            }}
+                            className="p-2 rounded-xl bg-teal-500/10 hover:bg-teal-400 hover:text-stone-950 border border-teal-500/30 text-[11px] font-bold text-teal-200 text-center transition cursor-pointer"
+                          >
+                            {chip.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Features List */}
-                  <div className="my-4 pt-3 border-t border-slate-800/80 space-y-1.5">
+                  <div className="my-4 pt-3 border-t border-slate-800/80 space-y-2">
                     {game.features.map((feat, i) => (
-                      <div key={i} className="flex items-center gap-2 text-[11px] text-slate-300">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <div key={i} className="flex items-center gap-2 text-xs text-slate-300">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
                         <span>{feat}</span>
                       </div>
                     ))}
@@ -643,11 +702,11 @@ export default function ShinobiArenaPage() {
                 </div>
 
                 {/* Footer Action Button */}
-                <div className="pt-2">
+                <div className="pt-3">
                   <button
                     disabled={game.isComingSoon}
-                    onClick={game.onPlay}
-                    className={`w-full py-3.5 px-4 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] ${game.buttonColor}`}
+                    onClick={() => game.onPlay()}
+                    className={`w-full py-4 px-5 rounded-2xl font-black text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${game.buttonColor}`}
                   >
                     {game.isComingSoon ? (
                       <>
@@ -657,7 +716,7 @@ export default function ShinobiArenaPage() {
                     ) : (
                       <>
                         <Play className="w-4 h-4 fill-current" />
-                        <span>MAINKAN SEKARANG</span>
+                        <span>MASUK KE GERBANG GAME</span>
                         <ChevronRight className="w-4 h-4" />
                       </>
                     )}
@@ -665,6 +724,54 @@ export default function ShinobiArenaPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* SECTION: MINIGAME & PETUALANGAN KLASIK TAMBAHAN */}
+          <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-base font-black text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  Koleksi Minigame &amp; Petualangan Klasik
+                </h4>
+                <p className="text-xs text-stone-400">
+                  Game eksplorasi sampingan untuk mengasah memori visual dan membaca kanji rambu darurat.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {CLASSIC_MINIGAMES.map((mini) => (
+                <div
+                  key={mini.id}
+                  className="p-4 rounded-2xl bg-black/40 border border-white/10 hover:border-amber-400/50 transition flex items-center justify-between gap-4 group"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl p-2.5 rounded-xl bg-white/5 border border-white/10 shrink-0">
+                      {mini.icon}
+                    </span>
+                    <div>
+                      <h5 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">
+                        {mini.title}
+                      </h5>
+                      <p className="text-[10px] font-japanese text-stone-400">
+                        {mini.jpTitle}
+                      </p>
+                      <p className="text-[11px] text-stone-300 mt-1 line-clamp-1">
+                        {mini.desc}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={mini.onPlay}
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-amber-400 hover:text-stone-950 text-white font-bold text-xs transition shrink-0 cursor-pointer"
+                  >
+                    Mainkan
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* KOLEKSI BADGE BANNER */}
@@ -685,7 +792,7 @@ export default function ShinobiArenaPage() {
 
             <button
               onClick={() => setShowBadgesModal(true)}
-              className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs border border-slate-700 hover:border-amber-400 transition whitespace-nowrap"
+              className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs border border-slate-700 hover:border-amber-400 transition whitespace-nowrap cursor-pointer"
             >
               Lihat Semua Lencana ›
             </button>
@@ -921,6 +1028,28 @@ export default function ShinobiArenaPage() {
           }}
           onClose={() => setShowCreatorStudio(false)}
         />
+      )}
+
+      {/* SHINOBI GAME LEADERBOARD MODAL (STANDALONE 28 SISWA KLAN OTSUTSUKI) */}
+      {showLeaderboardModal && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200">
+          <div className="relative max-w-5xl w-full bg-stone-950 border border-amber-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+            {/* Tombol Tutup Modal */}
+            <button
+              onClick={() => setShowLeaderboardModal(false)}
+              className="absolute top-4 right-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 text-stone-300 hover:text-white transition z-20 cursor-pointer"
+              aria-label="Tutup Papan Peringkat"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <ShinobiGameLeaderboard
+              currentUserName="Ninja Otsutsuki (Anda)"
+              currentUserXp={gamerState.xp}
+              onClose={() => setShowLeaderboardModal(false)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

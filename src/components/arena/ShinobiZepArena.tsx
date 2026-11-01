@@ -563,32 +563,45 @@ export default function ShinobiZepArena({
           <span>Gunakan <strong>WASD / Tombol Panah</strong> atau <strong>Klik Langsung pada Zona</strong> di layar untuk berpindah.</span>
         </div>
 
-        {/* Virtual On-screen D-Pad untuk Mobile */}
-        <div className="flex items-center gap-1.5 sm:hidden">
-          <button
-            onClick={() => setPlayerPos((prev) => ({ ...prev, y: Math.max(8, prev.y - 8) }))}
-            className="w-8 h-8 rounded-lg bg-white/20 font-black"
-          >
-            ▲
-          </button>
-          <button
-            onClick={() => setPlayerPos((prev) => ({ ...prev, x: Math.max(8, prev.x - 8) }))}
-            className="w-8 h-8 rounded-lg bg-white/20 font-black"
-          >
-            ◀
-          </button>
-          <button
-            onClick={() => setPlayerPos((prev) => ({ ...prev, y: Math.min(92, prev.y + 8) }))}
-            className="w-8 h-8 rounded-lg bg-white/20 font-black"
-          >
-            ▼
-          </button>
-          <button
-            onClick={() => setPlayerPos((prev) => ({ ...prev, x: Math.min(92, prev.x + 8) }))}
-            className="w-8 h-8 rounded-lg bg-white/20 font-black"
-          >
-            ▶
-          </button>
+        {/* Virtual On-screen Cross D-Pad untuk Mobile / Tablet */}
+        <div className="flex sm:hidden items-center justify-center py-1">
+          <div className="grid grid-cols-3 grid-rows-3 gap-1 w-28 h-28 place-items-center bg-black/60 p-1.5 rounded-2xl border border-white/10 shadow-lg">
+            <div />
+            <button
+              onClick={() => setPlayerPos((prev) => ({ ...prev, y: Math.max(8, prev.y - 9) }))}
+              className="w-8 h-8 rounded-xl bg-white/20 active:bg-amber-400 active:text-stone-950 font-black flex items-center justify-center text-xs shadow cursor-pointer transition"
+              aria-label="Gerak Atas"
+            >
+              ▲
+            </button>
+            <div />
+            <button
+              onClick={() => setPlayerPos((prev) => ({ ...prev, x: Math.max(8, prev.x - 9) }))}
+              className="w-8 h-8 rounded-xl bg-white/20 active:bg-amber-400 active:text-stone-950 font-black flex items-center justify-center text-xs shadow cursor-pointer transition"
+              aria-label="Gerak Kiri"
+            >
+              ◀
+            </button>
+            <div className="w-5 h-5 rounded-full bg-amber-400/40 border border-amber-400/80 flex items-center justify-center text-[8px] font-bold text-amber-200">
+              ●
+            </div>
+            <button
+              onClick={() => setPlayerPos((prev) => ({ ...prev, x: Math.min(92, prev.x + 9) }))}
+              className="w-8 h-8 rounded-xl bg-white/20 active:bg-amber-400 active:text-stone-950 font-black flex items-center justify-center text-xs shadow cursor-pointer transition"
+              aria-label="Gerak Kanan"
+            >
+              ▶
+            </button>
+            <div />
+            <button
+              onClick={() => setPlayerPos((prev) => ({ ...prev, y: Math.min(92, prev.y + 9) }))}
+              className="w-8 h-8 rounded-xl bg-white/20 active:bg-amber-400 active:text-stone-950 font-black flex items-center justify-center text-xs shadow cursor-pointer transition"
+              aria-label="Gerak Bawah"
+            >
+              ▼
+            </button>
+            <div />
+          </div>
         </div>
       </footer>
 

@@ -4,6 +4,14 @@ class SoundFX {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
 
+  constructor() {
+    if (typeof window !== "undefined") {
+      try {
+        this.isMuted = localStorage.getItem("shinobi_arena_muted") === "true";
+      } catch {}
+    }
+  }
+
   private getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
     if (!this.ctx) {
@@ -18,13 +26,49 @@ class SoundFX {
     return this.ctx;
   }
 
+  public getMuted(): boolean {
+    return this.isMuted;
+  }
+
   public setMuted(muted: boolean) {
     this.isMuted = muted;
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("shinobi_arena_muted", String(muted));
+        window.dispatchEvent(new CustomEvent("shinobi-audio-toggled", { detail: { isMuted: muted } }));
+      } catch {}
+    }
   }
 
   public toggleMute(): boolean {
-    this.isMuted = !this.isMuted;
-    return this.isMuted;
+    const next = !this.isMuted;
+    this.setMuted(next);
+    return next;
+  }
+
+  public playTaiko() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(95, now);
+      osc.frequency.exponentialRampToValueAtTime(38, now + 0.22);
+
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } catch (e) {}
   }
 
   public playCorrect() {
@@ -268,4 +312,5 @@ class SoundFX {
 }
 
 export const sfx = new SoundFX();
+export default sfx;
 
