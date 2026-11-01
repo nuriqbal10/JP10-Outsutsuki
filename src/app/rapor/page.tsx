@@ -27,6 +27,11 @@ import {
   Target,
   Sparkles,
   ShieldAlert,
+  Building2,
+  GraduationCap,
+  UserCheck,
+  Heart,
+  Compass,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
@@ -37,6 +42,9 @@ import DiagnosticMatrixView from "@/components/rapor/DiagnosticMatrixView";
 import ClassOverviewVisuals from "@/components/rapor/ClassOverviewVisuals";
 import ShikenBreakdownVisuals from "@/components/rapor/ShikenBreakdownVisuals";
 import StitchProjectionLab from "@/components/rapor/StitchProjectionLab";
+import ParentPortalView from "@/components/rapor/ParentPortalView";
+import PrincipalExecutiveView from "@/components/rapor/PrincipalExecutiveView";
+import StudentPersonaView from "@/components/rapor/StudentPersonaView";
 import RadarChartSVG from "@/components/rapor/RadarChartSVG";
 import masterRaporData from "@/data/raporMasterData.json";
 
@@ -69,6 +77,7 @@ export default function RaporDashboardPage() {
   const [selectedLevel, setSelectedLevel] = useState<"A1" | "A21" | "A22">("A22");
   const [activeTab, setActiveTab] = useState<"overview" | "final_exam" | "projection" | "students" | "grandprix" | "heatmap" | "feedback" | "portal">("overview");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [personaRole, setPersonaRole] = useState<"teacher" | "principal" | "student" | "parent" | "projection">("teacher");
 
   // Instant State
   const [raporData, setRaporData] = useState<LevelRaporData | null>(() => {
@@ -256,6 +265,14 @@ export default function RaporDashboardPage() {
     { id: "A22", label: "初級2 A2.2", name: "Tingkat Lanjutan 2 (A2.2)" },
   ];
 
+  const personaTabs = [
+    { id: "teacher", label: "Sensei / Guru", sub: "Kokpit Evaluasi", icon: GraduationCap },
+    { id: "principal", label: "Kepala Sekolah", sub: "Lensa Eksekutif & JFT", icon: Building2 },
+    { id: "student", label: "Ruang Siswa", sub: "Target 200 pt & Motivasi", icon: UserCheck },
+    { id: "parent", label: "Wali Murid", sub: "Portal Ramah Keluarga", icon: Heart },
+    { id: "projection", label: "Proyeksi Stitch", sub: "Forecasting A1 s.d. A2.2", icon: Sparkles },
+  ];
+
   return (
     <div className="min-h-screen flex font-sans relative selection:bg-amber-500/20 selection:text-amber-800 dark:selection:text-amber-200">
       {/* ========================================================
@@ -288,6 +305,39 @@ export default function RaporDashboardPage() {
               <p className="text-[10px] opacity-70 font-medium">Sistem Evaluasi Akademik</p>
             </div>
           </Link>
+
+          {/* Lensa Pengguna / Multi-Persona Switcher */}
+          <div className="space-y-1.5">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-2 block">
+              Lensa Pengguna (Multi-Persona)
+            </span>
+            <div className="space-y-1">
+              {personaTabs.map((pt) => {
+                const Icon = pt.icon;
+                const isActive = personaRole === pt.id;
+                return (
+                  <button
+                    key={pt.id}
+                    onClick={() => {
+                      setPersonaRole(pt.id as any);
+                      if (pt.id === "projection") setActiveTab("projection");
+                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer text-left ${
+                      isActive
+                        ? "bg-amber-500 text-stone-950 font-black shadow-sm"
+                        : "opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate leading-tight">{pt.label}</div>
+                      <div className="text-[9px] opacity-70 truncate font-normal">{pt.sub}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* Level Switcher (Segmented Clay Pills) */}
           <div className="space-y-1.5">
@@ -436,6 +486,32 @@ export default function RaporDashboardPage() {
                 >
                   <X className="w-4 h-4" />
                 </button>
+              </div>
+
+              {/* Mobile Persona Switcher */}
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider opacity-60 px-1 block">
+                  Lensa Pengguna
+                </span>
+                <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-black/5 dark:bg-white/5 border border-current/10">
+                  {personaTabs.map((pt) => (
+                    <button
+                      key={pt.id}
+                      onClick={() => {
+                        setPersonaRole(pt.id as any);
+                        if (pt.id === "projection") setActiveTab("projection");
+                        setIsMobileDrawerOpen(false);
+                      }}
+                      className={`p-2 rounded-lg text-[10px] font-bold text-center truncate ${
+                        personaRole === pt.id
+                          ? "bg-amber-500 text-stone-950 font-black shadow-xs"
+                          : "opacity-75 hover:opacity-100"
+                      }`}
+                    >
+                      {pt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Mobile Level Switcher */}
@@ -604,10 +680,102 @@ export default function RaporDashboardPage() {
           ))}
         </div>
 
+        {/* MULTI-PERSONA LENS BAR (KEPALA SEKOLAH, GURU, MURID, WALI MURID, PROYEKSI) */}
+        <div className="px-4 sm:px-8 py-3 border-b border-current/10 bg-gradient-to-r from-amber-500/10 via-black/5 dark:via-white/5 to-transparent flex items-center justify-between gap-4 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+              Lensa Pengguna:
+            </span>
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10">
+              {personaTabs.map((pt) => {
+                const Icon = pt.icon;
+                const isActive = personaRole === pt.id;
+                return (
+                  <button
+                    key={pt.id}
+                    onClick={() => {
+                      setPersonaRole(pt.id as any);
+                      if (pt.id === "projection") setActiveTab("projection");
+                    }}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap ${
+                      isActive
+                        ? "bg-amber-500 text-stone-950 shadow-md font-extrabold"
+                        : "opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{pt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="hidden xl:flex items-center gap-2 text-xs opacity-75 font-serif italic">
+            <span>&quot;Platform Kebanggaan Klan Outsutsuki — Menembus Ambang 200 pt JFT Prometric&quot;</span>
+          </div>
+        </div>
+
       {/* ========================================================
           2. KONTEN UTAMA DASHBOARD
           ======================================================== */}
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-8 flex-1 w-full">
+        {/* LENSA 1: KEPALA SEKOLAH */}
+        {personaRole === "principal" && (
+          <PrincipalExecutiveView
+            students={allStudents}
+            levelData={raporData}
+            kkm={kkm}
+            selectedLevel={selectedLevel}
+            onSelectLevel={(lvl) => setSelectedLevel(lvl)}
+            onOpenPrintModal={(st) => setSelectedStudentForPrint(st)}
+            onOpenDetailModal={(st) => setSelectedStudentForDetail(st)}
+            onNavigateToTab={(tab) => {
+              setPersonaRole("teacher");
+              setActiveTab(tab);
+            }}
+          />
+        )}
+
+        {/* LENSA 2: SISWA / MURID */}
+        {personaRole === "student" && (
+          <StudentPersonaView
+            students={allStudents}
+            levelData={raporData}
+            kkm={kkm}
+            onOpenPrintModal={(st) => setSelectedStudentForPrint(st)}
+            onOpenDetailModal={(st) => setSelectedStudentForDetail(st)}
+            onNavigateToTab={(tab) => {
+              setPersonaRole("teacher");
+              setActiveTab(tab);
+            }}
+          />
+        )}
+
+        {/* LENSA 3: WALI MURID */}
+        {personaRole === "parent" && (
+          <ParentPortalView
+            students={allStudents}
+            levelData={raporData}
+            kkm={kkm}
+            onOpenPrintModal={(st) => setSelectedStudentForPrint(st)}
+            onOpenDetailModal={(st) => setSelectedStudentForDetail(st)}
+          />
+        )}
+
+        {/* LENSA 4: PROYEKSI STITCH */}
+        {personaRole === "projection" && (
+          <StitchProjectionLab
+            students={allStudents}
+            kkm={kkm}
+            onSelectStudentPrint={(st) => setSelectedStudentForPrint(st)}
+            onSelectStudentDetail={(st) => setSelectedStudentForDetail(st)}
+          />
+        )}
+
+        {/* LENSA 5: GURU / SENSEI (KOKPIT LENGKAP) */}
+        {personaRole === "teacher" && (
+          <>
         {/* HERO BANNER EKSEKUTIF KLAN OUTSUTSUKI */}
         <section className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 relative overflow-hidden shadow-xl">
           {/* Watermark Lambang Otsutsuki Halus */}
@@ -2032,6 +2200,8 @@ export default function RaporDashboardPage() {
             </div>
           );
         })()}
+          </>
+        )}
       </main>
       </div>
 
