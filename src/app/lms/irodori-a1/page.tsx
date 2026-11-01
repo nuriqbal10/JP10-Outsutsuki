@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle, Volume2, Puzzle } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle, Volume2, Puzzle, Target } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { IRODORI_A1_CHAPTERS } from "@/data/coursesCatalog";
 
@@ -94,8 +94,9 @@ export default function IrodoriA1CoursePage() {
                     {ch.topic}
                   </p>
 
-                  <div className="mt-2 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                    🎯 Can-Do: {ch.canDo}
+                  <div className="mt-2 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5 shrink-0" />
+                    <span>Can-Do: {ch.canDo}</span>
                   </div>
 
                   {/* 3 PILAR PEMBELAJARAN PER BAB */}

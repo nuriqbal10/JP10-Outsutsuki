@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Sparkles, BookOpen } from "lucide-react";
+import { ArrowLeft, Sparkles, BookOpen, PenTool, ExternalLink } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export default function KanjiStudioPage() {
@@ -10,7 +10,8 @@ export default function KanjiStudioPage() {
           <ArrowLeft className="w-4 h-4" /> Kembali ke Portal
         </Link>
         <h1 className="text-sm sm:text-base font-extrabold text-[var(--text-heading)] flex items-center gap-2">
-          ✍️ Studio Huruf Kanji IRODORI (A1 • A2.1 • A2.2)
+          <PenTool className="w-4 h-4 text-purple-500" />
+          <span>Studio Huruf Kanji IRODORI (A1 • A2.1 • A2.2)</span>
         </h1>
         <div className="flex items-center gap-2">
           <ThemeSwitcher compact />

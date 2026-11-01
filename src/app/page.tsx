@@ -22,6 +22,8 @@ import {
   Layers,
   Award,
   Zap,
+  PenTool,
+  Monitor,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
@@ -70,19 +72,22 @@ export default function HomePage() {
               href="/bunpou"
               className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
-              <span>📖 Bunpou</span>
+              <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+              <span>Bunpou</span>
             </Link>
             <Link
               href="/kanji"
               className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
-              <span>✍️ Kanji</span>
+              <PenTool className="w-3.5 h-3.5 text-purple-500" />
+              <span>Kanji</span>
             </Link>
             <Link
               href="/flashcard"
               className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
-              <span>🎴 Kotoba 3D</span>
+              <Layers className="w-3.5 h-3.5 text-rose-500" />
+              <span>Kotoba 3D</span>
             </Link>
             <Link
               href="/rapor"
@@ -433,8 +438,8 @@ export default function HomePage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 transition text-lg">
-                    📖
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 transition">
+                    <BookOpen className="w-5 h-5" />
                   </div>
                   <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
                     264 Pola Kalimat
@@ -460,8 +465,8 @@ export default function HomePage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 group-hover:scale-110 transition text-lg">
-                    ✍️
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 group-hover:scale-110 transition">
+                    <PenTool className="w-5 h-5" />
                   </div>
                   <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30">
                     Animasi Stroke Order
@@ -487,8 +492,8 @@ export default function HomePage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 group-hover:scale-110 transition text-lg">
-                    🎴
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 group-hover:scale-110 transition">
+                    <Layers className="w-5 h-5" />
                   </div>
                   <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
                     4.245 Kosakata 3D
@@ -514,8 +519,8 @@ export default function HomePage() {
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition text-lg">
-                    💻
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition">
+                    <Monitor className="w-5 h-5" />
                   </div>
                   <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
                     1.210 Butir Soal

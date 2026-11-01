@@ -18,6 +18,7 @@ import {
   Clock,
   ChevronRight,
   ShieldAlert,
+  AlertCircle,
 } from "lucide-react";
 import {
   getGamificationState,
@@ -476,8 +477,8 @@ export default function GamificationBanner() {
             {!gameStarted && (
               <div className="flex flex-col gap-5 py-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-2xl shadow-inner">
-                    ⚡
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center shadow-inner">
+                    <Zap className="w-6 h-6" />
                   </div>
                   <div>
                     <h3 className="text-xl font-black">Kotoba Speed Reflex</h3>
@@ -609,8 +610,9 @@ export default function GamificationBanner() {
                 </div>
 
                 {selectedAns === "__TIMEOUT__" && (
-                  <div className="text-center text-xs font-black text-rose-500 animate-bounce">
-                    ⚠️ Waktu Habis! Soal berikutnya...
+                  <div className="text-center text-xs font-black text-rose-500 animate-bounce flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    <span>Waktu Habis! Soal berikutnya...</span>
                   </div>
                 )}
               </>
@@ -619,8 +621,8 @@ export default function GamificationBanner() {
             {/* STEP 3: HASIL AKHIR */}
             {gameStarted && gameFinished && (
               <div className="text-center py-6 flex flex-col items-center gap-4 animate-in zoom-in-95">
-                <div className="w-20 h-20 rounded-3xl bg-amber-500/20 text-amber-400 border border-amber-400/50 flex items-center justify-center text-4xl shadow-inner">
-                  🏆
+                <div className="w-20 h-20 rounded-3xl bg-amber-500/20 text-amber-500 border border-amber-400/50 flex items-center justify-center shadow-inner">
+                  <Trophy className="w-10 h-10" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-black">Latihan Refleks Selesai!</h3>

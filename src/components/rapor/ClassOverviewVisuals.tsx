@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Activity,
   Layers,
+  Building2,
 } from "lucide-react";
 import { StudentRaporItem } from "@/types/rapor";
 
@@ -347,15 +348,21 @@ export default function ClassOverviewVisuals({
             <div className="flex flex-wrap items-center justify-center gap-4 mt-3 text-xs">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-amber-500 shadow-sm" />
-                <span className="font-bold">🏛️ Rata-Rata Kelas ({calculatedClassAvg} pt)</span>
+                <span className="font-bold flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-amber-500" /> Rata-Rata Kelas ({calculatedClassAvg} pt)
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-1 bg-rose-500 rounded-full" />
-                <span className="font-medium opacity-80">🎯 Regulasi KKM ({kkm}%)</span>
+                <span className="font-medium opacity-80 flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-rose-500" /> Regulasi KKM ({kkm}%)
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-1 bg-emerald-500 border border-emerald-400 border-dashed" />
-                <span className="font-medium opacity-80">👑 Juara 1 ({topStudent?.name?.split(" ")[0]} - {topStudent?.compositeScore} pt)</span>
+                <span className="font-medium opacity-80 flex items-center gap-1">
+                  <Trophy className="w-3.5 h-3.5 text-amber-500" /> Juara 1 ({topStudent?.name?.split(" ")[0]} - {topStudent?.compositeScore} pt)
+                </span>
               </div>
             </div>
           </div>

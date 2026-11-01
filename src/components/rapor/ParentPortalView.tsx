@@ -351,7 +351,7 @@ export default function ParentPortalView({
           <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
           <div className="space-y-1 text-xs">
             <span className="font-extrabold text-amber-700 dark:text-amber-300 block">
-              💡 Panduan Sederhana Dukungan Orang Tua dari Rumah:
+              Panduan Sederhana Dukungan Orang Tua dari Rumah:
             </span>
             <p className="opacity-80 leading-relaxed">
               1. Berikan kata-kata motivasi dan apresiasi saat menelepon ananda, hindari membandingkan nilai dengan teman sekelas.<br />

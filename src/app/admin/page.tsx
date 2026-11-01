@@ -234,7 +234,7 @@ export default function SiteAdministrationPage() {
           )
         );
         setSelectedLkpd(null);
-        alert("✅ Penilaian & Catatan Feedback berhasil disimpan untuk siswa!");
+        alert("Penilaian & Catatan Feedback berhasil disimpan untuk siswa!");
       } else {
         alert("Gagal menyimpan nilai: " + json.error);
       }

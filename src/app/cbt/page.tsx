@@ -1,5 +1,19 @@
 import Link from "next/link";
-import { ArrowLeft, Clock, Volume2, Award, CheckCircle2, AlertCircle, FileText, ChevronRight, Sparkles, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  Clock,
+  Volume2,
+  Award,
+  CheckCircle2,
+  AlertCircle,
+  FileText,
+  ChevronRight,
+  Sparkles,
+  BookOpen,
+  MessageSquare,
+  Headphones,
+  FolderCheck,
+} from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 export default function CbtSimulatorPage() {
@@ -101,10 +115,22 @@ export default function CbtSimulatorPage() {
                   <p className="text-xs opacity-75 mt-1.5 leading-relaxed">{ch.topic}</p>
 
                   <div className="grid grid-cols-2 gap-2 mt-5 pt-4 border-t border-current/10 text-[11px] font-bold opacity-80">
-                    <div className="bg-current/5 p-2 rounded-lg border border-current/10">🔤 Moji: 25 Soal</div>
-                    <div className="bg-current/5 p-2 rounded-lg border border-current/10">💬 Kaiwa: 25 Soal</div>
-                    <div className="bg-current/5 p-2 rounded-lg border border-current/10">🎧 Choukai: 20 Soal</div>
-                    <div className="bg-current/5 p-2 rounded-lg border border-current/10">📖 Dokkai: 20 Soal</div>
+                    <div className="bg-current/5 p-2 rounded-lg border border-current/10 flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                      <span>Moji: 25 Soal</span>
+                    </div>
+                    <div className="bg-current/5 p-2 rounded-lg border border-current/10 flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                      <span>Kaiwa: 25 Soal</span>
+                    </div>
+                    <div className="bg-current/5 p-2 rounded-lg border border-current/10 flex items-center gap-1.5">
+                      <Headphones className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+                      <span>Choukai: 20 Soal</span>
+                    </div>
+                    <div className="bg-current/5 p-2 rounded-lg border border-current/10 flex items-center gap-1.5">
+                      <BookOpen className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                      <span>Dokkai: 20 Soal</span>
+                    </div>
                   </div>
                 </div>
 
@@ -129,7 +155,10 @@ export default function CbtSimulatorPage() {
                     90 Soal Campuran
                   </span>
                 </div>
-                <h4 className="font-black text-[var(--text-heading)] text-lg mt-4">📦 Fukushuu 1 (Bab 01–06)</h4>
+                <h4 className="font-black text-[var(--text-heading)] text-lg mt-4 flex items-center gap-2">
+                  <FolderCheck className="w-5 h-5 text-amber-500 shrink-0" />
+                  <span>Fukushuu 1 (Bab 01–06)</span>
+                </h4>
                 <p className="text-xs opacity-80 mt-2 leading-relaxed">
                   Paket ujian simulasi lengkap gabungan dari Bab 1 sampai Bab 6 dengan komposisi standar ujian nasional JFT-Basic A2.
                 </p>

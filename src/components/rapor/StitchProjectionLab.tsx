@@ -834,8 +834,7 @@ export default function StitchProjectionLab({
                       </div>
                     </td>
                     <td className="p-3">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${prof.habit.badgeColor}`}>
-                        <span>{prof.habit.icon}</span>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${prof.habit.badgeColor}`}>
                         <span>{prof.habit.label}</span>
                       </span>
                     </td>

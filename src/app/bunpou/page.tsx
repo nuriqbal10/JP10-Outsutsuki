@@ -20,6 +20,11 @@ import {
   Share2,
   Puzzle, Swords,
   ArrowRight,
+  PenTool,
+  Gamepad2,
+  Sprout,
+  Waves,
+  Lightbulb,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import BunpouCard from "@/components/bunpou/BunpouCard";
@@ -205,7 +210,7 @@ export default function IrodoriBunpouPage() {
             </Link>
             <div className="h-4 w-px bg-black/10 dark:bg-white/10 hidden sm:block" />
             <h1 className="font-extrabold text-sm sm:text-base flex items-center gap-2">
-              <span className="text-amber-500">📖</span>
+              <BookOpen className="w-4 h-4 text-amber-500" />
               <span>IRODORI文法リスト</span>
               <span className="hidden md:inline-block text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400">
                 全264文型
@@ -225,13 +230,15 @@ export default function IrodoriBunpouPage() {
               href="/kanji"
               className="text-xs font-bold px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:border-purple-500/40 hover:text-purple-600 dark:hover:text-purple-400 transition hidden lg:inline-flex items-center gap-1.5"
             >
-              ✍️ Studio Kanji
+              <PenTool className="w-3.5 h-3.5 text-purple-500" />
+              <span>Studio Kanji</span>
             </Link>
             <Link
               href="/flashcard"
               className="text-xs font-bold px-3 py-1.5 rounded-xl border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:border-rose-500/40 hover:text-rose-600 dark:hover:text-rose-400 transition hidden lg:inline-flex items-center gap-1.5"
             >
-              🎴 Kosakata 3D
+              <Layers className="w-3.5 h-3.5 text-rose-500" />
+              <span>Kosakata 3D</span>
             </Link>
             <ThemeSwitcher />
           </div>
@@ -277,8 +284,8 @@ export default function IrodoriBunpouPage() {
                   href="/bunpou-test"
                   className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-xs shadow-lg shadow-indigo-500/25 hover:scale-105 active:scale-95 transition inline-flex items-center gap-2"
                 >
-                  <Puzzle className="w-4 h-4" />
-                  <span>🎮 Arena Mini Test & Kotoba Puzzle</span>
+                  <Gamepad2 className="w-4 h-4" />
+                  <span>Arena Mini Test & Kotoba Puzzle</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <Link
@@ -286,7 +293,7 @@ export default function IrodoriBunpouPage() {
                   className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black text-xs shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95 transition inline-flex items-center gap-2 ring-1 ring-purple-400/40"
                 >
                   <Swords className="w-4 h-4" />
-                  <span>⚔️ Shinobi Arena (Bunpou Puzzle Battle 1v1 & Solo)</span>
+                  <span>Shinobi Arena (Bunpou 1v1 & Solo)</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -303,7 +310,7 @@ export default function IrodoriBunpouPage() {
                     {countA1} Pola
                   </div>
                 </div>
-                <span className="text-xl">🌱</span>
+                <Sprout className="w-5 h-5 text-emerald-500" />
               </div>
 
               <div className="flex-1 lg:w-56 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-between">
@@ -315,7 +322,7 @@ export default function IrodoriBunpouPage() {
                     {countA21} Pola
                   </div>
                 </div>
-                <span className="text-xl">🌊</span>
+                <Waves className="w-5 h-5 text-sky-500" />
               </div>
 
               <div className="flex-1 lg:w-56 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between">
@@ -327,7 +334,7 @@ export default function IrodoriBunpouPage() {
                     {countA22} Pola
                   </div>
                 </div>
-                <span className="text-xl">🔥</span>
+                <Flame className="w-5 h-5 text-amber-500" />
               </div>
             </div>
           </div>
@@ -536,7 +543,7 @@ export default function IrodoriBunpouPage() {
         {/* CONTENT VIEW: GRID OR LIST */}
         {filteredBunpou.length === 0 ? (
           <div className="clay-card rounded-3xl p-12 text-center border border-black/10 dark:border-white/10 flex flex-col items-center justify-center gap-3">
-            <span className="text-4xl">🔍</span>
+            <Search className="w-10 h-10 text-stone-400 opacity-60" />
             <h3 className="text-base font-extrabold text-stone-800 dark:text-stone-200">
               Tidak ada pola kalimat yang cocok
             </h3>
@@ -620,8 +627,9 @@ export default function IrodoriBunpouPage() {
                             {item.pattern}
                           </div>
                           {item.meaning && (
-                            <div className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold mt-1 leading-snug">
-                              💡 {item.meaning}
+                            <div className="text-[11px] text-amber-700 dark:text-amber-400 font-semibold mt-1 leading-snug flex items-start gap-1">
+                              <Lightbulb className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                              <span>{item.meaning}</span>
                             </div>
                           )}
                           {item.formulaDetailed && (

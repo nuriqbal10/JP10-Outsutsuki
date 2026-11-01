@@ -409,7 +409,7 @@ export default function RaporDashboardPage() {
                 className="flex items-center justify-between p-2 rounded-xl text-xs font-black bg-gradient-to-r from-purple-500/15 to-indigo-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 hover:scale-[1.02] transition shadow-xs"
               >
                 <span className="flex items-center gap-2">
-                  <Swords className="w-3.5 h-3.5 text-purple-500" /> ⚔️ Shinobi Game Arena
+                  <Swords className="w-3.5 h-3.5 text-purple-500" /> Shinobi Game Arena
                 </span>
                 <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-400 font-bold">BARU</span>
               </Link>
@@ -587,7 +587,7 @@ export default function RaporDashboardPage() {
                   className="block p-2 rounded-xl text-xs font-black bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300"
                   onClick={() => setIsMobileDrawerOpen(false)}
                 >
-                  ⚔️ Shinobi Game Arena (Dojo N4)
+                  Shinobi Game Arena (Dojo N4)
                 </Link>
                 <Link
                   href="/lms/irodori-a2-2"
@@ -672,7 +672,7 @@ export default function RaporDashboardPage() {
               title="Buka Shinobi Arcade Arena, Dojo 6 Pilar N4, dan Leaderboard Game"
             >
               <Swords className="w-3.5 h-3.5" />
-              <span>⚔️ Shinobi Arena</span>
+              <span>Shinobi Arena</span>
             </Link>
 
             {/* Quick Print Button */}
@@ -1545,8 +1545,9 @@ export default function RaporDashboardPage() {
                     {/* Baris Rata-Rata Kelas */}
                     <tr className="bg-amber-500/10 font-extrabold border-y-2 border-amber-500/30">
                       <td className="p-3 text-center text-amber-600 dark:text-amber-400">AVG</td>
-                      <td className="p-3 text-amber-700 dark:text-amber-300">
-                        🏛️ Rata-Rata Kelas Shiken 1 Buku
+                      <td className="p-3 text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span>Rata-Rata Kelas Shiken 1 Buku</span>
                       </td>
                       <td className="p-3 text-center font-mono text-[10px] opacity-75">28 SISWA</td>
                       <td className="p-3 text-center text-amber-600 dark:text-amber-400 font-mono">
@@ -1751,7 +1752,7 @@ export default function RaporDashboardPage() {
                       <td className="p-3">
                         <div className="flex items-center gap-2.5">
                           <div className="w-7 h-7 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-black text-xs flex items-center justify-center shrink-0 border border-amber-500/30">
-                            🏛️
+                            <Building2 className="w-3.5 h-3.5" />
                           </div>
                           <div>
                             <span className="font-extrabold text-sm text-amber-700 dark:text-amber-300">

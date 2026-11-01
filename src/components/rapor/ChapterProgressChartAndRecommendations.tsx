@@ -18,6 +18,10 @@ import {
   Layers,
   ChevronRight,
   Printer,
+  Building2,
+  Search,
+  GraduationCap,
+  PenTool,
 } from "lucide-react";
 import { StudentRaporItem } from "@/types/rapor";
 import { CHAPTER_MODULES } from "@/data/chapterModules";
@@ -276,17 +280,21 @@ export default function ChapterProgressChartAndRecommendations({
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-amber-500 shadow-sm" />
-                <span className="font-bold">🏛️ Rata-Rata Kelas</span>
+                <span className="font-bold flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-amber-500" /> Rata-Rata Kelas
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-3 h-1 bg-rose-500 border border-rose-500 border-dashed" />
-                <span className="font-bold text-rose-500">🎯 Target KKM ({kkm} pt)</span>
+                <span className="font-bold text-rose-500 flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5 text-rose-500" /> Target KKM ({kkm} pt)
+                </span>
               </div>
               {selectedStudent && (
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-cyan-400 shadow-sm" />
-                  <span className="font-bold text-cyan-600 dark:text-cyan-400">
-                    👤 {selectedStudent.name.split(" ")[0]} (#{selectedStudent.rank || selectedStudent.no})
+                  <span className="font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-1">
+                    <User className="w-3.5 h-3.5" /> {selectedStudent.name.split(" ")[0]} (#{selectedStudent.rank || selectedStudent.no})
                   </span>
                 </div>
               )}
@@ -696,8 +704,8 @@ export default function ChapterProgressChartAndRecommendations({
                 {/* Root Cause & Actions */}
                 <div className="space-y-2 text-xs">
                   <div className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-current/5">
-                    <span className="font-bold text-[11px] text-amber-600 dark:text-amber-400 block mb-0.5">
-                      🔍 Diagnosis Akar Kendala:
+                    <span className="font-bold text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1 mb-0.5">
+                      <Search className="w-3 h-3" /> Diagnosis Akar Kendala:
                     </span>
                     <p className="opacity-80 text-[11px] leading-relaxed">
                       {ch.rootCause}
@@ -705,8 +713,8 @@ export default function ChapterProgressChartAndRecommendations({
                   </div>
 
                   <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                    <span className="font-bold text-[11px] text-amber-700 dark:text-amber-300 block mb-0.5">
-                      👨‍🏫 Rekomendasi Aksi Pedagogis Guru:
+                    <span className="font-bold text-[11px] text-amber-700 dark:text-amber-300 flex items-center gap-1 mb-0.5">
+                      <GraduationCap className="w-3.5 h-3.5" /> Rekomendasi Aksi Pedagogis Guru:
                     </span>
                     <p className="opacity-85 text-[11px] leading-relaxed">
                       {ch.teacherAction}
@@ -714,8 +722,8 @@ export default function ChapterProgressChartAndRecommendations({
                   </div>
 
                   <div className="p-2 rounded-lg bg-black/5 dark:bg-white/5 border border-current/5">
-                    <span className="font-bold text-[11px] text-blue-600 dark:text-blue-400 block mb-0.5">
-                      ✍️ Tugas Mandiri &amp; Remedial Murid:
+                    <span className="font-bold text-[11px] text-blue-600 dark:text-blue-400 flex items-center gap-1 mb-0.5">
+                      <PenTool className="w-3 h-3" /> Tugas Mandiri &amp; Remedial Murid:
                     </span>
                     <p className="opacity-80 text-[11px] leading-relaxed">
                       {ch.studentAction}

@@ -10,7 +10,8 @@ export default function FlashcardPage() {
           <ArrowLeft className="w-4 h-4" /> Kembali ke Portal
         </Link>
         <h1 className="text-xs sm:text-base font-extrabold text-[var(--text-heading)] flex items-center gap-1.5 sm:gap-2">
-          🎴 Studio Flashcard Kosakata IRODORI 3D
+          <Layers className="w-4 h-4 text-amber-500" />
+          <span>Studio Flashcard Kosakata IRODORI 3D</span>
         </h1>
         <div className="flex items-center gap-2">
           <ThemeSwitcher compact />

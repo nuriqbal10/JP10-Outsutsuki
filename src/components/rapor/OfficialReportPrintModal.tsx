@@ -332,8 +332,8 @@ export default function OfficialReportPrintModal({
                     <td className="border border-slate-300 p-1 font-mono">{avg.honyaku}</td>
                   </tr>
                   <tr className="bg-slate-100/90 text-slate-800 font-bold border-b border-slate-300">
-                    <td className="border border-slate-300 p-1 text-left pl-2 text-slate-900">
-                      🏛️ Rata-Rata Kelas Harian (Pembanding)
+                    <td className="border border-slate-300 p-1 text-left pl-2 text-slate-900 font-bold">
+                      Rata-Rata Kelas Harian (Pembanding)
                     </td>
                     <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.mojiGoi ?? 12.5}</td>
                     <td className="border border-slate-300 p-1 font-mono text-slate-600">{classRawSectionAvg?.kaiwa ?? 12.2}</td>
@@ -393,7 +393,7 @@ export default function OfficialReportPrintModal({
                   </tr>
                   <tr className="bg-purple-50/60 font-semibold border-t-2 border-purple-400">
                     <td className="border border-slate-300 p-1.5 text-left pl-2 font-black text-purple-900">
-                      👑 5. Shiken 1 Buku (総括終了試験・Shiken Akhir)
+                      5. Shiken 1 Buku (総括終了試験・Shiken Akhir)
                     </td>
                     <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.mojiGoi}</td>
                     <td className="border border-slate-300 p-1 font-mono font-bold">{fn.test.kaiwa}</td>

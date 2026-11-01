@@ -21,6 +21,8 @@ import {
   UserCheck,
   Search,
   Star,
+  MessageSquare,
+  Headphones,
 } from "lucide-react";
 import { StudentRaporItem, LevelRaporData } from "@/types/rapor";
 
@@ -88,10 +90,10 @@ export default function StudentPersonaView({
 
   // Cari Aspek Terkuat & Terlemah
   const sections = [
-    { name: "Moji-Goi (Kosakata)", pct: mojiPct, val: moji, max: 24, icon: "📖" },
-    { name: "Kaiwa (Percakapan)", pct: kaiwaPct, val: kaiwa, max: 24, icon: "💬" },
-    { name: "Choukai (Pendengaran)", pct: choukaiPct, val: choukai, max: 24, icon: "🎧" },
-    { name: "Dokkai (Pemahaman Bacaan)", pct: dokkaiPct, val: dokkai, max: 28, icon: "📜" },
+    { name: "Moji-Goi (Kosakata)", pct: mojiPct, val: moji, max: 24, icon: BookOpen },
+    { name: "Kaiwa (Percakapan)", pct: kaiwaPct, val: kaiwa, max: 24, icon: MessageSquare },
+    { name: "Choukai (Pendengaran)", pct: choukaiPct, val: choukai, max: 24, icon: Headphones },
+    { name: "Dokkai (Pemahaman Bacaan)", pct: dokkaiPct, val: dokkai, max: 28, icon: FileText },
   ];
   const sortedSections = [...sections].sort((a, b) => b.pct - a.pct);
   const strongest = sortedSections[0];
@@ -261,7 +263,9 @@ export default function StudentPersonaView({
             <div className="inline-flex items-center gap-2 text-xs font-black uppercase text-emerald-600 dark:text-emerald-400">
               <Zap className="w-4 h-4" /> Kekuatan Supermu (長所・得意分野)
             </div>
-            <span className="text-2xl">{strongest.icon}</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500">
+              <strongest.icon className="w-4 h-4" />
+            </div>
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-black">{strongest.name}</h3>
@@ -283,7 +287,9 @@ export default function StudentPersonaView({
             <div className="inline-flex items-center gap-2 text-xs font-black uppercase text-amber-600 dark:text-amber-400">
               <Flame className="w-4 h-4" /> Area Asah Tambahan (弱点克服・鍛錬課題)
             </div>
-            <span className="text-2xl">{weakest.icon}</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500">
+              <weakest.icon className="w-4 h-4" />
+            </div>
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-black">{weakest.name}</h3>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Award, Printer, BookOpen, CheckCircle2, ChevronRight, User, Sparkles, AlertCircle } from "lucide-react";
+import { X, Award, Printer, BookOpen, CheckCircle2, ChevronRight, User, Sparkles, AlertCircle, BarChart2, Target } from "lucide-react";
 import { StudentRaporItem } from "@/types/rapor";
 import RadarChartSVG from "./RadarChartSVG";
 
@@ -132,33 +132,36 @@ export default function StudentDetailModal({
         <div className="px-6 pt-3 border-b border-current/10 flex gap-4 shrink-0 text-xs font-bold">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`pb-2.5 transition border-b-2 ${
+            className={`pb-2.5 transition border-b-2 flex items-center gap-1.5 ${
               activeTab === "overview"
                 ? "border-amber-500 text-amber-500"
                 : "border-transparent opacity-60 hover:opacity-100"
             }`}
           >
-            📊 Ikhtisar & Radar Kompetensi
+            <BarChart2 className="w-4 h-4" />
+            <span>Ikhtisar & Radar Kompetensi</span>
           </button>
           <button
             onClick={() => setActiveTab("chapters")}
-            className={`pb-2.5 transition border-b-2 ${
+            className={`pb-2.5 transition border-b-2 flex items-center gap-1.5 ${
               activeTab === "chapters"
                 ? "border-amber-500 text-amber-500"
                 : "border-transparent opacity-60 hover:opacity-100"
             }`}
           >
-            📖 Riwayat Nilai 18 Bab
+            <BookOpen className="w-4 h-4" />
+            <span>Riwayat Nilai 18 Bab</span>
           </button>
           <button
             onClick={() => setActiveTab("exams")}
-            className={`pb-2.5 transition border-b-2 ${
+            className={`pb-2.5 transition border-b-2 flex items-center gap-1.5 ${
               activeTab === "exams"
                 ? "border-amber-500 text-amber-500"
                 : "border-transparent opacity-60 hover:opacity-100"
             }`}
           >
-            🎯 Ujian Berkala (復習試験)
+            <Target className="w-4 h-4" />
+            <span>Ujian Berkala (復習試験)</span>
           </button>
         </div>
 
@@ -344,7 +347,7 @@ export default function StudentDetailModal({
                         rowsToRender.push(
                           <tr key="cp-1" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
                             <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
-                              🎖️ Checkpoint 1 (Bab 1–6)
+                              Checkpoint 1 (Bab 1–6)
                             </td>
                             <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
                             <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
@@ -370,7 +373,7 @@ export default function StudentDetailModal({
                         rowsToRender.push(
                           <tr key="cp-2" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
                             <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
-                              🎖️ Checkpoint 2 (Bab 7–12)
+                              Checkpoint 2 (Bab 7–12)
                             </td>
                             <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
                             <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
@@ -396,7 +399,7 @@ export default function StudentDetailModal({
                         rowsToRender.push(
                           <tr key="cp-3" className="bg-amber-500/15 font-bold border-y-2 border-amber-500/30">
                             <td className="py-2 px-3 font-sans font-black text-amber-600 dark:text-amber-400">
-                              🎖️ Checkpoint 3 (Bab 13–18)
+                              Checkpoint 3 (Bab 13–18)
                             </td>
                             <td className="py-2 px-2 text-center">{t.mojiGoi || "-"}</td>
                             <td className="py-2 px-2 text-center">{t.kaiwa || "-"}</td>
@@ -420,7 +423,7 @@ export default function StudentDetailModal({
                         rowsToRender.push(
                           <tr key="final-exam" className="bg-purple-500/20 font-black border-y-2 border-purple-500/40">
                             <td className="py-2.5 px-3 font-sans font-black text-purple-600 dark:text-purple-300">
-                              👑 Shiken 1 Buku (Full Book)
+                              Shiken 1 Buku (Full Book)
                             </td>
                             <td className="py-2 px-2 text-center">{fnTest.mojiGoi || "-"}</td>
                             <td className="py-2 px-2 text-center">{fnTest.kaiwa || "-"}</td>
@@ -517,7 +520,7 @@ export default function StudentDetailModal({
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-purple-500 text-white shadow-md">
-                            👑 SHIKEN 1 BUKU (総括終了試験)
+                            SHIKEN 1 BUKU (総括終了試験)
                           </span>
                           <span className="text-[11px] font-bold text-amber-500 uppercase px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30">
                             Wajib Dibedah • Shiken Akhir

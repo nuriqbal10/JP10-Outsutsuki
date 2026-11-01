@@ -23,6 +23,8 @@ import {
   Languages,
   Eye,
   SlidersHorizontal,
+  Building2,
+  Target,
 } from "lucide-react";
 import { StudentRaporItem, LevelRaporData } from "@/types/rapor";
 import ChapterProgressChartAndRecommendations from "./ChapterProgressChartAndRecommendations";
@@ -1106,7 +1108,10 @@ export default function DiagnosticMatrixView({
                   {/* Row 1: Rata-Rata Kelas */}
                   <tr className="bg-amber-500/10 font-extrabold text-amber-700 dark:text-amber-300">
                     <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-black text-xs shadow-md">
-                      🏛️ Rata-Rata Kelas
+                      <div className="flex items-center gap-1.5">
+                        <Building2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span>Rata-Rata Kelas</span>
+                      </div>
                     </td>
                     {/* Bab 1-6 */}
                     {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
@@ -1148,7 +1153,10 @@ export default function DiagnosticMatrixView({
                   {/* Row 2: % Ketuntasan KKM */}
                   <tr className="text-[10px]">
                     <td className="p-2 text-left pl-3 sticky left-0 z-10 diagnostic-sticky-cell border-r border-current/20 font-bold shadow-md">
-                      🎯 % Tuntas (≥{kkm}%)
+                      <div className="flex items-center gap-1.5">
+                        <Target className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                        <span>% Tuntas (≥{kkm}%)</span>
+                      </div>
                     </td>
                     {/* Bab 1-6 */}
                     {classColumnStats.babStats.slice(0, 6).map((st, idx) => (
