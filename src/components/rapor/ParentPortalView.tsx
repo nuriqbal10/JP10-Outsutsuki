@@ -138,7 +138,7 @@ export default function ParentPortalView({
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
               <input
                 type="text"
-                placeholder="Masukkan NIM (cth: 2026-A22-005)..."
+                placeholder="Masukkan NIM (cth: JP10-1804249)..."
                 value={searchNim}
                 onChange={(e) => setSearchNim(e.target.value)}
                 className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-stone-900 border border-current/20 text-xs font-bold outline-none focus:border-amber-500 transition"

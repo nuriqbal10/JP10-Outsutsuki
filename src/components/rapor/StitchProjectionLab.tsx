@@ -576,7 +576,7 @@ export default function StitchProjectionLab({
               <div>
                 <h4 className="font-extrabold text-sm">{selectedProfile.student.name}</h4>
                 <p className="text-[11px] opacity-60 font-mono">
-                  {selectedProfile.student.nim || `OTS-${String(selectedProfile.student.no).padStart(3, "0")}`} • {selectedProfile.habit.label}
+                  {selectedProfile.student.nim || `#${selectedProfile.student.no}`} • {selectedProfile.habit.label}
                 </p>
               </div>
             </div>

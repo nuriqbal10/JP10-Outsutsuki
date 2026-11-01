@@ -469,7 +469,7 @@ export default function PrincipalExecutiveView({
                       <div className="text-[10px] opacity-60">Kelas Outsutsuki</div>
                     </td>
                     <td className="py-3 px-4 font-mono font-semibold opacity-75">
-                      {s.nim || `OTS-${String(s.no).padStart(3, "0")}`}
+                      {s.nim || `#${s.no}`}
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="font-black text-sm">{sc.toFixed(1)}</span>

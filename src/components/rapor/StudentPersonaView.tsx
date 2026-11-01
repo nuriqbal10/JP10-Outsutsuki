@@ -127,7 +127,7 @@ export default function StudentPersonaView({
                   {ninjaTitle.title}
                 </span>
                 <span className="text-xs opacity-60 font-mono font-semibold">
-                  NIM: {activeStudent.nim || `OTS-${String(activeStudent.no).padStart(3, "0")}`}
+                  NIM: {activeStudent.nim || `#${activeStudent.no}`}
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black font-serif tracking-tight">
