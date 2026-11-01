@@ -11,6 +11,7 @@ import GuessPictureGame from "@/components/arena/GuessPictureGame";
 import ShinobiAdventureGame from "@/components/arena/ShinobiAdventureGame";
 import ShinobiZepArena from "@/components/arena/ShinobiZepArena";
 import ShinobiQuizCreatorStudio, { VillageEnvironment, VILLAGE_ENVIRONMENTS } from "@/components/arena/ShinobiQuizCreatorStudio";
+import ShinobiTrainingArena, { TrainingCategory } from "@/components/arena/ShinobiTrainingArena";
 import { ParsedQuestion } from "@/lib/quizParsers";
 import BattleRoyaleModal, { BattleMode } from "@/components/lms/BattleRoyaleModal";
 import {
@@ -46,9 +47,10 @@ import {
 export default function ShinobiArenaPage() {
   const [gamerState, setGamerState] = useState<UserGamificationState | null>(null);
 
-  // Active game router: null = Game Selection Catalog Hub, 'bunpou_puzzle' = In-place game
+  // Active game router: null = Game Selection Catalog Hub, 'training_arena' = In-place training
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "bunpou" | "kotoba" | "multiplayer">("all");
+  const [trainingCategory, setTrainingCategory] = useState<TrainingCategory>("choukai");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "training" | "bunpou" | "kotoba" | "multiplayer">("all");
   const [showBadgesModal, setShowBadgesModal] = useState<boolean>(false);
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
 
@@ -102,6 +104,106 @@ export default function ShinobiArenaPage() {
   // DEFINISI KATALOG GAME ARCADE (MODULAR & SANGAT MUDAH DIKEMBANGKAN)
   // ============================================================================
   const ARCADE_GAMES = [
+    {
+      id: "shinobi_training_ground",
+      title: "Shinobi Training Ground: 6 Sektor N4 / JFT A2",
+      jpTitle: "忍の修練場：6大部門特訓",
+      category: "training",
+      badge: "6 SEKTOR • CHOUKAI S/D DOKKAI",
+      badgeColor: "bg-gradient-to-r from-emerald-400 to-teal-400 text-stone-950 font-black",
+      icon: "🥋",
+      cardBorder: "border-teal-400 hover:border-teal-300 shadow-[0_0_25px_rgba(20,184,166,0.35)]",
+      glowBg: "from-teal-950/70 via-emerald-950/40 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 text-stone-950 font-black shadow-lg",
+      desc: "Dojo latihan mandiri terintegrasi mengasah 6 sektor kompetensi resmi: Choukai (Audio Jepang), Kosakata Kerja, Kanji & Kana, Pola Bunpou, Partikel Drill, dan Dokkai Rambu/Email kantor setara N4 & JFT-Basic A2.",
+      features: ["Audio Percakapan Penutur Asli", "Partikel Drill & Analisis 5S", "Pembahasan Trik JFT Prometric"],
+      tags: ["Choukai", "Partikel Drill", "Kanji & Dokkai", "N4 / JFT-A2"],
+      onPlay: () => {
+        setTrainingCategory("choukai");
+        setSelectedGame("training_arena");
+      },
+      isComingSoon: false,
+    },
+    {
+      id: "training_choukai_dojo",
+      title: "Choukai Listening Dojo (Audio Percakapan)",
+      jpTitle: "聴解道場・現場音声訓練",
+      category: "training",
+      badge: "AUDIO OTENTIK JFT A2",
+      badgeColor: "bg-blue-400 text-stone-950 font-bold",
+      icon: "🎧",
+      cardBorder: "border-blue-500/40 hover:border-blue-400",
+      glowBg: "from-blue-950/40 via-slate-900 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold",
+      desc: "Latihan pemahaman mendengarkan instruksi kerja pabrik, pengumuman stasiun Shinkansen, dan dialog kerja Jepang dengan audio penutur asli berkecepatan standar JFT.",
+      features: ["Audio Player Interaktif", "Kecepatan Alami JFT A2", "Naskah Skrip Terbuka"],
+      tags: ["Listening", "Instruksi Kerja", "JR Station Announcements"],
+      onPlay: () => {
+        setTrainingCategory("choukai");
+        setSelectedGame("training_arena");
+      },
+      isComingSoon: false,
+    },
+    {
+      id: "training_partikel_drill",
+      title: "Partikel Sniper Drill (に・で・を・が・へ)",
+      jpTitle: "助詞特訓・精密スナイパー",
+      category: "training",
+      badge: "DRILL PARTIKEL TEPAT",
+      badgeColor: "bg-rose-500 text-white font-bold",
+      icon: "⚡",
+      cardBorder: "border-rose-500/40 hover:border-rose-400",
+      glowBg: "from-rose-950/40 via-slate-900 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-rose-500 to-red-600 text-white font-bold",
+      desc: "Kuasai perbedaan partikel lokasi aksi (で) vs keberadaan (に), objek (を) vs kemampuan (が), serta arah tujuan (へ/に) melalui kalimat rumpang berwaktu.",
+      features: ["Soal Rumpang Berwaktu", "Penjelasan Pola Tata Bahasa", "Analisis Jebakan Soal"],
+      tags: ["Partikel", "Akurasi Kalimat", "N4/JFT-A2"],
+      onPlay: () => {
+        setTrainingCategory("partikel");
+        setSelectedGame("training_arena");
+      },
+      isComingSoon: false,
+    },
+    {
+      id: "training_dokkai_dojo",
+      title: "Dokkai Dojo: Rambu K3 & Email Kantor",
+      jpTitle: "読解道場・文書理解",
+      category: "training",
+      badge: "BACAAN OTENTIK JEPANG",
+      badgeColor: "bg-cyan-400 text-stone-950 font-bold",
+      icon: "📜",
+      cardBorder: "border-cyan-500/40 hover:border-cyan-400",
+      glowBg: "from-cyan-950/40 via-slate-900 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold",
+      desc: "Simulasi membaca dokumen resmi: email izin sakit/cuti, pengumuman perbaikan lift gedung, dan tata tertib pembuangan sampah asrama Jepang.",
+      features: ["Teks Format Asli Jepang", "Pertanyaan Pemahaman Kritis", "Tips Budaya Kerja Hou-Ren-So"],
+      tags: ["Dokkai", "Email Kantor", "Aturan Asrama"],
+      onPlay: () => {
+        setTrainingCategory("dokkai");
+        setSelectedGame("training_arena");
+      },
+      isComingSoon: false,
+    },
+    {
+      id: "training_kanji_kana",
+      title: "Kanji & Kana Dojo (Rambu & Katakana)",
+      jpTitle: "漢字・仮名道場",
+      category: "training",
+      badge: "RAMBU & KATA SERAPAN",
+      badgeColor: "bg-purple-400 text-stone-950 font-bold",
+      icon: "🈳",
+      cardBorder: "border-purple-500/40 hover:border-purple-400",
+      glowBg: "from-purple-950/40 via-slate-900 to-slate-900",
+      buttonColor: "bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold",
+      desc: "Uji kemampuan membaca kanji rambu darurat (立入禁止, 非常口), istilah etika kerja (連絡, 報告, 相談), dan katakana teknis (マニュアル, ドライバー).",
+      features: ["Kanji Esensial N4 / A2", "Furigana & Arti Indonesia", "Katakana Dunia Kerja"],
+      tags: ["Kanji Rambu", "Katakana", "Moji-Goi"],
+      onPlay: () => {
+        setTrainingCategory("kanji_kana");
+        setSelectedGame("training_arena");
+      },
+      isComingSoon: false,
+    },
     {
       id: "shinobi_zep_arena",
       title: "Shinobi ZEP Arena: Ujian Desa Ninja",
@@ -242,6 +344,7 @@ export default function ShinobiArenaPage() {
 
   const filteredGames = ARCADE_GAMES.filter((g) => {
     if (categoryFilter === "all") return true;
+    if (categoryFilter === "training") return g.category === "training";
     if (categoryFilter === "bunpou") return g.category === "bunpou";
     if (categoryFilter === "kotoba") return g.category === "kotoba";
     if (categoryFilter === "multiplayer") return g.category === "multiplayer";
@@ -253,6 +356,16 @@ export default function ShinobiArenaPage() {
       {/* ==================================================================== */}
       {/* 1. JIKA SEDANG MEMILIH GAME TERTENTU (IN-PLACE RUNNER) */}
       {/* ==================================================================== */}
+      {/* Mount Game Shinobi Training Arena (6 Sektor N4/JFT A2) */}
+      {selectedGame === "training_arena" && (
+        <div className="max-w-5xl mx-auto space-y-6">
+          <ShinobiTrainingArena
+            onBackToHub={() => setSelectedGame(null)}
+            initialCategory={trainingCategory}
+          />
+        </div>
+      )}
+
       {selectedGame === "bunpou_puzzle" && (
         <div className="max-w-5xl mx-auto space-y-6">
           {/* Top Bar Kembali ke Lobi Arcade */}
@@ -436,17 +549,37 @@ export default function ShinobiArenaPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setCategoryFilter("all")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === "all"
                     ? "bg-purple-600 text-white shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
                 }`}
               >
-                Semua Game ({ARCADE_GAMES.length})
+                Semua ({ARCADE_GAMES.length})
+              </button>
+              <button
+                onClick={() => setCategoryFilter("training")}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  categoryFilter === "training"
+                    ? "bg-teal-500 text-stone-950 shadow font-black ring-2 ring-teal-400"
+                    : "bg-teal-950/40 text-teal-300 hover:text-white border border-teal-500/30"
+                }`}
+              >
+                🥋 Training Arena (N4/JFT-A2)
+              </button>
+              <button
+                onClick={() => setCategoryFilter("multiplayer")}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  categoryFilter === "multiplayer"
+                    ? "bg-amber-500 text-stone-950 shadow font-black"
+                    : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
+                }`}
+              >
+                ⛩️ Live &amp; ZEP Arena
               </button>
               <button
                 onClick={() => setCategoryFilter("bunpou")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === "bunpou"
                     ? "bg-purple-600 text-white shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
@@ -456,23 +589,13 @@ export default function ShinobiArenaPage() {
               </button>
               <button
                 onClick={() => setCategoryFilter("kotoba")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   categoryFilter === "kotoba"
                     ? "bg-purple-600 text-white shadow font-black"
                     : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
                 }`}
               >
-                Kosakata & Kanji
-              </button>
-              <button
-                onClick={() => setCategoryFilter("multiplayer")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  categoryFilter === "multiplayer"
-                    ? "bg-purple-600 text-white shadow font-black"
-                    : "bg-slate-900 text-slate-300 hover:text-white border border-slate-800"
-                }`}
-              >
-                Multiplayer & Turnamen
+                Kosakata &amp; Rambu K3
               </button>
             </div>
           </div>
