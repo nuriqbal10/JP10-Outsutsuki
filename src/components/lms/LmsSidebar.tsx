@@ -21,38 +21,20 @@ import {
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { IRODORI_A1_CHAPTERS, IRODORI_A21_CHAPTERS, IRODORI_A22_CHAPTERS } from "@/data/coursesCatalog";
 
 interface LmsSidebarProps {
   currentChapter?: number;
+  courseLevel?: "a1" | "a2-1" | "a2-2";
   isOpen: boolean;
   onToggle: () => void;
   isMobileOpen: boolean;
   onMobileClose: () => void;
 }
 
-const CHAPTERS = [
-  { num: 1, title: "私のこと", topic: "Perkenalan Diri & Kehidupan di Jepang" },
-  { num: 2, title: "どんな人ですか", topic: "Ciri Fisik & Karakter Orang" },
-  { num: 3, title: "おすすめは何ですか", topic: "Restoran, Menu & Alergi" },
-  { num: 4, title: "何時からですか", topic: "Jam Kerja & Shift Pabrik" },
-  { num: 5, title: "安全第一", topic: "Aturan Pabrik & K3" },
-  { num: 6, title: "どうやって行きますか", topic: "Transportasi & Tiket Kereta" },
-  { num: 7, title: "雨が降ったら、ホールでやります", topic: "Festival Komunitas & Cuaca" },
-  { num: 8, title: "屋台はどこかわかりますか？", topic: "Denah Festival & Petunjuk Arah" },
-  { num: 9, title: "成人の日は、何をするんですか？", topic: "Hari Libur Nasional & Budaya" },
-  { num: 10, title: "どんな服を着て行けばいいですか？", topic: "Etiket Berpakaian & Upacara" },
-  { num: 11, title: "ポイントカードを忘れてしまいました", topic: "Belanja & Penyesalan" },
-  { num: 12, title: "このボタンを押すと、エコモードに変わります", topic: "Peralatan Elektronik & Mesin" },
-  { num: 13, title: "いろいろな資料を展示してあります", topic: "Fasilitas Umum & Balai Kota" },
-  { num: 14, title: "髪をもう少し短くしてください", topic: "Layanan Jasa, Salon & Kurir" },
-  { num: 15, title: "ゴミを減らすために、マイバッグを持っています", topic: "Pemilahan Sampah & Gaya Hidup Eco" },
-  { num: 16, title: "地震が起きたら、どうすればいいですか？", topic: "Mitigasi Bencana & Keselamatan" },
-  { num: 17, title: "日本語が前より話せるようになりました", topic: "Perkembangan Diri & Adaptasi" },
-  { num: 18, title: "将来、自分の会社を作ろうと思っています", topic: "Rencana Masa Depan & Karir" },
-];
-
 export default function LmsSidebar({
   currentChapter,
+  courseLevel,
   isOpen,
   onToggle,
   isMobileOpen,
@@ -61,6 +43,22 @@ export default function LmsSidebar({
   const pathname = usePathname();
   const { user } = useUser();
   const [studentName, setStudentName] = useState<string>("Siswa Outsutsuki");
+
+  const currentLevel: "a1" | "a2-1" | "a2-2" =
+    courseLevel ||
+    (pathname?.includes("irodori-a1")
+      ? "a1"
+      : pathname?.includes("irodori-a2-1")
+      ? "a2-1"
+      : "a2-2");
+
+  const coursePath = currentLevel === "a1" ? "irodori-a1" : currentLevel === "a2-1" ? "irodori-a2-1" : "irodori-a2-2";
+  const chaptersList =
+    currentLevel === "a1"
+      ? IRODORI_A1_CHAPTERS
+      : currentLevel === "a2-1"
+      ? IRODORI_A21_CHAPTERS
+      : IRODORI_A22_CHAPTERS;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -183,22 +181,63 @@ export default function LmsSidebar({
           </Link>
         </div>
 
-        {/* Daftar Bab Irodori A2.2 */}
+        {/* Series Selector Pills */}
+        {isOpen && (
+          <div className="px-3 pt-2 border-t border-current/10">
+            <span className="text-[9px] font-black uppercase tracking-wider opacity-60 block mb-1.5">
+              Pilih Series Irodori:
+            </span>
+            <div className="grid grid-cols-3 gap-1 text-[10px] font-black text-center">
+              <Link
+                href="/lms/irodori-a1"
+                className={`py-1 rounded-lg border transition ${
+                  currentLevel === "a1"
+                    ? "bg-emerald-500 text-white border-emerald-400 shadow-xs"
+                    : "bg-current/5 border-current/10 opacity-70 hover:opacity-100"
+                }`}
+              >
+                A1 (入門)
+              </Link>
+              <Link
+                href="/lms/irodori-a2-1"
+                className={`py-1 rounded-lg border transition ${
+                  currentLevel === "a2-1"
+                    ? "bg-sky-500 text-white border-sky-400 shadow-xs"
+                    : "bg-current/5 border-current/10 opacity-70 hover:opacity-100"
+                }`}
+              >
+                A2.1 (初級1)
+              </Link>
+              <Link
+                href="/lms/irodori-a2-2"
+                className={`py-1 rounded-lg border transition ${
+                  currentLevel === "a2-2"
+                    ? "bg-amber-500 text-stone-950 border-amber-300 shadow-xs"
+                    : "bg-current/5 border-current/10 opacity-70 hover:opacity-100"
+                }`}
+              >
+                A2.2 (初級2)
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Daftar Bab Irodori Sesuai Level Aktif */}
         <div className="flex flex-col gap-1">
           {isOpen && (
             <div className="px-3 flex items-center justify-between text-[10px] font-black uppercase tracking-wider opacity-60 mb-1">
-              <span>Modul Bab Irodori</span>
-              <span className="text-amber-500">12 Bab</span>
+              <span>Bab {currentLevel.toUpperCase()}</span>
+              <span className="text-amber-500">{chaptersList.length} Bab</span>
             </div>
           )}
 
           <div className="flex flex-col gap-1">
-            {CHAPTERS.map((bab) => {
+            {chaptersList.map((bab) => {
               const isActive = currentChapter === bab.num;
               return (
                 <Link
                   key={bab.num}
-                  href={`/lms/irodori-a2-2/bab/${bab.num}`}
+                  href={`/lms/${coursePath}/bab/${bab.num}`}
                   onClick={onMobileClose}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition group text-left ${
                     isActive

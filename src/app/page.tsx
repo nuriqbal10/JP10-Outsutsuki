@@ -271,13 +271,13 @@ export default function HomePage() {
                   Portal Akademik &amp; LMS Silabus
                 </h3>
                 <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                  Akses modul resmi 18 Bab Irodori A2.2, audio penutur asli JF, lembar LKPD terstandar, Studio Huruf Kanji animasi goresan, dan Flashcard 3D.
+                  Akses lengkap 3 tingkatan resmi Japan Foundation (A1, A2.1, A2.2) total 54 Bab modul terintegrasi, audio penutur asli JF, lembar LKPD, Studio Huruf Kanji, dan Flashcard 3D.
                 </p>
 
                 <div className="mt-4 pt-3 border-t border-current/10 space-y-1.5 text-xs opacity-80">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                    <span>Silabus Bab 1 s.d. 18 &amp; Buku PDF</span>
+                    <span>Silabus 3 Tingkat (A1 • A2.1 • A2.2)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />

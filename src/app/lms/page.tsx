@@ -3,40 +3,23 @@
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Layers, Award, Sparkles, CheckCircle2, ChevronRight, GraduationCap, Video, FileText, HelpCircle, Swords } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { COURSES_CATALOG } from "@/data/coursesCatalog";
 
 export default function LmsPortalPage() {
-  const courses = [
-    {
-      id: "irodori-a2-2",
-      title: "Irodori Bahasa Jepang untuk Kehidupan A2.2 (初級2)",
-      desc: "Kurikulum resmi The Japan Foundation tingkat A2.2 (Bab 1 s.d. 18). Dilengkapi modul slide tata bahasa, daftar kotoba berakar kata, dan kuis latihan format CBT.",
-      level: "A2.2 (Elementary 2)",
-      totalChapters: 18,
-      status: "Aktif & Tersedia",
-      badge: "Utama",
-      badgeColor: "bg-amber-400 text-stone-950",
-      href: "/lms/irodori-a2-2",
-      chapters: [
-        { num: 1, title: "私のこと", topic: "Perkenalan Diri & Kehidupan di Jepang" },
-        { num: 2, title: "どんな人ですか", topic: "Ciri Fisik, Karakter & Pakaian" },
-        { num: 3, title: "おすすめは何ですか", topic: "Restoran, Makanan & Reservasi" },
-        { num: 4, title: "何時からですか", topic: "Jam Kerja, Lembur & Jadwal" },
-        { num: 5, title: "安全第一", topic: "Aturan Pabrik & Keselamatan K3" },
-        { num: 6, title: "どうやって行きますか", topic: "Transportasi, Tiket & Rute" },
-        { num: 7, title: "雨が降ったら、ホールでやります", topic: "Festival & Acara Komunitas" },
-        { num: 8, title: "屋台はどこかわかりますか？", topic: "Denah Stan Festival & Posisi" },
-        { num: 9, title: "成人の日は、何をするんですか？", topic: "Hari Libur Nasional & Perayaan Jepang" },
-        { num: 10, title: "どんな服を着て行けばいいですか？", topic: "Etiket Menghadiri Acara & Pakaian" },
-        { num: 11, title: "ポイントカードを忘れてしまいました", topic: "Berbelanja, Fitting & Kasir" },
-        { num: 12, title: "このボタンを押すと、エコモードに変わります", topic: "Pengoperasian Alat Elektronik & Tombol" },
-        { num: 13, title: "いろいろな資料を展示してあります", topic: "Fasilitas Umum, Balai Kota & Galeri" },
-        { num: 14, title: "髪をもう少し短くしてください", topic: "Salon Rambut, Laundry & Kurir Paket" },
-        { num: 15, title: "ゴミを減らすために、マイバッグを持っています", topic: "Pemilahan Sampah & Gaya Hidup Eco" },
-        { num: 16, title: "地震が起きたら、どうすればいいですか？", topic: "Mitigasi Bencana & Keselamatan Jiwa" },
-        { num: 17, title: "日本語が前より話せるようになりました", topic: "Pertumbuhan Diri & Refleksi di Jepang" },
-        { num: 18, title: "将来、自分の会社を作ろうと思っています", topic: "Impian Masa Depan, Karir & SSW" },
-      ]
-    },
+  const allCourses = [
+    ...COURSES_CATALOG.map((c) => ({
+      id: c.id,
+      title: c.title,
+      desc: c.desc,
+      level: c.level,
+      totalChapters: c.totalChapters,
+      status: c.status,
+      badge: c.badge,
+      badgeColor: c.badgeColor,
+      href: c.href,
+      kotobaCount: c.id === "irodori-a1" ? "1.285+" : c.id === "irodori-a2-1" ? "1.190+" : "1.770+",
+      quizCount: c.id === "irodori-a1" ? "410+ Soal" : c.id === "irodori-a2-1" ? "450+ Soal" : "770+ Soal",
+    })),
     {
       id: "shiken-jft-a2",
       title: "Shiken JFT-Basic A2 Real Simulation (CBT Engine)",
@@ -47,32 +30,9 @@ export default function LmsPortalPage() {
       badge: "CBT Exam",
       badgeColor: "bg-rose-600 text-white",
       href: "/cbt",
-      chapters: []
+      kotobaCount: "1.210+ Soal",
+      quizCount: "4 Sub-Tes",
     },
-    {
-      id: "irodori-a1",
-      title: "Irodori A1 - Pemula (入門)",
-      desc: "Dasar-dasar percakapan bahasa Jepang sehari-hari untuk pekerja migran dan pemelajar pemula (1.285 kosakata master).",
-      level: "A1 (Starter)",
-      totalChapters: 18,
-      status: "Arsip Silabus",
-      badge: "Dasar",
-      badgeColor: "bg-stone-700 text-amber-200",
-      href: "#",
-      chapters: []
-    },
-    {
-      id: "irodori-a2-1",
-      title: "Irodori A2.1 - Tingkat Menengah Pertama (初級1)",
-      desc: "Kelanjutan tata bahasa praktis percakapan kerja, kehidupan bermasyarakat, dan belanja (1.190 kosakata master).",
-      level: "A2.1 (Elementary 1)",
-      totalChapters: 18,
-      status: "Arsip Silabus",
-      badge: "Lanjutan",
-      badgeColor: "bg-stone-700 text-amber-200",
-      href: "#",
-      chapters: []
-    }
   ];
 
   return (
@@ -132,7 +92,7 @@ export default function LmsPortalPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {courses.map((c) => (
+            {allCourses.map((c) => (
               <div
                 key={c.id}
                 className="clay-card rounded-2xl p-6 sm:p-7 border border-current/10 flex flex-col justify-between gap-6 hover:scale-[1.01] transition group"
@@ -160,12 +120,12 @@ export default function LmsPortalPage() {
                       <span className="opacity-80">Bab Modul</span>
                     </div>
                     <div className="bg-black/5 dark:bg-black/40 p-2.5 rounded-xl border border-current/10">
-                      <span className="block font-black text-amber-500">1.770+</span>
-                      <span className="opacity-80">Kotoba</span>
+                      <span className="block font-black text-amber-500">{c.kotobaCount}</span>
+                      <span className="opacity-80">Kotoba/Materi</span>
                     </div>
                     <div className="bg-black/5 dark:bg-black/40 p-2.5 rounded-xl border border-current/10">
-                      <span className="block font-black text-emerald-500">770+</span>
-                      <span className="opacity-80">Soal CBT</span>
+                      <span className="block font-black text-emerald-500">{c.quizCount}</span>
+                      <span className="opacity-80">Latihan Kuis</span>
                     </div>
                   </div>
                 </div>
