@@ -2,21 +2,40 @@
 
 export const runtime = "edge";
 
+import React from "react";
 import Link from "next/link";
-import { SignInButton, SignUpButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import { BookOpen, Sparkles, Award, ArrowRight, ShieldCheck, Database, Cloud, Layers, CheckCircle2, Trophy, Swords } from "lucide-react";
+import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+  BookOpen,
+  Trophy,
+  Swords,
+  ArrowRight,
+  ShieldCheck,
+  CheckCircle2,
+  GraduationCap,
+  Building2,
+  Users,
+  Heart,
+  ChevronRight,
+  Target,
+  Sparkles,
+  Layers,
+  Award,
+  Zap,
+} from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import GamificationBanner from "@/components/lms/GamificationBanner";
-import DailyQuestsLeaderboardSection from "@/components/lms/DailyQuestsLeaderboardSection";
 
 export default function HomePage() {
   return (
-    <div className="flex-1 flex flex-col font-sans">
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 clay-card rounded-none border-x-0 border-t-0 border-b border-black/10 dark:border-white/10 px-6 py-3.5 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 p-1 rounded-xl bg-white dark:bg-stone-800 flex items-center justify-center border-2 border-amber-500/60 shadow-md shrink-0">
+    <div className="flex-1 flex flex-col font-sans selection:bg-amber-500/20 selection:text-amber-800 dark:selection:text-amber-200">
+      {/* ========================================================
+          1. HEADER NAVIGASI BERSIH & ADAPTIF TERHADAP 6 TEMA
+          ======================================================== */}
+      <header className="sticky top-0 z-50 clay-card rounded-none border-x-0 border-t-0 border-b border-current/10 px-4 sm:px-8 py-3.5 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* Logo & Identitas Brand */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 p-1 rounded-xl bg-white dark:bg-stone-900 border border-current/15 flex items-center justify-center shadow-md group-hover:scale-105 transition shrink-0">
               <img
                 src="/logo_outsutsuki.png"
                 alt="Logo Outsutsuki"
@@ -24,59 +43,74 @@ export default function HomePage() {
               />
             </div>
             <div>
-              <h1 className="font-extrabold tracking-tight text-lg flex items-center gap-2">
-                OUTSUTSUKI PORTAL <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-current/20 bg-black/5 dark:bg-white/10">大筒木クラス</span>
-              </h1>
-              <p className="text-xs opacity-70 font-medium">Platform Eksklusif Irodori A2.2 & Persiapan JFT-Basic</p>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-sm sm:text-base tracking-wide uppercase font-serif">
+                  Ōtsutsuki Portal
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  大筒木クラス
+                </span>
+              </div>
+              <p className="text-[11px] opacity-70 font-medium hidden sm:block">
+                Platform Pembelajaran &amp; Evaluasi Akademik Irodori A2.2
+              </p>
             </div>
-          </div>
+          </Link>
 
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            <ThemeSwitcher />
+          {/* Navigasi Utama 3 Rumah Besar */}
+          <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 text-xs font-bold">
             <Link
-              href="/arena"
-              className="text-xs font-black px-3.5 py-1.5 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 text-purple-600 dark:text-purple-300 hover:scale-105 transition flex items-center gap-1.5 shadow-sm ring-1 ring-purple-500/30"
+              href="/lms"
+              className="px-3.5 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
-              <Swords className="w-3.5 h-3.5 text-purple-500" />
-              ⚔️ Shinobi Arena
-            </Link>
-            <Link
-              href="/bunpou"
-              className="text-xs font-bold px-3 py-1.5 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 hover:scale-105 transition flex items-center gap-1.5 shadow-sm"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              文法 Bunpou
+              <BookOpen className="w-3.5 h-3.5 text-amber-500" />
+              <span>LMS Silabus</span>
             </Link>
             <Link
               href="/rapor"
-              className="text-xs font-bold px-3 py-1.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:scale-105 transition flex items-center gap-1.5 shadow-sm"
+              className="px-3.5 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
-              <Trophy className="w-3.5 h-3.5" />
-              Rapor Kelas
+              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+              <span>Rapor Kelas</span>
             </Link>
             <Link
+              href="/arena"
+              className="px-3.5 py-1.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/30 hover:scale-105 transition flex items-center gap-1.5 font-black"
+            >
+              <Swords className="w-3.5 h-3.5 text-purple-500" />
+              <span>Shinobi Arena</span>
+            </Link>
+          </nav>
+
+          {/* Sisi Kanan: Theme Switcher, Portal Guru & Akun */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeSwitcher />
+
+            <Link
               href="/admin"
-              className="text-xs font-bold px-3 py-1.5 rounded-full border border-current/20 bg-black/5 dark:bg-white/10 hover:scale-105 transition flex items-center gap-1.5"
+              className="hidden lg:inline-flex text-xs font-bold px-3 py-1.5 rounded-xl border border-current/15 bg-black/5 dark:bg-white/5 hover:scale-105 transition"
             >
               Portal Guru
             </Link>
+
             <SignedOut>
               <Link
                 href="/sign-in"
-                className="text-xs font-bold px-4 py-2 rounded-full border border-current/20 bg-black/5 dark:bg-white/10 hover:scale-105 transition shadow-sm"
+                className="text-xs font-bold px-3.5 py-1.5 rounded-xl border border-current/15 hover:bg-black/5 dark:hover:bg-white/10 transition"
               >
                 Masuk
               </Link>
               <Link
                 href="/sign-up"
-                className="clay-btn-gold text-xs font-bold px-4 py-2 rounded-full transition shadow-md"
+                className="clay-btn-gold text-xs font-black px-4 py-1.5 rounded-xl transition shadow-md"
               >
-                Daftar Akun
+                Daftar
               </Link>
             </SignedOut>
+
             <SignedIn>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-bold opacity-80 hidden sm:inline-block">Siswa Outsutsuki</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold opacity-80 hidden xl:inline-block">Siswa Otsutsuki</span>
                 <UserButton afterSignOutUrl="/" />
               </div>
             </SignedIn>
@@ -84,198 +118,367 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* HERO SECTION */}
-      <main className="max-w-7xl mx-auto px-6 py-10 flex-1 flex flex-col gap-10 w-full">
-        <section className="clay-card rounded-3xl p-8 sm:p-12 border border-current/10 shadow-xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="max-w-2xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 text-xs font-semibold mb-4 bg-amber-500/10 text-amber-600 dark:text-amber-300">
+      {/* ========================================================
+          2. MAIN CONTENT AREA
+          ======================================================== */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 py-8 md:py-12 flex-1 flex flex-col gap-10 sm:gap-14 w-full">
+        {/* ======================================================
+            HERO SECTION: FOKUS, PRESTISIUS & HIERARKI DUAL CTA
+            ====================================================== */}
+        <section className="clay-card rounded-3xl p-6 sm:p-10 md:p-12 border border-current/10 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8 md:gap-12">
+          {/* Subtle Ambient Glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="max-w-2xl relative z-10 space-y-4">
+            {/* Tagline Akreditasi Resmi */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/30 text-xs font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              Eksklusif Kelas Outsutsuki • Kurikulum Irodori 初級2
+              Standard: The Japan Foundation • Kurikulum Irodori 初級2 (A2.2)
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Portal Pembelajaran Bahasa Jepang <span className="text-amber-600 dark:text-amber-400">Kelas Outsutsuki</span>
-            </h2>
-            <p className="mt-4 opacity-85 text-sm sm:text-base leading-relaxed">
-              Platform belajar resmi khusus siswa <strong>Kelas Outsutsuki</strong> untuk menguasai materi <strong>Irodori A2.2</strong>, mengerjakan 18 bab LKPD terstandar, menyimak audio otentik, dan mengikuti simulasi ujian JFT-Basic A2.
+
+            {/* Judul Utama */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight font-serif">
+              Portal Pembelajaran &amp; Evaluasi Akademik Bahasa Jepang{" "}
+              <span className="text-amber-600 dark:text-amber-400">Kelas Outsutsuki</span>
+            </h1>
+
+            {/* Deskripsi Lugas */}
+            <p className="opacity-80 text-sm sm:text-base leading-relaxed max-w-xl font-normal">
+              Pusat ekosistem resmi siswa <strong>Kelas Outsutsuki</strong> untuk menguasai silabus <strong>Irodori A2.2</strong>, mengerjakan 18 bab LKPD terstandar, menyimak audio otentik, dan memantau kemajuan akademik menuju kelulusan <strong>JFT-Basic A2</strong>.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            {/* DUAL CALL TO ACTION: HIERARKI SANGAT JELAS */}
+            <div className="pt-3 flex flex-wrap items-center gap-3.5">
+              {/* Primary CTA: Buka Rapor Kelas */}
               <Link
                 href="/rapor"
-                className="clay-btn-gold px-6 py-3 rounded-full font-black text-sm shadow-lg hover:scale-105 active:scale-95 transition inline-flex items-center gap-2"
+                className="clay-btn-gold px-7 py-3.5 rounded-2xl font-black text-sm shadow-xl hover:scale-105 active:scale-95 transition inline-flex items-center gap-2.5 cursor-pointer"
               >
-                🏆 Rapor Kelas Outsutsuki <ArrowRight className="w-4 h-4" />
+                <Trophy className="w-4 h-4" />
+                <span>Buka Rapor Akademik Kelas</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
+
+              {/* Secondary CTA: Buka LMS Silabus */}
               <Link
                 href="/lms"
-                className="clay-btn px-6 py-3 rounded-full font-black text-sm shadow-md hover:scale-105 active:scale-95 transition inline-flex items-center gap-2"
+                className="px-6 py-3.5 rounded-2xl border border-current/20 bg-black/5 dark:bg-white/10 font-bold text-sm hover:scale-105 active:scale-95 transition inline-flex items-center gap-2 cursor-pointer shadow-sm"
               >
-                🎓 Buka LMS Bab (1–18) <ArrowRight className="w-4 h-4" />
+                <GraduationCap className="w-4 h-4 text-amber-500" />
+                <span>Mulai Belajar di LMS (Bab 1–18)</span>
               </Link>
-              <Link
-                href="/cbt"
-                className="px-6 py-3 rounded-full border border-current/20 bg-black/5 dark:bg-white/10 font-bold text-sm shadow-sm hover:scale-105 transition inline-flex items-center gap-2"
-              >
-                📝 Latihan CBT
-              </Link>
-              <Link
-                href="/flashcard"
-                className="px-6 py-3 rounded-full border border-current/20 bg-black/5 dark:bg-white/10 font-bold text-sm shadow-sm hover:scale-105 transition inline-flex items-center gap-2"
-              >
-                🎴 Flashcard 3D
-              </Link>
-              <Link
-                href="/bunpou"
-                className="px-6 py-3 rounded-full border border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold text-sm shadow-sm hover:scale-105 transition inline-flex items-center gap-2"
-              >
-                📖 IRODORI文法リスト
-              </Link>
+
+              {/* Tertiary Accent: Shinobi Arena */}
               <Link
                 href="/arena"
-                className="px-6 py-3 rounded-full border-2 border-purple-400 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white font-black text-sm shadow-xl shadow-purple-500/30 hover:scale-105 transition inline-flex items-center gap-2 ring-2 ring-purple-400/50"
+                className="px-5 py-3.5 rounded-2xl border border-purple-500/40 bg-purple-500/10 text-purple-600 dark:text-purple-300 font-bold text-sm hover:scale-105 transition inline-flex items-center gap-2 cursor-pointer"
               >
-                <Swords className="w-4 h-4 animate-bounce" />
-                ⚔️ Shinobi Game Arena (Dojo N4 & Rank 28 Siswa)
+                <Swords className="w-4 h-4 text-purple-500" />
+                <span>Shinobi Arena (Dojo N4)</span>
               </Link>
             </div>
           </div>
 
+          {/* Sisi Kanan: Emblem Resmi Outsutsuki */}
           <div className="flex flex-col items-center justify-center relative z-10 shrink-0">
-            <div className="relative p-2 rounded-3xl bg-gradient-to-br from-amber-500/30 via-rose-900/40 to-black/80 border-2 border-amber-500/50 shadow-2xl">
+            <div className="relative p-2.5 rounded-3xl bg-gradient-to-br from-amber-500/20 via-black/20 to-black/60 border-2 border-amber-500/40 shadow-2xl">
               <img
                 src="/outsutsuki-crest.jpg"
                 alt="Emblem Outsutsuki"
-                className="w-56 h-56 sm:w-64 sm:h-64 object-cover rounded-2xl shadow-inner"
+                className="w-52 h-52 sm:w-64 sm:h-64 object-cover rounded-2xl shadow-inner"
               />
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/80 border border-amber-400/50 px-4 py-1 rounded-full text-[11px] font-black text-amber-300 tracking-wider uppercase whitespace-nowrap shadow-lg">
-                大筒木クラス専用
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/85 border border-amber-400/50 px-4 py-1 rounded-full text-[11px] font-black text-amber-300 tracking-wider uppercase whitespace-nowrap shadow-lg">
+                大筒木クラス専用 • A2.2
               </div>
             </div>
           </div>
         </section>
 
-        {/* GAMIFICATION BASE (LEVEL, XP, STREAK & KOTOBA MINIGAME & BATTLE ROYALE) */}
-        <GamificationBanner />
-
-        {/* DAILY QUESTS & CLASS LEADERBOARD SECTION */}
-        <DailyQuestsLeaderboardSection />
-
-        {/* SPOTLIGHT: RAPOR & RANKING OUTSUTSUKI */}
-        <section className="clay-card p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-amber-500/10 via-transparent to-amber-500/5">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-500 shrink-0 shadow-lg">
-              <Trophy className="w-8 h-8" />
+        {/* ======================================================
+            3. CLASS METRICS STRIP (INDIKATOR UTAMA KELAS)
+            ====================================================== */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div className="clay-card p-4 sm:p-5 rounded-2xl border border-current/10 shadow-sm flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0 font-black">
+              28
             </div>
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-[11px] font-black text-amber-500 uppercase tracking-widest mb-1.5">
-                大筒木成績表 • 28 Siswa Resmi
-              </div>
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                Rapor Kelas Outsutsuki & Radar Kompetensi 5 Pilar
+              <div className="text-sm font-black">Siswa Resmi</div>
+              <div className="text-[11px] opacity-70">NIM JP10-180xxxx</div>
+            </div>
+          </div>
+
+          <div className="clay-card p-4 sm:p-5 rounded-2xl border border-current/10 shadow-sm flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 shrink-0 font-black">
+              18
+            </div>
+            <div>
+              <div className="text-sm font-black">Bab Silabus LKPD</div>
+              <div className="text-[11px] opacity-70">Irodori Shokyu 2</div>
+            </div>
+          </div>
+
+          <div className="clay-card p-4 sm:p-5 rounded-2xl border border-current/10 shadow-sm flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-500 shrink-0 font-black">
+              85%
+            </div>
+            <div>
+              <div className="text-sm font-black">Standar KKM Kelas</div>
+              <div className="text-[11px] opacity-70">Evaluasi Ketuntasan</div>
+            </div>
+          </div>
+
+          <div className="clay-card p-4 sm:p-5 rounded-2xl border border-current/10 shadow-sm flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 shrink-0 font-black">
+              200
+            </div>
+            <div>
+              <div className="text-sm font-black">Target JFT / 250 pt</div>
+              <div className="text-[11px] opacity-70">Kesiapan Kerja Prometric</div>
+            </div>
+          </div>
+        </section>
+
+        {/* ======================================================
+            4. SHOWCASE 3 GERBANG UTAMA (BENTO GRID HIERARKI JELAS)
+            ====================================================== */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-current/10 pb-3">
+            <div>
+              <span className="text-[10px] font-black tracking-widest uppercase text-amber-500">
+                PONDASI PLATFORM
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black font-serif tracking-tight">
+                Tiga Gerbang Utama Layanan Terpadu
               </h2>
-              <p className="text-xs sm:text-sm opacity-75 mt-1 max-w-2xl leading-relaxed">
-                Pantau leaderboard 28 siswa, grafik radar kompetensi (Moji-Goi, Kaiwa, Choukai, Dokkai, Kanji), animasi balapan nilai (Bar Chart Race Bab 1–18), dan cetak lembar rapor resmi berstandar CEFR/JF.
-              </p>
+            </div>
+            <p className="text-xs opacity-70 max-w-md">
+              Pilih pilar yang sesuai dengan agenda belajar, evaluasi nilai resmi, atau latihan mandiri Anda hari ini.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+            {/* Gerbang 1: Portal Akademik & LMS Silabus */}
+            <div className="clay-card p-6 sm:p-7 rounded-3xl border border-current/10 shadow-xl flex flex-col justify-between transition hover:-translate-y-1 relative group overflow-hidden">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4 group-hover:scale-110 transition">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                  GERBANG 1 • KURIKULUM RESMI
+                </span>
+                <h3 className="text-lg font-black mt-2.5">
+                  Portal Akademik &amp; LMS Silabus
+                </h3>
+                <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                  Akses modul resmi 18 Bab Irodori A2.2, audio penutur asli JF, lembar LKPD terstandar, Studio Huruf Kanji animasi goresan, dan Flashcard 3D.
+                </p>
+
+                <div className="mt-4 pt-3 border-t border-current/10 space-y-1.5 text-xs opacity-80">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span>Silabus Bab 1 s.d. 18 &amp; Buku PDF</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span>Latihan Huruf Kanji &amp; Flashcard SRS</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <span>Simulasi Ujian CBT Format Resmi</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <Link
+                  href="/lms"
+                  className="w-full py-3 px-4 rounded-xl border border-current/20 bg-black/5 dark:bg-white/10 hover:bg-amber-500 hover:text-stone-950 font-black text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                >
+                  <span>Buka Silabus Bab 1–18</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Gerbang 2: Eksekutif Rapor & Evaluasi Terpadu */}
+            <div className="clay-card p-6 sm:p-7 rounded-3xl border-2 border-amber-500/50 shadow-2xl flex flex-col justify-between transition hover:-translate-y-1 relative group overflow-hidden bg-gradient-to-b from-amber-500/5 via-transparent to-transparent">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-stone-950 flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition font-black">
+                  <Trophy className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-400 text-stone-950 shadow-sm">
+                  GERBANG 2 • PRESTASI RESMI
+                </span>
+                <h3 className="text-lg font-black mt-2.5">
+                  Rapor Kelas &amp; Proyeksi Stitch
+                </h3>
+                <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                  Buku nilai akademik 28 siswa klan Outsutsuki dengan NIM resmi (`JP10-180xxxx`), radar kompetensi 5 pilar, matriks diagnostik 18 bab, dan forecasting nilai ujian akhir 250 pt.
+                </p>
+
+                <div className="mt-4 pt-3 border-t border-current/10 space-y-1.5 text-xs opacity-80">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>4 Persona: Guru, Kepsek, Siswa, Wali</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Radar Grafik 5 Pilar &amp; Bar Race Nilai</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                    <span>Cetak Lembar Rapor Resmi Prestisius</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <Link
+                  href="/rapor"
+                  className="clay-btn-gold w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer"
+                >
+                  <span>Masuk Ruang Rapor Kelas</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Gerbang 3: Shinobi Arcade & Dojo N4 */}
+            <div className="clay-card p-6 sm:p-7 rounded-3xl border border-purple-500/40 shadow-xl flex flex-col justify-between transition hover:-translate-y-1 relative group overflow-hidden bg-gradient-to-b from-purple-500/5 via-transparent to-transparent">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition">
+                  <Swords className="w-6 h-6" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-300 border border-purple-500/30">
+                  GERBANG 3 • GAMIFIKASI &amp; DOJO
+                </span>
+                <h3 className="text-lg font-black mt-2.5">
+                  Shinobi Arcade &amp; Dojo N4
+                </h3>
+                <p className="text-xs opacity-75 mt-2 leading-relaxed">
+                  Latihan mandiri 6 sektor kompetensi N4 / JFT-A2 (Choukai s/d Dokkai), Bunpou Sentence Puzzle 264 pola kalimat, ZEP Virtual 2D, dan Leaderboard Game 28 Siswa (100% terpisah dari rapor).
+                </p>
+
+                <div className="mt-4 pt-3 border-t border-current/10 space-y-1.5 text-xs opacity-80">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                    <span>Dojo 6 Sektor N4 &amp; Furigana Toggle</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                    <span>Leaderboard Khusus Game Non-Akademik</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                    <span>Colosseum PvP &amp; Audio Synthesizer</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <Link
+                  href="/arena"
+                  className="w-full py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs flex items-center justify-center gap-2 shadow-md transition cursor-pointer"
+                >
+                  <span>Masuk Shinobi Arena</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
           </div>
-          <Link
-            href="/rapor"
-            className="clay-btn-gold px-6 py-3.5 rounded-2xl font-black text-xs sm:text-sm shadow-xl hover:scale-105 active:scale-95 transition inline-flex items-center gap-2 whitespace-nowrap shrink-0"
-          >
-            Buka Rapor Lengkap ›
-          </Link>
         </section>
 
-        {/* 5 CORE MODULES GRID */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {/* Card 1: CBT Simulation */}
-          <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
+        {/* ======================================================
+            5. PANDUAN MULTI-STAKEHOLDER (4 PERAN PENGGUNA)
+            ====================================================== */}
+        <section className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 shadow-xl space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4">
-                <Award className="w-6 h-6" />
-              </div>
-              <h3 className="font-extrabold text-lg">Simulasi CBT JFT-Basic</h3>
-              <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                Ujian simulasi dengan timer resmi, audio Choukai, dan teks Dokkai autentik format 4 sub-tes.
-              </p>
+              <span className="text-[10px] font-black uppercase tracking-wider text-amber-500">
+                PANDUAN PENGGUNA
+              </span>
+              <h3 className="text-lg sm:text-xl font-black font-serif">
+                Akses Disesuaikan untuk Setiap Pihak
+              </h3>
             </div>
-            <Link href="/cbt" className="text-xs font-black text-amber-500 hover:underline flex items-center gap-1">
-              Jalankan Simulasi ›
-            </Link>
+            <p className="text-xs opacity-70">
+              Navigasi intuitif dirancang khusus untuk kenyamanan murid, guru, pimpinan, dan orang tua.
+            </p>
           </div>
 
-          {/* Card 2: 3D Flashcard */}
-          <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 mb-4">
-                <Sparkles className="w-6 h-6" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Persona Siswa */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center font-bold">
+                <GraduationCap className="w-4 h-4" />
               </div>
-              <h3 className="font-extrabold text-lg">Flashcard Kosakata 3D</h3>
-              <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                Kartu bolak-balik 3D dengan audio pelafalan asli, sistem Spaced Repetition (SRS), dan kuis kilat.
+              <h4 className="text-sm font-bold">Peserta Didik</h4>
+              <p className="text-xs opacity-75 leading-relaxed">
+                Pelajari materi bab harian, unduh lembar LKPD, dan latih kesiapan JFT di dojo mandiri.
               </p>
+              <Link href="/lms" className="text-xs font-bold text-amber-500 hover:underline inline-flex items-center gap-1 pt-1">
+                Buka Modul ›
+              </Link>
             </div>
-            <Link href="/flashcard" className="text-xs font-black text-rose-500 hover:underline flex items-center gap-1">
-              Buka Flashcard ›
-            </Link>
-          </div>
 
-          {/* Card 3: Kanji Studio */}
-          <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 mb-4">
-                <BookOpen className="w-6 h-6" />
+            {/* Persona Guru */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-500 flex items-center justify-center font-bold">
+                <Users className="w-4 h-4" />
               </div>
-              <h3 className="font-extrabold text-lg">Studio Huruf Kanji</h3>
-              <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                Animasi urutan goresan (Stroke Order), latihan kotak 20-grid, dan lembar print-out A4 presisi.
+              <h4 className="text-sm font-bold">Sensei &amp; Guru</h4>
+              <p className="text-xs opacity-75 leading-relaxed">
+                Evaluasi nilai per bab, pantau ketuntasan KKM 85%, dan cetak lembar rapor resmi siswa.
               </p>
+              <Link href="/rapor" className="text-xs font-bold text-blue-500 hover:underline inline-flex items-center gap-1 pt-1">
+                Buku Nilai ›
+              </Link>
             </div>
-            <Link href="/kanji" className="text-xs font-black text-purple-500 hover:underline flex items-center gap-1">
-              Masuk Studio Kanji ›
-            </Link>
-          </div>
 
-          {/* Card 4: IRODORI文法リスト */}
-          <div className="clay-card p-6 rounded-2xl border border-sky-500/30 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition bg-gradient-to-b from-sky-500/5 to-transparent">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-500 mb-4">
-                <BookOpen className="w-6 h-6" />
+            {/* Persona Kepala Sekolah */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center font-bold">
+                <Building2 className="w-4 h-4" />
               </div>
-              <div className="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-600 dark:text-sky-300 border border-sky-500/30 mb-1">
-                全264文型
-              </div>
-              <h3 className="font-extrabold text-lg">IRODORI文法リスト</h3>
-              <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                264 pola kalimat lengkap A1, A2.1, dan A2.2. Rumus tata bahasa, contoh audio otentik, dan padanan JF Marugoto.
+              <h4 className="text-sm font-bold">Kepala Sekolah</h4>
+              <p className="text-xs opacity-75 leading-relaxed">
+                Tinjau ringkasan eksekutif, analisis gap 5 pilar, dan proyeksi kelulusan JFT kelas.
               </p>
+              <Link href="/rapor" className="text-xs font-bold text-purple-500 hover:underline inline-flex items-center gap-1 pt-1">
+                Lensa Eksekutif ›
+              </Link>
             </div>
-            <Link href="/bunpou" className="text-xs font-black text-sky-500 hover:underline flex items-center gap-1">
-              Buka 文法リスト ›
-            </Link>
-          </div>
 
-          {/* Card 5: Modul LMS & LKPD */}
-          <div className="clay-card p-6 rounded-2xl border border-current/10 shadow-md flex flex-col justify-between gap-4 hover:-translate-y-1 transition">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 mb-4">
-                <Layers className="w-6 h-6" />
+            {/* Persona Wali Murid */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-current/10 space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-rose-500/15 text-rose-500 flex items-center justify-center font-bold">
+                <Heart className="w-4 h-4" />
               </div>
-              <h3 className="font-extrabold text-lg">Modul LMS & LKPD</h3>
-              <p className="text-xs opacity-75 mt-2 leading-relaxed">
-                Buku modul resmi PDF, audio otentik The Japan Foundation, dan lembar kerja peserta didik (LKPD) Bab 1 s.d. 18.
+              <h4 className="text-sm font-bold">Wali Murid</h4>
+              <p className="text-xs opacity-75 leading-relaxed">
+                Pantau pencapaian putra/putri tercinta dengan bahasa yang ramah dan apresiatif.
               </p>
+              <Link href="/rapor" className="text-xs font-bold text-rose-500 hover:underline inline-flex items-center gap-1 pt-1">
+                Portal Keluarga ›
+              </Link>
             </div>
-            <Link href="/lms" className="text-xs font-black text-amber-500 hover:underline flex items-center gap-1">
-              Buka Modul Bab ›
-            </Link>
           </div>
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="clay-card rounded-none border-x-0 border-b-0 border-t border-black/10 dark:border-white/10 py-6 text-center text-xs opacity-60">
-        <p>OUTSUTSUKI PORTAL • Irodori JFT-Basic A2 Curriculum Standards • 大筒木クラス</p>
+      {/* ========================================================
+          6. FOOTER RESMI BERSIH
+          ======================================================== */}
+      <footer className="clay-card rounded-none border-x-0 border-b-0 border-t border-current/10 py-6 text-center text-xs opacity-70">
+        <div className="max-w-7xl mx-auto px-4 space-y-1">
+          <p className="font-bold">
+            OUTSUTSUKI ACADEMIA • Platform Pembelajaran &amp; Evaluasi Bahasa Jepang
+          </p>
+          <p className="text-[11px] opacity-60">
+            Standard: The Japan Foundation (Irodori 初級2 / A2.2) • JF Standard for Japanese-Language Education • 大筒木クラス
+          </p>
+        </div>
       </footer>
     </div>
   );
