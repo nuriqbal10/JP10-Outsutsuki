@@ -191,9 +191,9 @@ export default function IrodoriBunpouPage() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen flex flex-col font-sans text-[var(--text-body)] transition-colors duration-200">
       {/* HEADER NAVBAR */}
-      <header className="sticky top-0 z-50 clay-card rounded-none border-x-0 border-t-0 border-b border-black/10 dark:border-white/10 px-4 sm:px-6 py-3.5 backdrop-blur-md">
+      <header className="sticky top-0 z-50 clay-card rounded-none border-x-0 border-t-0 border-b border-current/10 px-4 sm:px-6 py-3.5 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link

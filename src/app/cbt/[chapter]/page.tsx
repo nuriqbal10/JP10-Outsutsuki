@@ -465,24 +465,24 @@ export default function CbtSessionPage() {
   return (
     <div className="min-h-screen flex flex-col font-sans text-[var(--text-body)] select-none pb-12">
       {/* ========================================================
-          1. HEADER JFT-SIMULATION (CLAYMORPHISM LUXURY BURGUNDY)
+          1. HEADER JFT-SIMULATION (DYNAMIC HARMONIZED CLAY)
           ======================================================== */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#25060e]/90 border-b border-rose-950/60 px-4 sm:px-8 py-3 shadow-2xl">
+      <header className="sticky top-0 z-50 backdrop-blur-md clay-card rounded-none border-x-0 border-t-0 border-b border-current/10 px-4 sm:px-8 py-3 shadow-md">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           {/* Sisi Kiri: Status Section & Nomor Soal */}
           <div className="flex items-center gap-3">
             <Link
               href="/cbt"
-              className="clay-nav-pill px-3 py-1.5 bg-[#420d1a] hover:bg-[#5c1124] text-rose-300 hover:text-white text-xs font-black transition flex items-center gap-1.5 border border-rose-900/40"
+              className="clay-nav-pill px-3 py-1.5 border border-current/10 bg-current/5 hover:bg-current/10 text-xs font-black transition flex items-center gap-1.5 text-[var(--text-body)]"
             >
               <ArrowLeft className="w-3.5 h-3.5" /> Keluar
             </Link>
-            <div className="h-4 w-px bg-rose-900/40 hidden sm:block" />
+            <div className="h-4 w-px bg-current/10 hidden sm:block" />
             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-              <span className="text-xs font-black uppercase text-amber-400 tracking-wider">
+              <span className="text-xs font-black uppercase text-amber-500 tracking-wider">
                 {currentSection.name} : {currentSection.label}
               </span>
-              <span className="text-[11px] font-bold text-rose-300/70 hidden sm:inline">
+              <span className="text-[11px] font-bold opacity-70 hidden sm:inline">
                 • Question {currentQIndex + 1} of {sectionQuestions.length}
               </span>
             </div>
@@ -492,11 +492,11 @@ export default function CbtSessionPage() {
           <button
             onClick={() => setShowTimerModal(true)}
             title="Klik untuk ubah durasi timer"
-            className="clay-nav-pill px-4 py-1.5 bg-[#380a15] border border-amber-500/30 font-mono text-xs sm:text-sm font-black text-amber-300 flex items-center gap-2 hover:border-amber-400 transition shadow-inner"
+            className="clay-nav-pill px-4 py-1.5 border border-amber-500/40 font-mono text-xs sm:text-sm font-black text-amber-500 bg-amber-500/10 flex items-center gap-2 hover:border-amber-400 transition shadow-inner"
           >
-            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <Clock className="w-3.5 h-3.5 text-amber-500" />
             <span>{formatTime(timeLeft)}</span>
-            <Settings className="w-3 h-3 text-rose-400/60 ml-0.5" />
+            <Settings className="w-3 h-3 text-amber-500/70 ml-0.5" />
           </button>
 
           {/* Sisi Kanan: Bantuan Keyboard, Theme Switcher, Mode Guru & Tombol Selesaikan */}
@@ -504,9 +504,9 @@ export default function CbtSessionPage() {
             <button
               onClick={() => setShowKeyboardHelp(true)}
               title="Pintasan Keyboard (Shortcuts)"
-              className="p-1.5 rounded-lg bg-[#330812] hover:bg-[#4a0d1b] text-rose-300/80 hover:text-white border border-rose-900/50 transition hidden md:flex items-center justify-center"
+              className="p-1.5 rounded-lg bg-current/5 hover:bg-current/10 border border-current/10 transition hidden md:flex items-center justify-center text-[var(--text-body)]"
             >
-              <Keyboard className="w-4 h-4 text-amber-300/80" />
+              <Keyboard className="w-4 h-4 text-amber-500" />
             </button>
 
             <ThemeSwitcher compact />
@@ -514,9 +514,9 @@ export default function CbtSessionPage() {
             {!isTeacherMode ? (
               <button
                 onClick={() => setShowTeacherAuthModal(true)}
-                className="clay-nav-pill px-3 py-1 bg-[#330812] hover:bg-[#4a0d1b] text-[11px] font-bold text-rose-300 border border-rose-900/50 flex items-center gap-1 transition"
+                className="clay-nav-pill px-3 py-1 bg-current/5 hover:bg-current/10 text-[11px] font-bold border border-current/10 flex items-center gap-1 transition text-[var(--text-body)]"
               >
-                <ShieldCheck className="w-3 h-3 text-rose-400" />
+                <ShieldCheck className="w-3 h-3 text-amber-500" />
                 <span className="hidden md:inline">Mode Guru</span>
               </button>
             ) : (
@@ -531,12 +531,12 @@ export default function CbtSessionPage() {
             {!isSubmitted ? (
               <button
                 onClick={openSectionReview}
-                className="clay-btn px-4 sm:px-5 py-1.5 rounded-full text-xs font-black tracking-wide shadow-lg border border-rose-400/40"
+                className="clay-btn px-4 sm:px-5 py-1.5 rounded-full text-xs font-black tracking-wide shadow-lg"
               >
                 {currentSectionIndex === SECTIONS.length - 1 ? "Selesaikan Ujian" : "Selesaikan Sesi ➔"}
               </button>
             ) : (
-              <div className="clay-card-light px-3 py-1 text-rose-950 font-black text-xs">
+              <div className="clay-card-light px-3 py-1 text-slate-900 font-black text-xs">
                 Skor: {score}/{allQuestions.length} ({Math.round((score / allQuestions.length) * 100)}%)
               </div>
             )}
@@ -547,7 +547,7 @@ export default function CbtSessionPage() {
       {/* ========================================================
           2. SECTION TABS INDICATOR (STATUS 4 SEKSI JFT)
           ======================================================== */}
-      <div className="bg-[#1f060c] border-b border-rose-950/40 px-4 py-2">
+      <div className="border-b border-current/10 px-4 py-2 bg-current/5">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
           <div className="flex items-center gap-2">
             {SECTIONS.map((sec, idx) => {
@@ -557,11 +557,11 @@ export default function CbtSessionPage() {
               const answeredSec = allQuestions.filter((q) => q.section === sec.id && !!userAnswers[q.id]).length;
               const flaggedSec = allQuestions.filter((q) => q.section === sec.id && !!flaggedQuestions[q.id]).length;
 
-              let badgeStyle = "bg-[#2d0711] text-rose-400/60 border-rose-950";
+              let badgeStyle = "bg-current/5 text-[var(--text-muted)] border-current/10";
               if (isCurrent) {
-                badgeStyle = "bg-gradient-to-r from-rose-700 to-rose-900 text-white border-amber-400/50 shadow-md ring-1 ring-amber-400/40";
+                badgeStyle = "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400/50 shadow-md ring-1 ring-amber-400/40";
               } else if (isPast) {
-                badgeStyle = "bg-[#420d1a] text-emerald-400 border-emerald-500/40";
+                badgeStyle = "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/40";
               }
 
               return (
@@ -573,7 +573,7 @@ export default function CbtSessionPage() {
                   }}
                   className={`clay-nav-pill px-3 py-1.5 text-xs font-bold transition flex items-center gap-2 border ${badgeStyle}`}
                 >
-                  <span className="w-4 h-4 rounded-full bg-black/30 flex items-center justify-center text-[10px] font-black">
+                  <span className="w-4 h-4 rounded-full bg-black/20 flex items-center justify-center text-[10px] font-black">
                     {idx + 1}
                   </span>
                   <span>{sec.label}</span>
@@ -581,12 +581,12 @@ export default function CbtSessionPage() {
                     ({answeredSec}/{totalSec})
                   </span>
                   {flaggedSec > 0 && (
-                    <span className="flex items-center gap-0.5 text-[10px] text-amber-400 font-black">
-                      <Flag className="w-2.5 h-2.5 fill-amber-400" /> {flaggedSec}
+                    <span className="flex items-center gap-0.5 text-[10px] text-amber-500 font-black">
+                      <Flag className="w-2.5 h-2.5 fill-amber-500" /> {flaggedSec}
                     </span>
                   )}
                   {answeredSec === totalSec && totalSec > 0 && (
-                    <Check className="w-3 h-3 text-emerald-400 ml-0.5" />
+                    <Check className="w-3 h-3 text-emerald-500 ml-0.5" />
                   )}
                 </button>
               );
@@ -597,10 +597,10 @@ export default function CbtSessionPage() {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={openSectionReview}
-              className="clay-nav-pill px-3 py-1.5 bg-[#380a15] hover:bg-[#4d0c1c] text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5"
+              className="clay-nav-pill px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5"
               title="Tinjau Ringkasan Seksi Ini"
             >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <FileText className="w-3.5 h-3.5 text-amber-500" />
               <span className="hidden sm:inline">Ringkasan Seksi</span>
             </button>
 
@@ -759,11 +759,11 @@ export default function CbtSessionPage() {
                       title="Tandai butir ini untuk ditinjau nanti (Shortcut: M atau F)"
                       className={`clay-nav-pill px-3 py-1 text-xs font-black transition flex items-center gap-1.5 border ${
                         flaggedQuestions[currentQ.id]
-                          ? "bg-amber-400 text-rose-950 border-amber-300 shadow-md ring-1 ring-amber-400"
-                          : "bg-[#330812] text-amber-300/80 hover:text-amber-300 border-rose-900/50 hover:bg-[#4a0d1b]"
+                          ? "bg-amber-400 text-stone-950 border-amber-300 shadow-md ring-1 ring-amber-400"
+                          : "bg-current/5 text-amber-500 hover:text-amber-400 border-current/15 hover:bg-current/10"
                       }`}
                     >
-                      <Flag className={`w-3.5 h-3.5 ${flaggedQuestions[currentQ.id] ? "fill-rose-950" : ""}`} />
+                      <Flag className={`w-3.5 h-3.5 ${flaggedQuestions[currentQ.id] ? "fill-stone-950" : ""}`} />
                       <span>{flaggedQuestions[currentQ.id] ? "マーク済 (Ditandai)" : "マーク (Tandai)"}</span>
                     </button>
                   </div>
@@ -780,13 +780,13 @@ export default function CbtSessionPage() {
                       const isCorrect = isSubmitted && currentQ.answerKey.toLowerCase() === opt.letter;
                       const isWrong = isSubmitted && isSelected && !isCorrect;
 
-                      let optClass = "bg-[#330812] border-rose-900/40 text-white font-medium hover:bg-[#4a0d1b] hover:border-rose-500/50";
+                      let optClass = "bg-current/5 border-current/15 text-[var(--text-body)] hover:bg-current/10 hover:border-amber-500/50";
                       if (isSelected && !isSubmitted) {
-                        optClass = "bg-gradient-to-r from-rose-700 to-rose-800 text-white border-amber-400 shadow-xl ring-2 ring-amber-400/40 scale-[1.01]";
+                        optClass = "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-xl ring-2 ring-amber-400/40 scale-[1.01]";
                       } else if (isCorrect) {
-                        optClass = "bg-emerald-600/90 text-white border-emerald-400 ring-2 ring-emerald-400 shadow-lg";
+                        optClass = "bg-emerald-600 text-white border-emerald-400 ring-2 ring-emerald-400 shadow-lg";
                       } else if (isWrong) {
-                        optClass = "bg-rose-950 text-white border-rose-500 ring-2 ring-rose-500";
+                        optClass = "bg-rose-700 text-white border-rose-500 ring-2 ring-rose-500";
                       }
 
                       return (
@@ -796,17 +796,17 @@ export default function CbtSessionPage() {
                           className={`w-full text-left p-4 rounded-2xl border text-sm font-semibold transition flex items-center justify-between gap-4 ${optClass}`}
                         >
                           <div className="flex items-center gap-3.5">
-                            <span className="w-8 h-8 rounded-xl bg-black/40 border border-white/20 text-white flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
+                            <span className="w-8 h-8 rounded-xl bg-black/20 border border-current/20 flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
                               {opt.letter}
                             </span>
-                            <span className="whitespace-pre-line leading-relaxed text-white font-semibold">{opt.text}</span>
+                            <span className="whitespace-pre-line leading-relaxed font-semibold">{opt.text}</span>
                           </div>
 
                           {isSelected && !isSubmitted && (
                             <div className="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
                           )}
                           {isCorrect && (
-                            <span className="text-xs font-black text-emerald-200 bg-emerald-900/60 px-3 py-1 rounded-full border border-emerald-400/30">
+                            <span className="text-xs font-black text-emerald-100 bg-emerald-900/60 px-3 py-1 rounded-full border border-emerald-400/30">
                               Kunci Jawaban ✓
                             </span>
                           )}
@@ -820,7 +820,7 @@ export default function CbtSessionPage() {
                     <button
                       onClick={() => setCurrentQIndex((prev) => Math.max(0, prev - 1))}
                       disabled={currentQIndex === 0}
-                      className="clay-nav-pill px-5 py-2.5 bg-[#330812] border border-rose-900/50 text-white font-bold text-xs hover:bg-[#4a0d1b] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
+                      className="clay-nav-pill px-5 py-2.5 bg-current/5 border border-current/15 text-[var(--text-body)] font-bold text-xs hover:bg-current/10 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
                     >
                       <ChevronLeft className="w-4 h-4" /> Soal Sebelumnya
                     </button>
@@ -945,14 +945,14 @@ export default function CbtSessionPage() {
 
                 {/* GAMBAR ILUSTRASI RESMI JFT */}
                 {currentQ.imageR2Url && (
-                  <div className="flex flex-col items-center justify-center p-4 bg-[#2b0811] border border-rose-900/40 rounded-2xl shadow-inner">
+                  <div className="flex flex-col items-center justify-center p-4 bg-current/5 border border-current/10 rounded-2xl shadow-inner">
                     <div className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <ImageIcon className="w-3.5 h-3.5 text-amber-400" /> Gambar Ilustrasi Soal
+                      <ImageIcon className="w-3.5 h-3.5 text-amber-500" /> Gambar Ilustrasi Soal
                     </div>
                     <img
                       src={currentQ.imageR2Url}
                       alt={`Gambar Soal #${currentQ.questionNumber}`}
-                      className="max-h-64 sm:max-h-80 object-contain rounded-xl shadow-lg border border-rose-800/40 bg-white p-3"
+                      className="max-h-64 sm:max-h-80 object-contain rounded-xl shadow-lg border border-current/20 bg-white p-3"
                       onError={(e) => {
                         (e.target as HTMLElement).style.display = "none";
                       }}
@@ -972,13 +972,13 @@ export default function CbtSessionPage() {
                     const isCorrect = isSubmitted && currentQ.answerKey.toLowerCase() === opt.letter;
                     const isWrong = isSubmitted && isSelected && !isCorrect;
 
-                    let optClass = "bg-[#330812] border-rose-900/40 text-white font-medium hover:bg-[#4a0d1b] hover:border-rose-500/50";
+                    let optClass = "bg-current/5 border-current/15 text-[var(--text-body)] hover:bg-current/10 hover:border-amber-500/50";
                     if (isSelected && !isSubmitted) {
-                      optClass = "bg-gradient-to-r from-rose-700 to-rose-800 text-white border-amber-400 shadow-xl ring-2 ring-amber-400/40 scale-[1.01]";
+                      optClass = "bg-gradient-to-r from-amber-600 to-amber-700 text-white border-amber-400 shadow-xl ring-2 ring-amber-400/40 scale-[1.01]";
                     } else if (isCorrect) {
-                      optClass = "bg-emerald-600/90 text-white border-emerald-400 ring-2 ring-emerald-400 shadow-lg";
+                      optClass = "bg-emerald-600 text-white border-emerald-400 ring-2 ring-emerald-400 shadow-lg";
                     } else if (isWrong) {
-                      optClass = "bg-rose-950 text-white border-rose-500 ring-2 ring-rose-500";
+                      optClass = "bg-rose-700 text-white border-rose-500 ring-2 ring-rose-500";
                     }
 
                     return (
@@ -988,17 +988,17 @@ export default function CbtSessionPage() {
                         className={`w-full text-left p-4 rounded-2xl border text-sm font-semibold transition flex items-center justify-between gap-4 ${optClass}`}
                       >
                         <div className="flex items-center gap-3.5">
-                          <span className="w-8 h-8 rounded-xl bg-black/40 border border-white/20 text-white flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
+                          <span className="w-8 h-8 rounded-xl bg-black/20 border border-current/20 flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-inner">
                             {opt.letter}
                           </span>
-                          <span className="whitespace-pre-line leading-relaxed text-white font-semibold">{opt.text}</span>
+                          <span className="whitespace-pre-line leading-relaxed font-semibold">{opt.text}</span>
                         </div>
 
                         {isSelected && !isSubmitted && (
                           <div className="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b]" />
                         )}
                         {isCorrect && (
-                          <span className="text-xs font-black text-emerald-200 bg-emerald-900/60 px-3 py-1 rounded-full border border-emerald-400/30">
+                          <span className="text-xs font-black text-emerald-100 bg-emerald-900/60 px-3 py-1 rounded-full border border-emerald-400/30">
                             Kunci Jawaban ✓
                           </span>
                         )}
@@ -1012,7 +1012,7 @@ export default function CbtSessionPage() {
                   <button
                     onClick={() => setCurrentQIndex((prev) => Math.max(0, prev - 1))}
                     disabled={currentQIndex === 0}
-                    className="clay-nav-pill px-5 py-2.5 bg-[#330812] border border-rose-900/50 text-white font-bold text-xs hover:bg-[#4a0d1b] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
+                    className="clay-nav-pill px-5 py-2.5 bg-current/5 border border-current/15 text-[var(--text-body)] font-bold text-xs hover:bg-current/10 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center gap-1.5"
                   >
                     <ChevronLeft className="w-4 h-4" /> Soal Sebelumnya
                   </button>

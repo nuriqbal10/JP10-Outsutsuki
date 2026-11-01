@@ -30,6 +30,7 @@ import {
   UploadCloud,
 } from "lucide-react";
 import BulkQuestionImporter from "@/components/admin/BulkQuestionImporter";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 interface Question {
   id: number;
@@ -328,14 +329,14 @@ export default function SiteAdministrationPage() {
   // Jika belum login admin
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2D0B16] via-[#1E070F] to-[#120308] text-amber-50 flex items-center justify-center p-6">
-        <div className="clay-card rounded-3xl p-8 max-w-md w-full border border-rose-900/60 text-center flex flex-col gap-6">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-rose-600 text-stone-950 flex items-center justify-center mx-auto shadow-xl">
+      <div className="min-h-screen flex items-center justify-center p-6 font-sans text-[var(--text-body)]">
+        <div className="clay-card rounded-3xl p-8 max-w-md w-full border border-current/15 text-center flex flex-col gap-6 shadow-2xl">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-stone-950 flex items-center justify-center mx-auto shadow-xl">
             <Lock className="w-8 h-8" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-amber-100">Site Administration</h2>
-            <p className="text-xs text-rose-200/70 mt-1">
+            <h2 className="text-xl font-black text-[var(--text-heading)]">Site Administration</h2>
+            <p className="text-xs opacity-75 mt-1 leading-relaxed">
               Masukkan kata sandi administrator atau guru untuk mengelola bank soal dan konfigurasi LMS.
             </p>
           </div>
@@ -346,7 +347,7 @@ export default function SiteAdministrationPage() {
               onChange={(e) => setPassInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAuth()}
               placeholder="Masukkan Kata Sandi Administrator"
-              className="p-3.5 rounded-xl bg-[#1A050D] border border-rose-900/80 text-amber-100 text-sm outline-none focus:border-amber-400 transition text-center"
+              className="p-3.5 rounded-xl bg-current/5 border border-current/20 text-[var(--text-body)] text-sm outline-none focus:border-amber-400 transition text-center"
             />
             <button
               onClick={handleAuth}
@@ -355,9 +356,12 @@ export default function SiteAdministrationPage() {
             >
               {isAuthenticating ? "Memverifikasi..." : "Buka Panel Administrator"}
             </button>
-            <Link href="/" className="text-xs text-rose-300/60 hover:text-amber-200 transition">
-              Kembali ke Beranda
-            </Link>
+            <div className="flex items-center justify-between pt-2">
+              <Link href="/" className="text-xs text-amber-500 hover:underline transition">
+                Kembali ke Beranda
+              </Link>
+              <ThemeSwitcher compact />
+            </div>
           </div>
         </div>
       </div>
@@ -365,33 +369,34 @@ export default function SiteAdministrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#2D0B16] via-[#1E070F] to-[#120308] text-amber-50 flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans text-[var(--text-body)]">
       {/* 1. HEADER SITE ADMINISTRATION */}
-      <header className="clay-card border-b border-rose-950/60 px-6 py-4 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
+      <header className="clay-card rounded-none border-x-0 border-t-0 border-b border-current/10 px-6 py-4 flex items-center justify-between sticky top-0 z-50 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="p-2 rounded-xl bg-rose-950/80 text-amber-300 hover:text-white transition border border-rose-900/40"
+            className="p-2 rounded-xl bg-current/5 text-amber-500 hover:text-amber-400 transition border border-current/15"
             title="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-base sm:text-lg font-black text-amber-100 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-amber-400" />
+            <h1 className="text-base sm:text-lg font-black text-[var(--text-heading)] flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-amber-500" />
               Site administration
             </h1>
-            <p className="text-[11px] text-rose-300/60">Pusat Manajemen Bank Soal & Kursus LMS</p>
+            <p className="text-[11px] opacity-70">Pusat Manajemen Bank Soal & Kursus LMS</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase text-emerald-400 bg-emerald-950/70 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <ThemeSwitcher compact />
+          <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full flex items-center gap-1.5 hidden sm:inline-flex">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Mode Guru Aktif
           </span>
           <button
             onClick={() => setIsAuthenticated(false)}
-            className="text-xs text-rose-300/60 hover:text-rose-100 transition"
+            className="text-xs opacity-75 hover:opacity-100 transition px-2.5 py-1 rounded-lg bg-current/5 hover:bg-current/10"
           >
             Keluar
           </button>
@@ -399,7 +404,7 @@ export default function SiteAdministrationPage() {
       </header>
 
       {/* 2. TAB NAVIGASI PERSIS STYLE MOODLE (General, Users, Courses, Grades, Server, dll) */}
-      <div className="bg-[#1C050E] border-b border-rose-950/80 px-6 overflow-x-auto sticky top-[65px] z-40 backdrop-blur-md">
+      <div className="border-b border-current/10 px-6 overflow-x-auto sticky top-[65px] z-40 backdrop-blur-md bg-current/5">
         <div className="max-w-7xl mx-auto flex items-center gap-1 sm:gap-2">
           {ADMIN_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -409,8 +414,8 @@ export default function SiteAdministrationPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`py-3.5 px-4 text-xs font-black uppercase tracking-wider transition relative border-b-2 whitespace-nowrap ${
                   isActive
-                    ? "text-amber-300 border-amber-400 bg-amber-500/10"
-                    : "text-rose-200/60 border-transparent hover:text-rose-100 hover:border-rose-800"
+                    ? "text-amber-500 border-amber-500 bg-amber-500/10"
+                    : "opacity-70 border-transparent hover:opacity-100 hover:border-current/30"
                 }`}
               >
                 {tab.label}

@@ -254,21 +254,86 @@ h4:not([class*="text-"]),
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-/* Safeguard: Prevent pale pink text from ever washing out on light/milk surfaces */
+/* Safeguard: Prevent pale text from ever washing out on light/milk/ivory surfaces */
 [data-theme="milk"] .text-rose-50,
 [data-theme="milk"] .text-rose-100,
 [data-theme="milk"] .text-rose-200,
+[data-theme="milk"] .text-stone-100,
+[data-theme="milk"] .text-stone-200,
+[data-theme="milk"] .text-slate-100,
+[data-theme="milk"] .text-slate-200,
 [data-theme="ivory"] .text-rose-50,
 [data-theme="ivory"] .text-rose-100,
-[data-theme="ivory"] .text-rose-200 {
+[data-theme="ivory"] .text-rose-200,
+[data-theme="ivory"] .text-stone-100,
+[data-theme="ivory"] .text-stone-200,
+[data-theme="ivory"] .text-slate-100,
+[data-theme="ivory"] .text-slate-200 {
   color: #0f172a !important;
 }
 
 [data-theme="milk"] .text-rose-300,
 [data-theme="milk"] .text-rose-400,
+[data-theme="milk"] .text-stone-300,
+[data-theme="milk"] .text-stone-400,
+[data-theme="milk"] .text-slate-300,
+[data-theme="milk"] .text-slate-400,
 [data-theme="ivory"] .text-rose-300,
-[data-theme="ivory"] .text-rose-400 {
+[data-theme="ivory"] .text-rose-400,
+[data-theme="ivory"] .text-stone-300,
+[data-theme="ivory"] .text-stone-400,
+[data-theme="ivory"] .text-slate-300,
+[data-theme="ivory"] .text-slate-400 {
   color: #334155 !important;
+}
+
+[data-theme="milk"] .text-amber-100,
+[data-theme="milk"] .text-amber-200,
+[data-theme="ivory"] .text-amber-100,
+[data-theme="ivory"] .text-amber-200 {
+  color: #78350f !important;
+}
+
+/* Universal Light Theme Border & Background Normalization */
+[data-theme="milk"] .border-white\/5,
+[data-theme="milk"] .border-white\/10,
+[data-theme="milk"] .border-white\/15,
+[data-theme="milk"] .border-white\/20,
+[data-theme="milk"] .border-current\/10,
+[data-theme="milk"] .border-current\/15,
+[data-theme="ivory"] .border-white\/5,
+[data-theme="ivory"] .border-white\/10,
+[data-theme="ivory"] .border-white\/15,
+[data-theme="ivory"] .border-white\/20,
+[data-theme="ivory"] .border-current\/10,
+[data-theme="ivory"] .border-current\/15 {
+  border-color: rgba(15, 23, 42, 0.12) !important;
+}
+
+[data-theme="milk"] .bg-white\/5,
+[data-theme="milk"] .bg-white\/10,
+[data-theme="ivory"] .bg-white\/5,
+[data-theme="ivory"] .bg-white\/10 {
+  background-color: rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Light Theme Input Fields and Controls */
+[data-theme="milk"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.keep-dark),
+[data-theme="milk"] select:not(.keep-dark),
+[data-theme="milk"] textarea:not(.keep-dark),
+[data-theme="ivory"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(.keep-dark),
+[data-theme="ivory"] select:not(.keep-dark),
+[data-theme="ivory"] textarea:not(.keep-dark) {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.16) !important;
+}
+
+[data-theme="milk"] input::placeholder,
+[data-theme="milk"] textarea::placeholder,
+[data-theme="ivory"] input::placeholder,
+[data-theme="ivory"] textarea::placeholder {
+  color: #94a3b8 !important;
 }
 
 /* Claymorphism Ultra-Luxury Dynamic Surfaces */
