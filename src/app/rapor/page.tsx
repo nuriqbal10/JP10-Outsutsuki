@@ -32,6 +32,8 @@ import {
   UserCheck,
   Heart,
   Compass,
+  Swords,
+  Gamepad2,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { LevelRaporData, StudentRaporItem } from "@/types/rapor";
@@ -403,6 +405,15 @@ export default function RaporDashboardPage() {
                 <ChevronRight className="w-3 h-3 opacity-40" />
               </Link>
               <Link
+                href="/arena"
+                className="flex items-center justify-between p-2 rounded-xl text-xs font-black bg-gradient-to-r from-purple-500/15 to-indigo-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300 hover:scale-[1.02] transition shadow-xs"
+              >
+                <span className="flex items-center gap-2">
+                  <Swords className="w-3.5 h-3.5 text-purple-500" /> ⚔️ Shinobi Game Arena
+                </span>
+                <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-400 font-bold">BARU</span>
+              </Link>
+              <Link
                 href="/cbt"
                 className="flex items-center justify-between p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 transition"
               >
@@ -572,6 +583,13 @@ export default function RaporDashboardPage() {
                   Modul Portal
                 </span>
                 <Link
+                  href="/arena"
+                  className="block p-2 rounded-xl text-xs font-black bg-purple-500/15 border border-purple-500/30 text-purple-600 dark:text-purple-300"
+                  onClick={() => setIsMobileDrawerOpen(false)}
+                >
+                  ⚔️ Shinobi Game Arena (Dojo N4)
+                </Link>
+                <Link
                   href="/lms/irodori-a2-2"
                   className="block p-2 rounded-xl text-xs font-semibold opacity-75 hover:opacity-100"
                 >
@@ -646,6 +664,16 @@ export default function RaporDashboardPage() {
                 Ketuntasan KKM: {kkmPercentage}% ({passedStudentsCount}/{totalStudentsCount})
               </span>
             </div>
+
+            {/* Link ke Shinobi Arena */}
+            <Link
+              href="/arena"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white shadow-md hover:scale-105 transition"
+              title="Buka Shinobi Arcade Arena, Dojo 6 Pilar N4, dan Leaderboard Game"
+            >
+              <Swords className="w-3.5 h-3.5" />
+              <span>⚔️ Shinobi Arena</span>
+            </Link>
 
             {/* Quick Print Button */}
             {top3[0] && (

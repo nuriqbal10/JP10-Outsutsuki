@@ -132,10 +132,10 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/arena"
-                className="px-6 py-3 rounded-full border border-purple-500/50 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-sm shadow-lg shadow-purple-500/30 hover:scale-105 transition inline-flex items-center gap-2 ring-1 ring-purple-400/40"
+                className="px-6 py-3 rounded-full border-2 border-purple-400 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white font-black text-sm shadow-xl shadow-purple-500/30 hover:scale-105 transition inline-flex items-center gap-2 ring-2 ring-purple-400/50"
               >
-                <Swords className="w-4 h-4" />
-                ⚔️ Shinobi Arena (Bunpou Puzzle)
+                <Swords className="w-4 h-4 animate-bounce" />
+                ⚔️ Shinobi Game Arena (Dojo N4 & Rank 28 Siswa)
               </Link>
             </div>
           </div>
