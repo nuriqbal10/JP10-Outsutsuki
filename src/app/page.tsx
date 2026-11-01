@@ -57,25 +57,43 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Navigasi Utama 3 Rumah Besar */}
-          <nav className="hidden md:flex items-center gap-1.5 p-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 text-xs font-bold">
+          {/* Navigasi Utama Terpadu */}
+          <nav className="hidden lg:flex items-center gap-1 p-1 rounded-full bg-black/5 dark:bg-white/5 border border-current/10 text-xs font-bold">
             <Link
               href="/lms"
-              className="px-3.5 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
               <BookOpen className="w-3.5 h-3.5 text-amber-500" />
               <span>LMS Silabus</span>
             </Link>
             <Link
+              href="/bunpou"
+              className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
+            >
+              <span>📖 Bunpou</span>
+            </Link>
+            <Link
+              href="/kanji"
+              className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
+            >
+              <span>✍️ Kanji</span>
+            </Link>
+            <Link
+              href="/flashcard"
+              className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
+            >
+              <span>🎴 Kotoba 3D</span>
+            </Link>
+            <Link
               href="/rapor"
-              className="px-3.5 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full opacity-80 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition flex items-center gap-1.5"
             >
               <Trophy className="w-3.5 h-3.5 text-amber-500" />
               <span>Rapor Kelas</span>
             </Link>
             <Link
               href="/arena"
-              className="px-3.5 py-1.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/30 hover:scale-105 transition flex items-center gap-1.5 font-black"
+              className="px-3 py-1.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/30 hover:scale-105 transition flex items-center gap-1.5 font-black"
             >
               <Swords className="w-3.5 h-3.5 text-purple-500" />
               <span>Shinobi Arena</span>
@@ -390,7 +408,136 @@ export default function HomePage() {
         </section>
 
         {/* ======================================================
-            5. PANDUAN MULTI-STAKEHOLDER (4 PERAN PENGGUNA)
+            5. FASILITAS & STUDIO BELAJAR MANDIRI (KOTOBA, KANJI, BUNPOU, CBT)
+            ====================================================== */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-current/10 pb-3">
+            <div>
+              <span className="text-[10px] font-black tracking-widest uppercase text-amber-500">
+                SARANA PEMBELAJARAN TERINTEGRASI
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black font-serif tracking-tight">
+                Studio &amp; Laboratorium Belajar Mandiri
+              </h2>
+            </div>
+            <p className="text-xs opacity-70 max-w-md">
+              Akses cepat instrumen penguasaan huruf, perbendaharaan kata, kaidah tata bahasa, dan simulasi ujian komputer.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+            {/* Card 1: Bunpou */}
+            <Link
+              href="/bunpou"
+              className="clay-card p-5 rounded-2xl border border-current/10 hover:border-amber-500/50 hover:scale-[1.02] transition flex flex-col justify-between gap-4 group shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 group-hover:scale-110 transition text-lg">
+                    📖
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    264 Pola Kalimat
+                  </span>
+                </div>
+                <h3 className="font-black text-base group-hover:text-amber-500 transition">
+                  Pustaka Tata Bahasa Bunpou
+                </h3>
+                <p className="text-xs opacity-75 mt-1.5 leading-relaxed">
+                  Daftar rumus resmi Japan Foundation (A1, A2.1, A2.2) dengan arti bahasa Indonesia, contoh kalimat, dan audio pelafalan.
+                </p>
+              </div>
+              <div className="text-xs font-black text-amber-600 dark:text-amber-400 flex items-center gap-1 pt-2 border-t border-current/10">
+                <span>Buka Bunpou List</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+              </div>
+            </Link>
+
+            {/* Card 2: Kanji */}
+            <Link
+              href="/kanji"
+              className="clay-card p-5 rounded-2xl border border-current/10 hover:border-purple-500/50 hover:scale-[1.02] transition flex flex-col justify-between gap-4 group shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-500 group-hover:scale-110 transition text-lg">
+                    ✍️
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/30">
+                    Animasi Stroke Order
+                  </span>
+                </div>
+                <h3 className="font-black text-base group-hover:text-purple-500 transition">
+                  Studio Master Huruf Kanji
+                </h3>
+                <p className="text-xs opacity-75 mt-1.5 leading-relaxed">
+                  Lembar kisi-kisi (20-Grid Box), animasi urutan goresan stroke SVG, dan lembar print-out latihan menulis kanji presisi A4.
+                </p>
+              </div>
+              <div className="text-xs font-black text-purple-600 dark:text-purple-400 flex items-center gap-1 pt-2 border-t border-current/10">
+                <span>Buka Studio Kanji</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+              </div>
+            </Link>
+
+            {/* Card 3: Kotoba 3D Flashcard */}
+            <Link
+              href="/flashcard"
+              className="clay-card p-5 rounded-2xl border border-current/10 hover:border-rose-500/50 hover:scale-[1.02] transition flex flex-col justify-between gap-4 group shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-500 group-hover:scale-110 transition text-lg">
+                    🎴
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
+                    4.245 Kosakata 3D
+                  </span>
+                </div>
+                <h3 className="font-black text-base group-hover:text-rose-500 transition">
+                  Studio Kotoba Flashcard 3D
+                </h3>
+                <p className="text-xs opacity-75 mt-1.5 leading-relaxed">
+                  Kartu bolak-balik interaktif 3D tactile, pelafalan audio native Jepang, dan pelacak pengulangan berjarak (SRS Algorithm).
+                </p>
+              </div>
+              <div className="text-xs font-black text-rose-600 dark:text-rose-400 flex items-center gap-1 pt-2 border-t border-current/10">
+                <span>Mulai Flashcard 3D</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+              </div>
+            </Link>
+
+            {/* Card 4: CBT Simulator */}
+            <Link
+              href="/cbt"
+              className="clay-card p-5 rounded-2xl border border-current/10 hover:border-emerald-500/50 hover:scale-[1.02] transition flex flex-col justify-between gap-4 group shadow-md"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition text-lg">
+                    💻
+                  </div>
+                  <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                    1.210 Butir Soal
+                  </span>
+                </div>
+                <h3 className="font-black text-base group-hover:text-emerald-500 transition">
+                  Simulator CBT JFT-Basic
+                </h3>
+                <p className="text-xs opacity-75 mt-1.5 leading-relaxed">
+                  Simulasi 4 sub-tes berstandar Prometric: Moji-Goi, Kaiwa-Hyougen, Choukai (audio max 2x), dan Dokkai dengan timer presisi.
+                </p>
+              </div>
+              <div className="text-xs font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1 pt-2 border-t border-current/10">
+                <span>Buka Simulator CBT</span>
+                <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition" />
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* ======================================================
+            6. PANDUAN MULTI-STAKEHOLDER (4 PERAN PENGGUNA)
             ====================================================== */}
         <section className="clay-card p-6 sm:p-8 rounded-3xl border border-current/10 shadow-xl space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
