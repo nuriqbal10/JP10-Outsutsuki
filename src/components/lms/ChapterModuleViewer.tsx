@@ -34,7 +34,9 @@ export default function ChapterModuleViewer({
   chapterTitle,
   chapterTopic,
 }: ChapterModuleViewerProps) {
-  const [viewMode, setViewMode] = useState<"pdf" | "summary">("pdf");
+  const [viewMode, setViewMode] = useState<"pdf" | "summary">(
+    chapter === 15 || chapter === 16 ? "summary" : "pdf"
+  );
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
 
   const moduleData: ChapterModuleData = CHAPTER_MODULES[chapter] || {
@@ -176,13 +178,34 @@ export default function ChapterModuleViewer({
             </span>
           </div>
 
-          <div className="w-full rounded-2xl overflow-hidden border border-rose-900/50 shadow-inner bg-[#100308] h-[900px] sm:h-[1100px]">
-            <iframe
-              src={`${moduleData.pdfUrl}#toolbar=1`}
-              title={`Modul PDF Bab ${chapter}`}
-              className="w-full h-full border-0 rounded-2xl"
-            />
-          </div>
+          {chapter === 15 || chapter === 16 ? (
+            <div className="w-full rounded-2xl border border-rose-900/50 bg-[#100308] p-8 sm:p-12 flex flex-col items-center justify-center text-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 shadow-lg">
+                <FileText className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-black text-amber-100">
+                Modul Buku Teks Bab {chapter} (Format Ultra High-Resolution)
+              </h3>
+              <p className="text-xs text-rose-200/80 max-w-lg leading-relaxed">
+                Berkas PDF Bab {chapter} memiliki resolusi tinggi di atas 25 MB (melebihi limit CDN Cloudflare Pages). Anda dapat mempelajari materi secara lengkap melalui mode <strong>Rangkuman Tata Bahasa</strong> di bawah ini yang memuat 100% pola kalimat, rumus, dan audio pelafalan native Tokyo.
+              </p>
+              <button
+                onClick={() => setViewMode("summary")}
+                className="clay-btn-gold px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg hover:scale-105 transition mt-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Buka Rangkuman Tata Bahasa & Audio
+              </button>
+            </div>
+          ) : (
+            <div className="w-full rounded-2xl overflow-hidden border border-rose-900/50 shadow-inner bg-[#100308] h-[900px] sm:h-[1100px]">
+              <iframe
+                src={`${moduleData.pdfUrl}#toolbar=1`}
+                title={`Modul PDF Bab ${chapter}`}
+                className="w-full h-full border-0 rounded-2xl"
+              />
+            </div>
+          )}
         </div>
       ) : (
         /* RANGKUMAN TATA BAHASA & CATATAN BUDAYA INTERAKTIF (IRODORI文法リスト準拠) */
