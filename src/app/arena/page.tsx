@@ -50,7 +50,28 @@ import {
   VolumeX,
   X,
   Scroll,
+  BookOpen,
+  FileText,
 } from "lucide-react";
+
+function getBadgeIcon(badgeId: string) {
+  switch (badgeId) {
+    case "first_step": return <Sparkles className="w-5 h-5 text-emerald-400" />;
+    case "kotoba_master": return <BookOpen className="w-5 h-5 text-blue-400" />;
+    case "streak_3": return <Flame className="w-5 h-5 text-orange-400" />;
+    case "streak_7": return <Zap className="w-5 h-5 text-amber-400" />;
+    case "choukai_sniper": return <Volume2 className="w-5 h-5 text-sky-400" />;
+    case "lkpd_hero": return <FileText className="w-5 h-5 text-indigo-400" />;
+    case "cbt_champion": return <Trophy className="w-5 h-5 text-yellow-400" />;
+    case "tournament_1st": return <Award className="w-5 h-5 text-amber-300" />;
+    case "tournament_2nd": return <Award className="w-5 h-5 text-slate-300" />;
+    case "tournament_3rd": return <Shield className="w-5 h-5 text-amber-600" />;
+    case "puzzle_master": return <Layers className="w-5 h-5 text-purple-400" />;
+    case "picture_detective": return <Eye className="w-5 h-5 text-cyan-400" />;
+    case "shinobi_explorer": return <Compass className="w-5 h-5 text-teal-400" />;
+    default: return <Sparkles className="w-5 h-5 text-amber-400" />;
+  }
+}
 
 export default function ShinobiArenaPage() {
   const [gamerState, setGamerState] = useState<UserGamificationState | null>(null);
@@ -834,7 +855,7 @@ export default function ShinobiArenaPage() {
                         : "bg-slate-950/50 border-slate-800/60 text-slate-600 grayscale"
                     }`}
                   >
-                    <div className="text-3xl shrink-0">{b.icon}</div>
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700/60 flex items-center justify-center shrink-0">{getBadgeIcon(b.id)}</div>
                     <div className="min-w-0">
                       <div className="font-black text-xs truncate">{b.name}</div>
                       <div className="text-[10px] text-slate-400 mt-0.5 line-clamp-2">{b.desc}</div>

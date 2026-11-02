@@ -32,16 +32,16 @@ export async function sendWelcomeEmail(email: string, name: string) {
   return await resend.emails.send({
     from: fromEmail,
     to: email,
-    subject: "🌸 Selamat Datang di Portal Terpadu IRODORI JFT-Basic A2!",
+    subject: "Selamat Datang di Portal Terpadu IRODORI JFT-Basic A2",
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
-        <h2 style="color: #6366f1;">Selamat Datang, ${name}! 🎉</h2>
+        <h2 style="color: #6366f1;">Selamat Datang, ${name}!</h2>
         <p>Akun Anda telah berhasil terdaftar di <strong>Portal Terpadu IRODORI A2</strong>.</p>
         <p>Anda sekarang dapat mengakses:</p>
         <ul>
-          <li>🎴 <strong>Studio Flashcard Kosakata 3D</strong> (4.245 kata resmi A1, A2.1, A2.2)</li>
-          <li>📝 <strong>Simulasi CBT JFT-Basic A2</strong> (Moji Goi, Kaiwa Hyougen, Choukai, Dokkai)</li>
-          <li>✍️ <strong>Studio Kanji Irodori</strong> (Animasi Stroke Order & 20-Grid Box)</li>
+          <li><strong>Studio Flashcard Kosakata 3D</strong> (4.245 kata resmi A1, A2.1, A2.2)</li>
+          <li><strong>Simulasi CBT JFT-Basic A2</strong> (Moji Goi, Kaiwa Hyougen, Choukai, Dokkai)</li>
+          <li><strong>Studio Kanji Irodori</strong> (Animasi Stroke Order & 20-Grid Box)</li>
         </ul>
         <p style="margin-top: 24px;">Selamat belajar dan semoga sukses meraih skor maksimal JFT-Basic A2!</p>
       </div>
@@ -66,7 +66,7 @@ export async function sendCbtResultEmail(params: CbtResultEmailParams) {
   return await resend.emails.send({
     from: fromEmail,
     to: email,
-    subject: `📊 Hasil Rapor CBT: ${examTitle} - ${isPassed ? "LULUS" : "Evaluasi"}`,
+    subject: `Hasil Rapor CBT: ${examTitle} - ${isPassed ? "LULUS" : "Evaluasi"}`,
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 16px;">
         <h2 style="color: #1e293b; margin-bottom: 8px;">Laporan Hasil Ujian CBT JFT-Basic</h2>
@@ -81,19 +81,19 @@ export async function sendCbtResultEmail(params: CbtResultEmailParams) {
         <h4 style="color: #334155; margin-bottom: 8px;">Rincian Nilai per Sub-Tes:</h4>
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
           <tr style="border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 8px 0;">🔤 Moji Goi (Kosakata & Huruf)</td>
+            <td style="padding: 8px 0;">Moji Goi (Kosakata & Huruf)</td>
             <td style="text-align: right; font-weight: bold;">${scoreBreakdown.mojiGoi} Poin</td>
           </tr>
           <tr style="border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 8px 0;">💬 Kaiwa Hyougen (Tata Bahasa)</td>
+            <td style="padding: 8px 0;">Kaiwa Hyougen (Tata Bahasa)</td>
             <td style="text-align: right; font-weight: bold;">${scoreBreakdown.kaiwaHyougen} Poin</td>
           </tr>
           <tr style="border-bottom: 1px solid #f1f5f9;">
-            <td style="padding: 8px 0;">🎧 Choukai (Pendengaran)</td>
+            <td style="padding: 8px 0;">Choukai (Pendengaran)</td>
             <td style="text-align: right; font-weight: bold;">${scoreBreakdown.choukai} Poin</td>
           </tr>
           <tr>
-            <td style="padding: 8px 0;">📖 Dokkai (Pemahaman Bacaan)</td>
+            <td style="padding: 8px 0;">Dokkai (Pemahaman Bacaan)</td>
             <td style="text-align: right; font-weight: bold;">${scoreBreakdown.dokkai} Poin</td>
           </tr>
         </table>

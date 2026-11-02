@@ -19,6 +19,12 @@ import {
   ChevronRight,
   ShieldAlert,
   AlertCircle,
+  BookOpen,
+  FileText,
+  Layers,
+  Search,
+  Navigation,
+  Shield,
 } from "lucide-react";
 import {
   getGamificationState,
@@ -38,6 +44,25 @@ interface KotobaQuestion {
   romaji?: string;
   id: string; // the correct answer string
   distractors: string[]; // 3 wrong answers
+}
+
+function getBadgeIcon(badgeId: string) {
+  switch (badgeId) {
+    case "first_step": return <Sparkles className="w-4 h-4 text-emerald-400" />;
+    case "kotoba_master": return <BookOpen className="w-4 h-4 text-blue-400" />;
+    case "streak_3": return <Flame className="w-4 h-4 text-orange-400" />;
+    case "streak_7": return <Zap className="w-4 h-4 text-amber-400" />;
+    case "choukai_sniper": return <Volume2 className="w-4 h-4 text-sky-400" />;
+    case "lkpd_hero": return <FileText className="w-4 h-4 text-indigo-400" />;
+    case "cbt_champion": return <Trophy className="w-4 h-4 text-yellow-400" />;
+    case "tournament_1st": return <Award className="w-4 h-4 text-amber-300" />;
+    case "tournament_2nd": return <Award className="w-4 h-4 text-slate-300" />;
+    case "tournament_3rd": return <Shield className="w-4 h-4 text-amber-600" />;
+    case "puzzle_master": return <Layers className="w-4 h-4 text-purple-400" />;
+    case "picture_detective": return <Search className="w-4 h-4 text-cyan-400" />;
+    case "shinobi_explorer": return <Navigation className="w-4 h-4 text-teal-400" />;
+    default: return <Sparkles className="w-4 h-4 text-amber-400" />;
+  }
 }
 
 // Master pool of Irodori A2.2 Kotoba
@@ -360,7 +385,7 @@ export default function GamificationBanner() {
                   className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400/50 flex items-center justify-center text-sm shadow cursor-pointer hover:scale-125 transition"
                   title={`${b.name} (${b.desc})`}
                 >
-                  {b.icon}
+                  {getBadgeIcon(bId)}
                 </span>
               );
             })}
